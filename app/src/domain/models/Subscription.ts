@@ -1,3 +1,5 @@
+import type { Plan } from "./Plan"
+
 export type SubscriptionStatus =
   | "active"
   | "trialing"
@@ -10,12 +12,7 @@ export interface Subscription {
   id: string
   stripeId: string
   status: SubscriptionStatus
-  plan: {
-    id: string
-    name: string
-    context: "personal" | "team"
-    interval: "month" | "year"
-  }
+  plan: Pick<Plan, "id" | "name" | "context" | "interval">
   quantity: number
   currentPeriodStart: string
   currentPeriodEnd: string

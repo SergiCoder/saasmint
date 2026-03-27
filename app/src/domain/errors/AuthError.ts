@@ -1,9 +1,3 @@
-export class AuthError extends Error {
-  constructor(
-    message: string,
-    public readonly code: string
-  ) {
-    super(message)
-    this.name = "AuthError"
-  }
-}
+import { DomainError } from "./DomainError"
+
+export class AuthError extends DomainError {}
