@@ -134,10 +134,14 @@ jobs:
           } catch {}
 
           // ── Outdated dependencies ──
+          // Packages intentionally held below latest due to ecosystem compatibility:
+          //   eslint - pinned at ^9; @typescript-eslint 8.x (used by eslint-config-next)
+          //            does not yet support eslint 10 (scopeManager API break)
+          const outdatedIgnore = ['eslint'];
           try {
             const data = JSON.parse(fs.readFileSync('/tmp/outdated-raw.json', 'utf8'));
             const rows = Object.entries(data)
-              .filter(([, v]) => v.latest && v.current !== v.latest)
+              .filter(([name, v]) => !outdatedIgnore.includes(name) && v.latest && v.current !== v.latest)
               .map(([name, v]) => \`| \${name} | \${v.current} | \${v.latest} | \${v.dependencyType} |\`);
             if (rows.length) {
               comment += '## Outdated Dependencies\n\n';
@@ -147,17 +151,16 @@ jobs:
             }
           } catch {}
 
+          if (!comment) {
+            comment = '## Dependency Report\n\nNo vulnerabilities or outdated packages found.\n';
+          }
+
           fs.writeFileSync('/tmp/pr-comment.txt', comment);
           "
 
           # Delete previous bot comment if present
           gh api "repos/${GH_REPO}/issues/${PR_NUMBER}/comments" \
-            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("Vulnerability Audit") or contains("Outdated Dependencies"))) | .id' \
+            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("Vulnerability Audit") or contains("Outdated Dependencies") or contains("Dependency Report"))) | .id' \
             | xargs -I{} gh api -X DELETE "repos/${GH_REPO}/issues/comments/{}" 2>/dev/null || true
-
-          if [ ! -s /tmp/pr-comment.txt ]; then
-            echo "No audit or dependency issues — no comment needed."
-            exit 0
-          fi
 
           gh pr comment "$PR_NUMBER" --body-file /tmp/pr-comment.txt
