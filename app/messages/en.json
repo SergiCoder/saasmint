@@ -1,0 +1,83 @@
+{
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "docs": "Docs",
+    "getStarted": "Get started",
+    "dashboard": "Dashboard",
+    "billing": "Billing",
+    "settings": "Settings",
+    "org": "Organization",
+    "admin": "Admin",
+    "signOut": "Sign out"
+  },
+  "landing": {
+    "badge": "Now in GA — v1.0",
+    "headline": "The platform teams actually ship with",
+    "subheadline": "Stop managing infrastructure. Start shipping product.",
+    "cta": "Start for free",
+    "ctaSecondary": "Watch demo"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to your account",
+      "email": "Email address",
+      "password": "Password",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account?",
+      "register": "Sign up"
+    },
+    "register": {
+      "title": "Create your account",
+      "email": "Email address",
+      "password": "Password",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "login": "Sign in"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "uptime": "Uptime",
+    "latency": "Latency",
+    "requests": "Requests",
+    "errors": "Errors"
+  },
+  "billing": {
+    "title": "Billing",
+    "currentPlan": "Current Plan",
+    "upgrade": "Upgrade",
+    "cancel": "Cancel subscription",
+    "changePlan": "Change plan",
+    "applyPromo": "Apply promo code",
+    "portal": "Manage billing",
+    "success": "Payment successful!",
+    "successDesc": "Your subscription has been updated."
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "fullName": "Full name",
+    "email": "Email",
+    "save": "Save changes",
+    "danger": "Danger zone",
+    "deleteAccount": "Delete account",
+    "deleteConfirm": "This will permanently delete your account and all data."
+  },
+  "org": {
+    "title": "Organization",
+    "create": "Create organization",
+    "members": "Members",
+    "invite": "Invite member",
+    "role": "Role",
+    "remove": "Remove"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm"
+  }
+}
