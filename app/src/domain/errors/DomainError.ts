@@ -2,9 +2,9 @@ export abstract class DomainError extends Error {
   constructor(
     message: string,
     public readonly code: string,
-    options?: ErrorOptions
+    options?: ErrorOptions,
   ) {
-    super(message, options)
-    this.name = new.target.name
+    super(message, options);
+    this.name = new.target.name;
   }
 }
