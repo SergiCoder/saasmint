@@ -1,4 +1,4 @@
-import type { Plan } from "./Plan"
+import type { Plan } from "./Plan";
 
 export type SubscriptionStatus =
   | "active"
@@ -6,16 +6,16 @@ export type SubscriptionStatus =
   | "past_due"
   | "canceled"
   | "unpaid"
-  | "incomplete"
+  | "incomplete";
 
 export interface Subscription {
-  id: string
-  stripeId: string
-  status: SubscriptionStatus
-  plan: Pick<Plan, "id" | "name" | "context" | "interval">
-  quantity: number
-  currentPeriodStart: string
-  currentPeriodEnd: string
-  cancelAtPeriodEnd: boolean
-  trialEnd: string | null
+  id: string;
+  stripeId: string;
+  status: SubscriptionStatus;
+  plan: Pick<Plan, "id" | "name" | "context" | "interval">;
+  quantity: number;
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  cancelAtPeriodEnd: boolean;
+  trialEnd: string | null;
 }

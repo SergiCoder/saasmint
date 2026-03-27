@@ -1,10 +1,10 @@
-import type { PlanPrice } from "./PlanPrice"
+import type { PlanPrice } from "./PlanPrice";
 
 export interface Plan {
-  id: string
-  name: string
-  context: "personal" | "team"
-  interval: "month" | "year"
-  isActive: boolean
-  prices: PlanPrice[]
+  id: string;
+  name: string;
+  context: "personal" | "team";
+  interval: "month" | "year";
+  isActive: boolean;
+  prices: PlanPrice[];
 }
