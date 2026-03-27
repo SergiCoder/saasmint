@@ -117,14 +117,18 @@ jobs:
           let comment = '';
 
           // ── Vulnerability audit ──
+          // pnpm audit --json uses the npm v1 format: { advisories: { id: { module_name, severity, ... } } }
           try {
             const data = JSON.parse(fs.readFileSync('/tmp/audit-raw.json', 'utf8'));
-            const rows = Object.values(data.vulnerabilities || {})
+            const rows = Object.values(data.advisories || {})
               .filter(v => v.severity !== 'info')
-              .map(v => \`| \${v.name} | \${v.severity} | \${v.range} | \${v.fixAvailable ? 'Yes' : 'No'} |\`);
+              .map(v => {
+                const fix = v.patched_versions && v.patched_versions !== '<0.0.0' ? v.patched_versions : 'None';
+                return \`| \${v.module_name} | \${v.severity} | \${v.vulnerable_versions} | \${fix} |\`;
+              });
             if (rows.length) {
               comment += '## ⚠️ Vulnerability Audit\n\n';
-              comment += '| Package | Severity | Range | Fix available |\n|---|---|---|---|\n';
+              comment += '| Package | Severity | Vulnerable range | Fix |\n|---|---|---|---|\n';
               comment += rows.join('\n') + '\n\n';
             }
           } catch {}
