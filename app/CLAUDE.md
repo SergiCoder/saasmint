@@ -15,6 +15,25 @@ Strict hexagonal architecture enforced by layer isolation:
 
 **Never** import from `infrastructure/` inside `domain/` or `application/`.
 
+## Domain Models
+
+Core types in `src/domain/models/`:
+
+- `User` — authenticated user (Supabase UID, account type, locale/currency preferences)
+- `Org` — organisation record (id, name, slug, logoUrl)
+- `OrgMember` — org membership (userId, role: `owner | admin | member`, isBilling flag)
+- `Plan` — billing plan (context: `personal | team`, interval: `month | year`, prices)
+- `PlanPrice` — individual price point (stripePriceId, currency, amount)
+- `Subscription` — active Stripe subscription (status, plan snapshot, period dates, trial)
+
+Domain errors in `src/domain/errors/`:
+
+- `AuthError` — authentication / authorisation failures
+- `BillingError` — payment and subscription failures
+- `OrgError` — organisation management failures
+
+All error classes carry a `code: string` field for programmatic handling.
+
 ## Component Design
 
 Strict atomic design in `src/presentation/components/`:
@@ -44,5 +63,14 @@ Always use `/commit`. Never commit manually.
 make setup    # first-time setup
 make dev      # start dev server on port 3000
 ```
+
+## Testing
+
+```bash
+pnpm test             # run all tests once
+pnpm test:coverage    # run tests with v8 coverage report
+```
+
+Tests live in `tests/` mirroring the `src/` structure (e.g. `src/domain/errors/DomainError.ts` → `tests/domain/errors/DomainError.test.ts`). The test runner is Vitest; configuration is in `vitest.config.ts`.
 
 Backend: `stripe-django` must run on `NEXT_PUBLIC_API_URL` (default: `http://localhost:8001`)

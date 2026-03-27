@@ -28,6 +28,13 @@ make setup    # install dependencies
 make dev      # start dev server on port 3000
 ```
 
+## Testing
+
+```bash
+pnpm test             # run all tests once
+pnpm test:coverage    # run tests with v8 coverage report
+```
+
 The backend ([stripe-django](https://github.com/SergiCoder/stripe-django)) must be running on `http://localhost:8001`.
 
 ## Environment variables
