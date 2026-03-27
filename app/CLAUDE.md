@@ -71,6 +71,6 @@ pnpm test             # run all tests once
 pnpm test:coverage    # run tests with v8 coverage report
 ```
 
-Tests live alongside the code they test (e.g. `src/domain/errors/DomainError.test.ts`). The test runner is Vitest; configuration is in `vitest.config.ts`.
+Tests live in `tests/` mirroring the `src/` structure (e.g. `src/domain/errors/DomainError.ts` → `tests/domain/errors/DomainError.test.ts`). The test runner is Vitest; configuration is in `vitest.config.ts`.
 
 Backend: `stripe-django` must run on `NEXT_PUBLIC_API_URL` (default: `http://localhost:8001`)

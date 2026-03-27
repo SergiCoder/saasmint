@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest"
-import { AuthError } from "./AuthError"
-import { BillingError } from "./BillingError"
-import { OrgError } from "./OrgError"
+import { AuthError } from "@/domain/errors/AuthError"
+import { BillingError } from "@/domain/errors/BillingError"
+import { OrgError } from "@/domain/errors/OrgError"
 
 describe("AuthError", () => {
   it("sets message, code, and name", () => {
