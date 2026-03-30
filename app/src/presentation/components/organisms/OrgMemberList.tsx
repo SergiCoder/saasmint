@@ -47,7 +47,7 @@ export function OrgMemberList({
         <tbody className="divide-y divide-gray-200 bg-white">
           {members.map((member) => (
             <tr key={member.id}>
-              <td className="whitespace-nowrap px-6 py-4">
+              <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center gap-3">
                   <Avatar
                     src={member.avatarUrl}
@@ -62,12 +62,12 @@ export function OrgMemberList({
                   </div>
                 </div>
               </td>
-              <td className="whitespace-nowrap px-6 py-4">
+              <td className="px-6 py-4 whitespace-nowrap">
                 <Badge variant={roleVariant[member.role]}>
                   {member.roleLabel}
                 </Badge>
               </td>
-              <td className="whitespace-nowrap px-6 py-4 text-right">
+              <td className="px-6 py-4 text-right whitespace-nowrap">
                 {member.actions}
               </td>
             </tr>

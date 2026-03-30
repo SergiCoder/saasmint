@@ -37,7 +37,7 @@ export function Avatar({ src, alt, size = "md", className = "" }: AvatarProps) {
 
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-full bg-primary-100 font-medium text-primary-700 ${sizes[size]} ${className}`}
+      className={`bg-primary-100 text-primary-700 inline-flex items-center justify-center rounded-full font-medium ${sizes[size]} ${className}`}
       aria-label={alt}
     >
       {initials}

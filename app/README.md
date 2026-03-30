@@ -1,14 +1,14 @@
 # stripe-nextjs
 
-Next.js 15 SaaS frontend template paired with [stripe-django](https://github.com/SergiCoder/stripe-django).
+Next.js 16 SaaS frontend template paired with [stripe-django](https://github.com/SergiCoder/stripe-django).
 
 ## Stack
 
-- **Framework** — Next.js 15 (App Router, React 19, Turbopack)
+- **Framework** — Next.js 16 (App Router, React 19, Turbopack)
 - **Auth** — Supabase (JWT)
 - **Payments** — Stripe (hosted Checkout)
 - **i18n** — next-intl
-- **Styling** — Tailwind CSS 3
+- **Styling** — Tailwind CSS 4
 
 ## Architecture
 
@@ -39,7 +39,7 @@ The backend ([stripe-django](https://github.com/SergiCoder/stripe-django)) must 
 
 ## Environment variables
 
-Copy `.env.local.example` to `.env.local` and fill in:
+Copy `.env.example` to `.env.local` and fill in:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`

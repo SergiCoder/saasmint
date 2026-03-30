@@ -1,6 +1,6 @@
 # stripe-nextjs — CLAUDE.md
 
-Next.js 15 SaaS frontend template paired with `stripe-django`.
+Next.js 16 SaaS frontend template paired with `stripe-django`.
 
 ## Architecture
 
@@ -62,6 +62,20 @@ Strict atomic design in `src/presentation/components/`:
 - One barrel `index.ts` per atomic level for re-exports
 - Components receive all user-facing text as props — no hardcoded strings
 - Server Components by default; `"use client"` only for interactivity (onClick, onChange, useState)
+
+## Server Actions
+
+Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, `billing.ts`, `org.ts`, `user.ts`). Each action instantiates a use-case with a gateway from the registry — never call gateways directly from actions.
+
+## Route Groups
+
+`src/app/[locale]/` uses three route groups with distinct layouts:
+
+- `(marketing)/` — public pages (landing, pricing) using `MarketingLayout`
+- `(auth)/` — login/signup pages using `AuthLayout`
+- `(app)/` — authenticated pages (dashboard, billing, settings, org) using `AppLayout`
+
+Route-specific client components live in co-located `_components/` directories (e.g. `(app)/billing/_components/CheckoutButton.tsx`).
 
 ## Key Rules
 
