@@ -54,6 +54,15 @@ Strict atomic design in `src/presentation/components/`:
 - `organisms/` — NavBar, Footer, PricingTable, SubscriptionCard, OrgMemberList, InvoiceTable
 - `templates/` — MarketingLayout, AuthLayout, AppLayout
 
+## Presentation Conventions
+
+- Tailwind v4 utility classes only — no CSS modules or styled-components
+- Custom design tokens defined in `src/app/globals.css` via `@theme`
+- Flat component files: `atoms/Button.tsx` (no folder-per-component)
+- One barrel `index.ts` per atomic level for re-exports
+- Components receive all user-facing text as props — no hardcoded strings
+- Server Components by default; `"use client"` only for interactivity (onClick, onChange, useState)
+
 ## Key Rules
 
 - App Router only (`src/app/`) — no `pages/` directory
