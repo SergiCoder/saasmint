@@ -74,26 +74,29 @@ async function NoSubscription({
   let plans: PricingTableProps["plans"] = [];
   try {
     const fetched = await new ListPlans(planGateway).execute();
-    plans = fetched.map((plan) => ({
-      name: plan.name,
-      price: plan.prices[0]
-        ? `$${(plan.prices[0].amount / 100).toFixed(0)}`
-        : "$0",
-      interval: plan.interval,
-      features: [] as string[],
-      highlighted: plan.name.toLowerCase().includes("pro"),
-      cta: plan.prices[0] ? (
-        <CheckoutButton
-          planPriceId={plan.prices[0].stripePriceId}
-          orgId={orgId}
-          highlighted={plan.name.toLowerCase().includes("pro")}
-        >
-          {t("upgrade")}
-        </CheckoutButton>
-      ) : (
-        <span />
-      ),
-    }));
+    plans = fetched.map((plan) => {
+      const highlighted = plan.name.toLowerCase().includes("pro");
+      return {
+        name: plan.name,
+        price: plan.prices[0]
+          ? `$${(plan.prices[0].amount / 100).toFixed(0)}`
+          : "$0",
+        interval: plan.interval,
+        features: [] as string[],
+        highlighted,
+        cta: plan.prices[0] ? (
+          <CheckoutButton
+            planPriceId={plan.prices[0].stripePriceId}
+            orgId={orgId}
+            highlighted={highlighted}
+          >
+            {t("upgrade")}
+          </CheckoutButton>
+        ) : (
+          <span />
+        ),
+      };
+    });
   } catch (err) {
     console.error("Failed to fetch plans", err);
     plans = [];
