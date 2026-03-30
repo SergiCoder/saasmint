@@ -53,7 +53,7 @@ beforeEach(async () => {
 
 describe("org server actions", () => {
   describe("createOrg", () => {
-    it("calls redirect to org page on success (caught by bare catch)", async () => {
+    it("redirects to org page on success", async () => {
       mockCreateOrgExecute.mockResolvedValue({
         id: "org_1",
         name: "Acme",
@@ -65,16 +65,21 @@ describe("org server actions", () => {
       formData.set("name", "Acme");
       formData.set("slug", "acme");
 
-      // NOTE: The source code has a bare catch that swallows the redirect error,
-      // so createOrg returns the error fallback instead of propagating the redirect.
-      const result = await createOrg(undefined, formData);
+      await expect(createOrg(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
       expect(mockCreateOrgExecute).toHaveBeenCalledWith({
         name: "Acme",
         slug: "acme",
       });
       expect(mockRedirect).toHaveBeenCalledWith("/org/acme");
-      // Because the redirect throw is caught, we get the error fallback
-      expect(result).toEqual({ error: "Failed to create organization" });
+    });
+
+    it("returns error for missing fields", async () => {
+      const formData = new FormData();
+      const result = await createOrg(undefined, formData);
+      expect(result).toEqual({ error: "Name and slug are required" });
+      expect(mockCreateOrgExecute).not.toHaveBeenCalled();
     });
 
     it("returns error on failure", async () => {
