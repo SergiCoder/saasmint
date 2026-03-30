@@ -6,7 +6,7 @@ export interface LogoProps {
 export function Logo({ appName, className = "" }: LogoProps) {
   return (
     <span
-      className={`text-xl font-bold tracking-tight text-primary-600 ${className}`}
+      className={`text-primary-600 text-xl font-bold tracking-tight ${className}`}
     >
       {appName}
     </span>
