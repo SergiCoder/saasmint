@@ -36,7 +36,7 @@ export async function inviteMember(_prevState: unknown, formData: FormData) {
     typeof orgId !== "string" ||
     typeof email !== "string" ||
     typeof role !== "string" ||
-    !validRoles.includes(role as OrgRole)
+    !(validRoles as readonly string[]).includes(role)
   ) {
     return { error: "Invalid input" };
   }
@@ -45,7 +45,7 @@ export async function inviteMember(_prevState: unknown, formData: FormData) {
     await new InviteOrgMember(orgMemberGateway).execute(
       orgId,
       email,
-      role as OrgRole,
+      role as (typeof validRoles)[number],
     );
   } catch {
     return { error: "Failed to invite member" };
@@ -63,6 +63,11 @@ export async function removeMember(formData: FormData) {
     return;
   }
 
-  await new RemoveOrgMember(orgMemberGateway).execute(orgId, userId);
+  try {
+    await new RemoveOrgMember(orgMemberGateway).execute(orgId, userId);
+  } catch (err) {
+    console.error("Failed to remove member", err);
+    return;
+  }
   revalidatePath(`/org`);
 }

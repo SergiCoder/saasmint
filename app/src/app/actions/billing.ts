@@ -22,22 +22,34 @@ export async function startCheckout(formData: FormData) {
     return;
   }
 
-  const { url } = await new StartCheckout(subscriptionGateway).execute({
-    planPriceId,
-    ...(typeof orgId === "string" && orgId ? { orgId } : {}),
-  });
-
-  assertTrustedRedirect(url);
+  let url: string;
+  try {
+    ({ url } = await new StartCheckout(subscriptionGateway).execute({
+      planPriceId,
+      ...(typeof orgId === "string" && orgId ? { orgId } : {}),
+    }));
+    assertTrustedRedirect(url);
+  } catch (err) {
+    if (err instanceof Error && err.message === "NEXT_REDIRECT") throw err;
+    console.error("Failed to start checkout", err);
+    return;
+  }
   redirect(url);
 }
 
 export async function openBillingPortal(formData: FormData) {
   const orgId = formData.get("orgId");
 
-  const { url } = await new OpenBillingPortal(subscriptionGateway).execute({
-    ...(typeof orgId === "string" && orgId ? { orgId } : {}),
-  });
-
-  assertTrustedRedirect(url);
+  let url: string;
+  try {
+    ({ url } = await new OpenBillingPortal(subscriptionGateway).execute({
+      ...(typeof orgId === "string" && orgId ? { orgId } : {}),
+    }));
+    assertTrustedRedirect(url);
+  } catch (err) {
+    if (err instanceof Error && err.message === "NEXT_REDIRECT") throw err;
+    console.error("Failed to open billing portal", err);
+    return;
+  }
   redirect(url);
 }

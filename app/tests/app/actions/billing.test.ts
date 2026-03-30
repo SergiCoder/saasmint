@@ -109,7 +109,7 @@ describe("billing server actions", () => {
       expect(mockRedirect).not.toHaveBeenCalled();
     });
 
-    it("throws on untrusted redirect URL", async () => {
+    it("returns early on untrusted redirect URL", async () => {
       mockStartCheckoutExecute.mockResolvedValue({
         url: "https://evil.com/steal",
       });
@@ -117,9 +117,8 @@ describe("billing server actions", () => {
       const formData = new FormData();
       formData.set("planPriceId", "price_abc");
 
-      await expect(startCheckout(formData)).rejects.toThrow(
-        "Untrusted redirect URL",
-      );
+      const result = await startCheckout(formData);
+      expect(result).toBeUndefined();
       expect(mockRedirect).not.toHaveBeenCalled();
     });
   });
@@ -170,16 +169,15 @@ describe("billing server actions", () => {
       expect(mockOpenBillingPortalExecute).toHaveBeenCalledWith({});
     });
 
-    it("throws on untrusted redirect URL", async () => {
+    it("returns early on untrusted redirect URL", async () => {
       mockOpenBillingPortalExecute.mockResolvedValue({
         url: "https://malicious.site/phish",
       });
 
       const formData = new FormData();
 
-      await expect(openBillingPortal(formData)).rejects.toThrow(
-        "Untrusted redirect URL",
-      );
+      const result = await openBillingPortal(formData);
+      expect(result).toBeUndefined();
       expect(mockRedirect).not.toHaveBeenCalled();
     });
   });
