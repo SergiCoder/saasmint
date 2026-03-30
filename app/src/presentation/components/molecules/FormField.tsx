@@ -25,6 +25,7 @@ export function FormField({
       <Input
         id={name}
         name={name}
+        required={required}
         error={!!errorMessage}
         aria-describedby={errorMessage ? `${name}-error` : undefined}
         aria-invalid={!!errorMessage}

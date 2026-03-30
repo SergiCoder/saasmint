@@ -1,8 +1,12 @@
+import Image from "next/image";
+
 const sizes = {
   sm: "h-8 w-8 text-xs",
   md: "h-10 w-10 text-sm",
   lg: "h-12 w-12 text-base",
 } as const;
+
+const pixelSizes = { sm: 32, md: 40, lg: 48 } as const;
 
 export interface AvatarProps {
   src?: string | null;
@@ -21,9 +25,11 @@ export function Avatar({ src, alt, size = "md", className = "" }: AvatarProps) {
 
   if (src) {
     return (
-      <img
+      <Image
         src={src}
         alt={alt}
+        width={pixelSizes[size]}
+        height={pixelSizes[size]}
         className={`inline-block rounded-full object-cover ${sizes[size]} ${className}`}
       />
     );
