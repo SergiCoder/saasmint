@@ -5,32 +5,34 @@ import { createClient } from "@/infrastructure/supabase/server";
 import { SignOut } from "@/application/use-cases/auth/SignOut";
 import { authGateway } from "@/infrastructure/registry";
 
-export async function signIn(_prevState: unknown, formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+async function authAction(
+  formData: FormData,
+  method: "signInWithPassword" | "signUp",
+  redirectTo: string,
+) {
+  const email = formData.get("email");
+  const password = formData.get("password");
+
+  if (typeof email !== "string" || typeof password !== "string") {
+    return { error: "Email and password are required" };
+  }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await supabase.auth[method]({ email, password });
 
   if (error) {
     return { error: error.message };
   }
 
-  redirect("/dashboard");
+  redirect(redirectTo);
+}
+
+export async function signIn(_prevState: unknown, formData: FormData) {
+  return authAction(formData, "signInWithPassword", "/dashboard");
 }
 
 export async function signUp(_prevState: unknown, formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({ email, password });
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  redirect("/login");
+  return authAction(formData, "signUp", "/login");
 }
 
 export async function signOut() {

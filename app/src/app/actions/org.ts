@@ -8,24 +8,45 @@ import { RemoveOrgMember } from "@/application/use-cases/org-member/RemoveOrgMem
 import { orgGateway, orgMemberGateway } from "@/infrastructure/registry";
 
 export async function createOrg(_prevState: unknown, formData: FormData) {
-  const name = formData.get("name") as string;
-  const slug = formData.get("slug") as string;
+  const name = formData.get("name");
+  const slug = formData.get("slug");
 
+  if (typeof name !== "string" || typeof slug !== "string") {
+    return { error: "Name and slug are required" };
+  }
+
+  let org;
   try {
-    const org = await new CreateOrg(orgGateway).execute({ name, slug });
-    redirect(`/org/${org.slug}`);
+    org = await new CreateOrg(orgGateway).execute({ name, slug });
   } catch {
     return { error: "Failed to create organization" };
   }
+  redirect(`/org/${org.slug}`);
 }
 
+const validRoles = ["owner", "admin", "member"] as const;
+type OrgRole = (typeof validRoles)[number];
+
 export async function inviteMember(_prevState: unknown, formData: FormData) {
-  const orgId = formData.get("orgId") as string;
-  const email = formData.get("email") as string;
-  const role = formData.get("role") as "owner" | "admin" | "member";
+  const orgId = formData.get("orgId");
+  const email = formData.get("email");
+  const role = formData.get("role");
+
+  if (
+    typeof orgId !== "string" ||
+    typeof email !== "string" ||
+    typeof role !== "string" ||
+    !validRoles.includes(role as OrgRole)
+  ) {
+    return { error: "Invalid input" };
+  }
 
   try {
-    await new InviteOrgMember(orgMemberGateway).execute(orgId, email, role);
+    await new InviteOrgMember(orgMemberGateway).execute(
+      orgId,
+      email,
+      role as OrgRole,
+    );
   } catch {
     return { error: "Failed to invite member" };
   }
@@ -35,8 +56,12 @@ export async function inviteMember(_prevState: unknown, formData: FormData) {
 }
 
 export async function removeMember(formData: FormData) {
-  const orgId = formData.get("orgId") as string;
-  const userId = formData.get("userId") as string;
+  const orgId = formData.get("orgId");
+  const userId = formData.get("userId");
+
+  if (typeof orgId !== "string" || typeof userId !== "string") {
+    return;
+  }
 
   await new RemoveOrgMember(orgMemberGateway).execute(orgId, userId);
   revalidatePath(`/org`);

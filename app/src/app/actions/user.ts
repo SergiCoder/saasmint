@@ -8,15 +8,17 @@ import { authGateway, userGateway } from "@/infrastructure/registry";
 export async function updateProfile(_prevState: unknown, formData: FormData) {
   const user = await new GetCurrentUser(authGateway).execute();
 
-  const fullName = formData.get("fullName") as string | null;
-  const preferredLocale = formData.get("preferredLocale") as string | null;
-  const preferredCurrency = formData.get("preferredCurrency") as string | null;
+  const fullName = formData.get("fullName");
+  const preferredLocale = formData.get("preferredLocale");
+  const preferredCurrency = formData.get("preferredCurrency");
 
   try {
     await new UpdateUserProfile(userGateway).execute(user.id, {
-      fullName: fullName || null,
-      ...(preferredLocale && { preferredLocale }),
-      ...(preferredCurrency && { preferredCurrency }),
+      fullName: typeof fullName === "string" && fullName ? fullName : null,
+      ...(typeof preferredLocale === "string" &&
+        preferredLocale && { preferredLocale }),
+      ...(typeof preferredCurrency === "string" &&
+        preferredCurrency && { preferredCurrency }),
     });
   } catch {
     return { error: "Failed to update profile" };
