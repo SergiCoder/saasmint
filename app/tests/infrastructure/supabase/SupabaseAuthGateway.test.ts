@@ -2,13 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AuthError } from "@/domain/errors/AuthError";
 import type { User } from "@/domain/models/User";
 
-const mockGetSession = vi.fn();
 const mockSignOut = vi.fn();
 
 vi.mock("@/infrastructure/supabase/server", () => ({
   createClient: vi.fn().mockResolvedValue({
     auth: {
-      getSession: mockGetSession,
       signOut: mockSignOut,
     },
   }),
@@ -44,34 +42,16 @@ describe("SupabaseAuthGateway", () => {
   const gateway = new SupabaseAuthGateway();
 
   describe("getCurrentUser", () => {
-    it("fetches the session and returns user from API", async () => {
-      mockGetSession.mockResolvedValue({
-        data: { session: { access_token: "tok_abc" } },
-      });
+    it("returns user from API via apiFetch", async () => {
       mockApiFetch.mockResolvedValue(user);
 
       const result = await gateway.getCurrentUser();
 
-      expect(mockGetSession).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith("/account/", "tok_abc");
+      expect(mockApiFetch).toHaveBeenCalledWith("/account/");
       expect(result).toEqual(user);
     });
 
-    it("throws AuthError when no session exists", async () => {
-      mockGetSession.mockResolvedValue({
-        data: { session: null },
-      });
-
-      await expect(gateway.getCurrentUser()).rejects.toThrow(AuthError);
-      await expect(gateway.getCurrentUser()).rejects.toMatchObject({
-        code: "UNAUTHENTICATED",
-      });
-    });
-
     it("propagates apiFetch errors", async () => {
-      mockGetSession.mockResolvedValue({
-        data: { session: { access_token: "tok_abc" } },
-      });
       mockApiFetch.mockRejectedValue(new Error("API 500: Server Error"));
 
       await expect(gateway.getCurrentUser()).rejects.toThrow(

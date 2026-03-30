@@ -6,12 +6,7 @@ import { createClient } from "./server";
 
 export class SupabaseAuthGateway implements IAuthGateway {
   async getCurrentUser(): Promise<User> {
-    const supabase = await createClient();
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session) throw new AuthError("No active session", "UNAUTHENTICATED");
-    return apiFetch<User>("/account/", session.access_token);
+    return apiFetch<User>("/account/");
   }
 
   async signOut(): Promise<void> {

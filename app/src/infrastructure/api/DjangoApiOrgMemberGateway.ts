@@ -1,13 +1,11 @@
 import type { IOrgMemberGateway } from "@/application/ports/IOrgMemberGateway";
 import type { OrgMember } from "@/domain/models/OrgMember";
-import { apiFetch, getAuthToken } from "./apiClient";
+import { apiFetch } from "./apiClient";
 
 export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
   async listMembers(orgId: string): Promise<OrgMember[]> {
-    const token = await getAuthToken();
     const data = await apiFetch<{ results: OrgMember[] }>(
       `/orgs/${orgId}/members/`,
-      token,
     );
     return data.results;
   }
@@ -17,16 +15,14 @@ export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
     email: string,
     role: OrgMember["role"],
   ): Promise<void> {
-    const token = await getAuthToken();
-    await apiFetch<OrgMember>(`/orgs/${orgId}/members/`, token, {
+    await apiFetch<OrgMember>(`/orgs/${orgId}/members/`, {
       method: "POST",
       body: JSON.stringify({ email, role }),
     });
   }
 
   async removeMember(orgId: string, userId: string): Promise<void> {
-    const token = await getAuthToken();
-    await apiFetch<void>(`/orgs/${orgId}/members/${userId}/`, token, {
+    await apiFetch<void>(`/orgs/${orgId}/members/${userId}/`, {
       method: "DELETE",
     });
   }
@@ -36,8 +32,7 @@ export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
     userId: string,
     role: OrgMember["role"],
   ): Promise<void> {
-    const token = await getAuthToken();
-    await apiFetch<OrgMember>(`/orgs/${orgId}/members/${userId}/`, token, {
+    await apiFetch<OrgMember>(`/orgs/${orgId}/members/${userId}/`, {
       method: "PATCH",
       body: JSON.stringify({ role }),
     });

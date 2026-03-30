@@ -18,6 +18,9 @@ const { getAuthToken, apiFetch } =
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mockGetSession.mockResolvedValue({
+    data: { session: { access_token: "tok_abc" } },
+  });
 });
 
 afterEach(() => {
@@ -26,10 +29,6 @@ afterEach(() => {
 
 describe("getAuthToken", () => {
   it("returns the access token from the active session", async () => {
-    mockGetSession.mockResolvedValue({
-      data: { session: { access_token: "tok_abc" } },
-    });
-
     const token = await getAuthToken();
     expect(token).toBe("tok_abc");
   });
@@ -54,7 +53,7 @@ describe("apiFetch", () => {
       json: () => Promise.resolve({ id: 1 }),
     });
 
-    await apiFetch("/account/", "tok_abc");
+    await apiFetch("/account/");
 
     expect(fetchSpy).toHaveBeenCalledWith(
       "http://localhost:8001/api/v1/account/",
@@ -62,21 +61,21 @@ describe("apiFetch", () => {
     );
   });
 
-  it("sends Authorization header with bearer token", async () => {
+  it("sends Authorization header with bearer token from session", async () => {
     fetchSpy.mockResolvedValue({
       ok: true,
       status: 200,
       json: () => Promise.resolve({}),
     });
 
-    await apiFetch("/account/", "my-token");
+    await apiFetch("/account/");
 
     expect(fetchSpy).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
         headers: expect.objectContaining({
-          Authorization: "Bearer my-token",
-          "Content-Type": "application/json",
+          authorization: "Bearer tok_abc",
+          "content-type": "application/json",
         }),
       }),
     );
@@ -89,10 +88,10 @@ describe("apiFetch", () => {
       json: () => Promise.resolve({}),
     });
 
-    await apiFetch("/test/", "tok");
+    await apiFetch("/test/");
 
     const headers = fetchSpy.mock.calls[0][1].headers;
-    expect(headers["Content-Type"]).toBe("application/json");
+    expect(headers["content-type"]).toBe("application/json");
   });
 
   it("merges custom options (method, body)", async () => {
@@ -103,7 +102,7 @@ describe("apiFetch", () => {
     });
 
     const body = JSON.stringify({ name: "Test" });
-    await apiFetch("/orgs/", "tok", { method: "POST", body });
+    await apiFetch("/orgs/", { method: "POST", body });
 
     expect(fetchSpy).toHaveBeenCalledWith(
       expect.any(String),
@@ -122,7 +121,7 @@ describe("apiFetch", () => {
       json: () => Promise.resolve(payload),
     });
 
-    const result = await apiFetch("/account/", "tok");
+    const result = await apiFetch("/account/");
     expect(result).toEqual(payload);
   });
 
@@ -132,7 +131,7 @@ describe("apiFetch", () => {
       status: 204,
     });
 
-    const result = await apiFetch("/orgs/o1/members/u1/", "tok", {
+    const result = await apiFetch("/orgs/o1/members/u1/", {
       method: "DELETE",
     });
     expect(result).toBeUndefined();
@@ -145,9 +144,7 @@ describe("apiFetch", () => {
       text: () => Promise.resolve("Bad Request"),
     });
 
-    await expect(apiFetch("/account/", "tok")).rejects.toThrow(
-      "API 400: Bad Request",
-    );
+    await expect(apiFetch("/account/")).rejects.toThrow("API 400: Bad Request");
   });
 
   it("throws on 404 with API prefix", async () => {
@@ -157,7 +154,7 @@ describe("apiFetch", () => {
       text: () => Promise.resolve("Not Found"),
     });
 
-    await expect(apiFetch("/billing/subscription/", "tok")).rejects.toThrow(
+    await expect(apiFetch("/billing/subscription/")).rejects.toThrow(
       "API 404: Not Found",
     );
   });
@@ -169,7 +166,7 @@ describe("apiFetch", () => {
       text: () => Promise.resolve("Internal Server Error"),
     });
 
-    await expect(apiFetch("/account/", "tok")).rejects.toThrow(
+    await expect(apiFetch("/account/")).rejects.toThrow(
       "API 500: Internal Server Error",
     );
   });
@@ -181,11 +178,19 @@ describe("apiFetch", () => {
       json: () => Promise.resolve({}),
     });
 
-    await apiFetch("/test/", "tok", {
+    await apiFetch("/test/", {
       headers: { "Content-Type": "text/plain" },
     });
 
     const headers = fetchSpy.mock.calls[0][1].headers;
-    expect(headers["Content-Type"]).toBe("text/plain");
+    expect(headers["content-type"]).toBe("text/plain");
+  });
+
+  it("throws AuthError when no session exists", async () => {
+    mockGetSession.mockResolvedValue({
+      data: { session: null },
+    });
+
+    await expect(apiFetch("/account/")).rejects.toThrow(AuthError);
   });
 });

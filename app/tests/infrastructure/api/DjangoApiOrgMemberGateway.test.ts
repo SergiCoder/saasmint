@@ -1,11 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { OrgMember } from "@/domain/models/OrgMember";
 
-const mockGetAuthToken = vi.fn().mockResolvedValue("tok_test");
 const mockApiFetch = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
-  getAuthToken: (...args: unknown[]) => mockGetAuthToken(...args),
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
 }));
 
@@ -24,7 +22,6 @@ const member: OrgMember = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockGetAuthToken.mockResolvedValue("tok_test");
 });
 
 describe("DjangoApiOrgMemberGateway", () => {
@@ -37,11 +34,7 @@ describe("DjangoApiOrgMemberGateway", () => {
 
       const result = await gateway.listMembers("o1");
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith(
-        "/orgs/o1/members/",
-        "tok_test",
-      );
+      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/members/");
       expect(result).toEqual(members);
     });
 
@@ -51,6 +44,14 @@ describe("DjangoApiOrgMemberGateway", () => {
       const result = await gateway.listMembers("o1");
       expect(result).toEqual([]);
     });
+
+    it("propagates errors from apiFetch", async () => {
+      mockApiFetch.mockRejectedValue(new Error("API 500: Server Error"));
+
+      await expect(gateway.listMembers("o1")).rejects.toThrow(
+        "API 500: Server Error",
+      );
+    });
   });
 
   describe("inviteMember", () => {
@@ -59,15 +60,10 @@ describe("DjangoApiOrgMemberGateway", () => {
 
       await gateway.inviteMember("o1", "bob@example.com", "member");
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith(
-        "/orgs/o1/members/",
-        "tok_test",
-        {
-          method: "POST",
-          body: JSON.stringify({ email: "bob@example.com", role: "member" }),
-        },
-      );
+      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/members/", {
+        method: "POST",
+        body: JSON.stringify({ email: "bob@example.com", role: "member" }),
+      });
     });
 
     it("propagates errors from apiFetch", async () => {
@@ -85,13 +81,16 @@ describe("DjangoApiOrgMemberGateway", () => {
 
       await gateway.removeMember("o1", "u2");
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith(
-        "/orgs/o1/members/u2/",
-        "tok_test",
-        {
-          method: "DELETE",
-        },
+      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/members/u2/", {
+        method: "DELETE",
+      });
+    });
+
+    it("propagates errors from apiFetch", async () => {
+      mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
+
+      await expect(gateway.removeMember("o1", "u2")).rejects.toThrow(
+        "API 403: Forbidden",
       );
     });
   });
@@ -102,15 +101,10 @@ describe("DjangoApiOrgMemberGateway", () => {
 
       await gateway.updateMemberRole("o1", "u1", "owner");
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith(
-        "/orgs/o1/members/u1/",
-        "tok_test",
-        {
-          method: "PATCH",
-          body: JSON.stringify({ role: "owner" }),
-        },
-      );
+      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/members/u1/", {
+        method: "PATCH",
+        body: JSON.stringify({ role: "owner" }),
+      });
     });
 
     it("propagates errors from apiFetch", async () => {

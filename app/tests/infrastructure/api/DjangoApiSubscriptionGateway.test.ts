@@ -1,11 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { Subscription } from "@/domain/models/Subscription";
 
-const mockGetAuthToken = vi.fn().mockResolvedValue("tok_test");
 const mockApiFetch = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
-  getAuthToken: (...args: unknown[]) => mockGetAuthToken(...args),
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
 }));
 
@@ -26,7 +24,6 @@ const subscription: Subscription = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockGetAuthToken.mockResolvedValue("tok_test");
 });
 
 describe("DjangoApiSubscriptionGateway", () => {
@@ -38,11 +35,7 @@ describe("DjangoApiSubscriptionGateway", () => {
 
       const result = await gateway.getSubscription("o1");
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith(
-        "/billing/subscription/",
-        "tok_test",
-      );
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscription/");
       expect(result).toEqual(subscription);
     });
 
@@ -76,15 +69,10 @@ describe("DjangoApiSubscriptionGateway", () => {
       const input = { planPriceId: "price_123", orgId: "o1" };
       const result = await gateway.createCheckoutSession(input);
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith(
-        "/billing/checkout/",
-        "tok_test",
-        {
-          method: "POST",
-          body: JSON.stringify(input),
-        },
-      );
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/checkout/", {
+        method: "POST",
+        body: JSON.stringify(input),
+      });
       expect(result).toEqual(response);
     });
 
@@ -105,15 +93,10 @@ describe("DjangoApiSubscriptionGateway", () => {
       const input = { orgId: "o1" };
       const result = await gateway.createBillingPortalSession(input);
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith(
-        "/billing/portal/",
-        "tok_test",
-        {
-          method: "POST",
-          body: JSON.stringify(input),
-        },
-      );
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/portal/", {
+        method: "POST",
+        body: JSON.stringify(input),
+      });
       expect(result).toEqual(response);
     });
 
@@ -124,14 +107,10 @@ describe("DjangoApiSubscriptionGateway", () => {
       const input = {};
       const result = await gateway.createBillingPortalSession(input);
 
-      expect(mockApiFetch).toHaveBeenCalledWith(
-        "/billing/portal/",
-        "tok_test",
-        {
-          method: "POST",
-          body: JSON.stringify(input),
-        },
-      );
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/portal/", {
+        method: "POST",
+        body: JSON.stringify(input),
+      });
       expect(result).toEqual(response);
     });
   });

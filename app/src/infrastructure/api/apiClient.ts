@@ -14,16 +14,22 @@ export async function getAuthToken(): Promise<string> {
 
 export async function apiFetch<T>(
   path: string,
-  token: string,
   options: RequestInit = {},
 ): Promise<T> {
+  const token = await getAuthToken();
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  });
+  if (options.headers) {
+    new Headers(options.headers).forEach((value, key) => {
+      headers.set(key, value);
+    });
+  }
+
   const res = await fetch(`${API_URL}/api/v1${path}`, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      ...(options.headers as Record<string, string>),
-    },
+    headers: Object.fromEntries(headers.entries()),
   });
 
   if (!res.ok) {

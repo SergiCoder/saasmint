@@ -1,11 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { Plan } from "@/domain/models/Plan";
 
-const mockGetAuthToken = vi.fn().mockResolvedValue("tok_test");
 const mockApiFetch = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
-  getAuthToken: (...args: unknown[]) => mockGetAuthToken(...args),
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
 }));
 
@@ -42,7 +40,6 @@ const plans: Plan[] = [
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockGetAuthToken.mockResolvedValue("tok_test");
 });
 
 describe("DjangoApiPlanGateway", () => {
@@ -54,8 +51,7 @@ describe("DjangoApiPlanGateway", () => {
 
       const result = await gateway.listPlans();
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith("/billing/plans/", "tok_test");
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/plans/");
       expect(result).toEqual(plans);
     });
 

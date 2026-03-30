@@ -1,11 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { Org } from "@/domain/models/Org";
 
-const mockGetAuthToken = vi.fn().mockResolvedValue("tok_test");
 const mockApiFetch = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
-  getAuthToken: (...args: unknown[]) => mockGetAuthToken(...args),
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
 }));
 
@@ -22,7 +20,6 @@ const org: Org = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockGetAuthToken.mockResolvedValue("tok_test");
 });
 
 describe("DjangoApiOrgGateway", () => {
@@ -35,8 +32,7 @@ describe("DjangoApiOrgGateway", () => {
       const input = { name: "Acme Inc", slug: "acme-inc" };
       const result = await gateway.createOrg(input);
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/", "tok_test", {
+      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/", {
         method: "POST",
         body: JSON.stringify(input),
       });
@@ -58,8 +54,7 @@ describe("DjangoApiOrgGateway", () => {
 
       const result = await gateway.getOrg("o1");
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/", "tok_test");
+      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/");
       expect(result).toEqual(org);
     });
 
@@ -68,10 +63,13 @@ describe("DjangoApiOrgGateway", () => {
 
       await gateway.getOrg("org-xyz-123");
 
-      expect(mockApiFetch).toHaveBeenCalledWith(
-        "/orgs/org-xyz-123/",
-        "tok_test",
-      );
+      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/org-xyz-123/");
+    });
+
+    it("propagates errors from apiFetch", async () => {
+      mockApiFetch.mockRejectedValue(new Error("API 404: Not Found"));
+
+      await expect(gateway.getOrg("o1")).rejects.toThrow("API 404: Not Found");
     });
   });
 
@@ -83,12 +81,19 @@ describe("DjangoApiOrgGateway", () => {
       const input = { name: "Acme Corp" };
       const result = await gateway.updateOrg("o1", input);
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/", "tok_test", {
+      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/", {
         method: "PATCH",
         body: JSON.stringify(input),
       });
       expect(result).toEqual(updated);
+    });
+
+    it("propagates errors from apiFetch", async () => {
+      mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
+
+      await expect(gateway.updateOrg("o1", { name: "Test" })).rejects.toThrow(
+        "API 403: Forbidden",
+      );
     });
   });
 
@@ -99,8 +104,7 @@ describe("DjangoApiOrgGateway", () => {
 
       const result = await gateway.listUserOrgs("u1");
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/", "tok_test");
+      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/");
       expect(result).toEqual(orgs);
     });
 
@@ -109,6 +113,14 @@ describe("DjangoApiOrgGateway", () => {
 
       const result = await gateway.listUserOrgs("u1");
       expect(result).toEqual([]);
+    });
+
+    it("propagates errors from apiFetch", async () => {
+      mockApiFetch.mockRejectedValue(new Error("API 500: Server Error"));
+
+      await expect(gateway.listUserOrgs("u1")).rejects.toThrow(
+        "API 500: Server Error",
+      );
     });
   });
 });

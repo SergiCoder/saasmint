@@ -1,11 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { User } from "@/domain/models/User";
 
-const mockGetAuthToken = vi.fn().mockResolvedValue("tok_test");
 const mockApiFetch = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
-  getAuthToken: (...args: unknown[]) => mockGetAuthToken(...args),
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
 }));
 
@@ -27,7 +25,6 @@ const user: User = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockGetAuthToken.mockResolvedValue("tok_test");
 });
 
 describe("DjangoApiUserGateway", () => {
@@ -39,8 +36,7 @@ describe("DjangoApiUserGateway", () => {
 
       const result = await gateway.getProfile("u1");
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith("/account/", "tok_test");
+      expect(mockApiFetch).toHaveBeenCalledWith("/account/");
       expect(result).toEqual(user);
     });
 
@@ -61,20 +57,19 @@ describe("DjangoApiUserGateway", () => {
       const input = { fullName: "Alice Smith" };
       const result = await gateway.updateProfile("u1", input);
 
-      expect(mockGetAuthToken).toHaveBeenCalledOnce();
-      expect(mockApiFetch).toHaveBeenCalledWith("/account/", "tok_test", {
+      expect(mockApiFetch).toHaveBeenCalledWith("/account/", {
         method: "PATCH",
         body: JSON.stringify(input),
       });
       expect(result).toEqual(updated);
     });
 
-    it("propagates auth token errors", async () => {
-      mockGetAuthToken.mockRejectedValue(new Error("No active session"));
+    it("propagates errors from apiFetch", async () => {
+      mockApiFetch.mockRejectedValue(new Error("API 500: Server Error"));
 
       await expect(
         gateway.updateProfile("u1", { fullName: "Alice" }),
-      ).rejects.toThrow("No active session");
+      ).rejects.toThrow("API 500: Server Error");
     });
   });
 });
