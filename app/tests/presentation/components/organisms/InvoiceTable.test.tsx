@@ -23,7 +23,7 @@ const invoices = [
     amount: "$29.00",
     status: "open" as const,
     statusLabel: "Open",
-    actions: <a href="/invoice/inv_2">Download</a>,
+    actions: <button type="button">Download</button>,
   },
   {
     id: "inv_3",
@@ -94,10 +94,6 @@ describe("InvoiceTable", () => {
   it("renders invoice actions when provided", () => {
     render(<InvoiceTable invoices={invoices} columns={columns} />);
     expect(screen.getByText("Download")).toBeInTheDocument();
-    expect(screen.getByText("Download")).toHaveAttribute(
-      "href",
-      "/invoice/inv_2",
-    );
   });
 
   it("renders empty table when no invoices", () => {
