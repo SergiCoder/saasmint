@@ -1,53 +1,28 @@
-"use client";
-
-import { useActionState } from "react";
-import { useTranslations } from "next-intl";
-import Link from "next/link";
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
-import { FormField } from "@/presentation/components/molecules/FormField";
-import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
-import { Button } from "@/presentation/components/atoms/Button";
 import { signUp } from "@/app/actions/auth";
+import { AuthForm } from "../_components/AuthForm";
 
-export default function SignupPage() {
-  const t = useTranslations("auth.register");
-  const [state, formAction, pending] = useActionState(signUp, null);
+export const metadata: Metadata = {
+  title: "Sign up",
+};
+
+export default async function SignupPage() {
+  const t = await getTranslations("auth.register");
 
   return (
     <AuthLayout appName="Meridian" title={t("title")}>
-      {state?.error && (
-        <AlertBanner variant="error" className="mb-4">
-          {state.error}
-        </AlertBanner>
-      )}
-      <form action={formAction} className="space-y-4">
-        <FormField
-          label={t("email")}
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-        />
-        <FormField
-          label={t("password")}
-          name="password"
-          type="password"
-          required
-          autoComplete="new-password"
-        />
-        <Button type="submit" loading={pending} className="w-full">
-          {t("submit")}
-        </Button>
-      </form>
-      <p className="mt-4 text-center text-sm text-gray-600">
-        {t("hasAccount")}{" "}
-        <Link
-          href="/login"
-          className="text-primary-600 hover:text-primary-500 font-medium"
-        >
-          {t("login")}
-        </Link>
-      </p>
+      <AuthForm
+        action={signUp}
+        translationNamespace="auth.register"
+        passwordAutoComplete="new-password"
+        footerLink={{
+          href: "/login",
+          textKey: "hasAccount",
+          linkKey: "login",
+        }}
+      />
     </AuthLayout>
   );
 }
