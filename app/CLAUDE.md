@@ -1,6 +1,6 @@
 # stripe-nextjs — CLAUDE.md
 
-Next.js 15 SaaS frontend template paired with `stripe-django`.
+Next.js 16 SaaS frontend template paired with `stripe-django`.
 
 ## Architecture
 
