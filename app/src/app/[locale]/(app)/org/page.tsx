@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
 import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
 import { ListUserOrgs } from "@/application/use-cases/org/ListUserOrgs";
 import { authGateway, orgGateway } from "@/infrastructure/registry";
+import { OrgCard } from "@/presentation/components/molecules/OrgCard";
 import { CreateOrgForm } from "./_components/CreateOrgForm";
 
 export const metadata: Metadata = {
@@ -25,15 +25,7 @@ export default async function OrgListPage() {
         <ul className="space-y-3">
           {orgs.map((org) => (
             <li key={org.id}>
-              <Link
-                href={`/org/${org.slug}`}
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
-              >
-                <div>
-                  <p className="font-medium text-gray-900">{org.name}</p>
-                  <p className="text-sm text-gray-500">{org.slug}</p>
-                </div>
-              </Link>
+              <OrgCard slug={org.slug} name={org.name} />
             </li>
           ))}
         </ul>

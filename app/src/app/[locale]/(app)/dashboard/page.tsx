@@ -5,6 +5,7 @@ import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
 import { ListUserOrgs } from "@/application/use-cases/org/ListUserOrgs";
 import { authGateway, orgGateway } from "@/infrastructure/registry";
 import { MetricCard } from "@/presentation/components/molecules/MetricCard";
+import { OrgCard } from "@/presentation/components/molecules/OrgCard";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -59,13 +60,7 @@ export default async function DashboardPage() {
           <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {orgs.map((org) => (
               <li key={org.id}>
-                <Link
-                  href={`/org/${org.slug}`}
-                  className="block rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
-                >
-                  <p className="font-medium text-gray-900">{org.name}</p>
-                  <p className="text-sm text-gray-500">{org.slug}</p>
-                </Link>
+                <OrgCard slug={org.slug} name={org.name} />
               </li>
             ))}
           </ul>
