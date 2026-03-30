@@ -36,9 +36,9 @@ export function InviteMemberForm({ orgId }: InviteMemberFormProps) {
           defaultValue="member"
           className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:ring-2 focus:ring-offset-0 focus:outline-none"
         >
-          <option value="member">Member</option>
-          <option value="admin">Admin</option>
-          <option value="owner">Owner</option>
+          <option value="member">{t("roleMember")}</option>
+          <option value="admin">{t("roleAdmin")}</option>
+          <option value="owner">{t("roleOwner")}</option>
         </select>
       </div>
       <Button type="submit" loading={pending}>
