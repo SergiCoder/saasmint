@@ -11,8 +11,10 @@ interface AppLayoutRouteProps {
 export default async function AppLayoutRoute({
   children,
 }: AppLayoutRouteProps) {
-  const t = await getTranslations("nav");
-  const user = await new GetCurrentUser(authGateway).execute();
+  const [t, user] = await Promise.all([
+    getTranslations("nav"),
+    new GetCurrentUser(authGateway).execute(),
+  ]);
 
   const navLinks = [
     { href: "/dashboard", label: t("dashboard") },

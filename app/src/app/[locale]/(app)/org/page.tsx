@@ -11,8 +11,10 @@ export const metadata: Metadata = {
 };
 
 export default async function OrgListPage() {
-  const t = await getTranslations("org");
-  const user = await new GetCurrentUser(authGateway).execute();
+  const [t, user] = await Promise.all([
+    getTranslations("org"),
+    new GetCurrentUser(authGateway).execute(),
+  ]);
   const orgs = await new ListUserOrgs(orgGateway).execute(user.id);
 
   return (

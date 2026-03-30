@@ -23,8 +23,10 @@ export const metadata: Metadata = {
 };
 
 export default async function BillingPage() {
-  const t = await getTranslations("billing");
-  const user = await new GetCurrentUser(authGateway).execute();
+  const [t, user] = await Promise.all([
+    getTranslations("billing"),
+    new GetCurrentUser(authGateway).execute(),
+  ]);
   const orgs = await new ListUserOrgs(orgGateway).execute(user.id);
   const orgId = orgs[0]?.id;
 
@@ -56,15 +58,19 @@ export default async function BillingPage() {
           }
         />
       ) : (
-        <NoSubscription orgId={orgId} />
+        <NoSubscription orgId={orgId} t={t} />
       )}
     </div>
   );
 }
 
-async function NoSubscription({ orgId }: { orgId?: string }) {
-  const t = await getTranslations("billing");
-
+async function NoSubscription({
+  orgId,
+  t,
+}: {
+  orgId?: string;
+  t: Awaited<ReturnType<typeof getTranslations<"billing">>>;
+}) {
   let plans: PricingTableProps["plans"] = [];
   try {
     const fetched = await new ListPlans(planGateway).execute();
@@ -88,7 +94,8 @@ async function NoSubscription({ orgId }: { orgId?: string }) {
         <span />
       ),
     }));
-  } catch {
+  } catch (err) {
+    console.error("Failed to fetch plans", err);
     plans = [];
   }
 

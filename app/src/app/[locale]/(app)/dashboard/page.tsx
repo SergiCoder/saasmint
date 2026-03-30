@@ -11,9 +11,11 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-  const t = await getTranslations("dashboard");
-  const tOrg = await getTranslations("org");
-  const user = await new GetCurrentUser(authGateway).execute();
+  const [t, tOrg, user] = await Promise.all([
+    getTranslations("dashboard"),
+    getTranslations("org"),
+    new GetCurrentUser(authGateway).execute(),
+  ]);
   const orgs = await new ListUserOrgs(orgGateway).execute(user.id);
 
   return (

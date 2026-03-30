@@ -10,8 +10,10 @@ export const metadata: Metadata = {
 };
 
 export default async function SettingsPage() {
-  const t = await getTranslations("settings");
-  const currentUser = await new GetCurrentUser(authGateway).execute();
+  const [t, currentUser] = await Promise.all([
+    getTranslations("settings"),
+    new GetCurrentUser(authGateway).execute(),
+  ]);
   const user = await new GetUserProfile(userGateway).execute(currentUser.id);
 
   return (

@@ -19,9 +19,11 @@ interface OrgDetailPageProps {
 
 export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
   const { slug } = await params;
-  const t = await getTranslations("org");
 
-  const user = await new GetCurrentUser(authGateway).execute();
+  const [t, user] = await Promise.all([
+    getTranslations("org"),
+    new GetCurrentUser(authGateway).execute(),
+  ]);
   const orgs = await new ListUserOrgs(orgGateway).execute(user.id);
   const org = orgs.find((o) => o.slug === slug);
 
@@ -34,7 +36,12 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
     fullName: m.userId,
     email: "",
     role: m.role,
-    roleLabel: m.role.charAt(0).toUpperCase() + m.role.slice(1),
+    roleLabel: t(
+      `role${m.role.charAt(0).toUpperCase() + m.role.slice(1)}` as
+        | "roleMember"
+        | "roleAdmin"
+        | "roleOwner",
+    ),
     actions: (
       <form action={removeMember}>
         <input type="hidden" name="orgId" value={org.id} />
