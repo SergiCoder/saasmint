@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/presentation/components/atoms/Button";
 import { signOut } from "@/app/actions/auth";
 

@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/presentation/components/atoms/Button";
 import { openBillingPortal } from "@/app/actions/billing";
 
