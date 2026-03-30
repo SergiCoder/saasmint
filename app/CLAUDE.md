@@ -34,6 +34,17 @@ Domain errors in `src/domain/errors/`:
 
 All error classes carry a `code: string` field for programmatic handling.
 
+## Infrastructure
+
+Gateway implementations in `src/infrastructure/`, organised by provider:
+
+- `api/` — `DjangoApi*Gateway` classes that call `stripe-django` via `apiFetch`
+- `supabase/` — `SupabaseAuthGateway` plus `client.ts` / `server.ts` Supabase client factories
+
+Each gateway implements a port interface from `src/application/ports/` (e.g. `IOrgGateway`, `IAuthGateway`).
+
+`src/infrastructure/registry.ts` exports singleton instances of every gateway — import gateways from the registry, not by instantiating classes directly.
+
 ## Component Design
 
 Strict atomic design in `src/presentation/components/`:

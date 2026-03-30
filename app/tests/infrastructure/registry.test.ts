@@ -1,0 +1,58 @@
+import { describe, it, expect, vi } from "vitest";
+
+vi.mock("@/infrastructure/supabase/server", () => ({
+  createClient: vi.fn(),
+}));
+
+vi.mock("@/infrastructure/api/apiClient", () => ({
+  getAuthToken: vi.fn(),
+  apiFetch: vi.fn(),
+}));
+
+const {
+  authGateway,
+  userGateway,
+  planGateway,
+  subscriptionGateway,
+  orgGateway,
+  orgMemberGateway,
+} = await import("@/infrastructure/registry");
+
+const { SupabaseAuthGateway } =
+  await import("@/infrastructure/supabase/SupabaseAuthGateway");
+const { DjangoApiUserGateway } =
+  await import("@/infrastructure/api/DjangoApiUserGateway");
+const { DjangoApiPlanGateway } =
+  await import("@/infrastructure/api/DjangoApiPlanGateway");
+const { DjangoApiSubscriptionGateway } =
+  await import("@/infrastructure/api/DjangoApiSubscriptionGateway");
+const { DjangoApiOrgGateway } =
+  await import("@/infrastructure/api/DjangoApiOrgGateway");
+const { DjangoApiOrgMemberGateway } =
+  await import("@/infrastructure/api/DjangoApiOrgMemberGateway");
+
+describe("registry", () => {
+  it("exports authGateway as SupabaseAuthGateway", () => {
+    expect(authGateway).toBeInstanceOf(SupabaseAuthGateway);
+  });
+
+  it("exports userGateway as DjangoApiUserGateway", () => {
+    expect(userGateway).toBeInstanceOf(DjangoApiUserGateway);
+  });
+
+  it("exports planGateway as DjangoApiPlanGateway", () => {
+    expect(planGateway).toBeInstanceOf(DjangoApiPlanGateway);
+  });
+
+  it("exports subscriptionGateway as DjangoApiSubscriptionGateway", () => {
+    expect(subscriptionGateway).toBeInstanceOf(DjangoApiSubscriptionGateway);
+  });
+
+  it("exports orgGateway as DjangoApiOrgGateway", () => {
+    expect(orgGateway).toBeInstanceOf(DjangoApiOrgGateway);
+  });
+
+  it("exports orgMemberGateway as DjangoApiOrgMemberGateway", () => {
+    expect(orgMemberGateway).toBeInstanceOf(DjangoApiOrgMemberGateway);
+  });
+});

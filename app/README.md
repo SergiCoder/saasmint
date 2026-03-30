@@ -47,6 +47,10 @@ Copy `.env.local.example` to `.env.local` and fill in:
 - `NEXT_PUBLIC_API_URL`
 - `NEXT_PUBLIC_APP_URL`
 
+## Plugins
+
+- [Prism](https://github.com/SergiCoder/prism) — Claude Code plugin for multi-profile code review, conventional commits, branching, and PR workflows
+
 ## License
 
 [MIT](LICENSE)
