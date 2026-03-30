@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { PricingTable } from "@/presentation/components/organisms/PricingTable";
-import { Button } from "@/presentation/components/atoms/Button";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -59,13 +58,15 @@ export default async function PricingPage() {
   const plans = PLANS.map((plan) => ({
     ...plan,
     cta: (
-      <Link href="/signup" className="block">
-        <Button
-          variant={plan.highlighted ? "primary" : "secondary"}
-          className="w-full"
-        >
-          {t("getStarted")}
-        </Button>
+      <Link
+        href="/signup"
+        className={`block w-full rounded-md px-4 py-2 text-center text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
+          plan.highlighted
+            ? "bg-primary-600 hover:bg-primary-700 focus-visible:ring-primary-500 text-white"
+            : "focus-visible:ring-primary-500 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+        }`}
+      >
+        {t("getStarted")}
       </Link>
     ),
   }));

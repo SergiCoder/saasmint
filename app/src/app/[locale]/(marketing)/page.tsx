@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { Badge } from "@/presentation/components/atoms/Badge";
-import { Button } from "@/presentation/components/atoms/Button";
 
 export const metadata: Metadata = {
   title: "Meridian",
@@ -21,13 +20,17 @@ export default async function LandingPage() {
         {t("subheadline")}
       </p>
       <div className="mt-10 flex items-center justify-center gap-4">
-        <Link href="/signup">
-          <Button size="lg">{t("cta")}</Button>
+        <Link
+          href="/signup"
+          className="bg-primary-600 hover:bg-primary-700 focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-medium text-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        >
+          {t("cta")}
         </Link>
-        <Link href="#demo">
-          <Button variant="secondary" size="lg">
-            {t("ctaSecondary")}
-          </Button>
+        <Link
+          href="#demo"
+          className="focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-6 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        >
+          {t("ctaSecondary")}
         </Link>
       </div>
     </section>
