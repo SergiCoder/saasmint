@@ -126,6 +126,25 @@ describe("org server actions", () => {
       const result = await inviteMember(undefined, formData);
       expect(result).toEqual({ error: "Failed to invite member" });
     });
+
+    it("returns error for invalid role", async () => {
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("email", "new@example.com");
+      formData.set("role", "superadmin");
+
+      const result = await inviteMember(undefined, formData);
+      expect(result).toEqual({ error: "Invalid input" });
+      expect(mockInviteOrgMemberExecute).not.toHaveBeenCalled();
+    });
+
+    it("returns error when required fields are missing", async () => {
+      const formData = new FormData();
+
+      const result = await inviteMember(undefined, formData);
+      expect(result).toEqual({ error: "Invalid input" });
+      expect(mockInviteOrgMemberExecute).not.toHaveBeenCalled();
+    });
   });
 
   describe("removeMember", () => {
@@ -142,6 +161,24 @@ describe("org server actions", () => {
         "user_123",
       );
       expect(mockRevalidatePath).toHaveBeenCalledWith("/org");
+    });
+
+    it("returns early when orgId is missing", async () => {
+      const formData = new FormData();
+      formData.set("userId", "user_123");
+
+      const result = await removeMember(formData);
+      expect(result).toBeUndefined();
+      expect(mockRemoveOrgMemberExecute).not.toHaveBeenCalled();
+    });
+
+    it("returns early when userId is missing", async () => {
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+
+      const result = await removeMember(formData);
+      expect(result).toBeUndefined();
+      expect(mockRemoveOrgMemberExecute).not.toHaveBeenCalled();
     });
   });
 });

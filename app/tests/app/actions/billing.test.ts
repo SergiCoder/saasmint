@@ -84,6 +84,44 @@ describe("billing server actions", () => {
         planPriceId: "price_abc",
       });
     });
+
+    it("omits orgId when it is an empty string", async () => {
+      mockStartCheckoutExecute.mockResolvedValue({
+        url: "https://checkout.stripe.com/session_empty",
+      });
+
+      const formData = new FormData();
+      formData.set("planPriceId", "price_abc");
+      formData.set("orgId", "");
+
+      await expect(startCheckout(formData)).rejects.toThrow("NEXT_REDIRECT");
+      expect(mockStartCheckoutExecute).toHaveBeenCalledWith({
+        planPriceId: "price_abc",
+      });
+    });
+
+    it("returns early when planPriceId is missing", async () => {
+      const formData = new FormData();
+
+      const result = await startCheckout(formData);
+      expect(result).toBeUndefined();
+      expect(mockStartCheckoutExecute).not.toHaveBeenCalled();
+      expect(mockRedirect).not.toHaveBeenCalled();
+    });
+
+    it("throws on untrusted redirect URL", async () => {
+      mockStartCheckoutExecute.mockResolvedValue({
+        url: "https://evil.com/steal",
+      });
+
+      const formData = new FormData();
+      formData.set("planPriceId", "price_abc");
+
+      await expect(startCheckout(formData)).rejects.toThrow(
+        "Untrusted redirect URL",
+      );
+      expect(mockRedirect).not.toHaveBeenCalled();
+    });
   });
 
   describe("openBillingPortal", () => {
@@ -116,6 +154,33 @@ describe("billing server actions", () => {
       expect(mockOpenBillingPortalExecute).toHaveBeenCalledWith({
         orgId: "org_123",
       });
+    });
+
+    it("omits orgId when it is an empty string", async () => {
+      mockOpenBillingPortalExecute.mockResolvedValue({
+        url: "https://billing.stripe.com/portal_empty",
+      });
+
+      const formData = new FormData();
+      formData.set("orgId", "");
+
+      await expect(openBillingPortal(formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockOpenBillingPortalExecute).toHaveBeenCalledWith({});
+    });
+
+    it("throws on untrusted redirect URL", async () => {
+      mockOpenBillingPortalExecute.mockResolvedValue({
+        url: "https://malicious.site/phish",
+      });
+
+      const formData = new FormData();
+
+      await expect(openBillingPortal(formData)).rejects.toThrow(
+        "Untrusted redirect URL",
+      );
+      expect(mockRedirect).not.toHaveBeenCalled();
     });
   });
 });

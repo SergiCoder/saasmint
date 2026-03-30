@@ -110,6 +110,33 @@ describe("auth server actions", () => {
     });
   });
 
+  describe("signIn — validation", () => {
+    it("returns error when email is missing", async () => {
+      const formData = new FormData();
+      formData.set("password", "secret123");
+
+      const result = await signIn(undefined, formData);
+      expect(result).toEqual({ error: "Email and password are required" });
+      expect(mockSignInWithPassword).not.toHaveBeenCalled();
+    });
+
+    it("returns error when password is missing", async () => {
+      const formData = new FormData();
+      formData.set("email", "user@example.com");
+
+      const result = await signIn(undefined, formData);
+      expect(result).toEqual({ error: "Email and password are required" });
+      expect(mockSignInWithPassword).not.toHaveBeenCalled();
+    });
+
+    it("returns error when both fields are missing", async () => {
+      const formData = new FormData();
+
+      const result = await signIn(undefined, formData);
+      expect(result).toEqual({ error: "Email and password are required" });
+    });
+  });
+
   describe("signOut", () => {
     it("executes SignOut use case and redirects to /login", async () => {
       mockSignOutExecute.mockResolvedValue(undefined);
