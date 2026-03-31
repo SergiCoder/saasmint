@@ -1,8 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { AppLayout } from "@/presentation/components/templates/AppLayout";
-import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
-import { authGateway } from "@/infrastructure/registry";
 import { SignOutButton } from "./_components/SignOutButton";
+import { getCurrentUser } from "./_data/getCurrentUser";
 
 interface AppLayoutRouteProps {
   children: React.ReactNode;
@@ -13,7 +12,7 @@ export default async function AppLayoutRoute({
 }: AppLayoutRouteProps) {
   const [t, user] = await Promise.all([
     getTranslations("nav"),
-    new GetCurrentUser(authGateway).execute(),
+    getCurrentUser(),
   ]);
 
   const navLinks = [
