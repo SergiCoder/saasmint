@@ -2,8 +2,6 @@
   "nav": {
     "features": "Funktioner",
     "pricing": "Priser",
-    "docs": "Dokumentation",
-    "whyUs": "Varför oss",
     "blog": "Blog",
     "getStarted": "Kom igång",
     "dashboard": "Dashboard",
@@ -12,14 +10,15 @@
     "org": "Organisation",
     "admin": "Administration",
     "signIn": "Logga in",
-    "signOut": "Logga ut"
+    "signOut": "Logga ut",
+    "contactUs": "Kontakta oss"
   },
   "footer": {
     "privacy": "Integritet",
     "terms": "Villkor",
-    "security": "Säkerhet",
-    "status": "Status",
-    "copyright": "© 2026 Meridian, Inc."
+    "copyright": "© 2026 Meridian, Inc.",
+    "cookies": "Kakor",
+    "aboutUs": "Om oss"
   },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",
@@ -71,5 +70,29 @@
     "dashActivity2Time": "8m ago",
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
+  },
+  "contact": {
+    "title": "Kontakta oss",
+    "description": "Har du en fråga eller behöver hjälp? Vi vill gärna höra från dig.",
+    "email": "hello@meridian.dev"
+  },
+  "blog": {
+    "title": "Blogg",
+    "comingSoon": "Nya inlägg kommer snart. Håll utkik!"
+  },
+  "privacy": {
+    "title": "Integritetspolicy",
+    "lastUpdated": "Senast uppdaterad: mars 2026",
+    "intro": "Din integritet är viktig för oss. Denna policy förklarar hur vi samlar in, använder och skyddar dina personuppgifter."
+  },
+  "terms": {
+    "title": "Användarvillkor",
+    "lastUpdated": "Senast uppdaterad: mars 2026",
+    "intro": "Genom att använda Meridian godkänner du dessa villkor. Läs dem noggrant innan du använder våra tjänster."
+  },
+  "cookies": {
+    "title": "Cookiepolicy",
+    "lastUpdated": "Senast uppdaterad: mars 2026",
+    "intro": "Vi använder cookies för att förbättra din upplevelse. Denna policy förklarar hur och varför vi använder cookies på vår webbplats."
   }
 }

@@ -2,8 +2,6 @@
   "nav": {
     "features": "الميزات",
     "pricing": "الأسعار",
-    "docs": "المستندات",
-    "whyUs": "لماذا نحن",
     "blog": "Blog",
     "getStarted": "ابدأ الآن",
     "dashboard": "لوحة التحكم",
@@ -12,14 +10,15 @@
     "org": "المؤسسة",
     "admin": "الإدارة",
     "signIn": "تسجيل الدخول",
-    "signOut": "تسجيل الخروج"
+    "signOut": "تسجيل الخروج",
+    "contactUs": "اتصل بنا"
   },
   "footer": {
     "privacy": "الخصوصية",
     "terms": "الشروط",
-    "security": "الأمان",
-    "status": "الحالة",
-    "copyright": "© 2026 Meridian, Inc."
+    "copyright": "© 2026 Meridian, Inc.",
+    "cookies": "ملفات تعريف الارتباط",
+    "aboutUs": "من نحن"
   },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",
@@ -71,5 +70,29 @@
     "dashActivity2Time": "8m ago",
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
+  },
+  "contact": {
+    "title": "اتصل بنا",
+    "description": "هل لديك سؤال أو تحتاج مساعدة؟ يسعدنا سماعك.",
+    "email": "hello@meridian.dev"
+  },
+  "blog": {
+    "title": "المدونة",
+    "comingSoon": "مقالات جديدة قريباً. تابعونا!"
+  },
+  "privacy": {
+    "title": "سياسة الخصوصية",
+    "lastUpdated": "آخر تحديث: مارس 2026",
+    "intro": "خصوصيتك مهمة بالنسبة لنا. توضح هذه السياسة كيف نجمع معلوماتك الشخصية ونستخدمها ونحميها."
+  },
+  "terms": {
+    "title": "شروط الخدمة",
+    "lastUpdated": "آخر تحديث: مارس 2026",
+    "intro": "باستخدام Meridian، فإنك توافق على هذه الشروط. يرجى قراءتها بعناية قبل استخدام خدماتنا."
+  },
+  "cookies": {
+    "title": "سياسة ملفات تعريف الارتباط",
+    "lastUpdated": "آخر تحديث: مارس 2026",
+    "intro": "نستخدم ملفات تعريف الارتباط لتحسين تجربتك. توضح هذه السياسة كيف ولماذا نستخدم ملفات تعريف الارتباط على موقعنا."
   }
 }

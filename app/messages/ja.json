@@ -2,8 +2,6 @@
   "nav": {
     "features": "機能",
     "pricing": "料金",
-    "docs": "ドキュメント",
-    "whyUs": "選ばれる理由",
     "blog": "Blog",
     "getStarted": "始める",
     "dashboard": "ダッシュボード",
@@ -12,14 +10,15 @@
     "org": "組織",
     "admin": "管理",
     "signIn": "ログイン",
-    "signOut": "ログアウト"
+    "signOut": "ログアウト",
+    "contactUs": "お問い合わせ"
   },
   "footer": {
     "privacy": "プライバシー",
     "terms": "利用規約",
-    "security": "セキュリティ",
-    "status": "ステータス",
-    "copyright": "© 2026 Meridian, Inc."
+    "copyright": "© 2026 Meridian, Inc.",
+    "cookies": "Cookie",
+    "aboutUs": "会社概要"
   },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",
@@ -71,5 +70,29 @@
     "dashActivity2Time": "8m ago",
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
+  },
+  "contact": {
+    "title": "お問い合わせ",
+    "description": "ご質問やお困りのことがありますか？お気軽にご連絡ください。",
+    "email": "hello@meridian.dev"
+  },
+  "blog": {
+    "title": "ブログ",
+    "comingSoon": "新しい記事がまもなく公開されます。お楽しみに！"
+  },
+  "privacy": {
+    "title": "プライバシーポリシー",
+    "lastUpdated": "最終更新日: 2026年3月",
+    "intro": "お客様のプライバシーは私たちにとって重要です。このポリシーでは、個人情報の収集、使用、保護について説明します。"
+  },
+  "terms": {
+    "title": "利用規約",
+    "lastUpdated": "最終更新日: 2026年3月",
+    "intro": "Meridianをご利用いただくことで、これらの規約に同意いただいたものとみなします。ご利用前によくお読みください。"
+  },
+  "cookies": {
+    "title": "Cookieポリシー",
+    "lastUpdated": "最終更新日: 2026年3月",
+    "intro": "お客様の体験を向上させるためにCookieを使用しています。このポリシーでは、Cookieの使用方法と理由について説明します。"
   }
 }

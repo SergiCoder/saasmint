@@ -2,8 +2,6 @@
   "nav": {
     "features": "Fitur",
     "pricing": "Harga",
-    "docs": "Dokumentasi",
-    "whyUs": "Mengapa kami",
     "blog": "Blog",
     "getStarted": "Mulai",
     "dashboard": "Dasbor",
@@ -12,14 +10,15 @@
     "org": "Organisasi",
     "admin": "Administrasi",
     "signIn": "Masuk",
-    "signOut": "Keluar"
+    "signOut": "Keluar",
+    "contactUs": "Hubungi kami"
   },
   "footer": {
     "privacy": "Privasi",
     "terms": "Ketentuan",
-    "security": "Keamanan",
-    "status": "Status",
-    "copyright": "© 2026 Meridian, Inc."
+    "copyright": "© 2026 Meridian, Inc.",
+    "cookies": "Kuki",
+    "aboutUs": "Tentang kami"
   },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",
@@ -71,5 +70,29 @@
     "dashActivity2Time": "8m ago",
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
+  },
+  "contact": {
+    "title": "Hubungi kami",
+    "description": "Punya pertanyaan atau butuh bantuan? Kami senang mendengar dari Anda.",
+    "email": "hello@meridian.dev"
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "Postingan baru segera hadir. Nantikan!"
+  },
+  "privacy": {
+    "title": "Kebijakan Privasi",
+    "lastUpdated": "Terakhir diperbarui: Maret 2026",
+    "intro": "Privasi Anda penting bagi kami. Kebijakan ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi pribadi Anda."
+  },
+  "terms": {
+    "title": "Ketentuan Layanan",
+    "lastUpdated": "Terakhir diperbarui: Maret 2026",
+    "intro": "Dengan menggunakan Meridian, Anda menyetujui ketentuan ini. Harap baca dengan saksama sebelum menggunakan layanan kami."
+  },
+  "cookies": {
+    "title": "Kebijakan Cookie",
+    "lastUpdated": "Terakhir diperbarui: Maret 2026",
+    "intro": "Kami menggunakan cookie untuk meningkatkan pengalaman Anda. Kebijakan ini menjelaskan bagaimana dan mengapa kami menggunakan cookie di situs web kami."
   }
 }

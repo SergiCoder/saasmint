@@ -13,10 +13,9 @@ export default async function MarketingLayoutRoute({
 
   const navLinks = [
     { href: "/#features", label: t("features") },
-    { href: "/#stats", label: t("whyUs") },
     { href: "/pricing", label: t("pricing") },
-    { href: "#", label: t("docs") },
-    { href: "#", label: t("blog") },
+    { href: "/contact", label: t("contactUs") },
+    { href: "/blog", label: t("blog") },
   ];
 
   const tFooter = await getTranslations("footer");
@@ -25,17 +24,10 @@ export default async function MarketingLayoutRoute({
     {
       title: "Legal",
       links: [
-        { href: "#", label: tFooter("privacy") },
-        { href: "#", label: tFooter("terms") },
-        { href: "#", label: tFooter("security") },
-      ],
-    },
-    {
-      title: "Resources",
-      links: [
-        { href: "#", label: tFooter("status") },
-        { href: "#", label: t("docs") },
-        { href: "#", label: t("blog") },
+        { href: "/privacy", label: tFooter("privacy") },
+        { href: "/terms", label: tFooter("terms") },
+        { href: "/cookies", label: tFooter("cookies") },
+        { href: "#", label: tFooter("aboutUs") },
       ],
     },
   ];

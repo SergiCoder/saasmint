@@ -2,8 +2,6 @@
   "nav": {
     "features": "Funksjoner",
     "pricing": "Priser",
-    "docs": "Dokumentasjon",
-    "whyUs": "Hvorfor oss",
     "blog": "Blog",
     "getStarted": "Kom i gang",
     "dashboard": "Dashboard",
@@ -12,14 +10,15 @@
     "org": "Organisasjon",
     "admin": "Administrasjon",
     "signIn": "Logg inn",
-    "signOut": "Logg ut"
+    "signOut": "Logg ut",
+    "contactUs": "Kontakt oss"
   },
   "footer": {
     "privacy": "Personvern",
     "terms": "Vilkår",
-    "security": "Sikkerhet",
-    "status": "Status",
-    "copyright": "© 2026 Meridian, Inc."
+    "copyright": "© 2026 Meridian, Inc.",
+    "cookies": "Informasjonskapsler",
+    "aboutUs": "Om oss"
   },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",
@@ -71,5 +70,29 @@
     "dashActivity2Time": "8m ago",
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
+  },
+  "contact": {
+    "title": "Kontakt oss",
+    "description": "Har du et spørsmål eller trenger hjelp? Vi hører gjerne fra deg.",
+    "email": "hello@meridian.dev"
+  },
+  "blog": {
+    "title": "Blogg",
+    "comingSoon": "Nye innlegg kommer snart. Følg med!"
+  },
+  "privacy": {
+    "title": "Personvernerklæring",
+    "lastUpdated": "Sist oppdatert: mars 2026",
+    "intro": "Ditt personvern er viktig for oss. Denne erklæringen forklarer hvordan vi samler inn, bruker og beskytter dine personopplysninger."
+  },
+  "terms": {
+    "title": "Vilkår for bruk",
+    "lastUpdated": "Sist oppdatert: mars 2026",
+    "intro": "Ved å bruke Meridian godtar du disse vilkårene. Les dem nøye før du bruker våre tjenester."
+  },
+  "cookies": {
+    "title": "Retningslinjer for informasjonskapsler",
+    "lastUpdated": "Sist oppdatert: mars 2026",
+    "intro": "Vi bruker informasjonskapsler for å forbedre din opplevelse. Disse retningslinjene forklarer hvordan og hvorfor vi bruker informasjonskapsler på vår nettside."
   }
 }

@@ -2,8 +2,6 @@
   "nav": {
     "features": "Özellikler",
     "pricing": "Fiyatlandırma",
-    "docs": "Belgeler",
-    "whyUs": "Neden biz",
     "blog": "Blog",
     "getStarted": "Başlayın",
     "dashboard": "Kontrol paneli",
@@ -12,14 +10,15 @@
     "org": "Organizasyon",
     "admin": "Yönetim",
     "signIn": "Giriş yap",
-    "signOut": "Çıkış yap"
+    "signOut": "Çıkış yap",
+    "contactUs": "Bize ulaşın"
   },
   "footer": {
     "privacy": "Gizlilik",
     "terms": "Koşullar",
-    "security": "Güvenlik",
-    "status": "Durum",
-    "copyright": "© 2026 Meridian, Inc."
+    "copyright": "© 2026 Meridian, Inc.",
+    "cookies": "Çerezler",
+    "aboutUs": "Hakkımızda"
   },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",
@@ -71,5 +70,29 @@
     "dashActivity2Time": "8m ago",
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
+  },
+  "contact": {
+    "title": "Bize ulaşın",
+    "description": "Bir sorunuz mu var veya yardıma mı ihtiyacınız var? Sizden haber almak isteriz.",
+    "email": "hello@meridian.dev"
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "Yeni yazılar yakında. Takipte kalın!"
+  },
+  "privacy": {
+    "title": "Gizlilik Politikası",
+    "lastUpdated": "Son güncelleme: Mart 2026",
+    "intro": "Gizliliğiniz bizim için önemlidir. Bu politika, kişisel bilgilerinizi nasıl topladığımızı, kullandığımızı ve koruduğumuzu açıklar."
+  },
+  "terms": {
+    "title": "Hizmet Şartları",
+    "lastUpdated": "Son güncelleme: Mart 2026",
+    "intro": "Meridian'ı kullanarak bu şartları kabul etmiş olursunuz. Hizmetlerimizi kullanmadan önce lütfen dikkatlice okuyun."
+  },
+  "cookies": {
+    "title": "Çerez Politikası",
+    "lastUpdated": "Son güncelleme: Mart 2026",
+    "intro": "Deneyiminizi iyileştirmek için çerezler kullanıyoruz. Bu politika, web sitemizde çerezleri nasıl ve neden kullandığımızı açıklar."
   }
 }

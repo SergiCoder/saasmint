@@ -2,8 +2,6 @@
   "nav": {
     "features": "Fonctionnalités",
     "pricing": "Tarifs",
-    "docs": "Documentation",
-    "whyUs": "Pourquoi nous",
     "blog": "Blog",
     "getStarted": "Commencer",
     "dashboard": "Tableau de bord",
@@ -12,14 +10,15 @@
     "org": "Organisation",
     "admin": "Administration",
     "signIn": "Se connecter",
-    "signOut": "Se déconnecter"
+    "signOut": "Se déconnecter",
+    "contactUs": "Contactez-nous"
   },
   "footer": {
     "privacy": "Confidentialité",
     "terms": "Conditions",
-    "security": "Sécurité",
-    "status": "Statut",
-    "copyright": "© 2026 Meridian, Inc."
+    "copyright": "© 2026 Meridian, Inc.",
+    "cookies": "Cookies",
+    "aboutUs": "À propos"
   },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",
@@ -71,5 +70,29 @@
     "dashActivity2Time": "8m ago",
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "description": "Une question ou besoin d'aide ? Nous serions ravis de vous entendre.",
+    "email": "hello@meridian.dev"
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "De nouveaux articles arrivent bientôt. Restez à l'écoute !"
+  },
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "lastUpdated": "Dernière mise à jour : mars 2026",
+    "intro": "Votre vie privée est importante pour nous. Cette politique explique comment nous collectons, utilisons et protégeons vos informations personnelles."
+  },
+  "terms": {
+    "title": "Conditions d'utilisation",
+    "lastUpdated": "Dernière mise à jour : mars 2026",
+    "intro": "En utilisant Meridian, vous acceptez ces conditions. Veuillez les lire attentivement avant d'utiliser nos services."
+  },
+  "cookies": {
+    "title": "Politique de cookies",
+    "lastUpdated": "Dernière mise à jour : mars 2026",
+    "intro": "Nous utilisons des cookies pour améliorer votre expérience. Cette politique explique comment et pourquoi nous utilisons des cookies sur notre site."
   }
 }

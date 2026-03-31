@@ -2,8 +2,6 @@
   "nav": {
     "features": "功能",
     "pricing": "定價",
-    "docs": "文件",
-    "whyUs": "為什麼選擇我們",
     "blog": "Blog",
     "getStarted": "開始使用",
     "dashboard": "儀表板",
@@ -12,14 +10,15 @@
     "org": "組織",
     "admin": "管理",
     "signIn": "登入",
-    "signOut": "登出"
+    "signOut": "登出",
+    "contactUs": "聯絡我們"
   },
   "footer": {
     "privacy": "隱私權",
     "terms": "條款",
-    "security": "安全性",
-    "status": "狀態",
-    "copyright": "© 2026 Meridian, Inc."
+    "copyright": "© 2026 Meridian, Inc.",
+    "cookies": "Cookie",
+    "aboutUs": "關於我們"
   },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",
@@ -71,5 +70,29 @@
     "dashActivity2Time": "8m ago",
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
+  },
+  "contact": {
+    "title": "聯絡我們",
+    "description": "有問題或需要幫助？我們很樂意聽取您的意見。",
+    "email": "hello@meridian.dev"
+  },
+  "blog": {
+    "title": "部落格",
+    "comingSoon": "新文章即將發佈。敬請期待！"
+  },
+  "privacy": {
+    "title": "隱私政策",
+    "lastUpdated": "最後更新：2026年3月",
+    "intro": "您的隱私對我們很重要。本政策說明了我們如何收集、使用和保護您的個人資訊。"
+  },
+  "terms": {
+    "title": "服務條款",
+    "lastUpdated": "最後更新：2026年3月",
+    "intro": "使用 Meridian 即表示您同意這些條款。請在使用我們的服務之前仔細閱讀。"
+  },
+  "cookies": {
+    "title": "Cookie 政策",
+    "lastUpdated": "最後更新：2026年3月",
+    "intro": "我們使用 Cookie 來改善您的體驗。本政策說明了我們如何以及為何在網站上使用 Cookie。"
   }
 }

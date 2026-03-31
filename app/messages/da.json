@@ -2,8 +2,6 @@
   "nav": {
     "features": "Funktioner",
     "pricing": "Priser",
-    "docs": "Dokumentation",
-    "whyUs": "Hvorfor os",
     "blog": "Blog",
     "getStarted": "Kom i gang",
     "dashboard": "Dashboard",
@@ -12,14 +10,15 @@
     "org": "Organisation",
     "admin": "Administration",
     "signIn": "Log ind",
-    "signOut": "Log ud"
+    "signOut": "Log ud",
+    "contactUs": "Kontakt os"
   },
   "footer": {
     "privacy": "Privatlivspolitik",
     "terms": "Vilkår",
-    "security": "Sikkerhed",
-    "status": "Status",
-    "copyright": "© 2026 Meridian, Inc."
+    "copyright": "© 2026 Meridian, Inc.",
+    "cookies": "Cookies",
+    "aboutUs": "Om os"
   },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",
@@ -71,5 +70,29 @@
     "dashActivity2Time": "8m ago",
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
+  },
+  "contact": {
+    "title": "Kontakt os",
+    "description": "Har du et spørgsmål eller brug for hjælp? Vi hører gerne fra dig.",
+    "email": "hello@meridian.dev"
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "Nye indlæg kommer snart. Hold dig opdateret!"
+  },
+  "privacy": {
+    "title": "Privatlivspolitik",
+    "lastUpdated": "Sidst opdateret: marts 2026",
+    "intro": "Dit privatliv er vigtigt for os. Denne politik forklarer, hvordan vi indsamler, bruger og beskytter dine personlige oplysninger."
+  },
+  "terms": {
+    "title": "Servicevilkår",
+    "lastUpdated": "Sidst opdateret: marts 2026",
+    "intro": "Ved at bruge Meridian accepterer du disse vilkår. Læs dem omhyggeligt, før du bruger vores tjenester."
+  },
+  "cookies": {
+    "title": "Cookiepolitik",
+    "lastUpdated": "Sidst opdateret: marts 2026",
+    "intro": "Vi bruger cookies for at forbedre din oplevelse. Denne politik forklarer, hvordan og hvorfor vi bruger cookies på vores hjemmeside."
   }
 }

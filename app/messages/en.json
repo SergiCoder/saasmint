@@ -2,8 +2,6 @@
   "nav": {
     "features": "Features",
     "pricing": "Pricing",
-    "docs": "Docs",
-    "whyUs": "Why us",
     "blog": "Blog",
     "getStarted": "Get started",
     "dashboard": "Dashboard",
@@ -12,14 +10,15 @@
     "org": "Organization",
     "admin": "Admin",
     "signIn": "Sign in",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "contactUs": "Contact us"
   },
   "footer": {
     "privacy": "Privacy",
     "terms": "Terms",
-    "security": "Security",
-    "status": "Status",
-    "copyright": "© 2026 Meridian, Inc."
+    "copyright": "© 2026 Meridian, Inc.",
+    "cookies": "Cookies",
+    "aboutUs": "About us"
   },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",
@@ -133,5 +132,29 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "confirm": "Confirm"
+  },
+  "contact": {
+    "title": "Contact us",
+    "description": "Have a question or need help? We'd love to hear from you.",
+    "email": "hello@meridian.dev"
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "New posts coming soon. Stay tuned!"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: March 2026",
+    "intro": "Your privacy is important to us. This policy explains how we collect, use, and protect your personal information."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: March 2026",
+    "intro": "By using Meridian, you agree to these terms. Please read them carefully before using our services."
+  },
+  "cookies": {
+    "title": "Cookie Policy",
+    "lastUpdated": "Last updated: March 2026",
+    "intro": "We use cookies to improve your experience. This policy explains how and why we use cookies on our website."
   }
 }

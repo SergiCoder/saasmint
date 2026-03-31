@@ -2,8 +2,6 @@
   "nav": {
     "features": "Recursos",
     "pricing": "Preços",
-    "docs": "Documentação",
-    "whyUs": "Por que nós",
     "blog": "Blog",
     "getStarted": "Começar",
     "dashboard": "Painel",
@@ -12,14 +10,15 @@
     "org": "Organização",
     "admin": "Administração",
     "signIn": "Entrar",
-    "signOut": "Sair"
+    "signOut": "Sair",
+    "contactUs": "Fale conosco"
   },
   "footer": {
     "privacy": "Privacidade",
     "terms": "Termos",
-    "security": "Segurança",
-    "status": "Status",
-    "copyright": "© 2026 Meridian, Inc."
+    "copyright": "© 2026 Meridian, Inc.",
+    "cookies": "Cookies",
+    "aboutUs": "Sobre nós"
   },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",
@@ -71,5 +70,29 @@
     "dashActivity2Time": "8m ago",
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
+  },
+  "contact": {
+    "title": "Fale conosco",
+    "description": "Tem alguma dúvida ou precisa de ajuda? Adoraríamos ouvir você.",
+    "email": "hello@meridian.dev"
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "Novos posts em breve. Fique ligado!"
+  },
+  "privacy": {
+    "title": "Política de privacidade",
+    "lastUpdated": "Última atualização: março de 2026",
+    "intro": "Sua privacidade é importante para nós. Esta política explica como coletamos, usamos e protegemos suas informações pessoais."
+  },
+  "terms": {
+    "title": "Termos de serviço",
+    "lastUpdated": "Última atualização: março de 2026",
+    "intro": "Ao usar o Meridian, você concorda com estes termos. Leia-os com atenção antes de usar nossos serviços."
+  },
+  "cookies": {
+    "title": "Política de cookies",
+    "lastUpdated": "Última atualização: março de 2026",
+    "intro": "Usamos cookies para melhorar sua experiência. Esta política explica como e por que usamos cookies em nosso site."
   }
 }
