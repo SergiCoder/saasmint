@@ -3,13 +3,23 @@
     "features": "Features",
     "pricing": "Pricing",
     "docs": "Docs",
+    "whyUs": "Why us",
+    "blog": "Blog",
     "getStarted": "Get started",
     "dashboard": "Dashboard",
     "billing": "Billing",
     "settings": "Settings",
     "org": "Organization",
     "admin": "Admin",
+    "signIn": "Sign in",
     "signOut": "Sign out"
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "security": "Security",
+    "status": "Status",
+    "copyright": "© 2026 Meridian, Inc."
   },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",

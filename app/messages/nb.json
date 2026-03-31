@@ -1,4 +1,26 @@
 {
+  "nav": {
+    "features": "Funksjoner",
+    "pricing": "Priser",
+    "docs": "Dokumentasjon",
+    "whyUs": "Hvorfor oss",
+    "blog": "Blog",
+    "getStarted": "Kom i gang",
+    "dashboard": "Dashboard",
+    "billing": "Fakturering",
+    "settings": "Innstillinger",
+    "org": "Organisasjon",
+    "admin": "Administrasjon",
+    "signIn": "Logg inn",
+    "signOut": "Logg ut"
+  },
+  "footer": {
+    "privacy": "Personvern",
+    "terms": "Vilkår",
+    "security": "Sikkerhet",
+    "status": "Status",
+    "copyright": "© 2026 Meridian, Inc."
+  },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",
     "headline": "The platform teams actually <accent>ship with</accent>",

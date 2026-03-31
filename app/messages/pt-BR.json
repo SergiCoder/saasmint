@@ -1,4 +1,26 @@
 {
+  "nav": {
+    "features": "Recursos",
+    "pricing": "Preços",
+    "docs": "Documentação",
+    "whyUs": "Por que nós",
+    "blog": "Blog",
+    "getStarted": "Começar",
+    "dashboard": "Painel",
+    "billing": "Cobrança",
+    "settings": "Configurações",
+    "org": "Organização",
+    "admin": "Administração",
+    "signIn": "Entrar",
+    "signOut": "Sair"
+  },
+  "footer": {
+    "privacy": "Privacidade",
+    "terms": "Termos",
+    "security": "Segurança",
+    "status": "Status",
+    "copyright": "© 2026 Meridian, Inc."
+  },
   "landing": {
     "badge": "Now in GA — Meridian 2.0 with AI Agents",
     "headline": "The platform teams actually <accent>ship with</accent>",
