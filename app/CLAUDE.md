@@ -71,7 +71,7 @@ Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, 
 
 `src/app/[locale]/` uses three route groups with distinct layouts:
 
-- `(marketing)/` — public pages (landing, pricing) using `MarketingLayout`
+- `(marketing)/` — public pages (landing, pricing, blog, contact, privacy, terms, cookies) using `MarketingLayout`
 - `(auth)/` — login/signup pages using `AuthLayout`
 - `(app)/` — authenticated pages (dashboard, billing, settings, org) using `AppLayout`
 
