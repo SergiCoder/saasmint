@@ -14,7 +14,7 @@ const PROTECTED_PREFIXES = [
   "/admin",
 ];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Strip locale prefix to check route protection
