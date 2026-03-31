@@ -37,16 +37,19 @@ export function Footer({
                 {section.title}
               </h3>
               <ul className="mt-4 space-y-3">
-                {section.links.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-gray-500 hover:text-gray-700"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
+                {section.links.map((link) => {
+                  const Comp = link.href.startsWith("#") ? "a" : Link;
+                  return (
+                    <li key={link.label}>
+                      <Comp
+                        href={link.href}
+                        className="text-sm text-gray-500 hover:text-gray-700"
+                      >
+                        {link.label}
+                      </Comp>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}

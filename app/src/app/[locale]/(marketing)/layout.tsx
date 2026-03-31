@@ -12,8 +12,8 @@ export default async function MarketingLayoutRoute({
   const t = await getTranslations("nav");
 
   const navLinks = [
-    { href: "#features", label: t("features") },
-    { href: "#stats", label: t("whyUs") },
+    { href: "/#features", label: t("features") },
+    { href: "/#stats", label: t("whyUs") },
     { href: "/pricing", label: t("pricing") },
     { href: "#", label: t("docs") },
     { href: "#", label: t("blog") },
