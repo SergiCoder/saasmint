@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "계정에 로그인",
+      "email": "이메일 주소",
+      "password": "비밀번호",
+      "submit": "로그인",
+      "noAccount": "계정이 없으신가요?",
+      "register": "회원가입"
+    },
+    "register": {
+      "title": "계정 만들기",
+      "email": "이메일 주소",
+      "password": "비밀번호",
+      "submit": "계정 만들기",
+      "hasAccount": "이미 계정이 있으신가요?",
+      "login": "로그인"
+    }
+  },
+  "dashboard": {
+    "title": "대시보드",
+    "uptime": "가동 시간",
+    "latency": "지연 시간",
+    "requests": "요청",
+    "errors": "오류"
+  },
+  "billing": {
+    "title": "결제",
+    "currentPlan": "현재 플랜",
+    "upgrade": "업그레이드",
+    "cancel": "구독 취소",
+    "changePlan": "플랜 변경",
+    "applyPromo": "프로모 코드 적용",
+    "portal": "결제 관리",
+    "success": "결제 완료!",
+    "successDesc": "구독이 업데이트되었습니다."
+  },
+  "settings": {
+    "title": "설정",
+    "profile": "프로필",
+    "fullName": "이름",
+    "email": "이메일",
+    "save": "변경 사항 저장",
+    "danger": "위험 구역",
+    "deleteAccount": "계정 삭제",
+    "deleteConfirm": "계정과 모든 데이터가 영구적으로 삭제됩니다."
+  },
+  "org": {
+    "title": "조직",
+    "create": "조직 만들기",
+    "members": "멤버",
+    "invite": "멤버 초대",
+    "role": "역할",
+    "remove": "제거"
+  },
+  "common": {
+    "loading": "로딩 중...",
+    "error": "문제가 발생했습니다",
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "confirm": "확인"
+  },
   "contact": {
     "title": "문의하기",
     "description": "질문이 있거나 도움이 필요하신가요? 연락을 기다립니다.",

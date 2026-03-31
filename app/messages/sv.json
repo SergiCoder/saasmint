@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "Logga in på ditt konto",
+      "email": "E-postadress",
+      "password": "Lösenord",
+      "submit": "Logga in",
+      "noAccount": "Har du inget konto?",
+      "register": "Registrera dig"
+    },
+    "register": {
+      "title": "Skapa ditt konto",
+      "email": "E-postadress",
+      "password": "Lösenord",
+      "submit": "Skapa konto",
+      "hasAccount": "Har du redan ett konto?",
+      "login": "Logga in"
+    }
+  },
+  "dashboard": {
+    "title": "Instrumentpanel",
+    "uptime": "Drifttid",
+    "latency": "Latens",
+    "requests": "Förfrågningar",
+    "errors": "Fel"
+  },
+  "billing": {
+    "title": "Fakturering",
+    "currentPlan": "Nuvarande plan",
+    "upgrade": "Uppgradera",
+    "cancel": "Avsluta prenumeration",
+    "changePlan": "Byt plan",
+    "applyPromo": "Ange kampanjkod",
+    "portal": "Hantera fakturering",
+    "success": "Betalning lyckades!",
+    "successDesc": "Din prenumeration har uppdaterats."
+  },
+  "settings": {
+    "title": "Inställningar",
+    "profile": "Profil",
+    "fullName": "Fullständigt namn",
+    "email": "E-post",
+    "save": "Spara ändringar",
+    "danger": "Farozon",
+    "deleteAccount": "Radera konto",
+    "deleteConfirm": "Detta raderar ditt konto och all data permanent."
+  },
+  "org": {
+    "title": "Organisation",
+    "create": "Skapa organisation",
+    "members": "Medlemmar",
+    "invite": "Bjud in medlem",
+    "role": "Roll",
+    "remove": "Ta bort"
+  },
+  "common": {
+    "loading": "Laddar...",
+    "error": "Något gick fel",
+    "save": "Spara",
+    "cancel": "Avbryt",
+    "delete": "Radera",
+    "confirm": "Bekräfta"
+  },
   "contact": {
     "title": "Kontakta oss",
     "description": "Har du en fråga eller behöver hjälp? Vi vill gärna höra från dig.",

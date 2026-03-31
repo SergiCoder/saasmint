@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "Inloggen op uw account",
+      "email": "E-mailadres",
+      "password": "Wachtwoord",
+      "submit": "Inloggen",
+      "noAccount": "Nog geen account?",
+      "register": "Registreren"
+    },
+    "register": {
+      "title": "Maak uw account aan",
+      "email": "E-mailadres",
+      "password": "Wachtwoord",
+      "submit": "Account aanmaken",
+      "hasAccount": "Heeft u al een account?",
+      "login": "Inloggen"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "uptime": "Uptime",
+    "latency": "Latentie",
+    "requests": "Verzoeken",
+    "errors": "Fouten"
+  },
+  "billing": {
+    "title": "Facturering",
+    "currentPlan": "Huidig abonnement",
+    "upgrade": "Upgraden",
+    "cancel": "Abonnement opzeggen",
+    "changePlan": "Abonnement wijzigen",
+    "applyPromo": "Promotiecode toepassen",
+    "portal": "Facturering beheren",
+    "success": "Betaling geslaagd!",
+    "successDesc": "Uw abonnement is bijgewerkt."
+  },
+  "settings": {
+    "title": "Instellingen",
+    "profile": "Profiel",
+    "fullName": "Volledige naam",
+    "email": "E-mail",
+    "save": "Wijzigingen opslaan",
+    "danger": "Gevarenzone",
+    "deleteAccount": "Account verwijderen",
+    "deleteConfirm": "Dit verwijdert uw account en alle gegevens permanent."
+  },
+  "org": {
+    "title": "Organisatie",
+    "create": "Organisatie aanmaken",
+    "members": "Leden",
+    "invite": "Lid uitnodigen",
+    "role": "Rol",
+    "remove": "Verwijderen"
+  },
+  "common": {
+    "loading": "Laden...",
+    "error": "Er is iets misgegaan",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "confirm": "Bevestigen"
+  },
   "contact": {
     "title": "Contact",
     "description": "Heeft u een vraag of hulp nodig? We horen graag van u.",

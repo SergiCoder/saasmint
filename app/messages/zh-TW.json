@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "登入您的帳戶",
+      "email": "電子郵件地址",
+      "password": "密碼",
+      "submit": "登入",
+      "noAccount": "還沒有帳戶？",
+      "register": "註冊"
+    },
+    "register": {
+      "title": "建立您的帳戶",
+      "email": "電子郵件地址",
+      "password": "密碼",
+      "submit": "建立帳戶",
+      "hasAccount": "已有帳戶？",
+      "login": "登入"
+    }
+  },
+  "dashboard": {
+    "title": "儀表板",
+    "uptime": "正常運行時間",
+    "latency": "延遲",
+    "requests": "請求",
+    "errors": "錯誤"
+  },
+  "billing": {
+    "title": "帳單",
+    "currentPlan": "目前方案",
+    "upgrade": "升級",
+    "cancel": "取消訂閱",
+    "changePlan": "變更方案",
+    "applyPromo": "使用促銷代碼",
+    "portal": "管理帳單",
+    "success": "付款成功！",
+    "successDesc": "您的訂閱已更新。"
+  },
+  "settings": {
+    "title": "設定",
+    "profile": "個人資料",
+    "fullName": "全名",
+    "email": "電子郵件",
+    "save": "儲存變更",
+    "danger": "危險區域",
+    "deleteAccount": "刪除帳戶",
+    "deleteConfirm": "這將永久刪除您的帳戶和所有資料。"
+  },
+  "org": {
+    "title": "組織",
+    "create": "建立組織",
+    "members": "成員",
+    "invite": "邀請成員",
+    "role": "角色",
+    "remove": "移除"
+  },
+  "common": {
+    "loading": "載入中...",
+    "error": "發生錯誤",
+    "save": "儲存",
+    "cancel": "取消",
+    "delete": "刪除",
+    "confirm": "確認"
+  },
   "contact": {
     "title": "聯絡我們",
     "description": "有問題或需要幫助？我們很樂意聽取您的意見。",

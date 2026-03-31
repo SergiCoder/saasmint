@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "Melden Sie sich an",
+      "email": "E-Mail-Adresse",
+      "password": "Passwort",
+      "submit": "Anmelden",
+      "noAccount": "Noch kein Konto?",
+      "register": "Registrieren"
+    },
+    "register": {
+      "title": "Konto erstellen",
+      "email": "E-Mail-Adresse",
+      "password": "Passwort",
+      "submit": "Konto erstellen",
+      "hasAccount": "Bereits ein Konto?",
+      "login": "Anmelden"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "uptime": "Verfügbarkeit",
+    "latency": "Latenz",
+    "requests": "Anfragen",
+    "errors": "Fehler"
+  },
+  "billing": {
+    "title": "Abrechnung",
+    "currentPlan": "Aktueller Plan",
+    "upgrade": "Upgraden",
+    "cancel": "Abo kündigen",
+    "changePlan": "Plan ändern",
+    "applyPromo": "Promo-Code einlösen",
+    "portal": "Abrechnung verwalten",
+    "success": "Zahlung erfolgreich!",
+    "successDesc": "Ihr Abonnement wurde aktualisiert."
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "profile": "Profil",
+    "fullName": "Vollständiger Name",
+    "email": "E-Mail",
+    "save": "Änderungen speichern",
+    "danger": "Gefahrenzone",
+    "deleteAccount": "Konto löschen",
+    "deleteConfirm": "Dadurch werden Ihr Konto und alle Daten dauerhaft gelöscht."
+  },
+  "org": {
+    "title": "Organisation",
+    "create": "Organisation erstellen",
+    "members": "Mitglieder",
+    "invite": "Mitglied einladen",
+    "role": "Rolle",
+    "remove": "Entfernen"
+  },
+  "common": {
+    "loading": "Wird geladen...",
+    "error": "Etwas ist schiefgelaufen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "confirm": "Bestätigen"
+  },
   "contact": {
     "title": "Kontakt",
     "description": "Haben Sie eine Frage oder brauchen Sie Hilfe? Wir freuen uns auf Ihre Nachricht.",

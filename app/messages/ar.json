@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "تسجيل الدخول إلى حسابك",
+      "email": "عنوان البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "submit": "تسجيل الدخول",
+      "noAccount": "ليس لديك حساب؟",
+      "register": "إنشاء حساب"
+    },
+    "register": {
+      "title": "إنشاء حسابك",
+      "email": "عنوان البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "submit": "إنشاء حساب",
+      "hasAccount": "لديك حساب بالفعل؟",
+      "login": "تسجيل الدخول"
+    }
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "uptime": "وقت التشغيل",
+    "latency": "زمن الاستجابة",
+    "requests": "الطلبات",
+    "errors": "الأخطاء"
+  },
+  "billing": {
+    "title": "الفوترة",
+    "currentPlan": "الخطة الحالية",
+    "upgrade": "ترقية",
+    "cancel": "إلغاء الاشتراك",
+    "changePlan": "تغيير الخطة",
+    "applyPromo": "تطبيق رمز ترويجي",
+    "portal": "إدارة الفوترة",
+    "success": "تم الدفع بنجاح!",
+    "successDesc": "تم تحديث اشتراكك."
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "profile": "الملف الشخصي",
+    "fullName": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "save": "حفظ التغييرات",
+    "danger": "منطقة الخطر",
+    "deleteAccount": "حذف الحساب",
+    "deleteConfirm": "سيؤدي هذا إلى حذف حسابك وجميع بياناتك نهائيًا."
+  },
+  "org": {
+    "title": "المنظمة",
+    "create": "إنشاء منظمة",
+    "members": "الأعضاء",
+    "invite": "دعوة عضو",
+    "role": "الدور",
+    "remove": "إزالة"
+  },
+  "common": {
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ ما",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "confirm": "تأكيد"
+  },
   "contact": {
     "title": "اتصل بنا",
     "description": "هل لديك سؤال أو تحتاج مساعدة؟ يسعدنا سماعك.",

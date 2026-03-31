@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "Masuk ke akun Anda",
+      "email": "Alamat email",
+      "password": "Kata sandi",
+      "submit": "Masuk",
+      "noAccount": "Belum punya akun?",
+      "register": "Daftar"
+    },
+    "register": {
+      "title": "Buat akun Anda",
+      "email": "Alamat email",
+      "password": "Kata sandi",
+      "submit": "Buat akun",
+      "hasAccount": "Sudah punya akun?",
+      "login": "Masuk"
+    }
+  },
+  "dashboard": {
+    "title": "Dasbor",
+    "uptime": "Waktu aktif",
+    "latency": "Latensi",
+    "requests": "Permintaan",
+    "errors": "Kesalahan"
+  },
+  "billing": {
+    "title": "Tagihan",
+    "currentPlan": "Paket saat ini",
+    "upgrade": "Tingkatkan",
+    "cancel": "Batalkan langganan",
+    "changePlan": "Ubah paket",
+    "applyPromo": "Terapkan kode promo",
+    "portal": "Kelola tagihan",
+    "success": "Pembayaran berhasil!",
+    "successDesc": "Langganan Anda telah diperbarui."
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "profile": "Profil",
+    "fullName": "Nama lengkap",
+    "email": "Email",
+    "save": "Simpan perubahan",
+    "danger": "Zona bahaya",
+    "deleteAccount": "Hapus akun",
+    "deleteConfirm": "Ini akan menghapus akun dan semua data Anda secara permanen."
+  },
+  "org": {
+    "title": "Organisasi",
+    "create": "Buat organisasi",
+    "members": "Anggota",
+    "invite": "Undang anggota",
+    "role": "Peran",
+    "remove": "Hapus"
+  },
+  "common": {
+    "loading": "Memuat...",
+    "error": "Terjadi kesalahan",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "confirm": "Konfirmasi"
+  },
   "contact": {
     "title": "Hubungi kami",
     "description": "Punya pertanyaan atau butuh bantuan? Kami senang mendengar dari Anda.",

@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "登录您的账户",
+      "email": "邮箱地址",
+      "password": "密码",
+      "submit": "登录",
+      "noAccount": "还没有账户？",
+      "register": "注册"
+    },
+    "register": {
+      "title": "创建您的账户",
+      "email": "邮箱地址",
+      "password": "密码",
+      "submit": "创建账户",
+      "hasAccount": "已有账户？",
+      "login": "登录"
+    }
+  },
+  "dashboard": {
+    "title": "仪表盘",
+    "uptime": "正常运行时间",
+    "latency": "延迟",
+    "requests": "请求",
+    "errors": "错误"
+  },
+  "billing": {
+    "title": "账单",
+    "currentPlan": "当前方案",
+    "upgrade": "升级",
+    "cancel": "取消订阅",
+    "changePlan": "更改方案",
+    "applyPromo": "使用促销代码",
+    "portal": "管理账单",
+    "success": "支付成功！",
+    "successDesc": "您的订阅已更新。"
+  },
+  "settings": {
+    "title": "设置",
+    "profile": "个人资料",
+    "fullName": "全名",
+    "email": "邮箱",
+    "save": "保存更改",
+    "danger": "危险区域",
+    "deleteAccount": "删除账户",
+    "deleteConfirm": "这将永久删除您的账户和所有数据。"
+  },
+  "org": {
+    "title": "组织",
+    "create": "创建组织",
+    "members": "成员",
+    "invite": "邀请成员",
+    "role": "角色",
+    "remove": "移除"
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "出了点问题",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "confirm": "确认"
+  },
   "contact": {
     "title": "联系我们",
     "description": "有问题或需要帮助？我们很乐意听取您的反馈。",

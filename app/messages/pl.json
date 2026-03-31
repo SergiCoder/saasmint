@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "Zaloguj się na swoje konto",
+      "email": "Adres e-mail",
+      "password": "Hasło",
+      "submit": "Zaloguj się",
+      "noAccount": "Nie masz konta?",
+      "register": "Zarejestruj się"
+    },
+    "register": {
+      "title": "Utwórz konto",
+      "email": "Adres e-mail",
+      "password": "Hasło",
+      "submit": "Utwórz konto",
+      "hasAccount": "Masz już konto?",
+      "login": "Zaloguj się"
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "uptime": "Dostępność",
+    "latency": "Opóźnienie",
+    "requests": "Żądania",
+    "errors": "Błędy"
+  },
+  "billing": {
+    "title": "Płatności",
+    "currentPlan": "Aktualny plan",
+    "upgrade": "Uaktualnij",
+    "cancel": "Anuluj subskrypcję",
+    "changePlan": "Zmień plan",
+    "applyPromo": "Zastosuj kod promocyjny",
+    "portal": "Zarządzaj płatnościami",
+    "success": "Płatność powiodła się!",
+    "successDesc": "Twoja subskrypcja została zaktualizowana."
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "profile": "Profil",
+    "fullName": "Imię i nazwisko",
+    "email": "E-mail",
+    "save": "Zapisz zmiany",
+    "danger": "Strefa zagrożenia",
+    "deleteAccount": "Usuń konto",
+    "deleteConfirm": "To trwale usunie Twoje konto i wszystkie dane."
+  },
+  "org": {
+    "title": "Organizacja",
+    "create": "Utwórz organizację",
+    "members": "Członkowie",
+    "invite": "Zaproś członka",
+    "role": "Rola",
+    "remove": "Usuń"
+  },
+  "common": {
+    "loading": "Ładowanie...",
+    "error": "Coś poszło nie tak",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "confirm": "Potwierdź"
+  },
   "contact": {
     "title": "Kontakt",
     "description": "Masz pytanie lub potrzebujesz pomocy? Chętnie Cię wysłuchamy.",

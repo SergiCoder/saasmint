@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "Inicie sessão na sua conta",
+      "email": "Endereço de e-mail",
+      "password": "Palavra-passe",
+      "submit": "Iniciar sessão",
+      "noAccount": "Não tem uma conta?",
+      "register": "Registar-se"
+    },
+    "register": {
+      "title": "Crie a sua conta",
+      "email": "Endereço de e-mail",
+      "password": "Palavra-passe",
+      "submit": "Criar conta",
+      "hasAccount": "Já tem uma conta?",
+      "login": "Iniciar sessão"
+    }
+  },
+  "dashboard": {
+    "title": "Painel",
+    "uptime": "Disponibilidade",
+    "latency": "Latência",
+    "requests": "Pedidos",
+    "errors": "Erros"
+  },
+  "billing": {
+    "title": "Faturação",
+    "currentPlan": "Plano atual",
+    "upgrade": "Atualizar",
+    "cancel": "Cancelar subscrição",
+    "changePlan": "Alterar plano",
+    "applyPromo": "Aplicar código promocional",
+    "portal": "Gerir faturação",
+    "success": "Pagamento efetuado!",
+    "successDesc": "A sua subscrição foi atualizada."
+  },
+  "settings": {
+    "title": "Definições",
+    "profile": "Perfil",
+    "fullName": "Nome completo",
+    "email": "E-mail",
+    "save": "Guardar alterações",
+    "danger": "Zona de perigo",
+    "deleteAccount": "Eliminar conta",
+    "deleteConfirm": "Isto eliminará permanentemente a sua conta e todos os dados."
+  },
+  "org": {
+    "title": "Organização",
+    "create": "Criar organização",
+    "members": "Membros",
+    "invite": "Convidar membro",
+    "role": "Função",
+    "remove": "Remover"
+  },
+  "common": {
+    "loading": "A carregar...",
+    "error": "Algo correu mal",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "confirm": "Confirmar"
+  },
   "contact": {
     "title": "Contacte-nos",
     "description": "Tem alguma questão ou precisa de ajuda? Gostaríamos de o ouvir.",

@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "Log ind på din konto",
+      "email": "E-mailadresse",
+      "password": "Adgangskode",
+      "submit": "Log ind",
+      "noAccount": "Har du ikke en konto?",
+      "register": "Opret konto"
+    },
+    "register": {
+      "title": "Opret din konto",
+      "email": "E-mailadresse",
+      "password": "Adgangskode",
+      "submit": "Opret konto",
+      "hasAccount": "Har du allerede en konto?",
+      "login": "Log ind"
+    }
+  },
+  "dashboard": {
+    "title": "Kontrolpanel",
+    "uptime": "Oppetid",
+    "latency": "Forsinkelse",
+    "requests": "Forespørgsler",
+    "errors": "Fejl"
+  },
+  "billing": {
+    "title": "Fakturering",
+    "currentPlan": "Nuværende plan",
+    "upgrade": "Opgrader",
+    "cancel": "Annuller abonnement",
+    "changePlan": "Skift plan",
+    "applyPromo": "Brug kampagnekode",
+    "portal": "Administrer fakturering",
+    "success": "Betaling gennemført!",
+    "successDesc": "Dit abonnement er blevet opdateret."
+  },
+  "settings": {
+    "title": "Indstillinger",
+    "profile": "Profil",
+    "fullName": "Fulde navn",
+    "email": "E-mail",
+    "save": "Gem ændringer",
+    "danger": "Farezone",
+    "deleteAccount": "Slet konto",
+    "deleteConfirm": "Dette sletter permanent din konto og alle data."
+  },
+  "org": {
+    "title": "Organisation",
+    "create": "Opret organisation",
+    "members": "Medlemmer",
+    "invite": "Inviter medlem",
+    "role": "Rolle",
+    "remove": "Fjern"
+  },
+  "common": {
+    "loading": "Indlæser...",
+    "error": "Noget gik galt",
+    "save": "Gem",
+    "cancel": "Annuller",
+    "delete": "Slet",
+    "confirm": "Bekræft"
+  },
   "contact": {
     "title": "Kontakt os",
     "description": "Har du et spørgsmål eller brug for hjælp? Vi hører gerne fra dig.",

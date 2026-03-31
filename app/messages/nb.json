@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "Logg inn på kontoen din",
+      "email": "E-postadresse",
+      "password": "Passord",
+      "submit": "Logg inn",
+      "noAccount": "Har du ikke en konto?",
+      "register": "Registrer deg"
+    },
+    "register": {
+      "title": "Opprett kontoen din",
+      "email": "E-postadresse",
+      "password": "Passord",
+      "submit": "Opprett konto",
+      "hasAccount": "Har du allerede en konto?",
+      "login": "Logg inn"
+    }
+  },
+  "dashboard": {
+    "title": "Kontrollpanel",
+    "uptime": "Oppetid",
+    "latency": "Forsinkelse",
+    "requests": "Forespørsler",
+    "errors": "Feil"
+  },
+  "billing": {
+    "title": "Fakturering",
+    "currentPlan": "Nåværende plan",
+    "upgrade": "Oppgrader",
+    "cancel": "Avbryt abonnement",
+    "changePlan": "Endre plan",
+    "applyPromo": "Bruk kampanjekode",
+    "portal": "Administrer fakturering",
+    "success": "Betaling vellykket!",
+    "successDesc": "Abonnementet ditt er oppdatert."
+  },
+  "settings": {
+    "title": "Innstillinger",
+    "profile": "Profil",
+    "fullName": "Fullt navn",
+    "email": "E-post",
+    "save": "Lagre endringer",
+    "danger": "Faresone",
+    "deleteAccount": "Slett konto",
+    "deleteConfirm": "Dette vil permanent slette kontoen din og alle data."
+  },
+  "org": {
+    "title": "Organisasjon",
+    "create": "Opprett organisasjon",
+    "members": "Medlemmer",
+    "invite": "Inviter medlem",
+    "role": "Rolle",
+    "remove": "Fjern"
+  },
+  "common": {
+    "loading": "Laster...",
+    "error": "Noe gikk galt",
+    "save": "Lagre",
+    "cancel": "Avbryt",
+    "delete": "Slett",
+    "confirm": "Bekreft"
+  },
   "contact": {
     "title": "Kontakt oss",
     "description": "Har du et spørsmål eller trenger hjelp? Vi hører gjerne fra deg.",

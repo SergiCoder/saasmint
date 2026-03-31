@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "Connectez-vous à votre compte",
+      "email": "Adresse e-mail",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "register": "S'inscrire"
+    },
+    "register": {
+      "title": "Créez votre compte",
+      "email": "Adresse e-mail",
+      "password": "Mot de passe",
+      "submit": "Créer un compte",
+      "hasAccount": "Vous avez déjà un compte ?",
+      "login": "Se connecter"
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "uptime": "Disponibilité",
+    "latency": "Latence",
+    "requests": "Requêtes",
+    "errors": "Erreurs"
+  },
+  "billing": {
+    "title": "Facturation",
+    "currentPlan": "Plan actuel",
+    "upgrade": "Mettre à niveau",
+    "cancel": "Annuler l'abonnement",
+    "changePlan": "Changer de plan",
+    "applyPromo": "Appliquer un code promo",
+    "portal": "Gérer la facturation",
+    "success": "Paiement réussi !",
+    "successDesc": "Votre abonnement a été mis à jour."
+  },
+  "settings": {
+    "title": "Paramètres",
+    "profile": "Profil",
+    "fullName": "Nom complet",
+    "email": "E-mail",
+    "save": "Enregistrer les modifications",
+    "danger": "Zone de danger",
+    "deleteAccount": "Supprimer le compte",
+    "deleteConfirm": "Cela supprimera définitivement votre compte et toutes vos données."
+  },
+  "org": {
+    "title": "Organisation",
+    "create": "Créer une organisation",
+    "members": "Membres",
+    "invite": "Inviter un membre",
+    "role": "Rôle",
+    "remove": "Supprimer"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "confirm": "Confirmer"
+  },
   "contact": {
     "title": "Contactez-nous",
     "description": "Une question ou besoin d'aide ? Nous serions ravis de vous entendre.",

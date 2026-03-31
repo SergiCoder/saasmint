@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "Hesabınıza giriş yapın",
+      "email": "E-posta adresi",
+      "password": "Şifre",
+      "submit": "Giriş yap",
+      "noAccount": "Hesabınız yok mu?",
+      "register": "Kaydol"
+    },
+    "register": {
+      "title": "Hesabınızı oluşturun",
+      "email": "E-posta adresi",
+      "password": "Şifre",
+      "submit": "Hesap oluştur",
+      "hasAccount": "Zaten hesabınız var mı?",
+      "login": "Giriş yap"
+    }
+  },
+  "dashboard": {
+    "title": "Kontrol paneli",
+    "uptime": "Çalışma süresi",
+    "latency": "Gecikme",
+    "requests": "İstekler",
+    "errors": "Hatalar"
+  },
+  "billing": {
+    "title": "Faturalandırma",
+    "currentPlan": "Mevcut plan",
+    "upgrade": "Yükselt",
+    "cancel": "Aboneliği iptal et",
+    "changePlan": "Plan değiştir",
+    "applyPromo": "Promosyon kodu uygula",
+    "portal": "Faturalandırmayı yönet",
+    "success": "Ödeme başarılı!",
+    "successDesc": "Aboneliğiniz güncellendi."
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "profile": "Profil",
+    "fullName": "Ad soyad",
+    "email": "E-posta",
+    "save": "Değişiklikleri kaydet",
+    "danger": "Tehlikeli bölge",
+    "deleteAccount": "Hesabı sil",
+    "deleteConfirm": "Bu işlem hesabınızı ve tüm verilerinizi kalıcı olarak silecektir."
+  },
+  "org": {
+    "title": "Organizasyon",
+    "create": "Organizasyon oluştur",
+    "members": "Üyeler",
+    "invite": "Üye davet et",
+    "role": "Rol",
+    "remove": "Kaldır"
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Bir şeyler ters gitti",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "confirm": "Onayla"
+  },
   "contact": {
     "title": "Bize ulaşın",
     "description": "Bir sorunuz mu var veya yardıma mı ihtiyacınız var? Sizden haber almak isteriz.",

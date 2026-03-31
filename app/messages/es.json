@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "Inicia sesión en tu cuenta",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "submit": "Iniciar sesión",
+      "noAccount": "¿No tienes una cuenta?",
+      "register": "Regístrate"
+    },
+    "register": {
+      "title": "Crea tu cuenta",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "submit": "Crear cuenta",
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "login": "Iniciar sesión"
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "uptime": "Disponibilidad",
+    "latency": "Latencia",
+    "requests": "Solicitudes",
+    "errors": "Errores"
+  },
+  "billing": {
+    "title": "Facturación",
+    "currentPlan": "Plan actual",
+    "upgrade": "Mejorar",
+    "cancel": "Cancelar suscripción",
+    "changePlan": "Cambiar plan",
+    "applyPromo": "Aplicar código promocional",
+    "portal": "Gestionar facturación",
+    "success": "¡Pago exitoso!",
+    "successDesc": "Tu suscripción ha sido actualizada."
+  },
+  "settings": {
+    "title": "Configuración",
+    "profile": "Perfil",
+    "fullName": "Nombre completo",
+    "email": "Correo electrónico",
+    "save": "Guardar cambios",
+    "danger": "Zona de peligro",
+    "deleteAccount": "Eliminar cuenta",
+    "deleteConfirm": "Esto eliminará permanentemente tu cuenta y todos los datos."
+  },
+  "org": {
+    "title": "Organización",
+    "create": "Crear organización",
+    "members": "Miembros",
+    "invite": "Invitar miembro",
+    "role": "Rol",
+    "remove": "Eliminar"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "confirm": "Confirmar"
+  },
   "contact": {
     "title": "Contacto",
     "description": "¿Tienes alguna pregunta o necesitas ayuda? Nos encantaría saber de ti.",

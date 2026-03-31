@@ -71,6 +71,68 @@
     "dashActivity3": "Anomaly detected & resolved by Agent",
     "dashActivity3Time": "1h ago"
   },
+  "auth": {
+    "login": {
+      "title": "Accedi al tuo account",
+      "email": "Indirizzo email",
+      "password": "Password",
+      "submit": "Accedi",
+      "noAccount": "Non hai un account?",
+      "register": "Registrati"
+    },
+    "register": {
+      "title": "Crea il tuo account",
+      "email": "Indirizzo email",
+      "password": "Password",
+      "submit": "Crea account",
+      "hasAccount": "Hai già un account?",
+      "login": "Accedi"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "uptime": "Disponibilità",
+    "latency": "Latenza",
+    "requests": "Richieste",
+    "errors": "Errori"
+  },
+  "billing": {
+    "title": "Fatturazione",
+    "currentPlan": "Piano attuale",
+    "upgrade": "Aggiorna",
+    "cancel": "Annulla abbonamento",
+    "changePlan": "Cambia piano",
+    "applyPromo": "Applica codice promozionale",
+    "portal": "Gestisci fatturazione",
+    "success": "Pagamento riuscito!",
+    "successDesc": "Il tuo abbonamento è stato aggiornato."
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "profile": "Profilo",
+    "fullName": "Nome completo",
+    "email": "Email",
+    "save": "Salva modifiche",
+    "danger": "Zona pericolosa",
+    "deleteAccount": "Elimina account",
+    "deleteConfirm": "Questo eliminerà permanentemente il tuo account e tutti i dati."
+  },
+  "org": {
+    "title": "Organizzazione",
+    "create": "Crea organizzazione",
+    "members": "Membri",
+    "invite": "Invita membro",
+    "role": "Ruolo",
+    "remove": "Rimuovi"
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "error": "Qualcosa è andato storto",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "confirm": "Conferma"
+  },
   "contact": {
     "title": "Contattaci",
     "description": "Hai una domanda o hai bisogno di aiuto? Ci piacerebbe sentirti.",
