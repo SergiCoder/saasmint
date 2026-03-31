@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { AuthError } from "@/domain/errors/AuthError";
 
+const mockGetUser = vi.fn();
 const mockGetSession = vi.fn();
 
 vi.mock("@/infrastructure/supabase/server", () => ({
   createClient: vi.fn().mockResolvedValue({
-    auth: { getSession: mockGetSession },
+    auth: { getUser: mockGetUser, getSession: mockGetSession },
   }),
 }));
 
@@ -18,6 +19,9 @@ const { getAuthToken, apiFetch } =
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mockGetUser.mockResolvedValue({
+    data: { user: { id: "u1" } },
+  });
   mockGetSession.mockResolvedValue({
     data: { session: { access_token: "tok_abc" } },
   });
@@ -33,9 +37,9 @@ describe("getAuthToken", () => {
     expect(token).toBe("tok_abc");
   });
 
-  it("throws AuthError when no session exists", async () => {
-    mockGetSession.mockResolvedValue({
-      data: { session: null },
+  it("throws AuthError when no user exists", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: null },
     });
 
     await expect(getAuthToken()).rejects.toThrow(AuthError);
@@ -186,9 +190,9 @@ describe("apiFetch", () => {
     expect(headers["content-type"]).toBe("text/plain");
   });
 
-  it("throws AuthError when no session exists", async () => {
-    mockGetSession.mockResolvedValue({
-      data: { session: null },
+  it("throws AuthError when no user exists", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: null },
     });
 
     await expect(apiFetch("/account/")).rejects.toThrow(AuthError);
