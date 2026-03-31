@@ -49,8 +49,8 @@ Each gateway implements a port interface from `src/application/ports/` (e.g. `IO
 
 Strict atomic design in `src/presentation/components/`:
 
-- `atoms/` — Button, Input, Badge, Avatar, Label, Spinner, Logo
-- `molecules/` — FormField, MetricCard, NavLink, PlanCard, AlertBanner, FeatureCard, StatItem, TrustBar
+- `atoms/` — Button, Input, Badge, Avatar, Label, Spinner, Logo, SectionLabel
+- `molecules/` — FormField, MetricCard, NavLink, PlanCard, AlertBanner, FeatureCard, StatItem, TrustBar, OrgCard
 - `organisms/` — NavBar, Footer, PricingTable, SubscriptionCard, OrgMemberList, InvoiceTable, CtaSection, DashboardMock, FeaturesGrid, LogoCloud, StatsSection
 - `templates/` — MarketingLayout, AuthLayout, AppLayout
 
