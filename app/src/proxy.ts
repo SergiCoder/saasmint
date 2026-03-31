@@ -55,7 +55,11 @@ export async function proxy(request: NextRequest) {
       const locale = pathname.split("/")[1] ?? routing.defaultLocale;
       return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
     }
-    return response;
+    const intlResponse = intlMiddleware(request);
+    response.cookies.getAll().forEach(({ name, value }) => {
+      intlResponse.cookies.set(name, value);
+    });
+    return intlResponse;
   }
 
   return intlMiddleware(request);
