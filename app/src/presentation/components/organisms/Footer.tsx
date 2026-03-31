@@ -27,11 +27,11 @@ export function Footer({
   const allLinks = sections.flatMap((s) => s.links);
 
   return (
-    <footer className={`border-t border-gray-200 bg-gray-50 ${className}`}>
-      <div className="flex flex-wrap items-center justify-between gap-5 px-5 py-8 sm:px-8 lg:px-16">
+    <footer className={`border-t border-gray-200 bg-white ${className}`}>
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 px-4 py-8 text-center sm:flex-row sm:justify-between sm:px-6 sm:text-left lg:px-8">
         <Logo appName={appName} />
 
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
           {allLinks.map((link) => {
             const Comp = link.href.startsWith("#") ? "a" : Link;
             return (
