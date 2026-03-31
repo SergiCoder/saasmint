@@ -77,6 +77,14 @@
     "placeholder": "이메일 주소",
     "submit": "보내기"
   },
+  "about": {
+    "title": "이 프로젝트 소개",
+    "intro": "Next.js와 Stripe로 구축된 오픈소스 SaaS 스타터입니다. 인증, 결제, 조직 관리, i18n을 즉시 사용 가능한 형태로 제공합니다 — 보일러플레이트를 건너뛰고 바로 제품 개발을 시작할 수 있습니다.",
+    "body": "GitHub에서 포크하고, 자신의 브랜딩으로 교체하면 바로 시작할 수 있습니다. 사이드 프로젝트든 본격적인 SaaS든, 이 템플릿이 모두 해결해 드립니다.",
+    "cta": "GitHub에서 포크",
+    "repoFrontend": "인증, 결제, i18n을 갖춘 Next.js 프론트엔드",
+    "repoBackend": "Stripe 연동과 REST API를 갖춘 Django 백엔드"
+  },
   "blog": {
     "title": "블로그",
     "comingSoon": "새로운 글이 공 올라옵니다. 기대해 주세요!"

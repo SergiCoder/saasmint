@@ -77,6 +77,14 @@
     "placeholder": "E-postadressen din",
     "submit": "Send"
   },
+  "about": {
+    "title": "Om dette prosjektet",
+    "intro": "Dette er en åpen kildekode SaaS-starter bygget med Next.js og Stripe. Den gir deg autentisering, fakturering, organisasjoner og i18n rett ut av boksen — slik at du kan hoppe over standardkoden og begynne å bygge produktet ditt.",
+    "body": "Fork det på GitHub, bytt inn ditt eget merkevarebygging, og du er klar. Enten du lanserer et sideprosjekt eller en fullverdig SaaS, har denne malen deg dekket.",
+    "cta": "Fork på GitHub",
+    "repoFrontend": "Next.js-frontend med autentisering, fakturering og i18n",
+    "repoBackend": "Django-backend med Stripe-integrasjon og REST API"
+  },
   "blog": {
     "title": "Blogg",
     "comingSoon": "Nye innlegg kommer snart. Følg med!"

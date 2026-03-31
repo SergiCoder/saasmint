@@ -77,6 +77,14 @@
     "placeholder": "Ihre E-Mail-Adresse",
     "submit": "Senden"
   },
+  "about": {
+    "title": "Über dieses Projekt",
+    "intro": "Dies ist ein Open-Source-SaaS-Starter, der mit Next.js und Stripe erstellt wurde. Er bietet sofort Authentifizierung, Abrechnung, Organisationen und i18n — damit du den Boilerplate überspringen und mit dem Aufbau deines Produkts beginnen kannst.",
+    "body": "Forke es auf GitHub, passe es mit deinem eigenen Branding an und du bist startklar. Ob du ein Nebenprojekt oder ein vollständiges SaaS startest — dieses Template hat dich abgedeckt.",
+    "cta": "Fork auf GitHub",
+    "repoFrontend": "Next.js-Frontend mit Authentifizierung, Abrechnung und i18n",
+    "repoBackend": "Django-Backend mit Stripe-Integration und REST-API"
+  },
   "blog": {
     "title": "Blog",
     "comingSoon": "Neue Beiträge kommen bald. Bleiben Sie dran!"

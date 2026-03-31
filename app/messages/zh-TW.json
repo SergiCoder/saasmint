@@ -77,6 +77,14 @@
     "placeholder": "您的電子郵件地址",
     "submit": "傳送"
   },
+  "about": {
+    "title": "關於本專案",
+    "intro": "這是一個基於 Next.js 和 Stripe 構建的開源 SaaS 啟動模板。它開箱即用地提供了身份驗證、計費、組織管理和國際化 — 讓你跳過樣板程式碼，直接開始構建你的產品。",
+    "body": "在 GitHub 上 Fork 它，替換為你自己的品牌，即可開始使用。無論你是在啟動一個小專案還是完整的 SaaS，這個模板都能滿足你的需求。",
+    "cta": "在 GitHub 上 Fork",
+    "repoFrontend": "包含身份驗證、計費和國際化的 Next.js 前端",
+    "repoBackend": "整合 Stripe 和 REST API 的 Django 後端"
+  },
   "blog": {
     "title": "部落格",
     "comingSoon": "新文章即將發佈。敬請期待！"

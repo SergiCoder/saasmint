@@ -77,6 +77,14 @@
     "placeholder": "Alamat email Anda",
     "submit": "Kirim"
   },
+  "about": {
+    "title": "Tentang proyek ini",
+    "intro": "Ini adalah starter SaaS open-source yang dibangun dengan Next.js dan Stripe. Sudah dilengkapi dengan autentikasi, penagihan, organisasi, dan i18n — sehingga Anda bisa melewati boilerplate dan langsung mulai membangun produk Anda.",
+    "body": "Fork di GitHub, ganti dengan branding Anda sendiri, dan Anda siap meluncur. Baik untuk meluncurkan proyek sampingan maupun SaaS penuh, template ini siap mendukung Anda.",
+    "cta": "Fork di GitHub",
+    "repoFrontend": "Frontend Next.js dengan autentikasi, penagihan, dan i18n",
+    "repoBackend": "Backend Django dengan integrasi Stripe dan API REST"
+  },
   "blog": {
     "title": "Blog",
     "comingSoon": "Postingan baru segera hadir. Nantikan!"

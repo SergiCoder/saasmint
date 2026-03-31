@@ -77,6 +77,14 @@
     "placeholder": "E-posta adresiniz",
     "submit": "Gönder"
   },
+  "about": {
+    "title": "Bu proje hakkında",
+    "intro": "Bu, Next.js ve Stripe ile oluşturulmuş açık kaynaklı bir SaaS başlangıç şablonudur. Kimlik doğrulama, faturalandırma, organizasyonlar ve i18n'i kullanıma hazır olarak sunar — böylece tekrarlayan kodları atlayıp ürününüzü oluşturmaya başlayabilirsiniz.",
+    "body": "GitHub'da fork'layın, kendi markanızla değiştirin ve kullanıma hazırsınız. İster bir yan proje ister tam kapsamlı bir SaaS başlatıyor olun, bu şablon sizi kapsar.",
+    "cta": "GitHub'da Fork'la",
+    "repoFrontend": "Kimlik doğrulama, faturalandırma ve i18n içeren Next.js frontend",
+    "repoBackend": "Stripe entegrasyonu ve REST API içeren Django backend"
+  },
   "blog": {
     "title": "Blog",
     "comingSoon": "Yeni yazılar yakında. Takipte kalın!"
