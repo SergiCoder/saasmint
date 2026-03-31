@@ -52,7 +52,7 @@ export function DashboardMock({
               change={
                 m.change ? { value: m.change, positive: true } : undefined
               }
-              className="!p-3 !shadow-none"
+              compact
             />
           ))}
         </div>
