@@ -24,39 +24,29 @@ export function Footer({
   copyright,
   className = "",
 }: FooterProps) {
+  const allLinks = sections.flatMap((s) => s.links);
+
   return (
-    <footer className={`border-t border-gray-200 bg-white ${className}`}>
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-          <div className="col-span-2 md:col-span-1">
-            <Logo appName={appName} />
-          </div>
-          {sections.map((section) => (
-            <div key={section.title}>
-              <h3 className="text-sm font-semibold text-gray-900">
-                {section.title}
-              </h3>
-              <ul className="mt-4 space-y-3">
-                {section.links.map((link) => {
-                  const Comp = link.href.startsWith("#") ? "a" : Link;
-                  return (
-                    <li key={link.label}>
-                      <Comp
-                        href={link.href}
-                        className="text-sm text-gray-500 hover:text-gray-700"
-                      >
-                        {link.label}
-                      </Comp>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
+    <footer className={`border-t border-gray-200 bg-gray-50 ${className}`}>
+      <div className="flex flex-wrap items-center justify-between gap-5 px-5 py-8 sm:px-8 lg:px-16">
+        <Logo appName={appName} />
+
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+          {allLinks.map((link) => {
+            const Comp = link.href.startsWith("#") ? "a" : Link;
+            return (
+              <Comp
+                key={link.label}
+                href={link.href}
+                className="text-[13px] text-gray-500 transition-colors hover:text-gray-900"
+              >
+                {link.label}
+              </Comp>
+            );
+          })}
         </div>
-        <div className="mt-12 border-t border-gray-200 pt-8">
-          <p className="text-center text-sm text-gray-400">{copyright}</p>
-        </div>
+
+        <p className="text-[13px] text-gray-400">{copyright}</p>
       </div>
     </footer>
   );

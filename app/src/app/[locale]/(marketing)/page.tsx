@@ -109,7 +109,7 @@ export default async function LandingPage() {
   return (
     <>
       {/* Hero */}
-      <section className="mx-auto grid min-h-[88vh] max-w-6xl items-center gap-16 px-4 pt-28 pb-16 sm:px-6 lg:grid-cols-2 lg:px-8">
+      <section className="mx-auto grid max-w-6xl items-center gap-16 px-4 pt-16 pb-16 sm:px-6 lg:grid-cols-2 lg:px-8">
         <div>
           <Badge variant="success" className="mb-7">
             {t("badge")}
