@@ -64,4 +64,52 @@ describe("DashboardMock", () => {
     const wrapper = container.firstChild as HTMLElement;
     expect(wrapper.className).toContain("max-w-lg");
   });
+
+  it("highlights the tallest chart bar with full opacity", () => {
+    const { container } = render(<DashboardMock {...defaultProps} />);
+    const barContainer = container.querySelector("[style*='height: 48px']")!;
+    const bars = Array.from(barContainer.children) as HTMLElement[];
+    // chartBars = [20, 45, 30, 60, 80, 55, 90] -> max is 90 at index 6
+    expect(bars[6].style.opacity).toBe("1");
+    expect(bars[0].style.opacity).toBe("0.4");
+  });
+
+  it("renders the tallest bar at 100% height", () => {
+    const { container } = render(<DashboardMock {...defaultProps} />);
+    const barContainer = container.querySelector("[style*='height: 48px']")!;
+    const bars = Array.from(barContainer.children) as HTMLElement[];
+    // Max bar (90) should be 100% height
+    expect(bars[6].style.height).toBe("100%");
+  });
+
+  it("renders with empty chartBars array", () => {
+    const { container } = render(
+      <DashboardMock {...defaultProps} chartBars={[]} />,
+    );
+    const barContainer = container.querySelector("[style*='height: 48px']");
+    expect(barContainer).toBeInTheDocument();
+    expect(barContainer!.children).toHaveLength(0);
+  });
+
+  it("renders with empty metrics array", () => {
+    render(<DashboardMock {...defaultProps} metrics={[]} />);
+    expect(screen.getByText("app.example.com/dashboard")).toBeInTheDocument();
+  });
+
+  it("renders with empty activities array", () => {
+    render(<DashboardMock {...defaultProps} activities={[]} />);
+    expect(screen.getByText("app.example.com/dashboard")).toBeInTheDocument();
+  });
+
+  it("renders activity icons as arbitrary React nodes", () => {
+    const activities = [
+      {
+        icon: <svg data-testid="activity-icon" />,
+        text: "Deployed",
+        time: "1m ago",
+      },
+    ];
+    render(<DashboardMock {...defaultProps} activities={activities} />);
+    expect(screen.getByTestId("activity-icon")).toBeInTheDocument();
+  });
 });

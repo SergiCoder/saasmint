@@ -23,4 +23,17 @@ describe("StatItem", () => {
     const wrapper = container.firstChild as HTMLElement;
     expect(wrapper.className).toContain("text-center");
   });
+
+  it("renders value in a p element with bold styling", () => {
+    render(<StatItem value="42" label="Answer" />);
+    const value = screen.getByText("42");
+    expect(value.tagName).toBe("P");
+    expect(value.className).toContain("font-bold");
+  });
+
+  it("renders label in a p element", () => {
+    render(<StatItem value="42" label="Answer" />);
+    const label = screen.getByText("Answer");
+    expect(label.tagName).toBe("P");
+  });
 });

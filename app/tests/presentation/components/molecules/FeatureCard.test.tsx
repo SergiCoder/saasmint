@@ -51,4 +51,12 @@ describe("FeatureCard", () => {
     const desc = screen.getByText("Body text");
     expect(desc.tagName).toBe("P");
   });
+
+  it("does not inject undefined or extra text when className is omitted", () => {
+    const { container } = render(
+      <FeatureCard icon={<span>X</span>} title="T" description="D" />,
+    );
+    const card = container.firstChild as HTMLElement;
+    expect(card.className).not.toContain("undefined");
+  });
 });

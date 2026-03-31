@@ -39,4 +39,16 @@ describe("LogoCloud", () => {
     const section = container.querySelector("section") as HTMLElement;
     expect(section.className).toContain("py-20");
   });
+
+  it("renders label in a p element with uppercase styling", () => {
+    render(<LogoCloud label="Our partners" logos={logos} />);
+    const label = screen.getByText("Our partners");
+    expect(label.tagName).toBe("P");
+    expect(label.className).toContain("uppercase");
+  });
+
+  it("renders a single logo", () => {
+    render(<LogoCloud label="Partner" logos={["Solo"]} />);
+    expect(screen.getByText("Solo")).toBeInTheDocument();
+  });
 });
