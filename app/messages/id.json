@@ -74,7 +74,8 @@
   "contact": {
     "title": "Hubungi kami",
     "description": "Punya pertanyaan atau butuh bantuan? Kami senang mendengar dari Anda.",
-    "email": "hello@meridian.dev"
+    "placeholder": "Alamat email Anda",
+    "submit": "Kirim"
   },
   "blog": {
     "title": "Blog",

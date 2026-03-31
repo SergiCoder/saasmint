@@ -74,7 +74,8 @@
   "contact": {
     "title": "お問い合わせ",
     "description": "ご質問やお困りのことがありますか？お気軽にご連絡ください。",
-    "email": "hello@meridian.dev"
+    "placeholder": "メールアドレス",
+    "submit": "送信"
   },
   "blog": {
     "title": "ブログ",

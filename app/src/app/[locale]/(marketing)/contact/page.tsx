@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { ContactForm } from "./_components/ContactForm";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("contact");
@@ -17,8 +18,8 @@ export default async function ContactPage() {
       <p className="mt-4 text-lg leading-relaxed text-gray-500">
         {t("description")}
       </p>
-      <div className="mt-8 text-gray-700">
-        <p>{t("email")}</p>
+      <div className="mt-8">
+        <ContactForm placeholder={t("placeholder")} submitLabel={t("submit")} />
       </div>
     </section>
   );

@@ -136,7 +136,8 @@
   "contact": {
     "title": "Contact us",
     "description": "Have a question or need help? We'd love to hear from you.",
-    "email": "hello@meridian.dev"
+    "placeholder": "Your email address",
+    "submit": "Send"
   },
   "blog": {
     "title": "Blog",

@@ -74,7 +74,8 @@
   "contact": {
     "title": "Contacte-nos",
     "description": "Tem alguma questão ou precisa de ajuda? Gostaríamos de o ouvir.",
-    "email": "hello@meridian.dev"
+    "placeholder": "O seu endereço de e-mail",
+    "submit": "Enviar"
   },
   "blog": {
     "title": "Blog",

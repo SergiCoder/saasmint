@@ -74,7 +74,8 @@
   "contact": {
     "title": "Kontakt oss",
     "description": "Har du et spørsmål eller trenger hjelp? Vi hører gjerne fra deg.",
-    "email": "hello@meridian.dev"
+    "placeholder": "E-postadressen din",
+    "submit": "Send"
   },
   "blog": {
     "title": "Blogg",

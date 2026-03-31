@@ -74,7 +74,8 @@
   "contact": {
     "title": "聯絡我們",
     "description": "有問題或需要幫助？我們很樂意聽取您的意見。",
-    "email": "hello@meridian.dev"
+    "placeholder": "您的電子郵件地址",
+    "submit": "傳送"
   },
   "blog": {
     "title": "部落格",

@@ -74,7 +74,8 @@
   "contact": {
     "title": "문의하기",
     "description": "질문이 있거나 도움이 필요하신가요? 연락을 기다립니다.",
-    "email": "hello@meridian.dev"
+    "placeholder": "이메일 주소",
+    "submit": "보내기"
   },
   "blog": {
     "title": "블로그",
