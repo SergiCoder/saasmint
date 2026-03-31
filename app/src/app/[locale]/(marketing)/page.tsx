@@ -170,6 +170,7 @@ export default async function LandingPage() {
 
       {/* Features */}
       <FeaturesGrid
+        id="features"
         label={t("featuresLabel")}
         title={t("featuresTitle")}
         subtitle={t("featuresSubtitle")}
@@ -177,7 +178,7 @@ export default async function LandingPage() {
       />
 
       {/* Stats */}
-      <StatsSection stats={stats} />
+      <StatsSection id="stats" stats={stats} />
 
       {/* CTA */}
       <CtaSection

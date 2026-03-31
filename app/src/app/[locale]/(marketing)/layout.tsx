@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
+import { Link } from "@/lib/i18n/navigation";
 import { MarketingLayout } from "@/presentation/components/templates/MarketingLayout";
 
 interface MarketingLayoutRouteProps {
@@ -12,21 +12,30 @@ export default async function MarketingLayoutRoute({
   const t = await getTranslations("nav");
 
   const navLinks = [
-    { href: "/pricing", label: t("pricing") },
     { href: "#features", label: t("features") },
-    { href: "#docs", label: t("docs") },
+    { href: "#stats", label: t("whyUs") },
+    { href: "/pricing", label: t("pricing") },
+    { href: "#", label: t("docs") },
+    { href: "#", label: t("blog") },
   ];
+
+  const tFooter = await getTranslations("footer");
 
   const footerSections = [
     {
-      title: "Product",
-      links: navLinks,
+      title: "Legal",
+      links: [
+        { href: "#", label: tFooter("privacy") },
+        { href: "#", label: tFooter("terms") },
+        { href: "#", label: tFooter("security") },
+      ],
     },
     {
-      title: "Company",
+      title: "Resources",
       links: [
-        { href: "#about", label: "About" },
-        { href: "#blog", label: "Blog" },
+        { href: "#", label: tFooter("status") },
+        { href: "#", label: t("docs") },
+        { href: "#", label: t("blog") },
       ],
     },
   ];
@@ -36,15 +45,23 @@ export default async function MarketingLayoutRoute({
       appName="Meridian"
       navLinks={navLinks}
       navActions={
-        <Link
-          href="/login"
-          className="bg-primary-600 hover:bg-primary-700 focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-        >
-          {t("getStarted")}
-        </Link>
+        <>
+          <Link
+            href="/login"
+            className="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900"
+          >
+            {t("signIn")}
+          </Link>
+          <Link
+            href="/signup"
+            className="bg-primary-600 hover:bg-primary-700 focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          >
+            {t("getStarted")}
+          </Link>
+        </>
       }
       footerSections={footerSections}
-      copyright={`\u00A9 ${new Date().getFullYear()} Meridian. All rights reserved.`}
+      copyright={tFooter("copyright")}
     >
       {children}
     </MarketingLayout>

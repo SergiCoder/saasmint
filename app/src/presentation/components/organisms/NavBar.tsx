@@ -40,7 +40,7 @@ export function NavBar({
             <Logo appName={appName} />
             <div className="hidden items-center gap-6 md:flex">
               {links.map((link) => (
-                <NavLink key={link.href} href={link.href}>
+                <NavLink key={link.label} href={link.href}>
                   {link.label}
                 </NavLink>
               ))}
@@ -90,7 +90,7 @@ export function NavBar({
         <div className="border-t border-gray-200 md:hidden">
           <div className="space-y-1 px-4 py-3">
             {links.map((link) => (
-              <NavLink key={link.href} href={link.href} className="block py-2">
+              <NavLink key={link.label} href={link.href} className="block py-2">
                 {link.label}
               </NavLink>
             ))}

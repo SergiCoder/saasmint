@@ -2,6 +2,7 @@ import { SectionLabel } from "../atoms/SectionLabel";
 import { FeatureCard, type FeatureCardProps } from "../molecules/FeatureCard";
 
 export interface FeaturesGridProps {
+  id?: string;
   label: string;
   title: string;
   subtitle: string;
@@ -10,6 +11,7 @@ export interface FeaturesGridProps {
 }
 
 export function FeaturesGrid({
+  id,
   label,
   title,
   subtitle,
@@ -17,7 +19,7 @@ export function FeaturesGrid({
   className = "",
 }: FeaturesGridProps) {
   return (
-    <section className={`py-20 ${className}`}>
+    <section id={id} className={`py-20 ${className}`}>
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
           <SectionLabel>{label}</SectionLabel>
