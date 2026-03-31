@@ -3,14 +3,9 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { NavBar } from "@/presentation/components/organisms";
 
-// Mock next/navigation
-vi.mock("next/navigation", () => ({
-  usePathname: () => "/",
-}));
-
-// Mock next/link
-vi.mock("next/link", () => ({
-  default: ({
+// Mock next-intl navigation (used by NavLink)
+vi.mock("@/lib/i18n/navigation", () => ({
+  Link: ({
     href,
     children,
     ...props
@@ -23,6 +18,7 @@ vi.mock("next/link", () => ({
       {children}
     </a>
   ),
+  usePathname: () => "/",
 }));
 
 const defaultProps = {

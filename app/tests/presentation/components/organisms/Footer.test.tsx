@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { Footer } from "@/presentation/components/organisms";
 
-vi.mock("next/link", () => ({
-  default: ({
+vi.mock("@/lib/i18n/navigation", () => ({
+  Link: ({
     href,
     children,
     ...props

@@ -2,12 +2,8 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { MarketingLayout } from "@/presentation/components/templates";
 
-vi.mock("next/navigation", () => ({
-  usePathname: () => "/",
-}));
-
-vi.mock("next/link", () => ({
-  default: ({
+vi.mock("@/lib/i18n/navigation", () => ({
+  Link: ({
     href,
     children,
     ...props
@@ -20,6 +16,7 @@ vi.mock("next/link", () => ({
       {children}
     </a>
   ),
+  usePathname: () => "/",
 }));
 
 const defaultProps = {

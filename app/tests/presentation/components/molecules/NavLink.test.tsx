@@ -2,15 +2,10 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { NavLink } from "@/presentation/components/molecules";
 
-// Mock next/navigation
+// Mock next-intl navigation (used by NavLink)
 const mockUsePathname = vi.fn();
-vi.mock("next/navigation", () => ({
-  usePathname: () => mockUsePathname(),
-}));
-
-// Mock next/link to render a plain anchor
-vi.mock("next/link", () => ({
-  default: ({
+vi.mock("@/lib/i18n/navigation", () => ({
+  Link: ({
     href,
     children,
     ...props
@@ -23,6 +18,7 @@ vi.mock("next/link", () => ({
       {children}
     </a>
   ),
+  usePathname: () => mockUsePathname(),
 }));
 
 describe("NavLink", () => {
