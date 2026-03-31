@@ -32,7 +32,7 @@ export default async function MarketingLayoutRoute({
         { href: "/privacy", label: tFooter("privacy") },
         { href: "/terms", label: tFooter("terms") },
         { href: "/cookies", label: tFooter("cookies") },
-        { href: "#", label: tFooter("aboutUs") },
+        { href: "/about", label: tFooter("aboutUs") },
       ],
     },
   ];
