@@ -23,7 +23,7 @@ export function DashboardMock({
   activities,
   className = "",
 }: DashboardMockProps) {
-  const maxBar = Math.max(...chartBars);
+  const maxBar = chartBars.length > 0 ? Math.max(...chartBars) : 0;
 
   return (
     <div
@@ -66,7 +66,7 @@ export function DashboardMock({
                 key={i}
                 className="bg-primary-400 flex-1 rounded-t"
                 style={{
-                  height: `${(value / maxBar) * 100}%`,
+                  height: `${maxBar > 0 ? (value / maxBar) * 100 : 0}%`,
                   opacity: value === maxBar ? 1 : 0.4,
                 }}
               />
