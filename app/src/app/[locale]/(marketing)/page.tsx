@@ -9,9 +9,9 @@ import { FeaturesGrid } from "@/presentation/components/organisms/FeaturesGrid";
 import { StatsSection } from "@/presentation/components/organisms/StatsSection";
 import { CtaSection } from "@/presentation/components/organisms/CtaSection";
 
-export const metadata: Metadata = {
-  title: "Meridian",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: "Meridian" };
+}
 
 const TRUST_USERS = [
   { name: "JK" },
