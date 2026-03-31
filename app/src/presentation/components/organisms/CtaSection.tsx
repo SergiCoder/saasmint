@@ -21,7 +21,7 @@ export function CtaSection({
 }: CtaSectionProps) {
   return (
     <section className={`border-t border-gray-200 bg-white py-16 ${className}`}>
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="border-primary-200 from-primary-50 rounded-2xl border bg-gradient-to-br via-emerald-50 to-cyan-50 px-8 py-14 text-center sm:px-16">
           <SectionLabel centered>{label}</SectionLabel>
           <h2 className="mb-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
