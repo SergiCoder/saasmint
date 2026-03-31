@@ -4,5 +4,6 @@ export { SectionLabel, type SectionLabelProps } from "./SectionLabel";
 export { Button, type ButtonProps } from "./Button";
 export { Input, type InputProps } from "./Input";
 export { Label, type LabelProps } from "./Label";
+export { LocaleDropdown } from "./LocaleDropdown";
 export { Logo, type LogoProps } from "./Logo";
 export { Spinner, type SpinnerProps } from "./Spinner";

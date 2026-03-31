@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Logo } from "../atoms/Logo";
 import { Avatar } from "../atoms/Avatar";
+import { LocaleDropdown } from "../atoms/LocaleDropdown";
 import { NavLink } from "../molecules/NavLink";
 
 export interface NavBarLink {
@@ -48,6 +49,7 @@ export function NavBar({
         </div>
 
         <div className="flex items-center gap-2">
+          <LocaleDropdown />
           {actions}
           {user && (
             <Avatar src={user.avatarUrl} alt={user.fullName} size="sm" />
