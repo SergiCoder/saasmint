@@ -15,13 +15,26 @@ const PROTECTED_PREFIXES = [
 ];
 
 export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
 
-  // Strip locale prefix to check route protection
-  const pathnameWithoutLocale = pathname.replace(
-    /^\/[a-z]{2}(-[A-Z]{2})?(-[A-Z]{2})?/,
-    "",
-  );
+  // Supabase email confirmation sends ?code= to the site root.
+  // Redirect to the auth callback route so the code gets exchanged.
+  const code = searchParams.get("code");
+  const localePrefix = [...routing.locales]
+    .sort((a: string, b: string) => b.length - a.length) // match longer codes first (pt-BR before pt)
+    .find((l: string) => pathname.startsWith(`/${l}/`) || pathname === `/${l}`);
+  const pathnameWithoutLocale = localePrefix
+    ? pathname.slice(localePrefix.length + 1) // +1 for leading /
+    : pathname;
+  if (code && (pathnameWithoutLocale === "" || pathnameWithoutLocale === "/")) {
+    const locale = pathname.split("/")[1] ?? routing.defaultLocale;
+    const callbackUrl = new URL(
+      `/${locale}/auth/callback?code=${code}`,
+      request.url,
+    );
+    return NextResponse.redirect(callbackUrl);
+  }
+
   const isProtected = PROTECTED_PREFIXES.some((p) =>
     pathnameWithoutLocale.startsWith(p),
   );
@@ -47,11 +60,14 @@ export async function proxy(request: NextRequest) {
         },
       },
     );
+    // getUser() validates the JWT server-side and refreshes expired tokens.
+    // getSession() only reads cookies without validation, so stale tokens
+    // would pass the middleware but get rejected by the Django API.
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    if (!session) {
+    if (!user) {
       const locale = pathname.split("/")[1] ?? routing.defaultLocale;
       return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
     }
