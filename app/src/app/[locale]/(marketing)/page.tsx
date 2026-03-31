@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
+import { Link } from "@/lib/i18n/navigation";
 import { Badge } from "@/presentation/components/atoms/Badge";
 import { TrustBar } from "@/presentation/components/molecules/TrustBar";
 import { DashboardMock } from "@/presentation/components/organisms/DashboardMock";
@@ -131,7 +131,7 @@ export default async function LandingPage() {
             >
               {t("cta")}
             </Link>
-            <Link
+            <a
               href="#demo"
               className="focus-visible:ring-primary-500 inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-6 py-3 text-base text-gray-900 transition-colors hover:border-gray-300 hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
@@ -146,7 +146,7 @@ export default async function LandingPage() {
                 <path d="M6 5L10 7.5L6 10V5Z" fill="currentColor" />
               </svg>
               {t("ctaSecondary")}
-            </Link>
+            </a>
           </div>
           <TrustBar
             users={TRUST_USERS}
