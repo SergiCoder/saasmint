@@ -4,3 +4,6 @@ export { MetricCard, type MetricCardProps } from "./MetricCard";
 export { NavLink, type NavLinkProps } from "./NavLink";
 export { OrgCard, type OrgCardProps } from "./OrgCard";
 export { PlanCard, type PlanCardProps } from "./PlanCard";
+export { FeatureCard, type FeatureCardProps } from "./FeatureCard";
+export { StatItem, type StatItemProps } from "./StatItem";
+export { TrustBar, type TrustBarProps, type TrustBarUser } from "./TrustBar";
