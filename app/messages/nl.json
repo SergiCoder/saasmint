@@ -1,1 +1,206 @@
-{}
+{
+  "nav": {
+    "features": "Functies",
+    "pricing": "Prijzen",
+    "blog": "Blog",
+    "getStarted": "Aan de slag",
+    "dashboard": "Dashboard",
+    "billing": "Facturering",
+    "settings": "Instellingen",
+    "org": "Organisatie",
+    "admin": "Beheer",
+    "signIn": "Inloggen",
+    "signOut": "Uitloggen",
+    "contactUs": "Contact"
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Voorwaarden",
+    "copyright": "© 2026 SaaSmint, Inc.",
+    "cookies": "Cookies",
+    "aboutUs": "Over ons",
+    "legal": "Juridisch"
+  },
+  "landing": {
+    "badge": "Nu beschikbaar — SaaSmint 2.0 met AI-agents",
+    "headline": "Het platform waarmee teams echt <accent>resultaat leveren</accent>",
+    "subheadline": "Stop met het beheren van infrastructuur. Begin met het leveren van product. SaaSmint regelt deploys, schaling en observability zodat uw team zich kan richten op wat ertoe doet.",
+    "cta": "Gratis starten",
+    "ctaSecondary": "Bekijk de 2-min demo",
+    "trustText": "Meer dan {count} engineeringteams vertrouwen op ons",
+    "logosLabel": "Teams die op ons vertrouwen",
+    "featuresLabel": "Functies",
+    "featuresTitle": "Gebouwd voor teams die kwaliteit belangrijk vinden",
+    "featuresSubtitle": "Alles wat u nodig heeft om met vertrouwen te deployen op elke schaal — zonder operationele overhead.",
+    "featureDeploysTitle": "Directe deploys",
+    "featureDeploysDesc": "Push naar Git, live in 30 seconden. Geen configuratie, verbind uw repository en ga.",
+    "featureAiTitle": "AI-agents",
+    "featureAiDesc": "Autonome agents verzorgen testen, monitoring en incidentrespons voor u.",
+    "featureEdgeTitle": "Wereldwijd edge-netwerk",
+    "featureEdgeDesc": "Deploy naar 60+ regio's tegelijkertijd. Reactietijden onder 20ms voor gebruikers overal.",
+    "featureObsTitle": "Uniforme observability",
+    "featureObsDesc": "Metrics, logs en traces op één plek. ML-aangedreven alerts detecteren problemen als eerste.",
+    "featureSecTitle": "Zero-trust beveiliging",
+    "featureSecDesc": "End-to-end encryptie, RBAC, secretbeheer en SSO standaard inbegrepen.",
+    "featureIntTitle": "200+ integraties",
+    "featureIntDesc": "GitHub, Slack, Datadog, PagerDuty en honderden meer — sluit uw bestaande stack aan.",
+    "statDevs": "12,4k",
+    "statDevsLabel": "Actieve ontwikkelaars",
+    "statUptime": "99,99%",
+    "statUptimeLabel": "Beschikbaarheids-SLA",
+    "statRegions": "60+",
+    "statRegionsLabel": "Wereldwijde regio's",
+    "statLatency": "18ms",
+    "statLatencyLabel": "Gem. reactietijd",
+    "ctaSectionLabel": "Nu starten",
+    "ctaSectionTitle": "Klaar om sneller te leveren?",
+    "ctaSectionSubtitle": "Sluit u aan bij 12.400+ engineeringteams. Voor altijd gratis, geen kaart nodig.",
+    "ctaSectionPlaceholder": "u@bedrijf.nl",
+    "ctaSectionButton": "Begin met bouwen →",
+    "dashUrl": "app.meridian.io/dashboard",
+    "dashUptime": "Uptime",
+    "dashUptimeVal": "99,99%",
+    "dashUptimeSub": "Alle systemen nominaal",
+    "dashLatency": "Gem. latentie",
+    "dashLatencyVal": "18ms",
+    "dashLatencySub": "4ms t.o.v. vorige week",
+    "dashChart": "Verzoeken / uur",
+    "dashActivity1": "Deploy v2.4.1 succesvol — prod",
+    "dashActivity1Time": "2 min geleden",
+    "dashActivity2": "Automatisch geschaald naar 12 instanties",
+    "dashActivity2Time": "8 min geleden",
+    "dashActivity3": "Anomalie gedetecteerd en opgelost door agent",
+    "dashActivity3Time": "1 uur geleden"
+  },
+  "auth": {
+    "login": {
+      "title": "Inloggen op uw account",
+      "pageTitle": "Inloggen",
+      "email": "E-mailadres",
+      "password": "Wachtwoord",
+      "submit": "Inloggen",
+      "noAccount": "Nog geen account?",
+      "register": "Registreren"
+    },
+    "register": {
+      "title": "Maak uw account aan",
+      "pageTitle": "Registreren",
+      "email": "E-mailadres",
+      "password": "Wachtwoord",
+      "submit": "Account aanmaken",
+      "hasAccount": "Heeft u al een account?",
+      "login": "Inloggen"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "uptime": "Uptime",
+    "latency": "Latentie",
+    "requests": "Verzoeken",
+    "errors": "Fouten"
+  },
+  "billing": {
+    "title": "Facturering",
+    "currentPlan": "Huidig abonnement",
+    "upgrade": "Upgraden",
+    "cancel": "Abonnement opzeggen",
+    "changePlan": "Abonnement wijzigen",
+    "applyPromo": "Promotiecode toepassen",
+    "portal": "Facturering beheren",
+    "success": "Betaling geslaagd!",
+    "successDesc": "Uw abonnement is bijgewerkt."
+  },
+  "settings": {
+    "title": "Instellingen",
+    "profile": "Profiel",
+    "fullName": "Volledige naam",
+    "email": "E-mail",
+    "save": "Wijzigingen opslaan",
+    "danger": "Gevarenzone",
+    "deleteAccount": "Account verwijderen",
+    "deleteConfirm": "Dit verwijdert uw account en alle gegevens permanent."
+  },
+  "org": {
+    "title": "Organisatie",
+    "create": "Organisatie aanmaken",
+    "members": "Leden",
+    "invite": "Lid uitnodigen",
+    "role": "Rol",
+    "remove": "Verwijderen",
+    "name": "Naam",
+    "email": "E-mail",
+    "slug": "Slug",
+    "roleMember": "Lid",
+    "roleAdmin": "Beheerder",
+    "roleOwner": "Eigenaar"
+  },
+  "common": {
+    "loading": "Laden...",
+    "error": "Er is iets misgegaan",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "confirm": "Bevestigen",
+    "toggleNav": "Navigatie wisselen",
+    "dismiss": "Sluiten"
+  },
+  "pricing": {
+    "pageTitle": "Prijzen",
+    "interval": "maand",
+    "mostPopular": "Meest populair",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 project",
+    "starterFeature2": "Tot 1 000 verzoeken/maand",
+    "starterFeature3": "Community-ondersteuning",
+    "starterFeature4": "Basisanalyse",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Onbeperkte projecten",
+    "proFeature2": "Tot 100 000 verzoeken/maand",
+    "proFeature3": "Prioriteitsondersteuning",
+    "proFeature4": "Geavanceerde analyse",
+    "proFeature5": "Eigen domeinen",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Alles onbeperkt",
+    "enterpriseFeature2": "Toegewezen ondersteuning",
+    "enterpriseFeature3": "SSO & SAML",
+    "enterpriseFeature4": "SLA-garantie",
+    "enterpriseFeature5": "Auditlogs",
+    "enterpriseFeature6": "Aangepaste integraties"
+  },
+  "contact": {
+    "title": "Contact",
+    "description": "Heeft u een vraag of hulp nodig? We horen graag van u.",
+    "placeholder": "Uw e-mailadres",
+    "submit": "Verzenden"
+  },
+  "about": {
+    "title": "Over dit project",
+    "intro": "Dit is een open-source SaaS-starter gebouwd met Next.js en Stripe. Het biedt authenticatie, facturering, organisaties en i18n kant-en-klaar — zodat je de boilerplate kunt overslaan en direct kunt beginnen met bouwen aan je product.",
+    "body": "Fork het op GitHub, vervang door je eigen branding en je bent klaar om te gaan. Of je nu een zijproject of een volwaardige SaaS lanceert, dit template heeft je gedekt.",
+    "cta": "Fork op GitHub",
+    "repoFrontend": "Next.js-frontend met authenticatie, facturering en i18n",
+    "repoBackend": "Django-backend met Stripe-integratie en REST API"
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "Nieuwe berichten komen binnenkort. Blijf op de hoogte!"
+  },
+  "privacy": {
+    "title": "Privacybeleid",
+    "lastUpdated": "Laatst bijgewerkt: maart 2026",
+    "intro": "Uw privacy is belangrijk voor ons. Dit beleid legt uit hoe we uw persoonlijke gegevens verzamelen, gebruiken en beschermen."
+  },
+  "terms": {
+    "title": "Servicevoorwaarden",
+    "lastUpdated": "Laatst bijgewerkt: maart 2026",
+    "intro": "Door SaaSmint te gebruiken, stemt u in met deze voorwaarden. Lees ze zorgvuldig door voordat u onze diensten gebruikt."
+  },
+  "cookies": {
+    "title": "Cookiebeleid",
+    "lastUpdated": "Laatst bijgewerkt: maart 2026",
+    "intro": "We gebruiken cookies om uw ervaring te verbeteren. Dit beleid legt uit hoe en waarom we cookies op onze website gebruiken."
+  }
+}

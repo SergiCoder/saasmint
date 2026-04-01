@@ -1,1 +1,206 @@
-{}
+{
+  "nav": {
+    "features": "Funzionalità",
+    "pricing": "Prezzi",
+    "blog": "Blog",
+    "getStarted": "Inizia",
+    "dashboard": "Dashboard",
+    "billing": "Fatturazione",
+    "settings": "Impostazioni",
+    "org": "Organizzazione",
+    "admin": "Amministrazione",
+    "signIn": "Accedi",
+    "signOut": "Esci",
+    "contactUs": "Contattaci"
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Termini",
+    "copyright": "© 2026 SaaSmint, Inc.",
+    "cookies": "Cookie",
+    "aboutUs": "Chi siamo",
+    "legal": "Legale"
+  },
+  "landing": {
+    "badge": "Disponibile — SaaSmint 2.0 con agenti IA",
+    "headline": "La piattaforma con cui i team <accent>consegnano davvero</accent>",
+    "subheadline": "Smetti di gestire l'infrastruttura. Inizia a consegnare prodotto. SaaSmint gestisce deploy, scaling e observability perché il tuo team si concentri su ciò che conta.",
+    "cta": "Inizia gratis",
+    "ctaSecondary": "Guarda la demo di 2 min",
+    "trustText": "Più di {count} team di ingegneria si fidano di noi",
+    "logosLabel": "Team che si fidano di noi",
+    "featuresLabel": "Funzionalità",
+    "featuresTitle": "Progettato per team che tengono alla qualità",
+    "featuresSubtitle": "Tutto ciò che serve per fare deploy con fiducia a qualsiasi scala — senza il carico operativo.",
+    "featureDeploysTitle": "Deploy istantanei",
+    "featureDeploysDesc": "Push su Git, online in 30 secondi. Zero configurazione, collega il tuo repository e vai.",
+    "featureAiTitle": "Agenti IA",
+    "featureAiDesc": "Agenti autonomi gestiscono test, monitoraggio e risposta agli incidenti per te.",
+    "featureEdgeTitle": "Rete edge globale",
+    "featureEdgeDesc": "Fai deploy in oltre 60 regioni simultaneamente. Risposte sotto i 20 ms per utenti ovunque.",
+    "featureObsTitle": "Observability unificata",
+    "featureObsDesc": "Metriche, log e trace in un unico posto. Alert ML che rilevano i problemi per primi.",
+    "featureSecTitle": "Sicurezza zero-trust",
+    "featureSecDesc": "Crittografia end-to-end, RBAC, gestione dei secret e SSO inclusi di default.",
+    "featureIntTitle": "Oltre 200 integrazioni",
+    "featureIntDesc": "GitHub, Slack, Datadog, PagerDuty e centinaia di altri — collega il tuo stack esistente.",
+    "statDevs": "12,4k",
+    "statDevsLabel": "Sviluppatori attivi",
+    "statUptime": "99,99%",
+    "statUptimeLabel": "SLA di disponibilità",
+    "statRegions": "60+",
+    "statRegionsLabel": "Regioni globali",
+    "statLatency": "18ms",
+    "statLatencyLabel": "Tempo medio di risposta",
+    "ctaSectionLabel": "Inizia ora",
+    "ctaSectionTitle": "Pronto a consegnare più velocemente?",
+    "ctaSectionSubtitle": "Unisciti a oltre 12.400 team di ingegneria. Gratis per sempre, senza carta.",
+    "ctaSectionPlaceholder": "tu@azienda.it",
+    "ctaSectionButton": "Inizia a costruire →",
+    "dashUrl": "app.meridian.io/dashboard",
+    "dashUptime": "Disponibilità",
+    "dashUptimeVal": "99,99%",
+    "dashUptimeSub": "Tutti i sistemi operativi",
+    "dashLatency": "Latenza media",
+    "dashLatencyVal": "18ms",
+    "dashLatencySub": "4ms rispetto alla settimana scorsa",
+    "dashChart": "Richieste / ora",
+    "dashActivity1": "Deploy v2.4.1 riuscito — prod",
+    "dashActivity1Time": "2min fa",
+    "dashActivity2": "Auto-scalato a 12 istanze",
+    "dashActivity2Time": "8min fa",
+    "dashActivity3": "Anomalia rilevata e risolta dall'agente",
+    "dashActivity3Time": "1h fa"
+  },
+  "auth": {
+    "login": {
+      "title": "Accedi al tuo account",
+      "pageTitle": "Accedi",
+      "email": "Indirizzo email",
+      "password": "Password",
+      "submit": "Accedi",
+      "noAccount": "Non hai un account?",
+      "register": "Registrati"
+    },
+    "register": {
+      "title": "Crea il tuo account",
+      "pageTitle": "Registrati",
+      "email": "Indirizzo email",
+      "password": "Password",
+      "submit": "Crea account",
+      "hasAccount": "Hai già un account?",
+      "login": "Accedi"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "uptime": "Disponibilità",
+    "latency": "Latenza",
+    "requests": "Richieste",
+    "errors": "Errori"
+  },
+  "billing": {
+    "title": "Fatturazione",
+    "currentPlan": "Piano attuale",
+    "upgrade": "Aggiorna",
+    "cancel": "Annulla abbonamento",
+    "changePlan": "Cambia piano",
+    "applyPromo": "Applica codice promozionale",
+    "portal": "Gestisci fatturazione",
+    "success": "Pagamento riuscito!",
+    "successDesc": "Il tuo abbonamento è stato aggiornato."
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "profile": "Profilo",
+    "fullName": "Nome completo",
+    "email": "Email",
+    "save": "Salva modifiche",
+    "danger": "Zona pericolosa",
+    "deleteAccount": "Elimina account",
+    "deleteConfirm": "Questo eliminerà permanentemente il tuo account e tutti i dati."
+  },
+  "org": {
+    "title": "Organizzazione",
+    "create": "Crea organizzazione",
+    "members": "Membri",
+    "invite": "Invita membro",
+    "role": "Ruolo",
+    "remove": "Rimuovi",
+    "name": "Nome",
+    "email": "Email",
+    "slug": "Slug",
+    "roleMember": "Membro",
+    "roleAdmin": "Amministratore",
+    "roleOwner": "Proprietario"
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "error": "Qualcosa è andato storto",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "confirm": "Conferma",
+    "toggleNav": "Attiva/disattiva navigazione",
+    "dismiss": "Chiudi"
+  },
+  "pricing": {
+    "pageTitle": "Prezzi",
+    "interval": "mese",
+    "mostPopular": "Più popolare",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 progetto",
+    "starterFeature2": "Fino a 1 000 richieste/mese",
+    "starterFeature3": "Supporto community",
+    "starterFeature4": "Analisi di base",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Progetti illimitati",
+    "proFeature2": "Fino a 100 000 richieste/mese",
+    "proFeature3": "Supporto prioritario",
+    "proFeature4": "Analisi avanzate",
+    "proFeature5": "Domini personalizzati",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Tutto illimitato",
+    "enterpriseFeature2": "Supporto dedicato",
+    "enterpriseFeature3": "SSO e SAML",
+    "enterpriseFeature4": "Garanzia SLA",
+    "enterpriseFeature5": "Log di audit",
+    "enterpriseFeature6": "Integrazioni personalizzate"
+  },
+  "contact": {
+    "title": "Contattaci",
+    "description": "Hai una domanda o hai bisogno di aiuto? Ci piacerebbe sentirti.",
+    "placeholder": "Il tuo indirizzo email",
+    "submit": "Invia"
+  },
+  "about": {
+    "title": "Informazioni su questo progetto",
+    "intro": "Questo è uno starter SaaS open source costruito con Next.js e Stripe. Offre autenticazione, fatturazione, organizzazioni e i18n già configurati — così puoi saltare il codice boilerplate e iniziare a costruire il tuo prodotto.",
+    "body": "Crea un fork su GitHub, sostituisci con il tuo branding e sei pronto a partire. Che tu stia lanciando un progetto collaterale o un SaaS completo, questo template ha tutto ciò di cui hai bisogno.",
+    "cta": "Fork su GitHub",
+    "repoFrontend": "Frontend Next.js con autenticazione, fatturazione e i18n",
+    "repoBackend": "Backend Django con integrazione Stripe e API REST"
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "Nuovi articoli in arrivo. Resta sintonizzato!"
+  },
+  "privacy": {
+    "title": "Informativa sulla privacy",
+    "lastUpdated": "Ultimo aggiornamento: marzo 2026",
+    "intro": "La tua privacy è importante per noi. Questa informativa spiega come raccogliamo, utilizziamo e proteggiamo le tue informazioni personali."
+  },
+  "terms": {
+    "title": "Termini di servizio",
+    "lastUpdated": "Ultimo aggiornamento: marzo 2026",
+    "intro": "Utilizzando SaaSmint, accetti questi termini. Leggili attentamente prima di utilizzare i nostri servizi."
+  },
+  "cookies": {
+    "title": "Informativa sui cookie",
+    "lastUpdated": "Ultimo aggiornamento: marzo 2026",
+    "intro": "Utilizziamo i cookie per migliorare la tua esperienza. Questa informativa spiega come e perché utilizziamo i cookie sul nostro sito."
+  }
+}

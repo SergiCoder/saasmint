@@ -1,1 +1,206 @@
-{}
+{
+  "nav": {
+    "features": "機能",
+    "pricing": "料金",
+    "blog": "Blog",
+    "getStarted": "始める",
+    "dashboard": "ダッシュボード",
+    "billing": "請求",
+    "settings": "設定",
+    "org": "組織",
+    "admin": "管理",
+    "signIn": "ログイン",
+    "signOut": "ログアウト",
+    "contactUs": "お問い合わせ"
+  },
+  "footer": {
+    "privacy": "プライバシー",
+    "terms": "利用規約",
+    "copyright": "© 2026 SaaSmint, Inc.",
+    "cookies": "Cookie",
+    "aboutUs": "会社概要",
+    "legal": "法的情報"
+  },
+  "landing": {
+    "badge": "正式リリース — SaaSmint 2.0（AIエージェント搭載）",
+    "headline": "チームが本当に<accent>成果を出す</accent>プラットフォーム",
+    "subheadline": "インフラ管理はもう終わり。プロダクトの出荷に集中しましょう。SaaSmintがデプロイ、スケーリング、オブザーバビリティを担当し、チームが本当に大切なことに集中できるようにします。",
+    "cta": "無料で始める",
+    "ctaSecondary": "2分デモを見る",
+    "trustText": "{count}以上のエンジニアリングチームが利用中",
+    "logosLabel": "導入企業",
+    "featuresLabel": "機能",
+    "featuresTitle": "品質を重視するチームのために設計",
+    "featuresSubtitle": "あらゆる規模で安心してデプロイするために必要なすべて — 運用の負担なし。",
+    "featureDeploysTitle": "瞬時デプロイ",
+    "featureDeploysDesc": "Gitにプッシュ、30秒で本番稼働。設定不要、リポジトリを接続するだけ。",
+    "featureAiTitle": "AIエージェント",
+    "featureAiDesc": "自律型エージェントがテスト、監視、インシデント対応を代行します。",
+    "featureEdgeTitle": "グローバルエッジネットワーク",
+    "featureEdgeDesc": "60以上のリージョンに同時デプロイ。世界中のユーザーに20ms以下のレスポンス。",
+    "featureObsTitle": "統合オブザーバビリティ",
+    "featureObsDesc": "メトリクス、ログ、トレースを一か所に。ML搭載のアラートが問題をいち早く検知。",
+    "featureSecTitle": "ゼロトラストセキュリティ",
+    "featureSecDesc": "エンドツーエンド暗号化、RBAC、シークレット管理、SSOが標準装備。",
+    "featureIntTitle": "200以上のインテグレーション",
+    "featureIntDesc": "GitHub、Slack、Datadog、PagerDutyなど数百種類 — 既存のスタックをそのまま接続。",
+    "statDevs": "1.24万",
+    "statDevsLabel": "アクティブ開発者数",
+    "statUptime": "99.99%",
+    "statUptimeLabel": "稼働率SLA",
+    "statRegions": "60+",
+    "statRegionsLabel": "グローバルリージョン",
+    "statLatency": "18ms",
+    "statLatencyLabel": "平均応答時間",
+    "ctaSectionLabel": "今すぐ始める",
+    "ctaSectionTitle": "もっと速く出荷する準備はできましたか？",
+    "ctaSectionSubtitle": "12,400以上のエンジニアリングチームに参加。永久無料、カード不要。",
+    "ctaSectionPlaceholder": "you@company.jp",
+    "ctaSectionButton": "構築を始める →",
+    "dashUrl": "app.meridian.io/dashboard",
+    "dashUptime": "稼働率",
+    "dashUptimeVal": "99.99%",
+    "dashUptimeSub": "全システム正常稼働中",
+    "dashLatency": "平均レイテンシ",
+    "dashLatencyVal": "18ms",
+    "dashLatencySub": "先週比 4ms",
+    "dashChart": "リクエスト / 時間",
+    "dashActivity1": "デプロイ v2.4.1 成功 — 本番",
+    "dashActivity1Time": "2分前",
+    "dashActivity2": "12インスタンスに自動スケール",
+    "dashActivity2Time": "8分前",
+    "dashActivity3": "異常を検知しエージェントが解決",
+    "dashActivity3Time": "1時間前"
+  },
+  "auth": {
+    "login": {
+      "title": "アカウントにサインイン",
+      "pageTitle": "ログイン",
+      "email": "メールアドレス",
+      "password": "パスワード",
+      "submit": "サインイン",
+      "noAccount": "アカウントをお持ちでないですか？",
+      "register": "新規登録"
+    },
+    "register": {
+      "title": "アカウントを作成",
+      "pageTitle": "新規登録",
+      "email": "メールアドレス",
+      "password": "パスワード",
+      "submit": "アカウント作成",
+      "hasAccount": "すでにアカウントをお持ちですか？",
+      "login": "サインイン"
+    }
+  },
+  "dashboard": {
+    "title": "ダッシュボード",
+    "uptime": "稼働率",
+    "latency": "レイテンシ",
+    "requests": "リクエスト",
+    "errors": "エラー"
+  },
+  "billing": {
+    "title": "請求",
+    "currentPlan": "現在のプラン",
+    "upgrade": "アップグレード",
+    "cancel": "サブスクリプションを解約",
+    "changePlan": "プランを変更",
+    "applyPromo": "プロモコードを適用",
+    "portal": "請求を管理",
+    "success": "お支払い完了！",
+    "successDesc": "サブスクリプションが更新されました。"
+  },
+  "settings": {
+    "title": "設定",
+    "profile": "プロフィール",
+    "fullName": "氏名",
+    "email": "メール",
+    "save": "変更を保存",
+    "danger": "危険な操作",
+    "deleteAccount": "アカウントを削除",
+    "deleteConfirm": "アカウントとすべてのデータが完全に削除されます。"
+  },
+  "org": {
+    "title": "組織",
+    "create": "組織を作成",
+    "members": "メンバー",
+    "invite": "メンバーを招待",
+    "role": "役割",
+    "remove": "削除",
+    "name": "名前",
+    "email": "メール",
+    "slug": "Slug",
+    "roleMember": "メンバー",
+    "roleAdmin": "管理者",
+    "roleOwner": "オーナー"
+  },
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "confirm": "確認",
+    "toggleNav": "ナビゲーション切替",
+    "dismiss": "閉じる"
+  },
+  "pricing": {
+    "pageTitle": "料金プラン",
+    "interval": "月",
+    "mostPopular": "一番人気",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1プロジェクト",
+    "starterFeature2": "月間1,000リクエストまで",
+    "starterFeature3": "コミュニティサポート",
+    "starterFeature4": "基本分析",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "無制限のプロジェクト",
+    "proFeature2": "月間100,000リクエストまで",
+    "proFeature3": "優先サポート",
+    "proFeature4": "高度な分析",
+    "proFeature5": "カスタムドメイン",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "すべて無制限",
+    "enterpriseFeature2": "専任サポート",
+    "enterpriseFeature3": "SSO & SAML",
+    "enterpriseFeature4": "SLA保証",
+    "enterpriseFeature5": "監査ログ",
+    "enterpriseFeature6": "カスタム連携"
+  },
+  "contact": {
+    "title": "お問い合わせ",
+    "description": "ご質問やお困りのことがありますか？お気軽にご連絡ください。",
+    "placeholder": "メールアドレス",
+    "submit": "送信"
+  },
+  "about": {
+    "title": "このプロジェクトについて",
+    "intro": "Next.js と Stripe で構築されたオープンソースの SaaS スターターです。認証、課金、組織管理、i18n をすぐに使える状態で提供しています — ボイラープレートをスキップして、プロダクトの開発をすぐに始められます。",
+    "body": "GitHub でフォークして、自分のブランドに置き換えるだけで準備完了です。サイドプロジェクトでも本格的な SaaS でも、このテンプレートがカバーしてくれます。",
+    "cta": "GitHub でフォーク",
+    "repoFrontend": "認証・課金・i18n 対応の Next.js フロントエンド",
+    "repoBackend": "Stripe 連携と REST API を備えた Django バックエンド"
+  },
+  "blog": {
+    "title": "ブログ",
+    "comingSoon": "新しい記事がまもなく公開されます。お楽しみに！"
+  },
+  "privacy": {
+    "title": "プライバシーポリシー",
+    "lastUpdated": "最終更新日: 2026年3月",
+    "intro": "お客様のプライバシーは私たちにとって重要です。このポリシーでは、個人情報の収集、使用、保護について説明します。"
+  },
+  "terms": {
+    "title": "利用規約",
+    "lastUpdated": "最終更新日: 2026年3月",
+    "intro": "SaaSmintをご利用いただくことで、これらの規約に同意いただいたものとみなします。ご利用前によくお読みください。"
+  },
+  "cookies": {
+    "title": "Cookieポリシー",
+    "lastUpdated": "最終更新日: 2026年3月",
+    "intro": "お客様の体験を向上させるためにCookieを使用しています。このポリシーでは、Cookieの使用方法と理由について説明します。"
+  }
+}

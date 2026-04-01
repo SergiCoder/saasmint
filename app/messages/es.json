@@ -1,1 +1,206 @@
-{}
+{
+  "nav": {
+    "features": "Funciones",
+    "pricing": "Precios",
+    "blog": "Blog",
+    "getStarted": "Comenzar",
+    "dashboard": "Panel",
+    "billing": "Facturación",
+    "settings": "Configuración",
+    "org": "Organización",
+    "admin": "Administración",
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "contactUs": "Contáctanos"
+  },
+  "footer": {
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "copyright": "© 2026 SaaSmint, Inc.",
+    "cookies": "Cookies",
+    "aboutUs": "Sobre nosotros",
+    "legal": "Legal"
+  },
+  "landing": {
+    "badge": "Disponible — SaaSmint 2.0 con agentes IA",
+    "headline": "La plataforma con la que los equipos realmente <accent>entregan</accent>",
+    "subheadline": "Deja de gestionar infraestructura. Empieza a entregar producto. SaaSmint se encarga de los despliegues, el escalado y la observabilidad para que tu equipo se centre en lo que importa.",
+    "cta": "Empieza gratis",
+    "ctaSecondary": "Ver demo de 2 min",
+    "trustText": "Más de {count} equipos de ingeniería confían en nosotros",
+    "logosLabel": "Equipos que confían en nosotros",
+    "featuresLabel": "Funciones",
+    "featuresTitle": "Diseñado para equipos que valoran la calidad",
+    "featuresSubtitle": "Todo lo que necesitas para desplegar con confianza a cualquier escala, sin la carga operativa.",
+    "featureDeploysTitle": "Despliegues instantáneos",
+    "featureDeploysDesc": "Push a Git, en producción en 30 segundos. Sin configuración, solo conecta tu repositorio y listo.",
+    "featureAiTitle": "Agentes IA",
+    "featureAiDesc": "Agentes autónomos que gestionan pruebas, monitorización y respuesta a incidentes por ti.",
+    "featureEdgeTitle": "Red global en el edge",
+    "featureEdgeDesc": "Despliega en más de 60 regiones simultáneamente. Respuestas en menos de 20 ms para usuarios en cualquier lugar.",
+    "featureObsTitle": "Observabilidad unificada",
+    "featureObsDesc": "Métricas, logs y trazas en un solo lugar. Alertas con ML que detectan problemas primero.",
+    "featureSecTitle": "Seguridad zero-trust",
+    "featureSecDesc": "Cifrado de extremo a extremo, RBAC, gestión de secretos y SSO incluidos por defecto.",
+    "featureIntTitle": "Más de 200 integraciones",
+    "featureIntDesc": "GitHub, Slack, Datadog, PagerDuty y cientos más — conecta tu stack existente.",
+    "statDevs": "12.4k",
+    "statDevsLabel": "Desarrolladores activos",
+    "statUptime": "99,99%",
+    "statUptimeLabel": "SLA de disponibilidad",
+    "statRegions": "60+",
+    "statRegionsLabel": "Regiones globales",
+    "statLatency": "18ms",
+    "statLatencyLabel": "Tiempo medio de respuesta",
+    "ctaSectionLabel": "Empieza ahora",
+    "ctaSectionTitle": "¿Listo para entregar más rápido?",
+    "ctaSectionSubtitle": "Únete a más de 12.400 equipos de ingeniería. Gratis para siempre, sin tarjeta.",
+    "ctaSectionPlaceholder": "tu@empresa.com",
+    "ctaSectionButton": "Empieza a construir →",
+    "dashUrl": "app.meridian.io/dashboard",
+    "dashUptime": "Disponibilidad",
+    "dashUptimeVal": "99,99%",
+    "dashUptimeSub": "Todos los sistemas operativos",
+    "dashLatency": "Latencia media",
+    "dashLatencyVal": "18ms",
+    "dashLatencySub": "4ms respecto a la semana pasada",
+    "dashChart": "Solicitudes / hora",
+    "dashActivity1": "Despliegue v2.4.1 exitoso — prod",
+    "dashActivity1Time": "hace 2m",
+    "dashActivity2": "Autoescalado a 12 instancias",
+    "dashActivity2Time": "hace 8m",
+    "dashActivity3": "Anomalía detectada y resuelta por el agente",
+    "dashActivity3Time": "hace 1h"
+  },
+  "auth": {
+    "login": {
+      "title": "Inicia sesión en tu cuenta",
+      "pageTitle": "Iniciar sesión",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "submit": "Iniciar sesión",
+      "noAccount": "¿No tienes una cuenta?",
+      "register": "Regístrate"
+    },
+    "register": {
+      "title": "Crea tu cuenta",
+      "pageTitle": "Registrarse",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "submit": "Crear cuenta",
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "login": "Iniciar sesión"
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "uptime": "Disponibilidad",
+    "latency": "Latencia",
+    "requests": "Solicitudes",
+    "errors": "Errores"
+  },
+  "billing": {
+    "title": "Facturación",
+    "currentPlan": "Plan actual",
+    "upgrade": "Mejorar",
+    "cancel": "Cancelar suscripción",
+    "changePlan": "Cambiar plan",
+    "applyPromo": "Aplicar código promocional",
+    "portal": "Gestionar facturación",
+    "success": "¡Pago exitoso!",
+    "successDesc": "Tu suscripción ha sido actualizada."
+  },
+  "settings": {
+    "title": "Configuración",
+    "profile": "Perfil",
+    "fullName": "Nombre completo",
+    "email": "Correo electrónico",
+    "save": "Guardar cambios",
+    "danger": "Zona de peligro",
+    "deleteAccount": "Eliminar cuenta",
+    "deleteConfirm": "Esto eliminará permanentemente tu cuenta y todos los datos."
+  },
+  "org": {
+    "title": "Organización",
+    "create": "Crear organización",
+    "members": "Miembros",
+    "invite": "Invitar miembro",
+    "role": "Rol",
+    "remove": "Eliminar",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "slug": "Slug",
+    "roleMember": "Miembro",
+    "roleAdmin": "Administrador",
+    "roleOwner": "Propietario"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "confirm": "Confirmar",
+    "toggleNav": "Alternar navegación",
+    "dismiss": "Descartar"
+  },
+  "pricing": {
+    "pageTitle": "Precios",
+    "interval": "mes",
+    "mostPopular": "Más popular",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 proyecto",
+    "starterFeature2": "Hasta 1 000 solicitudes/mes",
+    "starterFeature3": "Soporte comunitario",
+    "starterFeature4": "Analíticas básicas",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Proyectos ilimitados",
+    "proFeature2": "Hasta 100 000 solicitudes/mes",
+    "proFeature3": "Soporte prioritario",
+    "proFeature4": "Analíticas avanzadas",
+    "proFeature5": "Dominios personalizados",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Todo ilimitado",
+    "enterpriseFeature2": "Soporte dedicado",
+    "enterpriseFeature3": "SSO y SAML",
+    "enterpriseFeature4": "Garantía de SLA",
+    "enterpriseFeature5": "Registros de auditoría",
+    "enterpriseFeature6": "Integraciones personalizadas"
+  },
+  "contact": {
+    "title": "Contacto",
+    "description": "¿Tienes alguna pregunta o necesitas ayuda? Nos encantaría saber de ti.",
+    "placeholder": "Tu dirección de correo electrónico",
+    "submit": "Enviar"
+  },
+  "about": {
+    "title": "Acerca de este proyecto",
+    "intro": "Este es un starter SaaS de código abierto construido con Next.js y Stripe. Incluye autenticación, facturación, organizaciones e i18n desde el primer momento — para que puedas saltarte el código repetitivo y empezar a construir tu producto.",
+    "body": "Haz un fork en GitHub, añade tu propia identidad de marca y estarás listo. Ya sea que estés lanzando un proyecto paralelo o un SaaS completo, esta plantilla te tiene cubierto.",
+    "cta": "Fork en GitHub",
+    "repoFrontend": "Frontend Next.js con autenticación, facturación e i18n",
+    "repoBackend": "Backend Django con integración de Stripe y API REST"
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "Nuevas publicaciones próximamente. ¡Mantente atento!"
+  },
+  "privacy": {
+    "title": "Política de privacidad",
+    "lastUpdated": "Última actualización: marzo 2026",
+    "intro": "Tu privacidad es importante para nosotros. Esta política explica cómo recopilamos, usamos y protegemos tu información personal."
+  },
+  "terms": {
+    "title": "Términos de servicio",
+    "lastUpdated": "Última actualización: marzo 2026",
+    "intro": "Al usar SaaSmint, aceptas estos términos. Léelos detenidamente antes de usar nuestros servicios."
+  },
+  "cookies": {
+    "title": "Política de cookies",
+    "lastUpdated": "Última actualización: marzo 2026",
+    "intro": "Usamos cookies para mejorar tu experiencia. Esta política explica cómo y por qué usamos cookies en nuestro sitio web."
+  }
+}

@@ -1,1 +1,206 @@
-{}
+{
+  "nav": {
+    "features": "Funktioner",
+    "pricing": "Priser",
+    "blog": "Blog",
+    "getStarted": "Kom i gang",
+    "dashboard": "Dashboard",
+    "billing": "Fakturering",
+    "settings": "Indstillinger",
+    "org": "Organisation",
+    "admin": "Administration",
+    "signIn": "Log ind",
+    "signOut": "Log ud",
+    "contactUs": "Kontakt os"
+  },
+  "footer": {
+    "privacy": "Privatlivspolitik",
+    "terms": "Vilkår",
+    "copyright": "© 2026 SaaSmint, Inc.",
+    "cookies": "Cookies",
+    "aboutUs": "Om os",
+    "legal": "Juridisk"
+  },
+  "landing": {
+    "badge": "Now in GA — SaaSmint 2.0 with AI Agents",
+    "headline": "The platform teams actually <accent>ship with</accent>",
+    "subheadline": "Stop managing infrastructure. Start shipping product. SaaSmint handles deploys, scaling, and observability so your team can focus on what matters.",
+    "cta": "Start for free",
+    "ctaSecondary": "Watch 2-min demo",
+    "trustText": "Trusted by {count}+ engineering teams",
+    "logosLabel": "Trusted by teams at",
+    "featuresLabel": "Features",
+    "featuresTitle": "Built for teams that care about quality",
+    "featuresSubtitle": "Everything you need to deploy confidently at any scale — without the ops overhead.",
+    "featureDeploysTitle": "Instant Deploys",
+    "featureDeploysDesc": "Push to Git, live in 30 seconds. Zero config, just connect your repository and go.",
+    "featureAiTitle": "AI Agents",
+    "featureAiDesc": "Autonomous agents handle testing, monitoring, and incident response on your behalf.",
+    "featureEdgeTitle": "Global Edge Network",
+    "featureEdgeDesc": "Deploy to 60+ regions simultaneously. Sub-20ms responses for users anywhere.",
+    "featureObsTitle": "Unified Observability",
+    "featureObsDesc": "Metrics, logs, and traces in one place. ML-powered alerting catches issues first.",
+    "featureSecTitle": "Zero-trust Security",
+    "featureSecDesc": "End-to-end encryption, RBAC, secret management, and SSO included by default.",
+    "featureIntTitle": "200+ Integrations",
+    "featureIntDesc": "GitHub, Slack, Datadog, PagerDuty and hundreds more — plug in your existing stack.",
+    "statDevs": "12.4k",
+    "statDevsLabel": "Active developers",
+    "statUptime": "99.99%",
+    "statUptimeLabel": "Uptime SLA",
+    "statRegions": "60+",
+    "statRegionsLabel": "Global regions",
+    "statLatency": "18ms",
+    "statLatencyLabel": "Avg. response time",
+    "ctaSectionLabel": "Get started",
+    "ctaSectionTitle": "Ready to ship faster?",
+    "ctaSectionSubtitle": "Join 12,400+ engineering teams. Free forever, no card required.",
+    "ctaSectionPlaceholder": "you@company.com",
+    "ctaSectionButton": "Start building →",
+    "dashUrl": "app.meridian.io/dashboard",
+    "dashUptime": "Uptime",
+    "dashUptimeVal": "99.99%",
+    "dashUptimeSub": "All systems nominal",
+    "dashLatency": "Avg. Latency",
+    "dashLatencyVal": "18ms",
+    "dashLatencySub": "4ms vs last week",
+    "dashChart": "Requests / hour",
+    "dashActivity1": "Deploy v2.4.1 successful — prod",
+    "dashActivity1Time": "2m ago",
+    "dashActivity2": "Auto-scaled to 12 instances",
+    "dashActivity2Time": "8m ago",
+    "dashActivity3": "Anomaly detected & resolved by Agent",
+    "dashActivity3Time": "1h ago"
+  },
+  "auth": {
+    "login": {
+      "title": "Log ind på din konto",
+      "pageTitle": "Log ind",
+      "email": "E-mailadresse",
+      "password": "Adgangskode",
+      "submit": "Log ind",
+      "noAccount": "Har du ikke en konto?",
+      "register": "Opret konto"
+    },
+    "register": {
+      "title": "Opret din konto",
+      "pageTitle": "Opret konto",
+      "email": "E-mailadresse",
+      "password": "Adgangskode",
+      "submit": "Opret konto",
+      "hasAccount": "Har du allerede en konto?",
+      "login": "Log ind"
+    }
+  },
+  "dashboard": {
+    "title": "Kontrolpanel",
+    "uptime": "Oppetid",
+    "latency": "Forsinkelse",
+    "requests": "Forespørgsler",
+    "errors": "Fejl"
+  },
+  "billing": {
+    "title": "Fakturering",
+    "currentPlan": "Nuværende plan",
+    "upgrade": "Opgrader",
+    "cancel": "Annuller abonnement",
+    "changePlan": "Skift plan",
+    "applyPromo": "Brug kampagnekode",
+    "portal": "Administrer fakturering",
+    "success": "Betaling gennemført!",
+    "successDesc": "Dit abonnement er blevet opdateret."
+  },
+  "settings": {
+    "title": "Indstillinger",
+    "profile": "Profil",
+    "fullName": "Fulde navn",
+    "email": "E-mail",
+    "save": "Gem ændringer",
+    "danger": "Farezone",
+    "deleteAccount": "Slet konto",
+    "deleteConfirm": "Dette sletter permanent din konto og alle data."
+  },
+  "org": {
+    "title": "Organisation",
+    "create": "Opret organisation",
+    "members": "Medlemmer",
+    "invite": "Inviter medlem",
+    "role": "Rolle",
+    "remove": "Fjern",
+    "name": "Navn",
+    "email": "E-mail",
+    "slug": "Slug",
+    "roleMember": "Medlem",
+    "roleAdmin": "Administrator",
+    "roleOwner": "Ejer"
+  },
+  "common": {
+    "loading": "Indlæser...",
+    "error": "Noget gik galt",
+    "save": "Gem",
+    "cancel": "Annuller",
+    "delete": "Slet",
+    "confirm": "Bekræft",
+    "toggleNav": "Skift navigation",
+    "dismiss": "Luk"
+  },
+  "pricing": {
+    "pageTitle": "Priser",
+    "interval": "måned",
+    "mostPopular": "Mest populær",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 projekt",
+    "starterFeature2": "Op til 1.000 forespørgsler/måned",
+    "starterFeature3": "Community-support",
+    "starterFeature4": "Grundlæggende analyse",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Ubegrænsede projekter",
+    "proFeature2": "Op til 100.000 forespørgsler/måned",
+    "proFeature3": "Prioriteret support",
+    "proFeature4": "Avanceret analyse",
+    "proFeature5": "Egne domæner",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Alt ubegrænset",
+    "enterpriseFeature2": "Dedikeret support",
+    "enterpriseFeature3": "SSO & SAML",
+    "enterpriseFeature4": "SLA-garanti",
+    "enterpriseFeature5": "Revisionslogge",
+    "enterpriseFeature6": "Tilpassede integrationer"
+  },
+  "contact": {
+    "title": "Kontakt os",
+    "description": "Har du et spørgsmål eller brug for hjælp? Vi hører gerne fra dig.",
+    "placeholder": "Din e-mailadresse",
+    "submit": "Send"
+  },
+  "about": {
+    "title": "Om dette projekt",
+    "intro": "Dette er en open source SaaS-starter bygget med Next.js og Stripe. Den giver dig autentificering, fakturering, organisationer og i18n ud af boksen — så du kan springe boilerplate over og begynde at bygge dit produkt.",
+    "body": "Fork det på GitHub, skift til dit eget brand og du er klar. Uanset om du lancerer et sideprojekt eller en fuld SaaS, har denne skabelon dig dækket.",
+    "cta": "Fork på GitHub",
+    "repoFrontend": "Next.js-frontend med autentificering, fakturering og i18n",
+    "repoBackend": "Django-backend med Stripe-integration og REST API"
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "Nye indlæg kommer snart. Hold dig opdateret!"
+  },
+  "privacy": {
+    "title": "Privatlivspolitik",
+    "lastUpdated": "Sidst opdateret: marts 2026",
+    "intro": "Dit privatliv er vigtigt for os. Denne politik forklarer, hvordan vi indsamler, bruger og beskytter dine personlige oplysninger."
+  },
+  "terms": {
+    "title": "Servicevilkår",
+    "lastUpdated": "Sidst opdateret: marts 2026",
+    "intro": "Ved at bruge SaaSmint accepterer du disse vilkår. Læs dem omhyggeligt, før du bruger vores tjenester."
+  },
+  "cookies": {
+    "title": "Cookiepolitik",
+    "lastUpdated": "Sidst opdateret: marts 2026",
+    "intro": "Vi bruger cookies for at forbedre din oplevelse. Denne politik forklarer, hvordan og hvorfor vi bruger cookies på vores hjemmeside."
+  }
+}

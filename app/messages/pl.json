@@ -1,1 +1,206 @@
-{}
+{
+  "nav": {
+    "features": "Funkcje",
+    "pricing": "Cennik",
+    "blog": "Blog",
+    "getStarted": "Rozpocznij",
+    "dashboard": "Panel",
+    "billing": "Rozliczenia",
+    "settings": "Ustawienia",
+    "org": "Organizacja",
+    "admin": "Administracja",
+    "signIn": "Zaloguj się",
+    "signOut": "Wyloguj się",
+    "contactUs": "Kontakt"
+  },
+  "footer": {
+    "privacy": "Prywatność",
+    "terms": "Regulamin",
+    "copyright": "© 2026 SaaSmint, Inc.",
+    "cookies": "Ciasteczka",
+    "aboutUs": "O nas",
+    "legal": "Informacje prawne"
+  },
+  "landing": {
+    "badge": "Dostępne — SaaSmint 2.0 z agentami AI",
+    "headline": "Platforma, z którą zespoły naprawdę <accent>dostarczają</accent>",
+    "subheadline": "Przestań zarządzać infrastrukturą. Zacznij dostarczać produkt. SaaSmint obsługuje wdrożenia, skalowanie i obserwowalność, aby Twój zespół mógł skupić się na tym, co ważne.",
+    "cta": "Zacznij za darmo",
+    "ctaSecondary": "Obejrzyj 2-min demo",
+    "trustText": "Ponad {count} zespołów inżynierskich nam ufa",
+    "logosLabel": "Zespoły, które nam ufają",
+    "featuresLabel": "Funkcje",
+    "featuresTitle": "Stworzone dla zespołów ceniących jakość",
+    "featuresSubtitle": "Wszystko, czego potrzebujesz, aby wdrażać z pewnością w każdej skali — bez obciążenia operacyjnego.",
+    "featureDeploysTitle": "Natychmiastowe wdrożenia",
+    "featureDeploysDesc": "Push do Git, na żywo w 30 sekund. Zero konfiguracji, podłącz repozytorium i gotowe.",
+    "featureAiTitle": "Agenci AI",
+    "featureAiDesc": "Autonomiczni agenci obsługują testy, monitoring i reagowanie na incydenty za Ciebie.",
+    "featureEdgeTitle": "Globalna sieć edge",
+    "featureEdgeDesc": "Wdrażaj w ponad 60 regionach jednocześnie. Odpowiedzi poniżej 20 ms dla użytkowników wszędzie.",
+    "featureObsTitle": "Zunifikowana obserwowalność",
+    "featureObsDesc": "Metryki, logi i ślady w jednym miejscu. Alerty ML wykrywają problemy jako pierwsze.",
+    "featureSecTitle": "Bezpieczeństwo zero-trust",
+    "featureSecDesc": "Szyfrowanie end-to-end, RBAC, zarządzanie sekretami i SSO w standardzie.",
+    "featureIntTitle": "Ponad 200 integracji",
+    "featureIntDesc": "GitHub, Slack, Datadog, PagerDuty i setki innych — podłącz swój istniejący stos.",
+    "statDevs": "12,4 tys.",
+    "statDevsLabel": "Aktywnych deweloperów",
+    "statUptime": "99,99%",
+    "statUptimeLabel": "SLA dostępności",
+    "statRegions": "60+",
+    "statRegionsLabel": "Regionów globalnych",
+    "statLatency": "18ms",
+    "statLatencyLabel": "Śr. czas odpowiedzi",
+    "ctaSectionLabel": "Zacznij teraz",
+    "ctaSectionTitle": "Gotowy dostarczać szybciej?",
+    "ctaSectionSubtitle": "Dołącz do ponad 12 400 zespołów inżynierskich. Zawsze za darmo, bez karty.",
+    "ctaSectionPlaceholder": "ty@firma.pl",
+    "ctaSectionButton": "Zacznij budować →",
+    "dashUrl": "app.meridian.io/dashboard",
+    "dashUptime": "Dostępność",
+    "dashUptimeVal": "99,99%",
+    "dashUptimeSub": "Wszystkie systemy sprawne",
+    "dashLatency": "Śr. opóźnienie",
+    "dashLatencyVal": "18ms",
+    "dashLatencySub": "4ms w porównaniu z ubiegłym tygodniem",
+    "dashChart": "Żądania / godzinę",
+    "dashActivity1": "Wdrożenie v2.4.1 udane — prod",
+    "dashActivity1Time": "2 min temu",
+    "dashActivity2": "Automatyczne skalowanie do 12 instancji",
+    "dashActivity2Time": "8 min temu",
+    "dashActivity3": "Anomalia wykryta i rozwiązana przez agenta",
+    "dashActivity3Time": "1 godz. temu"
+  },
+  "auth": {
+    "login": {
+      "title": "Zaloguj się na swoje konto",
+      "pageTitle": "Logowanie",
+      "email": "Adres e-mail",
+      "password": "Hasło",
+      "submit": "Zaloguj się",
+      "noAccount": "Nie masz konta?",
+      "register": "Zarejestruj się"
+    },
+    "register": {
+      "title": "Utwórz konto",
+      "pageTitle": "Rejestracja",
+      "email": "Adres e-mail",
+      "password": "Hasło",
+      "submit": "Utwórz konto",
+      "hasAccount": "Masz już konto?",
+      "login": "Zaloguj się"
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "uptime": "Dostępność",
+    "latency": "Opóźnienie",
+    "requests": "Żądania",
+    "errors": "Błędy"
+  },
+  "billing": {
+    "title": "Płatności",
+    "currentPlan": "Aktualny plan",
+    "upgrade": "Uaktualnij",
+    "cancel": "Anuluj subskrypcję",
+    "changePlan": "Zmień plan",
+    "applyPromo": "Zastosuj kod promocyjny",
+    "portal": "Zarządzaj płatnościami",
+    "success": "Płatność powiodła się!",
+    "successDesc": "Twoja subskrypcja została zaktualizowana."
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "profile": "Profil",
+    "fullName": "Imię i nazwisko",
+    "email": "E-mail",
+    "save": "Zapisz zmiany",
+    "danger": "Strefa zagrożenia",
+    "deleteAccount": "Usuń konto",
+    "deleteConfirm": "To trwale usunie Twoje konto i wszystkie dane."
+  },
+  "org": {
+    "title": "Organizacja",
+    "create": "Utwórz organizację",
+    "members": "Członkowie",
+    "invite": "Zaproś członka",
+    "role": "Rola",
+    "remove": "Usuń",
+    "name": "Nazwa",
+    "email": "E-mail",
+    "slug": "Slug",
+    "roleMember": "Członek",
+    "roleAdmin": "Administrator",
+    "roleOwner": "Właściciel"
+  },
+  "common": {
+    "loading": "Ładowanie...",
+    "error": "Coś poszło nie tak",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "confirm": "Potwierdź",
+    "toggleNav": "Przełącz nawigację",
+    "dismiss": "Zamknij"
+  },
+  "pricing": {
+    "pageTitle": "Cennik",
+    "interval": "miesiąc",
+    "mostPopular": "Najpopularniejszy",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 projekt",
+    "starterFeature2": "Do 1 000 żądań/mies.",
+    "starterFeature3": "Wsparcie społeczności",
+    "starterFeature4": "Podstawowa analityka",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Nieograniczone projekty",
+    "proFeature2": "Do 100 000 żądań/mies.",
+    "proFeature3": "Priorytetowe wsparcie",
+    "proFeature4": "Zaawansowana analityka",
+    "proFeature5": "Własne domeny",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Wszystko bez limitów",
+    "enterpriseFeature2": "Dedykowane wsparcie",
+    "enterpriseFeature3": "SSO i SAML",
+    "enterpriseFeature4": "Gwarancja SLA",
+    "enterpriseFeature5": "Dzienniki audytu",
+    "enterpriseFeature6": "Niestandardowe integracje"
+  },
+  "contact": {
+    "title": "Kontakt",
+    "description": "Masz pytanie lub potrzebujesz pomocy? Chętnie Cię wysłuchamy.",
+    "placeholder": "Twój adres e-mail",
+    "submit": "Wyślij"
+  },
+  "about": {
+    "title": "O tym projekcie",
+    "intro": "To open-source'owy starter SaaS zbudowany z Next.js i Stripe. Dostarcza gotowe do użycia uwierzytelnianie, rozliczenia, organizacje i i18n — abyś mógł pominąć boilerplate i zacząć budować swój produkt.",
+    "body": "Sforkuj go na GitHubie, zastąp własnym brandingiem i jesteś gotowy do działania. Niezależnie od tego, czy uruchamiasz projekt poboczny, czy pełnoprawny SaaS, ten szablon Cię obsłuży.",
+    "cta": "Fork na GitHubie",
+    "repoFrontend": "Frontend Next.js z uwierzytelnianiem, rozliczeniami i i18n",
+    "repoBackend": "Backend Django z integracją Stripe i API REST"
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "Nowe wpisy już wkrótce. Bądź na bieżąco!"
+  },
+  "privacy": {
+    "title": "Polityka prywatności",
+    "lastUpdated": "Ostatnia aktualizacja: marzec 2026",
+    "intro": "Twoja prywatność jest dla nas ważna. Ta polityka wyjaśnia, w jaki sposób zbieramy, wykorzystujemy i chronimy Twoje dane osobowe."
+  },
+  "terms": {
+    "title": "Regulamin",
+    "lastUpdated": "Ostatnia aktualizacja: marzec 2026",
+    "intro": "Korzystając z SaaSmint, akceptujesz niniejszy regulamin. Przeczytaj go uważnie przed skorzystaniem z naszych usług."
+  },
+  "cookies": {
+    "title": "Polityka cookies",
+    "lastUpdated": "Ostatnia aktualizacja: marzec 2026",
+    "intro": "Używamy plików cookie, aby poprawić Twoje doświadczenie. Ta polityka wyjaśnia, jak i dlaczego używamy plików cookie na naszej stronie."
+  }
+}

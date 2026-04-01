@@ -1,14 +1,14 @@
-# stripe-nextjs
+# SaaSmint App
 
-Next.js 15 SaaS frontend template paired with [stripe-django](https://github.com/SergiCoder/stripe-django).
+Next.js 16 SaaS frontend template paired with [SaaSmint Core](https://github.com/SergiCoder/SaaSmint-Core).
 
 ## Stack
 
-- **Framework** — Next.js 15 (App Router, React 19, Turbopack)
+- **Framework** — Next.js 16 (App Router, React 19, Turbopack)
 - **Auth** — Supabase (JWT)
 - **Payments** — Stripe (hosted Checkout)
 - **i18n** — next-intl
-- **Styling** — Tailwind CSS 3
+- **Styling** — Tailwind CSS 4
 
 ## Architecture
 
@@ -28,17 +28,28 @@ make setup    # install dependencies
 make dev      # start dev server on port 3000
 ```
 
-The backend ([stripe-django](https://github.com/SergiCoder/stripe-django)) must be running on `http://localhost:8001`.
+## Testing
+
+```bash
+pnpm test             # run all tests once
+pnpm test:coverage    # run tests with v8 coverage report
+```
+
+The backend ([SaaSmint Core](https://github.com/SergiCoder/SaaSmint-Core)) must be running on `http://localhost:8001`.
 
 ## Environment variables
 
-Copy `.env.local.example` to `.env.local` and fill in:
+Copy `.env.example` to `.env.local` and fill in:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 - `NEXT_PUBLIC_API_URL`
 - `NEXT_PUBLIC_APP_URL`
+
+## Plugins
+
+- [Prism](https://github.com/SergiCoder/prism) — Claude Code plugin for multi-profile code review, conventional commits, branching, and PR workflows
 
 ## License
 
