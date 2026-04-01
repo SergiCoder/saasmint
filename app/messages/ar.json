@@ -18,7 +18,8 @@
     "terms": "الشروط",
     "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "ملفات تعريف الارتباط",
-    "aboutUs": "من نحن"
+    "aboutUs": "من نحن",
+    "legal": "قانوني"
   },
   "landing": {
     "badge": "متاح الآن — SaaSmint 2.0 مع وكلاء الذكاء الاصطناعي",
@@ -74,6 +75,7 @@
   "auth": {
     "login": {
       "title": "تسجيل الدخول إلى حسابك",
+      "pageTitle": "تسجيل الدخول",
       "email": "عنوان البريد الإلكتروني",
       "password": "كلمة المرور",
       "submit": "تسجيل الدخول",
@@ -82,6 +84,7 @@
     },
     "register": {
       "title": "إنشاء حسابك",
+      "pageTitle": "إنشاء حساب",
       "email": "عنوان البريد الإلكتروني",
       "password": "كلمة المرور",
       "submit": "إنشاء حساب",
@@ -123,7 +126,13 @@
     "members": "الأعضاء",
     "invite": "دعوة عضو",
     "role": "الدور",
-    "remove": "إزالة"
+    "remove": "إزالة",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "slug": "Slug",
+    "roleMember": "عضو",
+    "roleAdmin": "مدير",
+    "roleOwner": "مالك"
   },
   "common": {
     "loading": "جارٍ التحميل...",
@@ -131,7 +140,35 @@
     "save": "حفظ",
     "cancel": "إلغاء",
     "delete": "حذف",
-    "confirm": "تأكيد"
+    "confirm": "تأكيد",
+    "toggleNav": "تبديل التنقل",
+    "dismiss": "إغلاق"
+  },
+  "pricing": {
+    "pageTitle": "الأسعار",
+    "interval": "شهر",
+    "mostPopular": "الأكثر شعبية",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "مشروع واحد",
+    "starterFeature2": "حتى 1,000 طلب/شهر",
+    "starterFeature3": "دعم المجتمع",
+    "starterFeature4": "تحليلات أساسية",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "مشاريع غير محدودة",
+    "proFeature2": "حتى 100,000 طلب/شهر",
+    "proFeature3": "دعم ذو أولوية",
+    "proFeature4": "تحليلات متقدمة",
+    "proFeature5": "نطاقات مخصصة",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "كل شيء غير محدود",
+    "enterpriseFeature2": "دعم مخصص",
+    "enterpriseFeature3": "SSO و SAML",
+    "enterpriseFeature4": "ضمان SLA",
+    "enterpriseFeature5": "سجلات التدقيق",
+    "enterpriseFeature6": "تكاملات مخصصة"
   },
   "contact": {
     "title": "اتصل بنا",

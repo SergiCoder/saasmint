@@ -18,7 +18,8 @@
     "terms": "Ketentuan",
     "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Kuki",
-    "aboutUs": "Tentang kami"
+    "aboutUs": "Tentang kami",
+    "legal": "Hukum"
   },
   "landing": {
     "badge": "Now in GA — SaaSmint 2.0 with AI Agents",
@@ -74,6 +75,7 @@
   "auth": {
     "login": {
       "title": "Masuk ke akun Anda",
+      "pageTitle": "Masuk",
       "email": "Alamat email",
       "password": "Kata sandi",
       "submit": "Masuk",
@@ -82,6 +84,7 @@
     },
     "register": {
       "title": "Buat akun Anda",
+      "pageTitle": "Daftar",
       "email": "Alamat email",
       "password": "Kata sandi",
       "submit": "Buat akun",
@@ -123,7 +126,13 @@
     "members": "Anggota",
     "invite": "Undang anggota",
     "role": "Peran",
-    "remove": "Hapus"
+    "remove": "Hapus",
+    "name": "Nama",
+    "email": "Email",
+    "slug": "Slug",
+    "roleMember": "Anggota",
+    "roleAdmin": "Administrator",
+    "roleOwner": "Pemilik"
   },
   "common": {
     "loading": "Memuat...",
@@ -131,7 +140,35 @@
     "save": "Simpan",
     "cancel": "Batal",
     "delete": "Hapus",
-    "confirm": "Konfirmasi"
+    "confirm": "Konfirmasi",
+    "toggleNav": "Alihkan navigasi",
+    "dismiss": "Tutup"
+  },
+  "pricing": {
+    "pageTitle": "Harga",
+    "interval": "bulan",
+    "mostPopular": "Paling populer",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 proyek",
+    "starterFeature2": "Hingga 1.000 permintaan/bulan",
+    "starterFeature3": "Dukungan komunitas",
+    "starterFeature4": "Analitik dasar",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Proyek tak terbatas",
+    "proFeature2": "Hingga 100.000 permintaan/bulan",
+    "proFeature3": "Dukungan prioritas",
+    "proFeature4": "Analitik lanjutan",
+    "proFeature5": "Domain kustom",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Semuanya tak terbatas",
+    "enterpriseFeature2": "Dukungan khusus",
+    "enterpriseFeature3": "SSO & SAML",
+    "enterpriseFeature4": "Jaminan SLA",
+    "enterpriseFeature5": "Log audit",
+    "enterpriseFeature6": "Integrasi kustom"
   },
   "contact": {
     "title": "Hubungi kami",

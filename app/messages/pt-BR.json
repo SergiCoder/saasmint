@@ -18,7 +18,8 @@
     "terms": "Termos",
     "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Cookies",
-    "aboutUs": "Sobre nós"
+    "aboutUs": "Sobre nós",
+    "legal": "Legal"
   },
   "landing": {
     "badge": "Disponível — SaaSmint 2.0 com agentes de IA",
@@ -74,6 +75,7 @@
   "auth": {
     "login": {
       "title": "Entre na sua conta",
+      "pageTitle": "Entrar",
       "email": "Endereço de e-mail",
       "password": "Senha",
       "submit": "Entrar",
@@ -82,6 +84,7 @@
     },
     "register": {
       "title": "Crie sua conta",
+      "pageTitle": "Cadastrar",
       "email": "Endereço de e-mail",
       "password": "Senha",
       "submit": "Criar conta",
@@ -123,7 +126,13 @@
     "members": "Membros",
     "invite": "Convidar membro",
     "role": "Função",
-    "remove": "Remover"
+    "remove": "Remover",
+    "name": "Nome",
+    "email": "E-mail",
+    "slug": "Slug",
+    "roleMember": "Membro",
+    "roleAdmin": "Administrador",
+    "roleOwner": "Proprietário"
   },
   "common": {
     "loading": "Carregando...",
@@ -131,7 +140,35 @@
     "save": "Salvar",
     "cancel": "Cancelar",
     "delete": "Excluir",
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "toggleNav": "Alternar navegação",
+    "dismiss": "Fechar"
+  },
+  "pricing": {
+    "pageTitle": "Preços",
+    "interval": "mês",
+    "mostPopular": "Mais popular",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 projeto",
+    "starterFeature2": "Até 1 000 requisições/mês",
+    "starterFeature3": "Suporte comunitário",
+    "starterFeature4": "Análises básicas",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Projetos ilimitados",
+    "proFeature2": "Até 100 000 requisições/mês",
+    "proFeature3": "Suporte prioritário",
+    "proFeature4": "Análises avançadas",
+    "proFeature5": "Domínios personalizados",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Tudo ilimitado",
+    "enterpriseFeature2": "Suporte dedicado",
+    "enterpriseFeature3": "SSO e SAML",
+    "enterpriseFeature4": "Garantia de SLA",
+    "enterpriseFeature5": "Logs de auditoria",
+    "enterpriseFeature6": "Integrações personalizadas"
   },
   "contact": {
     "title": "Fale conosco",

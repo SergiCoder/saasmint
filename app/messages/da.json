@@ -18,7 +18,8 @@
     "terms": "Vilkår",
     "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Cookies",
-    "aboutUs": "Om os"
+    "aboutUs": "Om os",
+    "legal": "Juridisk"
   },
   "landing": {
     "badge": "Now in GA — SaaSmint 2.0 with AI Agents",
@@ -74,6 +75,7 @@
   "auth": {
     "login": {
       "title": "Log ind på din konto",
+      "pageTitle": "Log ind",
       "email": "E-mailadresse",
       "password": "Adgangskode",
       "submit": "Log ind",
@@ -82,6 +84,7 @@
     },
     "register": {
       "title": "Opret din konto",
+      "pageTitle": "Opret konto",
       "email": "E-mailadresse",
       "password": "Adgangskode",
       "submit": "Opret konto",
@@ -123,7 +126,13 @@
     "members": "Medlemmer",
     "invite": "Inviter medlem",
     "role": "Rolle",
-    "remove": "Fjern"
+    "remove": "Fjern",
+    "name": "Navn",
+    "email": "E-mail",
+    "slug": "Slug",
+    "roleMember": "Medlem",
+    "roleAdmin": "Administrator",
+    "roleOwner": "Ejer"
   },
   "common": {
     "loading": "Indlæser...",
@@ -131,7 +140,35 @@
     "save": "Gem",
     "cancel": "Annuller",
     "delete": "Slet",
-    "confirm": "Bekræft"
+    "confirm": "Bekræft",
+    "toggleNav": "Skift navigation",
+    "dismiss": "Luk"
+  },
+  "pricing": {
+    "pageTitle": "Priser",
+    "interval": "måned",
+    "mostPopular": "Mest populær",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 projekt",
+    "starterFeature2": "Op til 1.000 forespørgsler/måned",
+    "starterFeature3": "Community-support",
+    "starterFeature4": "Grundlæggende analyse",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Ubegrænsede projekter",
+    "proFeature2": "Op til 100.000 forespørgsler/måned",
+    "proFeature3": "Prioriteret support",
+    "proFeature4": "Avanceret analyse",
+    "proFeature5": "Egne domæner",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Alt ubegrænset",
+    "enterpriseFeature2": "Dedikeret support",
+    "enterpriseFeature3": "SSO & SAML",
+    "enterpriseFeature4": "SLA-garanti",
+    "enterpriseFeature5": "Revisionslogge",
+    "enterpriseFeature6": "Tilpassede integrationer"
   },
   "contact": {
     "title": "Kontakt os",

@@ -18,7 +18,8 @@
     "terms": "條款",
     "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Cookie",
-    "aboutUs": "關於我們"
+    "aboutUs": "關於我們",
+    "legal": "法律資訊"
   },
   "landing": {
     "badge": "正式發布 — SaaSmint 2.0 搭載 AI 代理",
@@ -74,6 +75,7 @@
   "auth": {
     "login": {
       "title": "登入您的帳戶",
+      "pageTitle": "登入",
       "email": "電子郵件地址",
       "password": "密碼",
       "submit": "登入",
@@ -82,6 +84,7 @@
     },
     "register": {
       "title": "建立您的帳戶",
+      "pageTitle": "註冊",
       "email": "電子郵件地址",
       "password": "密碼",
       "submit": "建立帳戶",
@@ -123,7 +126,13 @@
     "members": "成員",
     "invite": "邀請成員",
     "role": "角色",
-    "remove": "移除"
+    "remove": "移除",
+    "name": "名稱",
+    "email": "電子郵件",
+    "slug": "Slug",
+    "roleMember": "成員",
+    "roleAdmin": "管理員",
+    "roleOwner": "擁有者"
   },
   "common": {
     "loading": "載入中...",
@@ -131,7 +140,35 @@
     "save": "儲存",
     "cancel": "取消",
     "delete": "刪除",
-    "confirm": "確認"
+    "confirm": "確認",
+    "toggleNav": "切換導覽",
+    "dismiss": "關閉"
+  },
+  "pricing": {
+    "pageTitle": "定價",
+    "interval": "月",
+    "mostPopular": "最受歡迎",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1個專案",
+    "starterFeature2": "每月最多1,000次請求",
+    "starterFeature3": "社群支援",
+    "starterFeature4": "基礎分析",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "無限專案",
+    "proFeature2": "每月最多100,000次請求",
+    "proFeature3": "優先支援",
+    "proFeature4": "進階分析",
+    "proFeature5": "自訂網域",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "一切無限",
+    "enterpriseFeature2": "專屬支援",
+    "enterpriseFeature3": "SSO與SAML",
+    "enterpriseFeature4": "SLA保障",
+    "enterpriseFeature5": "稽核日誌",
+    "enterpriseFeature6": "自訂整合"
   },
   "contact": {
     "title": "聯絡我們",

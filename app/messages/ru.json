@@ -18,7 +18,8 @@
     "terms": "Условия",
     "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Файлы cookie",
-    "aboutUs": "О нас"
+    "aboutUs": "О нас",
+    "legal": "Правовая информация"
   },
   "landing": {
     "badge": "Доступно — SaaSmint 2.0 с ИИ-агентами",
@@ -74,6 +75,7 @@
   "auth": {
     "login": {
       "title": "Войдите в свой аккаунт",
+      "pageTitle": "Вход",
       "email": "Электронная почта",
       "password": "Пароль",
       "submit": "Войти",
@@ -82,6 +84,7 @@
     },
     "register": {
       "title": "Создайте аккаунт",
+      "pageTitle": "Регистрация",
       "email": "Электронная почта",
       "password": "Пароль",
       "submit": "Создать аккаунт",
@@ -123,7 +126,13 @@
     "members": "Участники",
     "invite": "Пригласить участника",
     "role": "Роль",
-    "remove": "Удалить"
+    "remove": "Удалить",
+    "name": "Имя",
+    "email": "Эл. почта",
+    "slug": "Slug",
+    "roleMember": "Участник",
+    "roleAdmin": "Администратор",
+    "roleOwner": "Владелец"
   },
   "common": {
     "loading": "Загрузка...",
@@ -131,7 +140,35 @@
     "save": "Сохранить",
     "cancel": "Отмена",
     "delete": "Удалить",
-    "confirm": "Подтвердить"
+    "confirm": "Подтвердить",
+    "toggleNav": "Переключить навигацию",
+    "dismiss": "Закрыть"
+  },
+  "pricing": {
+    "pageTitle": "Тарифы",
+    "interval": "месяц",
+    "mostPopular": "Самый популярный",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 проект",
+    "starterFeature2": "До 1 000 запросов/мес",
+    "starterFeature3": "Поддержка сообщества",
+    "starterFeature4": "Базовая аналитика",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Неограниченные проекты",
+    "proFeature2": "До 100 000 запросов/мес",
+    "proFeature3": "Приоритетная поддержка",
+    "proFeature4": "Расширенная аналитика",
+    "proFeature5": "Собственные домены",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Всё без ограничений",
+    "enterpriseFeature2": "Выделенная поддержка",
+    "enterpriseFeature3": "SSO и SAML",
+    "enterpriseFeature4": "Гарантия SLA",
+    "enterpriseFeature5": "Журналы аудита",
+    "enterpriseFeature6": "Индивидуальные интеграции"
   },
   "contact": {
     "title": "Связаться с нами",

@@ -18,7 +18,8 @@
     "terms": "Vilkår",
     "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Informasjonskapsler",
-    "aboutUs": "Om oss"
+    "aboutUs": "Om oss",
+    "legal": "Juridisk"
   },
   "landing": {
     "badge": "Now in GA — SaaSmint 2.0 with AI Agents",
@@ -74,6 +75,7 @@
   "auth": {
     "login": {
       "title": "Logg inn på kontoen din",
+      "pageTitle": "Logg inn",
       "email": "E-postadresse",
       "password": "Passord",
       "submit": "Logg inn",
@@ -82,6 +84,7 @@
     },
     "register": {
       "title": "Opprett kontoen din",
+      "pageTitle": "Registrer deg",
       "email": "E-postadresse",
       "password": "Passord",
       "submit": "Opprett konto",
@@ -123,7 +126,13 @@
     "members": "Medlemmer",
     "invite": "Inviter medlem",
     "role": "Rolle",
-    "remove": "Fjern"
+    "remove": "Fjern",
+    "name": "Navn",
+    "email": "E-post",
+    "slug": "Slug",
+    "roleMember": "Medlem",
+    "roleAdmin": "Administrator",
+    "roleOwner": "Eier"
   },
   "common": {
     "loading": "Laster...",
@@ -131,7 +140,35 @@
     "save": "Lagre",
     "cancel": "Avbryt",
     "delete": "Slett",
-    "confirm": "Bekreft"
+    "confirm": "Bekreft",
+    "toggleNav": "Veksle navigasjon",
+    "dismiss": "Lukk"
+  },
+  "pricing": {
+    "pageTitle": "Priser",
+    "interval": "måned",
+    "mostPopular": "Mest populær",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 prosjekt",
+    "starterFeature2": "Opptil 1 000 forespørsler/måned",
+    "starterFeature3": "Fellesskapsstøtte",
+    "starterFeature4": "Grunnleggende analyse",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Ubegrensede prosjekter",
+    "proFeature2": "Opptil 100 000 forespørsler/måned",
+    "proFeature3": "Prioritert støtte",
+    "proFeature4": "Avansert analyse",
+    "proFeature5": "Egne domener",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Alt ubegrenset",
+    "enterpriseFeature2": "Dedikert støtte",
+    "enterpriseFeature3": "SSO og SAML",
+    "enterpriseFeature4": "SLA-garanti",
+    "enterpriseFeature5": "Revisjonslogger",
+    "enterpriseFeature6": "Tilpassede integrasjoner"
   },
   "contact": {
     "title": "Kontakt oss",

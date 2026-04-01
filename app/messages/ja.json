@@ -18,7 +18,8 @@
     "terms": "利用規約",
     "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Cookie",
-    "aboutUs": "会社概要"
+    "aboutUs": "会社概要",
+    "legal": "法的情報"
   },
   "landing": {
     "badge": "正式リリース — SaaSmint 2.0（AIエージェント搭載）",
@@ -74,6 +75,7 @@
   "auth": {
     "login": {
       "title": "アカウントにサインイン",
+      "pageTitle": "ログイン",
       "email": "メールアドレス",
       "password": "パスワード",
       "submit": "サインイン",
@@ -82,6 +84,7 @@
     },
     "register": {
       "title": "アカウントを作成",
+      "pageTitle": "新規登録",
       "email": "メールアドレス",
       "password": "パスワード",
       "submit": "アカウント作成",
@@ -123,7 +126,13 @@
     "members": "メンバー",
     "invite": "メンバーを招待",
     "role": "役割",
-    "remove": "削除"
+    "remove": "削除",
+    "name": "名前",
+    "email": "メール",
+    "slug": "Slug",
+    "roleMember": "メンバー",
+    "roleAdmin": "管理者",
+    "roleOwner": "オーナー"
   },
   "common": {
     "loading": "読み込み中...",
@@ -131,7 +140,35 @@
     "save": "保存",
     "cancel": "キャンセル",
     "delete": "削除",
-    "confirm": "確認"
+    "confirm": "確認",
+    "toggleNav": "ナビゲーション切替",
+    "dismiss": "閉じる"
+  },
+  "pricing": {
+    "pageTitle": "料金プラン",
+    "interval": "月",
+    "mostPopular": "一番人気",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1プロジェクト",
+    "starterFeature2": "月間1,000リクエストまで",
+    "starterFeature3": "コミュニティサポート",
+    "starterFeature4": "基本分析",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "無制限のプロジェクト",
+    "proFeature2": "月間100,000リクエストまで",
+    "proFeature3": "優先サポート",
+    "proFeature4": "高度な分析",
+    "proFeature5": "カスタムドメイン",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "すべて無制限",
+    "enterpriseFeature2": "専任サポート",
+    "enterpriseFeature3": "SSO & SAML",
+    "enterpriseFeature4": "SLA保証",
+    "enterpriseFeature5": "監査ログ",
+    "enterpriseFeature6": "カスタム連携"
   },
   "contact": {
     "title": "お問い合わせ",

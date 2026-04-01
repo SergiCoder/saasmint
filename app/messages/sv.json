@@ -18,7 +18,8 @@
     "terms": "Villkor",
     "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Kakor",
-    "aboutUs": "Om oss"
+    "aboutUs": "Om oss",
+    "legal": "Juridiskt"
   },
   "landing": {
     "badge": "Now in GA — SaaSmint 2.0 with AI Agents",
@@ -74,6 +75,7 @@
   "auth": {
     "login": {
       "title": "Logga in på ditt konto",
+      "pageTitle": "Logga in",
       "email": "E-postadress",
       "password": "Lösenord",
       "submit": "Logga in",
@@ -82,6 +84,7 @@
     },
     "register": {
       "title": "Skapa ditt konto",
+      "pageTitle": "Registrera",
       "email": "E-postadress",
       "password": "Lösenord",
       "submit": "Skapa konto",
@@ -123,7 +126,13 @@
     "members": "Medlemmar",
     "invite": "Bjud in medlem",
     "role": "Roll",
-    "remove": "Ta bort"
+    "remove": "Ta bort",
+    "name": "Namn",
+    "email": "E-post",
+    "slug": "Slug",
+    "roleMember": "Medlem",
+    "roleAdmin": "Administratör",
+    "roleOwner": "Ägare"
   },
   "common": {
     "loading": "Laddar...",
@@ -131,7 +140,35 @@
     "save": "Spara",
     "cancel": "Avbryt",
     "delete": "Radera",
-    "confirm": "Bekräfta"
+    "confirm": "Bekräfta",
+    "toggleNav": "Växla navigering",
+    "dismiss": "Stäng"
+  },
+  "pricing": {
+    "pageTitle": "Priser",
+    "interval": "månad",
+    "mostPopular": "Mest populär",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 projekt",
+    "starterFeature2": "Upp till 1 000 förfrågningar/månad",
+    "starterFeature3": "Community-support",
+    "starterFeature4": "Grundläggande analys",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Obegränsade projekt",
+    "proFeature2": "Upp till 100 000 förfrågningar/månad",
+    "proFeature3": "Prioriterad support",
+    "proFeature4": "Avancerad analys",
+    "proFeature5": "Egna domäner",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Allt obegränsat",
+    "enterpriseFeature2": "Dedikerad support",
+    "enterpriseFeature3": "SSO & SAML",
+    "enterpriseFeature4": "SLA-garanti",
+    "enterpriseFeature5": "Granskningsloggar",
+    "enterpriseFeature6": "Anpassade integrationer"
   },
   "contact": {
     "title": "Kontakta oss",

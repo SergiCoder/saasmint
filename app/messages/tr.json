@@ -18,7 +18,8 @@
     "terms": "Koşullar",
     "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Çerezler",
-    "aboutUs": "Hakkımızda"
+    "aboutUs": "Hakkımızda",
+    "legal": "Yasal"
   },
   "landing": {
     "badge": "Kullanıma hazır — SaaSmint 2.0 yapay zeka ajanlarıyla",
@@ -74,6 +75,7 @@
   "auth": {
     "login": {
       "title": "Hesabınıza giriş yapın",
+      "pageTitle": "Giriş yap",
       "email": "E-posta adresi",
       "password": "Şifre",
       "submit": "Giriş yap",
@@ -82,6 +84,7 @@
     },
     "register": {
       "title": "Hesabınızı oluşturun",
+      "pageTitle": "Kayıt ol",
       "email": "E-posta adresi",
       "password": "Şifre",
       "submit": "Hesap oluştur",
@@ -123,7 +126,13 @@
     "members": "Üyeler",
     "invite": "Üye davet et",
     "role": "Rol",
-    "remove": "Kaldır"
+    "remove": "Kaldır",
+    "name": "Ad",
+    "email": "E-posta",
+    "slug": "Slug",
+    "roleMember": "Üye",
+    "roleAdmin": "Yönetici",
+    "roleOwner": "Sahip"
   },
   "common": {
     "loading": "Yükleniyor...",
@@ -131,7 +140,35 @@
     "save": "Kaydet",
     "cancel": "İptal",
     "delete": "Sil",
-    "confirm": "Onayla"
+    "confirm": "Onayla",
+    "toggleNav": "Gezinmeyi aç/kapat",
+    "dismiss": "Kapat"
+  },
+  "pricing": {
+    "pageTitle": "Fiyatlandırma",
+    "interval": "ay",
+    "mostPopular": "En popüler",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 proje",
+    "starterFeature2": "Ayda 1.000 isteğe kadar",
+    "starterFeature3": "Topluluk desteği",
+    "starterFeature4": "Temel analitik",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Sınırsız proje",
+    "proFeature2": "Ayda 100.000 isteğe kadar",
+    "proFeature3": "Öncelikli destek",
+    "proFeature4": "Gelişmiş analitik",
+    "proFeature5": "Özel alan adları",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Her şey sınırsız",
+    "enterpriseFeature2": "Özel destek",
+    "enterpriseFeature3": "SSO ve SAML",
+    "enterpriseFeature4": "SLA garantisi",
+    "enterpriseFeature5": "Denetim günlükleri",
+    "enterpriseFeature6": "Özel entegrasyonlar"
   },
   "contact": {
     "title": "Bize ulaşın",

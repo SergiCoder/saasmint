@@ -18,7 +18,8 @@
     "terms": "Voorwaarden",
     "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Cookies",
-    "aboutUs": "Over ons"
+    "aboutUs": "Over ons",
+    "legal": "Juridisch"
   },
   "landing": {
     "badge": "Nu beschikbaar — SaaSmint 2.0 met AI-agents",
@@ -74,6 +75,7 @@
   "auth": {
     "login": {
       "title": "Inloggen op uw account",
+      "pageTitle": "Inloggen",
       "email": "E-mailadres",
       "password": "Wachtwoord",
       "submit": "Inloggen",
@@ -82,6 +84,7 @@
     },
     "register": {
       "title": "Maak uw account aan",
+      "pageTitle": "Registreren",
       "email": "E-mailadres",
       "password": "Wachtwoord",
       "submit": "Account aanmaken",
@@ -123,7 +126,13 @@
     "members": "Leden",
     "invite": "Lid uitnodigen",
     "role": "Rol",
-    "remove": "Verwijderen"
+    "remove": "Verwijderen",
+    "name": "Naam",
+    "email": "E-mail",
+    "slug": "Slug",
+    "roleMember": "Lid",
+    "roleAdmin": "Beheerder",
+    "roleOwner": "Eigenaar"
   },
   "common": {
     "loading": "Laden...",
@@ -131,7 +140,35 @@
     "save": "Opslaan",
     "cancel": "Annuleren",
     "delete": "Verwijderen",
-    "confirm": "Bevestigen"
+    "confirm": "Bevestigen",
+    "toggleNav": "Navigatie wisselen",
+    "dismiss": "Sluiten"
+  },
+  "pricing": {
+    "pageTitle": "Prijzen",
+    "interval": "maand",
+    "mostPopular": "Meest populair",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 project",
+    "starterFeature2": "Tot 1 000 verzoeken/maand",
+    "starterFeature3": "Community-ondersteuning",
+    "starterFeature4": "Basisanalyse",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Onbeperkte projecten",
+    "proFeature2": "Tot 100 000 verzoeken/maand",
+    "proFeature3": "Prioriteitsondersteuning",
+    "proFeature4": "Geavanceerde analyse",
+    "proFeature5": "Eigen domeinen",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Alles onbeperkt",
+    "enterpriseFeature2": "Toegewezen ondersteuning",
+    "enterpriseFeature3": "SSO & SAML",
+    "enterpriseFeature4": "SLA-garantie",
+    "enterpriseFeature5": "Auditlogs",
+    "enterpriseFeature6": "Aangepaste integraties"
   },
   "contact": {
     "title": "Contact",

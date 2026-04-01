@@ -18,7 +18,8 @@
     "terms": "이용약관",
     "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "쿠키",
-    "aboutUs": "소개"
+    "aboutUs": "소개",
+    "legal": "법적 정보"
   },
   "landing": {
     "badge": "정식 출시 — SaaSmint 2.0 AI 에이전트 탑재",
@@ -74,6 +75,7 @@
   "auth": {
     "login": {
       "title": "계정에 로그인",
+      "pageTitle": "로그인",
       "email": "이메일 주소",
       "password": "비밀번호",
       "submit": "로그인",
@@ -82,6 +84,7 @@
     },
     "register": {
       "title": "계정 만들기",
+      "pageTitle": "회원가입",
       "email": "이메일 주소",
       "password": "비밀번호",
       "submit": "계정 만들기",
@@ -123,7 +126,13 @@
     "members": "멤버",
     "invite": "멤버 초대",
     "role": "역할",
-    "remove": "제거"
+    "remove": "제거",
+    "name": "이름",
+    "email": "이메일",
+    "slug": "Slug",
+    "roleMember": "멤버",
+    "roleAdmin": "관리자",
+    "roleOwner": "소유자"
   },
   "common": {
     "loading": "로딩 중...",
@@ -131,7 +140,35 @@
     "save": "저장",
     "cancel": "취소",
     "delete": "삭제",
-    "confirm": "확인"
+    "confirm": "확인",
+    "toggleNav": "내비게이션 전환",
+    "dismiss": "닫기"
+  },
+  "pricing": {
+    "pageTitle": "요금제",
+    "interval": "월",
+    "mostPopular": "가장 인기",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1개 프로젝트",
+    "starterFeature2": "월 1,000건 요청까지",
+    "starterFeature3": "커뮤니티 지원",
+    "starterFeature4": "기본 분석",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "무제한 프로젝트",
+    "proFeature2": "월 100,000건 요청까지",
+    "proFeature3": "우선 지원",
+    "proFeature4": "고급 분석",
+    "proFeature5": "커스텀 도메인",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "모든 것 무제한",
+    "enterpriseFeature2": "전담 지원",
+    "enterpriseFeature3": "SSO & SAML",
+    "enterpriseFeature4": "SLA 보장",
+    "enterpriseFeature5": "감사 로그",
+    "enterpriseFeature6": "커스텀 연동"
   },
   "contact": {
     "title": "문의하기",

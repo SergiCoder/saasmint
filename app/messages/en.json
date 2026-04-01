@@ -18,7 +18,8 @@
     "terms": "Terms",
     "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Cookies",
-    "aboutUs": "About us"
+    "aboutUs": "About us",
+    "legal": "Legal"
   },
   "landing": {
     "badge": "Now in GA — SaaSmint 2.0 with AI Agents",
@@ -74,6 +75,7 @@
   "auth": {
     "login": {
       "title": "Sign in to your account",
+      "pageTitle": "Log in",
       "email": "Email address",
       "password": "Password",
       "submit": "Sign in",
@@ -82,6 +84,7 @@
     },
     "register": {
       "title": "Create your account",
+      "pageTitle": "Sign up",
       "email": "Email address",
       "password": "Password",
       "submit": "Create account",
@@ -123,7 +126,13 @@
     "members": "Members",
     "invite": "Invite member",
     "role": "Role",
-    "remove": "Remove"
+    "remove": "Remove",
+    "name": "Name",
+    "email": "Email",
+    "slug": "Slug",
+    "roleMember": "Member",
+    "roleAdmin": "Admin",
+    "roleOwner": "Owner"
   },
   "common": {
     "loading": "Loading...",
@@ -131,7 +140,35 @@
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "toggleNav": "Toggle navigation",
+    "dismiss": "Dismiss"
+  },
+  "pricing": {
+    "pageTitle": "Pricing",
+    "interval": "month",
+    "mostPopular": "Most popular",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 project",
+    "starterFeature2": "Up to 1 000 requests/mo",
+    "starterFeature3": "Community support",
+    "starterFeature4": "Basic analytics",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Unlimited projects",
+    "proFeature2": "Up to 100 000 requests/mo",
+    "proFeature3": "Priority support",
+    "proFeature4": "Advanced analytics",
+    "proFeature5": "Custom domains",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Unlimited everything",
+    "enterpriseFeature2": "Dedicated support",
+    "enterpriseFeature3": "SSO & SAML",
+    "enterpriseFeature4": "SLA guarantee",
+    "enterpriseFeature5": "Audit logs",
+    "enterpriseFeature6": "Custom integrations"
   },
   "contact": {
     "title": "Contact us",
