@@ -17,6 +17,7 @@ vi.mock("@/lib/i18n/navigation", () => ({
     </a>
   ),
   usePathname: () => "/",
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
 }));
 
 const defaultProps = {
@@ -32,6 +33,7 @@ const defaultProps = {
     },
   ],
   copyright: "\u00a9 2026 TestApp",
+  toggleNavLabel: "Toggle navigation",
 };
 
 describe("MarketingLayout", () => {

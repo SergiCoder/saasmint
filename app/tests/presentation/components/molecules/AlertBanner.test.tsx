@@ -53,7 +53,11 @@ describe("AlertBanner", () => {
     });
 
     it("shows dismiss button when dismissible is true", () => {
-      render(<AlertBanner dismissible>Dismissible</AlertBanner>);
+      render(
+        <AlertBanner dismissible dismissLabel="Dismiss">
+          Dismissible
+        </AlertBanner>,
+      );
       expect(
         screen.getByRole("button", { name: "Dismiss" }),
       ).toBeInTheDocument();
@@ -61,7 +65,11 @@ describe("AlertBanner", () => {
 
     it("hides the banner when dismiss button is clicked", async () => {
       const user = userEvent.setup();
-      render(<AlertBanner dismissible>Will be dismissed</AlertBanner>);
+      render(
+        <AlertBanner dismissible dismissLabel="Dismiss">
+          Will be dismissed
+        </AlertBanner>,
+      );
       expect(screen.getByRole("alert")).toBeInTheDocument();
 
       await user.click(screen.getByRole("button", { name: "Dismiss" }));
