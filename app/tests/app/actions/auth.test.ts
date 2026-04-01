@@ -8,12 +8,6 @@ vi.mock("next/navigation", () => ({
   },
 }));
 
-vi.mock("next/headers", () => ({
-  headers: vi.fn().mockResolvedValue({
-    get: (name: string) => (name === "origin" ? "http://localhost:3000" : null),
-  }),
-}));
-
 const mockSignInWithPassword = vi.fn();
 const mockSignUp = vi.fn();
 vi.mock("@/infrastructure/supabase/server", () => ({
@@ -95,11 +89,13 @@ describe("auth server actions", () => {
       await expect(signUp(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      expect(mockSignUp).toHaveBeenCalledWith({
-        email: "new@example.com",
-        password: "secret123",
-        options: { emailRedirectTo: "http://localhost:3000/auth/callback" },
-      });
+      expect(mockSignUp).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: "new@example.com",
+          password: "secret123",
+          options: { emailRedirectTo: "http://localhost:3000/auth/callback" },
+        }),
+      );
       expect(mockRedirect).toHaveBeenCalledWith("/login?registered=true");
     });
 

@@ -1,12 +1,13 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/infrastructure/supabase/server";
 import { SignOut } from "@/application/use-cases/auth/SignOut";
 import { authGateway } from "@/infrastructure/registry";
 
-export async function signIn(_prevState: unknown, formData: FormData) {
+function extractCredentials(
+  formData: FormData,
+): { email: string; password: string } | { error: string } {
   const email = formData.get("email");
   const password = formData.get("password");
 
@@ -14,8 +15,15 @@ export async function signIn(_prevState: unknown, formData: FormData) {
     return { error: "Email and password are required" };
   }
 
+  return { email, password };
+}
+
+export async function signIn(_prevState: unknown, formData: FormData) {
+  const result = extractCredentials(formData);
+  if ("error" in result) return result;
+
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await supabase.auth.signInWithPassword(result);
 
   if (error) {
     return { error: error.message };
@@ -25,20 +33,14 @@ export async function signIn(_prevState: unknown, formData: FormData) {
 }
 
 export async function signUp(_prevState: unknown, formData: FormData) {
-  const email = formData.get("email");
-  const password = formData.get("password");
+  const result = extractCredentials(formData);
+  if ("error" in result) return result;
 
-  if (typeof email !== "string" || typeof password !== "string") {
-    return { error: "Email and password are required" };
-  }
-
-  const headerStore = await headers();
-  const origin = headerStore.get("origin") ?? "";
+  const origin = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
-    email,
-    password,
+    ...result,
     options: { emailRedirectTo: `${origin}/auth/callback` },
   });
 
