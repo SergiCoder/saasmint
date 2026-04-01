@@ -26,9 +26,7 @@ describe("LogoCloud", () => {
   });
 
   it("renders as a section element", () => {
-    const { container } = render(
-      <LogoCloud label="Partners" logos={logos} />,
-    );
+    const { container } = render(<LogoCloud label="Partners" logos={logos} />);
     expect(container.querySelector("section")).toBeInTheDocument();
   });
 

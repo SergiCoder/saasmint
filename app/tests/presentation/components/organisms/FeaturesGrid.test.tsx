@@ -4,8 +4,16 @@ import { FeaturesGrid } from "@/presentation/components/organisms";
 
 const features = [
   { icon: <span>A</span>, title: "Analytics", description: "Track everything" },
-  { icon: <span>B</span>, title: "Billing", description: "Automated invoicing" },
-  { icon: <span>C</span>, title: "Collaboration", description: "Work together" },
+  {
+    icon: <span>B</span>,
+    title: "Billing",
+    description: "Automated invoicing",
+  },
+  {
+    icon: <span>C</span>,
+    title: "Collaboration",
+    description: "Work together",
+  },
 ];
 
 const defaultProps = {

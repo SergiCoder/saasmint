@@ -15,7 +15,9 @@ describe("CtaSection", () => {
     render(<CtaSection {...defaultProps} />);
     expect(screen.getByText("Get Started")).toBeInTheDocument();
     expect(screen.getByText("Ready to launch?")).toBeInTheDocument();
-    expect(screen.getByText("Start your free trial today.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Start your free trial today."),
+    ).toBeInTheDocument();
   });
 
   it("renders an email input with the given placeholder", () => {
@@ -27,9 +29,7 @@ describe("CtaSection", () => {
 
   it("renders a button with the given text", () => {
     render(<CtaSection {...defaultProps} />);
-    expect(
-      screen.getByRole("button", { name: "Sign Up" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Sign Up" })).toBeInTheDocument();
   });
 
   it("renders as a section element", () => {

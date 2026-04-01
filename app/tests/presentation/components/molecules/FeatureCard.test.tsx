@@ -5,7 +5,11 @@ import { FeatureCard } from "@/presentation/components/molecules";
 describe("FeatureCard", () => {
   it("renders icon, title, and description", () => {
     render(
-      <FeatureCard icon={<span>🚀</span>} title="Fast" description="Blazing speed" />,
+      <FeatureCard
+        icon={<span>🚀</span>}
+        title="Fast"
+        description="Blazing speed"
+      />,
     );
     expect(screen.getByText("🚀")).toBeInTheDocument();
     expect(screen.getByText("Fast")).toBeInTheDocument();
