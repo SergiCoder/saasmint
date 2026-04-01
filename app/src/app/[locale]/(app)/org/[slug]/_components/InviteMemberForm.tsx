@@ -22,7 +22,7 @@ export function InviteMemberForm({ orgId }: InviteMemberFormProps) {
         <AlertBanner variant="success">{t("invite")}</AlertBanner>
       )}
       <input type="hidden" name="orgId" value={orgId} />
-      <FormField label="Email" name="email" type="email" required />
+      <FormField label={t("email")} name="email" type="email" required />
       <div className="space-y-1">
         <label
           htmlFor="role"

@@ -5,9 +5,10 @@ import { userGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../_data/getCurrentUser";
 import { SettingsForm } from "./_components/SettingsForm";
 
-export const metadata: Metadata = {
-  title: "Settings",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("settings");
+  return { title: t("title") };
+}
 
 export default async function SettingsPage() {
   const [t, currentUser] = await Promise.all([

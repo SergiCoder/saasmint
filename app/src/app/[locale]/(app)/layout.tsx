@@ -10,8 +10,9 @@ interface AppLayoutRouteProps {
 export default async function AppLayoutRoute({
   children,
 }: AppLayoutRouteProps) {
-  const [t, user] = await Promise.all([
+  const [t, tCommon, user] = await Promise.all([
     getTranslations("nav"),
+    getTranslations("common"),
     getCurrentUser(),
   ]);
 
@@ -31,6 +32,7 @@ export default async function AppLayoutRoute({
         avatarUrl: user.avatarUrl,
       }}
       navActions={<SignOutButton label={t("signOut")} />}
+      toggleNavLabel={tCommon("toggleNav")}
     >
       {children}
     </AppLayout>

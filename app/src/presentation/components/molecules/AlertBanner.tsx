@@ -25,6 +25,7 @@ export interface AlertBannerProps {
   variant?: keyof typeof variants;
   children: React.ReactNode;
   dismissible?: boolean;
+  dismissLabel?: string;
   className?: string;
 }
 
@@ -32,6 +33,7 @@ export function AlertBanner({
   variant = "info",
   children,
   dismissible = false,
+  dismissLabel,
   className = "",
 }: AlertBannerProps) {
   const [visible, setVisible] = useState(true);
@@ -51,7 +53,7 @@ export function AlertBanner({
           type="button"
           onClick={() => setVisible(false)}
           className={`ml-4 rounded p-1 transition-colors ${styles.close}`}
-          aria-label="Dismiss"
+          aria-label={dismissLabel}
         >
           <svg
             className="h-4 w-4"

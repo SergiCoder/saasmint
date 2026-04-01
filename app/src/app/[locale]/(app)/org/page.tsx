@@ -6,9 +6,10 @@ import { getCurrentUser } from "../_data/getCurrentUser";
 import { OrgCard } from "@/presentation/components/molecules/OrgCard";
 import { CreateOrgForm } from "./_components/CreateOrgForm";
 
-export const metadata: Metadata = {
-  title: "Organizations",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("org");
+  return { title: t("title") };
+}
 
 export default async function OrgListPage() {
   const [t, user] = await Promise.all([

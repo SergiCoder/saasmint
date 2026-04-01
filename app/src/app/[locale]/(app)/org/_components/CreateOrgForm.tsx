@@ -16,7 +16,7 @@ export function CreateOrgForm() {
     <form action={formAction} className="space-y-4">
       {state?.error && <AlertBanner variant="error">{state.error}</AlertBanner>}
       <FormField label={t("title")} name="name" required />
-      <FormField label="Slug" name="slug" required />
+      <FormField label={t("slug")} name="slug" required />
       <Button type="submit" loading={pending}>
         {t("create")}
       </Button>

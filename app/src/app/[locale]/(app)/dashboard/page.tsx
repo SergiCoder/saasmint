@@ -7,9 +7,10 @@ import { getCurrentUser } from "../_data/getCurrentUser";
 import { MetricCard } from "@/presentation/components/molecules/MetricCard";
 import { OrgCard } from "@/presentation/components/molecules/OrgCard";
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("dashboard");
+  return { title: t("title") };
+}
 
 export default async function DashboardPage() {
   const [t, tOrg, user] = await Promise.all([

@@ -5,6 +5,7 @@ export interface AppLayoutProps {
   navLinks: NavBarLink[];
   user: NavBarUser;
   navActions?: React.ReactNode;
+  toggleNavLabel?: string;
   children: React.ReactNode;
 }
 
@@ -13,6 +14,7 @@ export function AppLayout({
   navLinks,
   user,
   navActions,
+  toggleNavLabel,
   children,
 }: AppLayoutProps) {
   return (
@@ -22,6 +24,7 @@ export function AppLayout({
         links={navLinks}
         user={user}
         actions={navActions}
+        toggleNavLabel={toggleNavLabel}
       />
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {children}

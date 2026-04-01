@@ -21,6 +21,7 @@ export interface NavBarProps {
   links: NavBarLink[];
   user?: NavBarUser | null;
   actions?: React.ReactNode;
+  toggleNavLabel?: string;
   className?: string;
 }
 
@@ -29,6 +30,7 @@ export function NavBar({
   links,
   user,
   actions,
+  toggleNavLabel,
   className = "",
 }: NavBarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -59,7 +61,7 @@ export function NavBar({
             onClick={() => setMobileOpen(!mobileOpen)}
             className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 md:hidden"
             aria-expanded={mobileOpen}
-            aria-label="Toggle navigation"
+            aria-label={toggleNavLabel}
           >
             <svg
               className="h-6 w-6"

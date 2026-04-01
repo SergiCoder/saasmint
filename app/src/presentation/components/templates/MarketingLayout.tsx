@@ -6,6 +6,7 @@ export interface MarketingLayoutProps {
   navLinks: NavBarLink[];
   navUser?: NavBarUser | null;
   navActions?: React.ReactNode;
+  toggleNavLabel?: string;
   footerSections: FooterSection[];
   copyright: string;
   children: React.ReactNode;
@@ -16,6 +17,7 @@ export function MarketingLayout({
   navLinks,
   navUser,
   navActions,
+  toggleNavLabel,
   footerSections,
   copyright,
   children,
@@ -27,6 +29,7 @@ export function MarketingLayout({
         links={navLinks}
         user={navUser}
         actions={navActions}
+        toggleNavLabel={toggleNavLabel}
       />
       <main className="mt-[62px] flex-1">{children}</main>
       <Footer

@@ -17,9 +17,10 @@ import {
 import { CheckoutButton } from "./_components/CheckoutButton";
 import { BillingPortalButton } from "./_components/BillingPortalButton";
 
-export const metadata: Metadata = {
-  title: "Billing",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("billing");
+  return { title: t("title") };
+}
 
 export default async function BillingPage() {
   const [t, user] = await Promise.all([

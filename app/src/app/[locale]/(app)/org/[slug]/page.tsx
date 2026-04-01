@@ -63,7 +63,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
         <OrgMemberList
           members={memberRows}
           columns={{
-            name: "Name",
+            name: t("name"),
             role: t("role"),
             actions: "",
           }}

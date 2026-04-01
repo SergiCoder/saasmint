@@ -11,8 +11,9 @@ interface MarketingLayoutRouteProps {
 export default async function MarketingLayoutRoute({
   children,
 }: MarketingLayoutRouteProps) {
-  const [t, user] = await Promise.all([
+  const [t, tCommon, user] = await Promise.all([
     getTranslations("nav"),
+    getTranslations("common"),
     getOptionalUser(),
   ]);
 
@@ -27,7 +28,7 @@ export default async function MarketingLayoutRoute({
 
   const footerSections = [
     {
-      title: "Legal",
+      title: tFooter("legal"),
       links: [
         { href: "/privacy", label: tFooter("privacy") },
         { href: "/terms", label: tFooter("terms") },
@@ -74,6 +75,7 @@ export default async function MarketingLayoutRoute({
       navLinks={navLinks}
       navUser={navUser}
       navActions={navActions}
+      toggleNavLabel={tCommon("toggleNav")}
       footerSections={footerSections}
       copyright={tFooter("copyright")}
     >
