@@ -16,14 +16,14 @@
   "footer": {
     "privacy": "Privacidad",
     "terms": "Términos",
-    "copyright": "© 2026 Meridian, Inc.",
+    "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Cookies",
     "aboutUs": "Sobre nosotros"
   },
   "landing": {
-    "badge": "Disponible — Meridian 2.0 con agentes IA",
+    "badge": "Disponible — SaaSmint 2.0 con agentes IA",
     "headline": "La plataforma con la que los equipos realmente <accent>entregan</accent>",
-    "subheadline": "Deja de gestionar infraestructura. Empieza a entregar producto. Meridian se encarga de los despliegues, el escalado y la observabilidad para que tu equipo se centre en lo que importa.",
+    "subheadline": "Deja de gestionar infraestructura. Empieza a entregar producto. SaaSmint se encarga de los despliegues, el escalado y la observabilidad para que tu equipo se centre en lo que importa.",
     "cta": "Empieza gratis",
     "ctaSecondary": "Ver demo de 2 min",
     "trustText": "Más de {count} equipos de ingeniería confían en nosotros",
@@ -159,7 +159,7 @@
   "terms": {
     "title": "Términos de servicio",
     "lastUpdated": "Última actualización: marzo 2026",
-    "intro": "Al usar Meridian, aceptas estos términos. Léelos detenidamente antes de usar nuestros servicios."
+    "intro": "Al usar SaaSmint, aceptas estos términos. Léelos detenidamente antes de usar nuestros servicios."
   },
   "cookies": {
     "title": "Política de cookies",

@@ -1,6 +1,6 @@
-# stripe-nextjs — CLAUDE.md
+# SaaSmint App — CLAUDE.md
 
-Next.js 16 SaaS frontend template paired with `stripe-django`.
+Next.js 16 SaaS frontend template paired with `SaaSmint Core`.
 
 ## Architecture
 
@@ -38,7 +38,7 @@ All error classes carry a `code: string` field for programmatic handling.
 
 Gateway implementations in `src/infrastructure/`, organised by provider:
 
-- `api/` — `DjangoApi*Gateway` classes that call `stripe-django` via `apiFetch`
+- `api/` — `DjangoApi*Gateway` classes that call `SaaSmint Core` via `apiFetch`
 - `supabase/` — `SupabaseAuthGateway` plus `client.ts` / `server.ts` Supabase client factories
 
 Each gateway implements a port interface from `src/application/ports/` (e.g. `IOrgGateway`, `IAuthGateway`).
@@ -107,4 +107,4 @@ pnpm test:coverage    # run tests with v8 coverage report
 
 Tests live in `tests/` mirroring the `src/` structure (e.g. `src/domain/errors/DomainError.ts` → `tests/domain/errors/DomainError.test.ts`). The test runner is Vitest; configuration is in `vitest.config.ts`.
 
-Backend: `stripe-django` must run on `NEXT_PUBLIC_API_URL` (default: `http://localhost:8001`)
+Backend: `SaaSmint Core` must run on `NEXT_PUBLIC_API_URL` (default: `http://localhost:8001`)

@@ -10,7 +10,7 @@ import { StatsSection } from "@/presentation/components/organisms/StatsSection";
 import { CtaSection } from "@/presentation/components/organisms/CtaSection";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return { title: "Meridian" };
+  return { title: "SaaSmint" };
 }
 
 const TRUST_USERS = [

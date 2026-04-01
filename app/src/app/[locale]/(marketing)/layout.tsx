@@ -70,7 +70,7 @@ export default async function MarketingLayoutRoute({
 
   return (
     <MarketingLayout
-      appName="Meridian"
+      appName="SaaSmint"
       navLinks={navLinks}
       navUser={navUser}
       navActions={navActions}

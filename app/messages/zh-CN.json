@@ -16,14 +16,14 @@
   "footer": {
     "privacy": "隐私",
     "terms": "条款",
-    "copyright": "© 2026 Meridian, Inc.",
+    "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Cookie",
     "aboutUs": "关于我们"
   },
   "landing": {
-    "badge": "正式发布 — Meridian 2.0 搭载 AI 代理",
+    "badge": "正式发布 — SaaSmint 2.0 搭载 AI 代理",
     "headline": "团队真正<accent>交付产品</accent>的平台",
-    "subheadline": "不再管理基础设施，专注交付产品。Meridian 负责部署、扩展和可观测性，让您的团队专注于真正重要的事。",
+    "subheadline": "不再管理基础设施，专注交付产品。SaaSmint 负责部署、扩展和可观测性，让您的团队专注于真正重要的事。",
     "cta": "免费开始",
     "ctaSecondary": "观看2分钟演示",
     "trustText": "超过 {count} 个工程团队的信赖之选",
@@ -159,7 +159,7 @@
   "terms": {
     "title": "服务条款",
     "lastUpdated": "最后更新：2026年3月",
-    "intro": "使用 Meridian 即表示您同意这些条款。请在使用我们的服务之前仔细阅读。"
+    "intro": "使用 SaaSmint 即表示您同意这些条款。请在使用我们的服务之前仔细阅读。"
   },
   "cookies": {
     "title": "Cookie 政策",

@@ -12,7 +12,7 @@ export default async function SignupPage() {
   const t = await getTranslations("auth.register");
 
   return (
-    <AuthLayout appName="Meridian" title={t("title")}>
+    <AuthLayout appName="SaaSmint" title={t("title")}>
       <AuthForm
         action={signUp}
         translationNamespace="auth.register"

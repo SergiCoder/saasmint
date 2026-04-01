@@ -16,14 +16,14 @@
   "footer": {
     "privacy": "プライバシー",
     "terms": "利用規約",
-    "copyright": "© 2026 Meridian, Inc.",
+    "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Cookie",
     "aboutUs": "会社概要"
   },
   "landing": {
-    "badge": "正式リリース — Meridian 2.0（AIエージェント搭載）",
+    "badge": "正式リリース — SaaSmint 2.0（AIエージェント搭載）",
     "headline": "チームが本当に<accent>成果を出す</accent>プラットフォーム",
-    "subheadline": "インフラ管理はもう終わり。プロダクトの出荷に集中しましょう。Meridianがデプロイ、スケーリング、オブザーバビリティを担当し、チームが本当に大切なことに集中できるようにします。",
+    "subheadline": "インフラ管理はもう終わり。プロダクトの出荷に集中しましょう。SaaSmintがデプロイ、スケーリング、オブザーバビリティを担当し、チームが本当に大切なことに集中できるようにします。",
     "cta": "無料で始める",
     "ctaSecondary": "2分デモを見る",
     "trustText": "{count}以上のエンジニアリングチームが利用中",
@@ -159,7 +159,7 @@
   "terms": {
     "title": "利用規約",
     "lastUpdated": "最終更新日: 2026年3月",
-    "intro": "Meridianをご利用いただくことで、これらの規約に同意いただいたものとみなします。ご利用前によくお読みください。"
+    "intro": "SaaSmintをご利用いただくことで、これらの規約に同意いただいたものとみなします。ご利用前によくお読みください。"
   },
   "cookies": {
     "title": "Cookieポリシー",

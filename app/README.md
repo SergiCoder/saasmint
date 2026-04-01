@@ -1,6 +1,6 @@
-# stripe-nextjs
+# SaaSmint App
 
-Next.js 16 SaaS frontend template paired with [stripe-django](https://github.com/SergiCoder/stripe-django).
+Next.js 16 SaaS frontend template paired with [SaaSmint Core](https://github.com/SergiCoder/SaaSmint-Core).
 
 ## Stack
 
@@ -35,7 +35,7 @@ pnpm test             # run all tests once
 pnpm test:coverage    # run tests with v8 coverage report
 ```
 
-The backend ([stripe-django](https://github.com/SergiCoder/stripe-django)) must be running on `http://localhost:8001`.
+The backend ([SaaSmint Core](https://github.com/SergiCoder/SaaSmint-Core)) must be running on `http://localhost:8001`.
 
 ## Environment variables
 

@@ -16,14 +16,14 @@
   "footer": {
     "privacy": "Gizlilik",
     "terms": "Koşullar",
-    "copyright": "© 2026 Meridian, Inc.",
+    "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Çerezler",
     "aboutUs": "Hakkımızda"
   },
   "landing": {
-    "badge": "Kullanıma hazır — Meridian 2.0 yapay zeka ajanlarıyla",
+    "badge": "Kullanıma hazır — SaaSmint 2.0 yapay zeka ajanlarıyla",
     "headline": "Ekiplerin gerçekten <accent>ürün teslim ettiği</accent> platform",
-    "subheadline": "Altyapı yönetmeyi bırakın. Ürün teslim etmeye başlayın. Meridian dağıtım, ölçekleme ve gözlemlenebilirliği üstlenir, böylece ekibiniz önemli olana odaklanabilir.",
+    "subheadline": "Altyapı yönetmeyi bırakın. Ürün teslim etmeye başlayın. SaaSmint dağıtım, ölçekleme ve gözlemlenebilirliği üstlenir, böylece ekibiniz önemli olana odaklanabilir.",
     "cta": "Ücretsiz başla",
     "ctaSecondary": "2 dk demo izle",
     "trustText": "{count}+ mühendislik ekibinin güvendiği platform",
@@ -159,7 +159,7 @@
   "terms": {
     "title": "Hizmet Şartları",
     "lastUpdated": "Son güncelleme: Mart 2026",
-    "intro": "Meridian'ı kullanarak bu şartları kabul etmiş olursunuz. Hizmetlerimizi kullanmadan önce lütfen dikkatlice okuyun."
+    "intro": "SaaSmint'ı kullanarak bu şartları kabul etmiş olursunuz. Hizmetlerimizi kullanmadan önce lütfen dikkatlice okuyun."
   },
   "cookies": {
     "title": "Çerez Politikası",

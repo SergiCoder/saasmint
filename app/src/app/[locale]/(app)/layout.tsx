@@ -24,7 +24,7 @@ export default async function AppLayoutRoute({
 
   return (
     <AppLayout
-      appName="Meridian"
+      appName="SaaSmint"
       navLinks={navLinks}
       user={{
         fullName: user.fullName ?? user.email,

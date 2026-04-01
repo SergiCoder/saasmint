@@ -16,14 +16,14 @@
   "footer": {
     "privacy": "Privasi",
     "terms": "Ketentuan",
-    "copyright": "© 2026 Meridian, Inc.",
+    "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Kuki",
     "aboutUs": "Tentang kami"
   },
   "landing": {
-    "badge": "Now in GA — Meridian 2.0 with AI Agents",
+    "badge": "Now in GA — SaaSmint 2.0 with AI Agents",
     "headline": "The platform teams actually <accent>ship with</accent>",
-    "subheadline": "Stop managing infrastructure. Start shipping product. Meridian handles deploys, scaling, and observability so your team can focus on what matters.",
+    "subheadline": "Stop managing infrastructure. Start shipping product. SaaSmint handles deploys, scaling, and observability so your team can focus on what matters.",
     "cta": "Start for free",
     "ctaSecondary": "Watch 2-min demo",
     "trustText": "Trusted by {count}+ engineering teams",
@@ -159,7 +159,7 @@
   "terms": {
     "title": "Ketentuan Layanan",
     "lastUpdated": "Terakhir diperbarui: Maret 2026",
-    "intro": "Dengan menggunakan Meridian, Anda menyetujui ketentuan ini. Harap baca dengan saksama sebelum menggunakan layanan kami."
+    "intro": "Dengan menggunakan SaaSmint, Anda menyetujui ketentuan ini. Harap baca dengan saksama sebelum menggunakan layanan kami."
   },
   "cookies": {
     "title": "Kebijakan Cookie",

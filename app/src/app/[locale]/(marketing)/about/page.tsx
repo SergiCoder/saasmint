@@ -21,23 +21,23 @@ export default async function AboutPage() {
       <ul className="mt-6 space-y-2 text-base leading-relaxed text-gray-600">
         <li>
           <a
-            href="https://github.com/SergiCoder/stripe-nextjs"
+            href="https://github.com/SergiCoder/SaaSmint-App"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary-600 hover:text-primary-700 font-medium underline"
           >
-            stripe-nextjs
+            SaaSmint App
           </a>{" "}
           — {t("repoFrontend")}
         </li>
         <li>
           <a
-            href="https://github.com/SergiCoder/stripe-django"
+            href="https://github.com/SergiCoder/SaaSmint-Core"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary-600 hover:text-primary-700 font-medium underline"
           >
-            stripe-django
+            SaaSmint Core
           </a>{" "}
           — {t("repoBackend")}
         </li>

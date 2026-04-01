@@ -16,14 +16,14 @@
   "footer": {
     "privacy": "Privatlivspolitik",
     "terms": "Vilkår",
-    "copyright": "© 2026 Meridian, Inc.",
+    "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "Cookies",
     "aboutUs": "Om os"
   },
   "landing": {
-    "badge": "Now in GA — Meridian 2.0 with AI Agents",
+    "badge": "Now in GA — SaaSmint 2.0 with AI Agents",
     "headline": "The platform teams actually <accent>ship with</accent>",
-    "subheadline": "Stop managing infrastructure. Start shipping product. Meridian handles deploys, scaling, and observability so your team can focus on what matters.",
+    "subheadline": "Stop managing infrastructure. Start shipping product. SaaSmint handles deploys, scaling, and observability so your team can focus on what matters.",
     "cta": "Start for free",
     "ctaSecondary": "Watch 2-min demo",
     "trustText": "Trusted by {count}+ engineering teams",
@@ -159,7 +159,7 @@
   "terms": {
     "title": "Servicevilkår",
     "lastUpdated": "Sidst opdateret: marts 2026",
-    "intro": "Ved at bruge Meridian accepterer du disse vilkår. Læs dem omhyggeligt, før du bruger vores tjenester."
+    "intro": "Ved at bruge SaaSmint accepterer du disse vilkår. Læs dem omhyggeligt, før du bruger vores tjenester."
   },
   "cookies": {
     "title": "Cookiepolitik",

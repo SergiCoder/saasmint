@@ -16,14 +16,14 @@
   "footer": {
     "privacy": "개인정보 보호",
     "terms": "이용약관",
-    "copyright": "© 2026 Meridian, Inc.",
+    "copyright": "© 2026 SaaSmint, Inc.",
     "cookies": "쿠키",
     "aboutUs": "소개"
   },
   "landing": {
-    "badge": "정식 출시 — Meridian 2.0 AI 에이전트 탑재",
+    "badge": "정식 출시 — SaaSmint 2.0 AI 에이전트 탑재",
     "headline": "팀이 실제로 <accent>성과를 내는</accent> 플랫폼",
-    "subheadline": "인프라 관리는 그만. 제품 배포에 집중하세요. Meridian이 배포, 스케일링, 관측성을 담당하여 팀이 중요한 일에 집중할 수 있도록 합니다.",
+    "subheadline": "인프라 관리는 그만. 제품 배포에 집중하세요. SaaSmint이 배포, 스케일링, 관측성을 담당하여 팀이 중요한 일에 집중할 수 있도록 합니다.",
     "cta": "무료로 시작",
     "ctaSecondary": "2분 데모 보기",
     "trustText": "{count}개 이상의 엔지니어링 팀이 신뢰합니다",
@@ -159,7 +159,7 @@
   "terms": {
     "title": "이용약관",
     "lastUpdated": "최종 업데이트: 2026년 3월",
-    "intro": "Meridian을 사용함으로써 이 약관에 동의하는 것입니다. 서비스를 사용하기 전에 주의 깊게 읽어주세요."
+    "intro": "SaaSmint을 사용함으로써 이 약관에 동의하는 것입니다. 서비스를 사용하기 전에 주의 깊게 읽어주세요."
   },
   "cookies": {
     "title": "쿠키 정책",
