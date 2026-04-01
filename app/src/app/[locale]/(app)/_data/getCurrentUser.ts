@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
 import { AuthError } from "@/domain/errors/AuthError";
@@ -8,8 +9,11 @@ import { authGateway } from "@/infrastructure/registry";
  * Use in (app) server components instead of calling GetCurrentUser directly,
  * because Next.js renders layout and page in parallel — the layout's redirect
  * cannot prevent the page from executing.
+ *
+ * Wrapped with React.cache() so that layout + page share a single request
+ * per server render pass.
  */
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async function getCurrentUser() {
   try {
     return await new GetCurrentUser(authGateway).execute();
   } catch (err) {
@@ -18,4 +22,4 @@ export async function getCurrentUser() {
     }
     throw err;
   }
-}
+});

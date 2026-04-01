@@ -21,7 +21,7 @@ export interface NavBarProps {
   links: NavBarLink[];
   user?: NavBarUser | null;
   actions?: React.ReactNode;
-  toggleNavLabel?: string;
+  toggleNavLabel: string;
   className?: string;
 }
 

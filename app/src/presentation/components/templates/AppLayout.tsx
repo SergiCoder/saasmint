@@ -5,7 +5,7 @@ export interface AppLayoutProps {
   navLinks: NavBarLink[];
   user: NavBarUser;
   navActions?: React.ReactNode;
-  toggleNavLabel?: string;
+  toggleNavLabel: string;
   children: React.ReactNode;
 }
 

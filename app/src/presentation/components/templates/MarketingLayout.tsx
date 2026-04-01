@@ -6,7 +6,7 @@ export interface MarketingLayoutProps {
   navLinks: NavBarLink[];
   navUser?: NavBarUser | null;
   navActions?: React.ReactNode;
-  toggleNavLabel?: string;
+  toggleNavLabel: string;
   footerSections: FooterSection[];
   copyright: string;
   children: React.ReactNode;

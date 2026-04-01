@@ -53,7 +53,7 @@ export function AlertBanner({
           type="button"
           onClick={() => setVisible(false)}
           className={`ml-4 rounded p-1 transition-colors ${styles.close}`}
-          aria-label={dismissLabel}
+          aria-label={dismissLabel ?? "Dismiss"}
         >
           <svg
             className="h-4 w-4"

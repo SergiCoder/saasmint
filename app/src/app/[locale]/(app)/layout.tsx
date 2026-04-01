@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { AppLayout } from "@/presentation/components/templates/AppLayout";
-import { SignOutButton } from "./_components/SignOutButton";
+import { SignOutButton } from "../_components/SignOutButton";
 import { getCurrentUser } from "./_data/getCurrentUser";
 
 interface AppLayoutRouteProps {
