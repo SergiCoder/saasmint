@@ -31,6 +31,11 @@ const mockUser = {
   fullName: "John Doe",
   preferredLocale: "en",
   preferredCurrency: "usd",
+  phonePrefix: null,
+  phone: null,
+  timezone: null,
+  jobTitle: null,
+  bio: null,
 };
 
 let updateProfile: typeof import("@/app/actions/user").updateProfile;
@@ -58,6 +63,11 @@ describe("user server actions", () => {
         fullName: "Jane Doe",
         preferredLocale: "fr",
         preferredCurrency: "eur",
+        phonePrefix: null,
+        phone: null,
+        timezone: null,
+        jobTitle: null,
+        bio: null,
       });
       expect(mockRevalidatePath).toHaveBeenCalledWith("/settings");
       expect(result).toEqual({ success: true });
@@ -72,6 +82,55 @@ describe("user server actions", () => {
       const result = await updateProfile(undefined, formData);
       expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
         fullName: null,
+        phonePrefix: null,
+        phone: null,
+        timezone: null,
+        jobTitle: null,
+        bio: null,
+      });
+      expect(result).toEqual({ success: true });
+    });
+
+    it("updates profile with new custom fields", async () => {
+      mockUpdateUserProfileExecute.mockResolvedValue(undefined);
+
+      const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
+      formData.set("phone", "+1234567890");
+      formData.set("timezone", "Europe/Madrid");
+      formData.set("jobTitle", "Engineer");
+      formData.set("bio", "Hello world");
+
+      const result = await updateProfile(undefined, formData);
+      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
+        fullName: "Jane Doe",
+        phonePrefix: null,
+        phone: "+1234567890",
+        timezone: "Europe/Madrid",
+        jobTitle: "Engineer",
+        bio: "Hello world",
+      });
+      expect(result).toEqual({ success: true });
+    });
+
+    it("sends null for empty custom fields", async () => {
+      mockUpdateUserProfileExecute.mockResolvedValue(undefined);
+
+      const formData = new FormData();
+      formData.set("fullName", "Jane");
+      formData.set("phone", "");
+      formData.set("timezone", "");
+      formData.set("jobTitle", "");
+      formData.set("bio", "");
+
+      const result = await updateProfile(undefined, formData);
+      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
+        fullName: "Jane",
+        phonePrefix: null,
+        phone: null,
+        timezone: null,
+        jobTitle: null,
+        bio: null,
       });
       expect(result).toEqual({ success: true });
     });
@@ -85,6 +144,11 @@ describe("user server actions", () => {
       const result = await updateProfile(undefined, formData);
       expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
         fullName: "Jane",
+        phonePrefix: null,
+        phone: null,
+        timezone: null,
+        jobTitle: null,
+        bio: null,
       });
       expect(result).toEqual({ success: true });
     });
