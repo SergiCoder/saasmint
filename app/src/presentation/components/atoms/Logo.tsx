@@ -1,14 +1,18 @@
+import { Link } from "@/lib/i18n/navigation";
+
 export interface LogoProps {
   appName: string;
+  href?: string;
   className?: string;
 }
 
-export function Logo({ appName, className = "" }: LogoProps) {
+export function Logo({ appName, href = "/", className = "" }: LogoProps) {
   return (
-    <span
+    <Link
+      href={href}
       className={`text-primary-600 text-xl font-bold tracking-tight ${className}`}
     >
       {appName}
-    </span>
+    </Link>
   );
 }

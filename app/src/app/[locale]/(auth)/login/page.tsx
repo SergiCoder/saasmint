@@ -4,15 +4,16 @@ import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
 import { signIn } from "@/app/actions/auth";
 import { AuthForm } from "../_components/AuthForm";
 
-export const metadata: Metadata = {
-  title: "Log in",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("auth.login");
+  return { title: t("pageTitle") };
+}
 
 export default async function LoginPage() {
   const t = await getTranslations("auth.login");
 
   return (
-    <AuthLayout appName="Meridian" title={t("title")}>
+    <AuthLayout appName="SaaSmint" title={t("title")}>
       <AuthForm
         action={signIn}
         translationNamespace="auth.login"

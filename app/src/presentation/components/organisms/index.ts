@@ -25,3 +25,12 @@ export {
   SubscriptionCard,
   type SubscriptionCardProps,
 } from "./SubscriptionCard";
+export { CtaSection, type CtaSectionProps } from "./CtaSection";
+export {
+  DashboardMock,
+  type DashboardMockProps,
+  type DashboardMockActivity,
+} from "./DashboardMock";
+export { FeaturesGrid, type FeaturesGridProps } from "./FeaturesGrid";
+export { LogoCloud, type LogoCloudProps } from "./LogoCloud";
+export { StatsSection, type StatsSectionProps } from "./StatsSection";

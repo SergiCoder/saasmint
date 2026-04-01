@@ -1,5 +1,5 @@
 {
-  "name": "stripe-nextjs",
+  "name": "saasmint-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -14,13 +14,13 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@stripe/stripe-js": "^9.0.0",
+    "@stripe/stripe-js": "^9.0.1",
     "@supabase/ssr": "^0.10.0",
-    "@supabase/supabase-js": "^2.100.1",
+    "@supabase/supabase-js": "^2.101.1",
     "@tailwindcss/forms": "^0.5.11",
     "gray-matter": "^4.0.3",
-    "next": "16.2.1",
-    "next-intl": "^4.8.3",
+    "next": "16.2.2",
+    "next-intl": "^4.8.4",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
@@ -36,7 +36,7 @@
     "@vitest/coverage-v8": "^4.1.2",
     "autoprefixer": "^10.4.27",
     "eslint": "^9.39.4",
-    "eslint-config-next": "16.2.1",
+    "eslint-config-next": "16.2.2",
     "jsdom": "^29.0.1",
     "postcss": "^8.5.8",
     "prettier": "^3.8.1",

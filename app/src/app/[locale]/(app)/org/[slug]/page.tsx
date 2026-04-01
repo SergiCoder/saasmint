@@ -1,13 +1,9 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
 import { ListUserOrgs } from "@/application/use-cases/org/ListUserOrgs";
 import { ListOrgMembers } from "@/application/use-cases/org-member/ListOrgMembers";
-import {
-  authGateway,
-  orgGateway,
-  orgMemberGateway,
-} from "@/infrastructure/registry";
+import { orgGateway, orgMemberGateway } from "@/infrastructure/registry";
+import { getCurrentUser } from "../../_data/getCurrentUser";
 import { OrgMemberList } from "@/presentation/components/organisms/OrgMemberList";
 import { Button } from "@/presentation/components/atoms/Button";
 import { removeMember } from "@/app/actions/org";
@@ -22,7 +18,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
 
   const [t, user] = await Promise.all([
     getTranslations("org"),
-    new GetCurrentUser(authGateway).execute(),
+    getCurrentUser(),
   ]);
   const orgs = await new ListUserOrgs(orgGateway).execute(user.id);
   const org = orgs.find((o) => o.slug === slug);
@@ -67,7 +63,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
         <OrgMemberList
           members={memberRows}
           columns={{
-            name: "Name",
+            name: t("name"),
             role: t("role"),
             actions: "",
           }}

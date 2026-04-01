@@ -2,12 +2,8 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { AppLayout } from "@/presentation/components/templates";
 
-vi.mock("next/navigation", () => ({
-  usePathname: () => "/dashboard",
-}));
-
-vi.mock("next/link", () => ({
-  default: ({
+vi.mock("@/lib/i18n/navigation", () => ({
+  Link: ({
     href,
     children,
     ...props
@@ -20,12 +16,15 @@ vi.mock("next/link", () => ({
       {children}
     </a>
   ),
+  usePathname: () => "/dashboard",
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
 }));
 
 const defaultProps = {
   appName: "TestApp",
   navLinks: [{ href: "/dashboard", label: "Dashboard" }],
   user: { fullName: "Jane Doe", avatarUrl: null },
+  toggleNavLabel: "Toggle navigation",
 };
 
 describe("AppLayout", () => {

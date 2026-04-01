@@ -1,1 +1,206 @@
-{}
+{
+  "nav": {
+    "features": "功能",
+    "pricing": "定价",
+    "blog": "Blog",
+    "getStarted": "开始使用",
+    "dashboard": "仪表盘",
+    "billing": "账单",
+    "settings": "设置",
+    "org": "组织",
+    "admin": "管理",
+    "signIn": "登录",
+    "signOut": "退出",
+    "contactUs": "联系我们"
+  },
+  "footer": {
+    "privacy": "隐私",
+    "terms": "条款",
+    "copyright": "© 2026 SaaSmint, Inc.",
+    "cookies": "Cookie",
+    "aboutUs": "关于我们",
+    "legal": "法律信息"
+  },
+  "landing": {
+    "badge": "正式发布 — SaaSmint 2.0 搭载 AI 代理",
+    "headline": "团队真正<accent>交付产品</accent>的平台",
+    "subheadline": "不再管理基础设施，专注交付产品。SaaSmint 负责部署、扩展和可观测性，让您的团队专注于真正重要的事。",
+    "cta": "免费开始",
+    "ctaSecondary": "观看2分钟演示",
+    "trustText": "超过 {count} 个工程团队的信赖之选",
+    "logosLabel": "信赖我们的团队",
+    "featuresLabel": "功能",
+    "featuresTitle": "为注重质量的团队而构建",
+    "featuresSubtitle": "在任何规模下自信部署所需的一切 — 无需运维负担。",
+    "featureDeploysTitle": "即时部署",
+    "featureDeploysDesc": "Push 到 Git，30 秒内上线。零配置，连接仓库即可开始。",
+    "featureAiTitle": "AI 代理",
+    "featureAiDesc": "自主代理为您处理测试、监控和事件响应。",
+    "featureEdgeTitle": "全球边缘网络",
+    "featureEdgeDesc": "同时部署到 60+ 个区域。为全球用户提供低于 20ms 的响应。",
+    "featureObsTitle": "统一可观测性",
+    "featureObsDesc": "指标、日志和链路追踪集于一处。ML 驱动的告警率先发现问题。",
+    "featureSecTitle": "零信任安全",
+    "featureSecDesc": "端到端加密、RBAC、密钥管理和 SSO 默认包含。",
+    "featureIntTitle": "200+ 集成",
+    "featureIntDesc": "GitHub、Slack、Datadog、PagerDuty 及数百种更多 — 接入您现有的技术栈。",
+    "statDevs": "1.24万",
+    "statDevsLabel": "活跃开发者",
+    "statUptime": "99.99%",
+    "statUptimeLabel": "可用性 SLA",
+    "statRegions": "60+",
+    "statRegionsLabel": "全球区域",
+    "statLatency": "18ms",
+    "statLatencyLabel": "平均响应时间",
+    "ctaSectionLabel": "立即开始",
+    "ctaSectionTitle": "准备好更快交付了吗？",
+    "ctaSectionSubtitle": "加入 12,400+ 工程团队。永久免费，无需信用卡。",
+    "ctaSectionPlaceholder": "you@company.cn",
+    "ctaSectionButton": "开始构建 →",
+    "dashUrl": "app.meridian.io/dashboard",
+    "dashUptime": "正常运行时间",
+    "dashUptimeVal": "99.99%",
+    "dashUptimeSub": "所有系统正常运行",
+    "dashLatency": "平均延迟",
+    "dashLatencyVal": "18ms",
+    "dashLatencySub": "较上周减少 4ms",
+    "dashChart": "请求 / 小时",
+    "dashActivity1": "部署 v2.4.1 成功 — 生产",
+    "dashActivity1Time": "2分钟前",
+    "dashActivity2": "自动扩展至 12 个实例",
+    "dashActivity2Time": "8分钟前",
+    "dashActivity3": "异常已被代理检测并解决",
+    "dashActivity3Time": "1小时前"
+  },
+  "auth": {
+    "login": {
+      "title": "登录您的账户",
+      "pageTitle": "登录",
+      "email": "邮箱地址",
+      "password": "密码",
+      "submit": "登录",
+      "noAccount": "还没有账户？",
+      "register": "注册"
+    },
+    "register": {
+      "title": "创建您的账户",
+      "pageTitle": "注册",
+      "email": "邮箱地址",
+      "password": "密码",
+      "submit": "创建账户",
+      "hasAccount": "已有账户？",
+      "login": "登录"
+    }
+  },
+  "dashboard": {
+    "title": "仪表盘",
+    "uptime": "正常运行时间",
+    "latency": "延迟",
+    "requests": "请求",
+    "errors": "错误"
+  },
+  "billing": {
+    "title": "账单",
+    "currentPlan": "当前方案",
+    "upgrade": "升级",
+    "cancel": "取消订阅",
+    "changePlan": "更改方案",
+    "applyPromo": "使用促销代码",
+    "portal": "管理账单",
+    "success": "支付成功！",
+    "successDesc": "您的订阅已更新。"
+  },
+  "settings": {
+    "title": "设置",
+    "profile": "个人资料",
+    "fullName": "全名",
+    "email": "邮箱",
+    "save": "保存更改",
+    "danger": "危险区域",
+    "deleteAccount": "删除账户",
+    "deleteConfirm": "这将永久删除您的账户和所有数据。"
+  },
+  "org": {
+    "title": "组织",
+    "create": "创建组织",
+    "members": "成员",
+    "invite": "邀请成员",
+    "role": "角色",
+    "remove": "移除",
+    "name": "名称",
+    "email": "邮箱",
+    "slug": "Slug",
+    "roleMember": "成员",
+    "roleAdmin": "管理员",
+    "roleOwner": "所有者"
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "出了点问题",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "confirm": "确认",
+    "toggleNav": "切换导航",
+    "dismiss": "关闭"
+  },
+  "pricing": {
+    "pageTitle": "定价",
+    "interval": "月",
+    "mostPopular": "最受欢迎",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1个项目",
+    "starterFeature2": "每月最多1,000次请求",
+    "starterFeature3": "社区支持",
+    "starterFeature4": "基础分析",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "无限项目",
+    "proFeature2": "每月最多100,000次请求",
+    "proFeature3": "优先支持",
+    "proFeature4": "高级分析",
+    "proFeature5": "自定义域名",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "一切无限",
+    "enterpriseFeature2": "专属支持",
+    "enterpriseFeature3": "SSO和SAML",
+    "enterpriseFeature4": "SLA保障",
+    "enterpriseFeature5": "审计日志",
+    "enterpriseFeature6": "自定义集成"
+  },
+  "contact": {
+    "title": "联系我们",
+    "description": "有问题或需要帮助？我们很乐意听取您的反馈。",
+    "placeholder": "您的电子邮件地址",
+    "submit": "发送"
+  },
+  "about": {
+    "title": "关于本项目",
+    "intro": "这是一个基于 Next.js 和 Stripe 构建的开源 SaaS 启动模板。它开箱即用地提供了身份验证、计费、组织管理和国际化 — 让你跳过样板代码，直接开始构建你的产品。",
+    "body": "在 GitHub 上 Fork 它，替换为你自己的品牌，即可开始使用。无论你是在启动一个小项目还是完整的 SaaS，这个模板都能满足你的需求。",
+    "cta": "在 GitHub 上 Fork",
+    "repoFrontend": "包含身份验证、计费和国际化的 Next.js 前端",
+    "repoBackend": "集成 Stripe 和 REST API 的 Django 后端"
+  },
+  "blog": {
+    "title": "博客",
+    "comingSoon": "新文章即将发布。敬请期待！"
+  },
+  "privacy": {
+    "title": "隐私政策",
+    "lastUpdated": "最后更新：2026年3月",
+    "intro": "您的隐私对我们很重要。本政策说明了我们如何收集、使用和保护您的个人信息。"
+  },
+  "terms": {
+    "title": "服务条款",
+    "lastUpdated": "最后更新：2026年3月",
+    "intro": "使用 SaaSmint 即表示您同意这些条款。请在使用我们的服务之前仔细阅读。"
+  },
+  "cookies": {
+    "title": "Cookie 政策",
+    "lastUpdated": "最后更新：2026年3月",
+    "intro": "我们使用 Cookie 来改善您的体验。本政策说明了我们如何以及为何在网站上使用 Cookie。"
+  }
+}

@@ -1,8 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { AppLayout } from "@/presentation/components/templates/AppLayout";
-import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
-import { authGateway } from "@/infrastructure/registry";
-import { SignOutButton } from "./_components/SignOutButton";
+import { SignOutButton } from "../_components/SignOutButton";
+import { getCurrentUser } from "./_data/getCurrentUser";
 
 interface AppLayoutRouteProps {
   children: React.ReactNode;
@@ -11,9 +10,10 @@ interface AppLayoutRouteProps {
 export default async function AppLayoutRoute({
   children,
 }: AppLayoutRouteProps) {
-  const [t, user] = await Promise.all([
+  const [t, tCommon, user] = await Promise.all([
     getTranslations("nav"),
-    new GetCurrentUser(authGateway).execute(),
+    getTranslations("common"),
+    getCurrentUser(),
   ]);
 
   const navLinks = [
@@ -25,13 +25,14 @@ export default async function AppLayoutRoute({
 
   return (
     <AppLayout
-      appName="Meridian"
+      appName="SaaSmint"
       navLinks={navLinks}
       user={{
         fullName: user.fullName ?? user.email,
         avatarUrl: user.avatarUrl,
       }}
       navActions={<SignOutButton label={t("signOut")} />}
+      toggleNavLabel={tCommon("toggleNav")}
     >
       {children}
     </AppLayout>

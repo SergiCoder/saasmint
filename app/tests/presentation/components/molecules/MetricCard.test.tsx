@@ -43,6 +43,24 @@ describe("MetricCard", () => {
     expect(change.textContent).toContain("\u2193");
   });
 
+  it("applies compact padding when compact is true", () => {
+    const { container } = render(
+      <MetricCard title="Revenue" value="$12,345" compact />,
+    );
+    const card = container.firstChild as HTMLElement;
+    expect(card.className).toContain("p-3");
+    expect(card.className).not.toContain("p-6");
+  });
+
+  it("applies normal padding when compact is false", () => {
+    const { container } = render(
+      <MetricCard title="Revenue" value="$12,345" />,
+    );
+    const card = container.firstChild as HTMLElement;
+    expect(card.className).toContain("p-6");
+    expect(card.className).not.toContain("p-3");
+  });
+
   it("applies custom className", () => {
     const { container } = render(
       <MetricCard title="Revenue" value="$12,345" className="col-span-2" />,

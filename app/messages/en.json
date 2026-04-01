@@ -2,25 +2,80 @@
   "nav": {
     "features": "Features",
     "pricing": "Pricing",
-    "docs": "Docs",
+    "blog": "Blog",
     "getStarted": "Get started",
     "dashboard": "Dashboard",
     "billing": "Billing",
     "settings": "Settings",
     "org": "Organization",
     "admin": "Admin",
-    "signOut": "Sign out"
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "contactUs": "Contact us"
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "copyright": "© 2026 SaaSmint, Inc.",
+    "cookies": "Cookies",
+    "aboutUs": "About us",
+    "legal": "Legal"
   },
   "landing": {
-    "badge": "Now in GA — v1.0",
-    "headline": "The platform teams actually ship with",
-    "subheadline": "Stop managing infrastructure. Start shipping product.",
+    "badge": "Now in GA — SaaSmint 2.0 with AI Agents",
+    "headline": "The platform teams actually <accent>ship with</accent>",
+    "subheadline": "Stop managing infrastructure. Start shipping product. SaaSmint handles deploys, scaling, and observability so your team can focus on what matters.",
     "cta": "Start for free",
-    "ctaSecondary": "Watch demo"
+    "ctaSecondary": "Watch 2-min demo",
+    "trustText": "Trusted by {count}+ engineering teams",
+    "logosLabel": "Trusted by teams at",
+    "featuresLabel": "Features",
+    "featuresTitle": "Built for teams that care about quality",
+    "featuresSubtitle": "Everything you need to deploy confidently at any scale — without the ops overhead.",
+    "featureDeploysTitle": "Instant Deploys",
+    "featureDeploysDesc": "Push to Git, live in 30 seconds. Zero config, just connect your repository and go.",
+    "featureAiTitle": "AI Agents",
+    "featureAiDesc": "Autonomous agents handle testing, monitoring, and incident response on your behalf.",
+    "featureEdgeTitle": "Global Edge Network",
+    "featureEdgeDesc": "Deploy to 60+ regions simultaneously. Sub-20ms responses for users anywhere.",
+    "featureObsTitle": "Unified Observability",
+    "featureObsDesc": "Metrics, logs, and traces in one place. ML-powered alerting catches issues first.",
+    "featureSecTitle": "Zero-trust Security",
+    "featureSecDesc": "End-to-end encryption, RBAC, secret management, and SSO included by default.",
+    "featureIntTitle": "200+ Integrations",
+    "featureIntDesc": "GitHub, Slack, Datadog, PagerDuty and hundreds more — plug in your existing stack.",
+    "statDevs": "12.4k",
+    "statDevsLabel": "Active developers",
+    "statUptime": "99.99%",
+    "statUptimeLabel": "Uptime SLA",
+    "statRegions": "60+",
+    "statRegionsLabel": "Global regions",
+    "statLatency": "18ms",
+    "statLatencyLabel": "Avg. response time",
+    "ctaSectionLabel": "Get started",
+    "ctaSectionTitle": "Ready to ship faster?",
+    "ctaSectionSubtitle": "Join 12,400+ engineering teams. Free forever, no card required.",
+    "ctaSectionPlaceholder": "you@company.com",
+    "ctaSectionButton": "Start building →",
+    "dashUrl": "app.meridian.io/dashboard",
+    "dashUptime": "Uptime",
+    "dashUptimeVal": "99.99%",
+    "dashUptimeSub": "All systems nominal",
+    "dashLatency": "Avg. Latency",
+    "dashLatencyVal": "18ms",
+    "dashLatencySub": "4ms vs last week",
+    "dashChart": "Requests / hour",
+    "dashActivity1": "Deploy v2.4.1 successful — prod",
+    "dashActivity1Time": "2m ago",
+    "dashActivity2": "Auto-scaled to 12 instances",
+    "dashActivity2Time": "8m ago",
+    "dashActivity3": "Anomaly detected & resolved by Agent",
+    "dashActivity3Time": "1h ago"
   },
   "auth": {
     "login": {
       "title": "Sign in to your account",
+      "pageTitle": "Log in",
       "email": "Email address",
       "password": "Password",
       "submit": "Sign in",
@@ -29,6 +84,7 @@
     },
     "register": {
       "title": "Create your account",
+      "pageTitle": "Sign up",
       "email": "Email address",
       "password": "Password",
       "submit": "Create account",
@@ -70,7 +126,13 @@
     "members": "Members",
     "invite": "Invite member",
     "role": "Role",
-    "remove": "Remove"
+    "remove": "Remove",
+    "name": "Name",
+    "email": "Email",
+    "slug": "Slug",
+    "roleMember": "Member",
+    "roleAdmin": "Admin",
+    "roleOwner": "Owner"
   },
   "common": {
     "loading": "Loading...",
@@ -78,6 +140,67 @@
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "toggleNav": "Toggle navigation",
+    "dismiss": "Dismiss"
+  },
+  "pricing": {
+    "pageTitle": "Pricing",
+    "interval": "month",
+    "mostPopular": "Most popular",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "1 project",
+    "starterFeature2": "Up to 1 000 requests/mo",
+    "starterFeature3": "Community support",
+    "starterFeature4": "Basic analytics",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "Unlimited projects",
+    "proFeature2": "Up to 100 000 requests/mo",
+    "proFeature3": "Priority support",
+    "proFeature4": "Advanced analytics",
+    "proFeature5": "Custom domains",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "Unlimited everything",
+    "enterpriseFeature2": "Dedicated support",
+    "enterpriseFeature3": "SSO & SAML",
+    "enterpriseFeature4": "SLA guarantee",
+    "enterpriseFeature5": "Audit logs",
+    "enterpriseFeature6": "Custom integrations"
+  },
+  "contact": {
+    "title": "Contact us",
+    "description": "Have a question or need help? We'd love to hear from you.",
+    "placeholder": "Your email address",
+    "submit": "Send"
+  },
+  "about": {
+    "title": "About this project",
+    "intro": "This is an open-source SaaS starter built with Next.js and Stripe. It gives you authentication, billing, organisations, and i18n out of the box — so you can skip the boilerplate and start building your product.",
+    "body": "Fork it on GitHub, swap in your own branding, and you're ready to go. Whether you're launching a side project or a full-blown SaaS, this template has you covered.",
+    "cta": "Fork on GitHub",
+    "repoFrontend": "Next.js frontend with auth, billing, and i18n",
+    "repoBackend": "Django backend with Stripe integration and REST API"
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "New posts coming soon. Stay tuned!"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: March 2026",
+    "intro": "Your privacy is important to us. This policy explains how we collect, use, and protect your personal information."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: March 2026",
+    "intro": "By using SaaSmint, you agree to these terms. Please read them carefully before using our services."
+  },
+  "cookies": {
+    "title": "Cookie Policy",
+    "lastUpdated": "Last updated: March 2026",
+    "intro": "We use cookies to improve your experience. This policy explains how and why we use cookies on our website."
   }
 }

@@ -5,6 +5,12 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001";
 
 export async function getAuthToken(): Promise<string> {
   const supabase = await createClient();
+  // Validate and refresh the JWT before reading the access token.
+  // getSession() alone reads stale cookies without server-side validation.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new AuthError("No active session", "UNAUTHENTICATED");
   const {
     data: { session },
   } = await supabase.auth.getSession();

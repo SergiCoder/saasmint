@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { Footer } from "@/presentation/components/organisms";
 
-vi.mock("next/link", () => ({
-  default: ({
+vi.mock("@/lib/i18n/navigation", () => ({
+  Link: ({
     href,
     children,
     ...props
@@ -42,10 +42,11 @@ describe("Footer", () => {
     expect(screen.getByText("TestApp")).toBeInTheDocument();
   });
 
-  it("renders section titles", () => {
+  it("renders all links from all sections flattened", () => {
     render(<Footer {...defaultProps} />);
-    expect(screen.getByText("Product")).toBeInTheDocument();
-    expect(screen.getByText("Company")).toBeInTheDocument();
+    expect(screen.getByText("Features")).toBeInTheDocument();
+    expect(screen.getByText("Pricing")).toBeInTheDocument();
+    expect(screen.getByText("About")).toBeInTheDocument();
   });
 
   it("renders section links with correct hrefs", () => {

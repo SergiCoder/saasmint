@@ -89,11 +89,14 @@ describe("auth server actions", () => {
       await expect(signUp(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      expect(mockSignUp).toHaveBeenCalledWith({
-        email: "new@example.com",
-        password: "secret123",
-      });
-      expect(mockRedirect).toHaveBeenCalledWith("/login");
+      expect(mockSignUp).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: "new@example.com",
+          password: "secret123",
+          options: { emailRedirectTo: "http://localhost:3000/auth/callback" },
+        }),
+      );
+      expect(mockRedirect).toHaveBeenCalledWith("/login?registered=true");
     });
 
     it("returns error message on failure", async () => {

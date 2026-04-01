@@ -1,21 +1,22 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
-import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
 import { ListUserOrgs } from "@/application/use-cases/org/ListUserOrgs";
-import { authGateway, orgGateway } from "@/infrastructure/registry";
+import { orgGateway } from "@/infrastructure/registry";
+import { getCurrentUser } from "../_data/getCurrentUser";
 import { MetricCard } from "@/presentation/components/molecules/MetricCard";
 import { OrgCard } from "@/presentation/components/molecules/OrgCard";
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("dashboard");
+  return { title: t("title") };
+}
 
 export default async function DashboardPage() {
   const [t, tOrg, user] = await Promise.all([
     getTranslations("dashboard"),
     getTranslations("org"),
-    new GetCurrentUser(authGateway).execute(),
+    getCurrentUser(),
   ]);
   const orgs = await new ListUserOrgs(orgGateway).execute(user.id);
 

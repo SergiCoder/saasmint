@@ -1,1 +1,206 @@
-{}
+{
+  "nav": {
+    "features": "الميزات",
+    "pricing": "الأسعار",
+    "blog": "Blog",
+    "getStarted": "ابدأ الآن",
+    "dashboard": "لوحة التحكم",
+    "billing": "الفواتير",
+    "settings": "الإعدادات",
+    "org": "المؤسسة",
+    "admin": "الإدارة",
+    "signIn": "تسجيل الدخول",
+    "signOut": "تسجيل الخروج",
+    "contactUs": "اتصل بنا"
+  },
+  "footer": {
+    "privacy": "الخصوصية",
+    "terms": "الشروط",
+    "copyright": "© 2026 SaaSmint, Inc.",
+    "cookies": "ملفات تعريف الارتباط",
+    "aboutUs": "من نحن",
+    "legal": "قانوني"
+  },
+  "landing": {
+    "badge": "متاح الآن — SaaSmint 2.0 مع وكلاء الذكاء الاصطناعي",
+    "headline": "المنصة التي تُمكّن الفرق من <accent>الإنجاز فعلاً</accent>",
+    "subheadline": "توقف عن إدارة البنية التحتية. ابدأ بشحن المنتج. يتولى SaaSmint النشر والتوسع والمراقبة حتى يتمكن فريقك من التركيز على ما يهم.",
+    "cta": "ابدأ مجاناً",
+    "ctaSecondary": "شاهد العرض التوضيحي (دقيقتان)",
+    "trustText": "أكثر من {count} فريق هندسي يثقون بنا",
+    "logosLabel": "فرق تثق بنا",
+    "featuresLabel": "الميزات",
+    "featuresTitle": "مصمم للفرق التي تهتم بالجودة",
+    "featuresSubtitle": "كل ما تحتاجه للنشر بثقة على أي نطاق — بدون عبء التشغيل.",
+    "featureDeploysTitle": "نشر فوري",
+    "featureDeploysDesc": "ادفع إلى Git، وكن مباشراً خلال 30 ثانية. بدون إعدادات، فقط اربط مستودعك وانطلق.",
+    "featureAiTitle": "وكلاء الذكاء الاصطناعي",
+    "featureAiDesc": "وكلاء مستقلون يتعاملون مع الاختبار والمراقبة والاستجابة للحوادث نيابةً عنك.",
+    "featureEdgeTitle": "شبكة حافة عالمية",
+    "featureEdgeDesc": "انشر في أكثر من 60 منطقة في وقت واحد. استجابات أقل من 20 مللي ثانية للمستخدمين في أي مكان.",
+    "featureObsTitle": "مراقبة موحدة",
+    "featureObsDesc": "المقاييس والسجلات والتتبع في مكان واحد. تنبيهات بالذكاء الاصطناعي تكتشف المشاكل أولاً.",
+    "featureSecTitle": "أمان انعدام الثقة",
+    "featureSecDesc": "تشفير شامل، RBAC، إدارة الأسرار وSSO مضمنة بشكل افتراضي.",
+    "featureIntTitle": "أكثر من 200 تكامل",
+    "featureIntDesc": "GitHub وSlack وDatadog وPagerDuty والمئات غيرها — اربط مجموعتك التقنية الحالية.",
+    "statDevs": "12.4 ألف",
+    "statDevsLabel": "مطور نشط",
+    "statUptime": "99.99%",
+    "statUptimeLabel": "اتفاقية مستوى التوافر",
+    "statRegions": "60+",
+    "statRegionsLabel": "منطقة عالمية",
+    "statLatency": "18ms",
+    "statLatencyLabel": "متوسط وقت الاستجابة",
+    "ctaSectionLabel": "ابدأ الآن",
+    "ctaSectionTitle": "مستعد للشحن أسرع؟",
+    "ctaSectionSubtitle": "انضم إلى أكثر من 12,400 فريق هندسي. مجاني للأبد، بدون بطاقة.",
+    "ctaSectionPlaceholder": "you@company.com",
+    "ctaSectionButton": "ابدأ البناء ←",
+    "dashUrl": "app.meridian.io/dashboard",
+    "dashUptime": "وقت التشغيل",
+    "dashUptimeVal": "99.99%",
+    "dashUptimeSub": "جميع الأنظمة تعمل بشكل طبيعي",
+    "dashLatency": "متوسط التأخير",
+    "dashLatencyVal": "18ms",
+    "dashLatencySub": "4ms مقارنة بالأسبوع الماضي",
+    "dashChart": "الطلبات / ساعة",
+    "dashActivity1": "نشر v2.4.1 ناجح — الإنتاج",
+    "dashActivity1Time": "قبل دقيقتين",
+    "dashActivity2": "توسع تلقائي إلى 12 نسخة",
+    "dashActivity2Time": "قبل 8 دقائق",
+    "dashActivity3": "تم اكتشاف شذوذ وحله بواسطة الوكيل",
+    "dashActivity3Time": "قبل ساعة"
+  },
+  "auth": {
+    "login": {
+      "title": "تسجيل الدخول إلى حسابك",
+      "pageTitle": "تسجيل الدخول",
+      "email": "عنوان البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "submit": "تسجيل الدخول",
+      "noAccount": "ليس لديك حساب؟",
+      "register": "إنشاء حساب"
+    },
+    "register": {
+      "title": "إنشاء حسابك",
+      "pageTitle": "إنشاء حساب",
+      "email": "عنوان البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "submit": "إنشاء حساب",
+      "hasAccount": "لديك حساب بالفعل؟",
+      "login": "تسجيل الدخول"
+    }
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "uptime": "وقت التشغيل",
+    "latency": "زمن الاستجابة",
+    "requests": "الطلبات",
+    "errors": "الأخطاء"
+  },
+  "billing": {
+    "title": "الفوترة",
+    "currentPlan": "الخطة الحالية",
+    "upgrade": "ترقية",
+    "cancel": "إلغاء الاشتراك",
+    "changePlan": "تغيير الخطة",
+    "applyPromo": "تطبيق رمز ترويجي",
+    "portal": "إدارة الفوترة",
+    "success": "تم الدفع بنجاح!",
+    "successDesc": "تم تحديث اشتراكك."
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "profile": "الملف الشخصي",
+    "fullName": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "save": "حفظ التغييرات",
+    "danger": "منطقة الخطر",
+    "deleteAccount": "حذف الحساب",
+    "deleteConfirm": "سيؤدي هذا إلى حذف حسابك وجميع بياناتك نهائيًا."
+  },
+  "org": {
+    "title": "المنظمة",
+    "create": "إنشاء منظمة",
+    "members": "الأعضاء",
+    "invite": "دعوة عضو",
+    "role": "الدور",
+    "remove": "إزالة",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "slug": "Slug",
+    "roleMember": "عضو",
+    "roleAdmin": "مدير",
+    "roleOwner": "مالك"
+  },
+  "common": {
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ ما",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "confirm": "تأكيد",
+    "toggleNav": "تبديل التنقل",
+    "dismiss": "إغلاق"
+  },
+  "pricing": {
+    "pageTitle": "الأسعار",
+    "interval": "شهر",
+    "mostPopular": "الأكثر شعبية",
+    "starterName": "Starter",
+    "starterPrice": "$0",
+    "starterFeature1": "مشروع واحد",
+    "starterFeature2": "حتى 1,000 طلب/شهر",
+    "starterFeature3": "دعم المجتمع",
+    "starterFeature4": "تحليلات أساسية",
+    "proName": "Pro",
+    "proPrice": "$29",
+    "proFeature1": "مشاريع غير محدودة",
+    "proFeature2": "حتى 100,000 طلب/شهر",
+    "proFeature3": "دعم ذو أولوية",
+    "proFeature4": "تحليلات متقدمة",
+    "proFeature5": "نطاقات مخصصة",
+    "enterpriseName": "Enterprise",
+    "enterprisePrice": "$99",
+    "enterpriseFeature1": "كل شيء غير محدود",
+    "enterpriseFeature2": "دعم مخصص",
+    "enterpriseFeature3": "SSO و SAML",
+    "enterpriseFeature4": "ضمان SLA",
+    "enterpriseFeature5": "سجلات التدقيق",
+    "enterpriseFeature6": "تكاملات مخصصة"
+  },
+  "contact": {
+    "title": "اتصل بنا",
+    "description": "هل لديك سؤال أو تحتاج مساعدة؟ يسعدنا سماعك.",
+    "placeholder": "عنوان بريدك الإلكتروني",
+    "submit": "إرسال"
+  },
+  "about": {
+    "title": "حول هذا المشروع",
+    "intro": "هذا نموذج SaaS مفتوح المصدر مبني بـ Next.js وStripe. يوفر لك المصادقة والفوترة والمنظمات وi18n جاهزة للاستخدام — حتى تتمكن من تخطي الكود النمطي والبدء في بناء منتجك.",
+    "body": "قم بعمل Fork على GitHub، واستبدل بعلامتك التجارية الخاصة، وستكون جاهزاً للانطلاق. سواء كنت تطلق مشروعاً جانبياً أو SaaS متكامل، هذا القالب يغطيك.",
+    "cta": "Fork على GitHub",
+    "repoFrontend": "واجهة أمامية Next.js مع المصادقة والفوترة وi18n",
+    "repoBackend": "خلفية Django مع تكامل Stripe وواجهة برمجة REST"
+  },
+  "blog": {
+    "title": "المدونة",
+    "comingSoon": "مقالات جديدة قريباً. تابعونا!"
+  },
+  "privacy": {
+    "title": "سياسة الخصوصية",
+    "lastUpdated": "آخر تحديث: مارس 2026",
+    "intro": "خصوصيتك مهمة بالنسبة لنا. توضح هذه السياسة كيف نجمع معلوماتك الشخصية ونستخدمها ونحميها."
+  },
+  "terms": {
+    "title": "شروط الخدمة",
+    "lastUpdated": "آخر تحديث: مارس 2026",
+    "intro": "باستخدام SaaSmint، فإنك توافق على هذه الشروط. يرجى قراءتها بعناية قبل استخدام خدماتنا."
+  },
+  "cookies": {
+    "title": "سياسة ملفات تعريف الارتباط",
+    "lastUpdated": "آخر تحديث: مارس 2026",
+    "intro": "نستخدم ملفات تعريف الارتباط لتحسين تجربتك. توضح هذه السياسة كيف ولماذا نستخدم ملفات تعريف الارتباط على موقعنا."
+  }
+}

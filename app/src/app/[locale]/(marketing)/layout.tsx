@@ -1,6 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
+import { Link } from "@/lib/i18n/navigation";
 import { MarketingLayout } from "@/presentation/components/templates/MarketingLayout";
+import { getOptionalUser } from "./_data/getOptionalUser";
+import { SignOutButton } from "../_components/SignOutButton";
+
+const primaryLinkClass =
+  "bg-primary-600 hover:bg-primary-700 focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none";
 
 interface MarketingLayoutRouteProps {
   children: React.ReactNode;
@@ -9,42 +14,66 @@ interface MarketingLayoutRouteProps {
 export default async function MarketingLayoutRoute({
   children,
 }: MarketingLayoutRouteProps) {
-  const t = await getTranslations("nav");
+  const [t, tCommon, tFooter, user] = await Promise.all([
+    getTranslations("nav"),
+    getTranslations("common"),
+    getTranslations("footer"),
+    getOptionalUser(),
+  ]);
 
   const navLinks = [
+    { href: "/#features", label: t("features") },
     { href: "/pricing", label: t("pricing") },
-    { href: "#features", label: t("features") },
-    { href: "#docs", label: t("docs") },
+    { href: "/contact", label: t("contactUs") },
+    { href: "/blog", label: t("blog") },
   ];
 
   const footerSections = [
     {
-      title: "Product",
-      links: navLinks,
-    },
-    {
-      title: "Company",
+      title: tFooter("legal"),
       links: [
-        { href: "#about", label: "About" },
-        { href: "#blog", label: "Blog" },
+        { href: "/privacy", label: tFooter("privacy") },
+        { href: "/terms", label: tFooter("terms") },
+        { href: "/cookies", label: tFooter("cookies") },
+        { href: "/about", label: tFooter("aboutUs") },
       ],
     },
   ];
 
+  const navUser = user
+    ? { fullName: user.fullName ?? user.email, avatarUrl: user.avatarUrl }
+    : undefined;
+
+  const navActions = user ? (
+    <>
+      <Link href="/dashboard" className={primaryLinkClass}>
+        {t("dashboard")}
+      </Link>
+      <SignOutButton label={t("signOut")} />
+    </>
+  ) : (
+    <>
+      <Link
+        href="/login"
+        className="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900"
+      >
+        {t("signIn")}
+      </Link>
+      <Link href="/signup" className={primaryLinkClass}>
+        {t("getStarted")}
+      </Link>
+    </>
+  );
+
   return (
     <MarketingLayout
-      appName="Meridian"
+      appName="SaaSmint"
       navLinks={navLinks}
-      navActions={
-        <Link
-          href="/login"
-          className="bg-primary-600 hover:bg-primary-700 focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-        >
-          {t("getStarted")}
-        </Link>
-      }
+      navUser={navUser}
+      navActions={navActions}
+      toggleNavLabel={tCommon("toggleNav")}
       footerSections={footerSections}
-      copyright={`\u00A9 ${new Date().getFullYear()} Meridian. All rights reserved.`}
+      copyright={tFooter("copyright")}
     >
       {children}
     </MarketingLayout>

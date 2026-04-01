@@ -5,11 +5,9 @@ import { createClient } from "@/infrastructure/supabase/server";
 import { SignOut } from "@/application/use-cases/auth/SignOut";
 import { authGateway } from "@/infrastructure/registry";
 
-async function authAction(
+function extractCredentials(
   formData: FormData,
-  method: "signInWithPassword" | "signUp",
-  redirectTo: string,
-) {
+): { email: string; password: string } | { error: string } {
   const email = formData.get("email");
   const password = formData.get("password");
 
@@ -17,22 +15,40 @@ async function authAction(
     return { error: "Email and password are required" };
   }
 
+  return { email, password };
+}
+
+export async function signIn(_prevState: unknown, formData: FormData) {
+  const result = extractCredentials(formData);
+  if ("error" in result) return result;
+
   const supabase = await createClient();
-  const { error } = await supabase.auth[method]({ email, password });
+  const { error } = await supabase.auth.signInWithPassword(result);
 
   if (error) {
     return { error: error.message };
   }
 
-  redirect(redirectTo);
-}
-
-export async function signIn(_prevState: unknown, formData: FormData) {
-  return authAction(formData, "signInWithPassword", "/dashboard");
+  redirect("/dashboard");
 }
 
 export async function signUp(_prevState: unknown, formData: FormData) {
-  return authAction(formData, "signUp", "/login");
+  const result = extractCredentials(formData);
+  if ("error" in result) return result;
+
+  const origin = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signUp({
+    ...result,
+    options: { emailRedirectTo: `${origin}/auth/callback` },
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  redirect("/login?registered=true");
 }
 
 export async function signOut() {
