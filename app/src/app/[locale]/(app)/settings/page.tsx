@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { GetPhonePrefixes } from "@/application/use-cases/reference/GetPhonePrefixes";
 import { GetUserProfile } from "@/application/use-cases/user/GetUserProfile";
-import { userGateway } from "@/infrastructure/registry";
+import { referenceGateway, userGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../_data/getCurrentUser";
 import { SettingsForm } from "./_components/SettingsForm";
 
@@ -15,7 +16,10 @@ export default async function SettingsPage() {
     getTranslations("settings"),
     getCurrentUser(),
   ]);
-  const user = await new GetUserProfile(userGateway).execute(currentUser.id);
+  const [user, phonePrefixes] = await Promise.all([
+    new GetUserProfile(userGateway).execute(currentUser.id),
+    new GetPhonePrefixes(referenceGateway).execute(),
+  ]);
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">
@@ -24,7 +28,7 @@ export default async function SettingsPage() {
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
           {t("profile")}
         </h2>
-        <SettingsForm user={user} />
+        <SettingsForm user={user} phonePrefixes={phonePrefixes} />
       </section>
       <section className="rounded-lg border border-red-200 bg-white p-6 shadow-sm">
         <h2 className="mb-2 text-lg font-semibold text-red-600">

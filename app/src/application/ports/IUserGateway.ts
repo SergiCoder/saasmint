@@ -5,6 +5,11 @@ export interface UpdateProfileInput {
   avatarUrl?: string | null;
   preferredLocale?: string;
   preferredCurrency?: string;
+  phonePrefix?: string | null;
+  phone?: string | null;
+  timezone?: string | null;
+  jobTitle?: string | null;
+  bio?: string | null;
 }
 
 export interface IUserGateway {

@@ -11,6 +11,11 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
   const fullName = formData.get("fullName");
   const preferredLocale = formData.get("preferredLocale");
   const preferredCurrency = formData.get("preferredCurrency");
+  const phonePrefix = formData.get("phonePrefix");
+  const phone = formData.get("phone");
+  const timezone = formData.get("timezone");
+  const jobTitle = formData.get("jobTitle");
+  const bio = formData.get("bio");
 
   try {
     await new UpdateUserProfile(userGateway).execute(user.id, {
@@ -19,6 +24,12 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
         preferredLocale && { preferredLocale }),
       ...(typeof preferredCurrency === "string" &&
         preferredCurrency && { preferredCurrency }),
+      phonePrefix:
+        typeof phonePrefix === "string" && phonePrefix ? phonePrefix : null,
+      phone: typeof phone === "string" && phone ? phone : null,
+      timezone: typeof timezone === "string" && timezone ? timezone : null,
+      jobTitle: typeof jobTitle === "string" && jobTitle ? jobTitle : null,
+      bio: typeof bio === "string" && bio ? bio : null,
     });
   } catch {
     return { error: "Failed to update profile" };
