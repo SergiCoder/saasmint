@@ -11,6 +11,7 @@ interface AuthFormProps {
   action: (prev: unknown, fd: FormData) => Promise<{ error: string } | void>;
   translationNamespace: string;
   passwordAutoComplete: string;
+  showNameField?: boolean;
   footerLink: { href: string; textKey: string; linkKey: string };
 }
 
@@ -18,6 +19,7 @@ export function AuthForm({
   action,
   translationNamespace,
   passwordAutoComplete,
+  showNameField = false,
   footerLink,
 }: AuthFormProps) {
   const t = useTranslations(translationNamespace);
@@ -31,6 +33,16 @@ export function AuthForm({
         </AlertBanner>
       )}
       <form action={formAction} className="space-y-4">
+        {showNameField && (
+          <FormField
+            label={t("fullName")}
+            name="fullName"
+            required
+            minLength={3}
+            maxLength={255}
+            autoComplete="name"
+          />
+        )}
         <FormField
           label={t("email")}
           name="email"
