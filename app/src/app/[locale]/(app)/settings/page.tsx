@@ -4,6 +4,7 @@ import { GetPhonePrefixes } from "@/application/use-cases/reference/GetPhonePref
 import { GetUserProfile } from "@/application/use-cases/user/GetUserProfile";
 import { referenceGateway, userGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../_data/getCurrentUser";
+import { DeleteAccountDialog } from "./_components/DeleteAccountDialog";
 import { SettingsForm } from "./_components/SettingsForm";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -36,13 +37,7 @@ export default async function SettingsPage() {
         </h2>
         <p className="text-sm text-gray-600">{t("deleteConfirm")}</p>
         <div className="mt-4">
-          <button
-            type="button"
-            disabled
-            className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white opacity-50"
-          >
-            {t("deleteAccount")}
-          </button>
+          <DeleteAccountDialog userEmail={user.email} />
         </div>
       </section>
     </div>
