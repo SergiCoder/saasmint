@@ -128,6 +128,7 @@
     "bioPlaceholder": "自己紹介を入力してください",
     "avatarUpload": "写真をアップロード",
     "avatarRemove": "削除",
+    "avatarError": "アバターの更新に失敗しました",
     "save": "変更を保存",
     "danger": "危険な操作",
     "deleteAccount": "アカウントを削除",

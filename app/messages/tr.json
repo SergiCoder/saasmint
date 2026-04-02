@@ -128,6 +128,7 @@
     "bioPlaceholder": "Bize kendinizden bahsedin",
     "avatarUpload": "Fotoğraf yükle",
     "avatarRemove": "Kaldır",
+    "avatarError": "Avatar güncellenemedi",
     "save": "Değişiklikleri kaydet",
     "danger": "Tehlikeli bölge",
     "deleteAccount": "Hesabı sil",

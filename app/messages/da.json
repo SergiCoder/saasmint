@@ -128,6 +128,7 @@
     "bioPlaceholder": "Fortæl os lidt om dig selv",
     "avatarUpload": "Upload foto",
     "avatarRemove": "Fjern",
+    "avatarError": "Kunne ikke opdatere avatar",
     "save": "Gem ændringer",
     "danger": "Farezone",
     "deleteAccount": "Slet konto",

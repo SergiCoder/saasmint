@@ -128,6 +128,7 @@
     "bioPlaceholder": "Raccontaci qualcosa su di te",
     "avatarUpload": "Carica foto",
     "avatarRemove": "Rimuovi",
+    "avatarError": "Impossibile aggiornare l'avatar",
     "save": "Salva modifiche",
     "danger": "Zona pericolosa",
     "deleteAccount": "Elimina account",

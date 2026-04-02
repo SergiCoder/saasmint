@@ -8,6 +8,7 @@ export interface AvatarUploadProps {
   userName: string;
   uploadLabel: string;
   removeLabel: string;
+  loading?: boolean;
   onChange?: (file: File | null) => void;
 }
 
@@ -16,6 +17,7 @@ export function AvatarUpload({
   userName,
   uploadLabel,
   removeLabel,
+  loading = false,
   onChange,
 }: AvatarUploadProps) {
   const [preview, setPreview] = useState<string | null>(null);
@@ -47,20 +49,29 @@ export function AvatarUpload({
 
   return (
     <div className="flex items-center gap-4">
-      <Avatar src={displaySrc} alt={userName} size="lg" />
+      <div className="relative">
+        <Avatar src={displaySrc} alt={userName} size="lg" />
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center rounded-full bg-white/60">
+            <div className="border-primary-600 h-5 w-5 animate-spin rounded-full border-2 border-t-transparent" />
+          </div>
+        )}
+      </div>
       <div className="flex gap-2">
         <button
           type="button"
+          disabled={loading}
           onClick={() => inputRef.current?.click()}
-          className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+          className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-50"
         >
           {uploadLabel}
         </button>
         {showRemove && (
           <button
             type="button"
+            disabled={loading}
             onClick={handleRemove}
-            className="rounded-md px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-red-600"
+            className="rounded-md px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-red-600 disabled:pointer-events-none disabled:opacity-50"
           >
             {removeLabel}
           </button>
@@ -69,7 +80,7 @@ export function AvatarUpload({
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp"
         onChange={handleChange}
         className="hidden"
         aria-label={uploadLabel}

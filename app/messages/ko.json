@@ -128,6 +128,7 @@
     "bioPlaceholder": "자기소개를 입력해주세요",
     "avatarUpload": "사진 업로드",
     "avatarRemove": "삭제",
+    "avatarError": "아바타 업데이트에 실패했습니다",
     "save": "변경 사항 저장",
     "danger": "위험 구역",
     "deleteAccount": "계정 삭제",

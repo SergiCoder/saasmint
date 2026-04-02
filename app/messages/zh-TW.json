@@ -128,6 +128,7 @@
     "bioPlaceholder": "介紹一下自己",
     "avatarUpload": "上傳照片",
     "avatarRemove": "移除",
+    "avatarError": "頭像更新失敗",
     "save": "儲存變更",
     "danger": "危險區域",
     "deleteAccount": "刪除帳戶",

@@ -1,12 +1,16 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { AvatarUpload } from "@/presentation/components/atoms/AvatarUpload";
 import { Button } from "@/presentation/components/atoms/Button";
 import { Label } from "@/presentation/components/atoms/Label";
+import {
+  uploadAvatar,
+  deleteAvatar,
+} from "@/infrastructure/supabase/avatarStorage";
 import { updateProfile } from "@/app/actions/user";
 import type { User } from "@/domain/models/User";
 import type { PhonePrefix } from "@/domain/models/PhonePrefix";
@@ -65,6 +69,34 @@ interface SettingsFormProps {
 export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
   const t = useTranslations("settings");
   const [state, formAction, pending] = useActionState(updateProfile, null);
+  const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+
+  async function handleAvatarChange(file: File | null) {
+    setAvatarError(null);
+    if (file) {
+      setAvatarUploading(true);
+      try {
+        const url = await uploadAvatar(user.id, file);
+        setAvatarUrl(url);
+      } catch {
+        setAvatarError(t("avatarError"));
+      } finally {
+        setAvatarUploading(false);
+      }
+    } else {
+      setAvatarUploading(true);
+      try {
+        await deleteAvatar(user.id);
+        setAvatarUrl(null);
+      } catch {
+        setAvatarError(t("avatarError"));
+      } finally {
+        setAvatarUploading(false);
+      }
+    }
+  }
 
   const selectClassName =
     "block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50";
@@ -77,11 +109,15 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
       )}
 
       <AvatarUpload
-        currentSrc={user.avatarUrl}
+        currentSrc={avatarUrl}
         userName={user.fullName ?? user.email}
         uploadLabel={t("avatarUpload")}
         removeLabel={t("avatarRemove")}
+        loading={avatarUploading}
+        onChange={handleAvatarChange}
       />
+      {avatarError && <AlertBanner variant="error">{avatarError}</AlertBanner>}
+      <input type="hidden" name="avatarUrl" value={avatarUrl ?? ""} />
 
       <FormField
         label={t("email")}

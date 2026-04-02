@@ -128,6 +128,7 @@
     "bioPlaceholder": "Conte-nos um pouco sobre você",
     "avatarUpload": "Enviar foto",
     "avatarRemove": "Remover",
+    "avatarError": "Falha ao atualizar o avatar",
     "save": "Salvar alterações",
     "danger": "Zona de perigo",
     "deleteAccount": "Excluir conta",

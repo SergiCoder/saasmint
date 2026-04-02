@@ -128,6 +128,7 @@
     "bioPlaceholder": "Vertel ons iets over jezelf",
     "avatarUpload": "Foto uploaden",
     "avatarRemove": "Verwijderen",
+    "avatarError": "Avatar bijwerken mislukt",
     "save": "Wijzigingen opslaan",
     "danger": "Gevarenzone",
     "deleteAccount": "Account verwijderen",

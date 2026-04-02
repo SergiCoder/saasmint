@@ -128,6 +128,7 @@
     "bioPlaceholder": "Erzählen Sie uns etwas über sich",
     "avatarUpload": "Foto hochladen",
     "avatarRemove": "Entfernen",
+    "avatarError": "Avatar konnte nicht aktualisiert werden",
     "save": "Änderungen speichern",
     "danger": "Gefahrenzone",
     "deleteAccount": "Konto löschen",

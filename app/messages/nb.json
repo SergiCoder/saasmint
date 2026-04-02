@@ -128,6 +128,7 @@
     "bioPlaceholder": "Fortell oss litt om deg selv",
     "avatarUpload": "Last opp bilde",
     "avatarRemove": "Fjern",
+    "avatarError": "Kunne ikke oppdatere avatar",
     "save": "Lagre endringer",
     "danger": "Faresone",
     "deleteAccount": "Slett konto",
