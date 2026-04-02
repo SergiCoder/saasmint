@@ -9,6 +9,7 @@ export interface UpdateProfileInput {
   phone?: string | null;
   timezone?: string | null;
   jobTitle?: string | null;
+  pronouns?: string | null;
   bio?: string | null;
 }
 
