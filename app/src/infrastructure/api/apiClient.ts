@@ -10,11 +10,11 @@ export async function getAuthToken(): Promise<string> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new AuthError("No active session", "UNAUTHENTICATED");
+  if (!user) throw new AuthError("No active session", "NO_SESSION");
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  if (!session) throw new AuthError("No active session", "UNAUTHENTICATED");
+  if (!session) throw new AuthError("No active session", "NO_SESSION");
   return session.access_token;
 }
 
@@ -40,6 +40,16 @@ export async function apiFetch<T>(
 
   if (!res.ok) {
     const text = await res.text();
+    if (res.status === 401) {
+      let code = "BACKEND_REJECTED";
+      try {
+        const body = JSON.parse(text) as { code?: string };
+        if (typeof body.code === "string") code = body.code;
+      } catch {
+        // non-JSON body — use generic code
+      }
+      throw new AuthError(`API 401: ${text}`, code);
+    }
     throw new Error(`API ${res.status}: ${text}`);
   }
 

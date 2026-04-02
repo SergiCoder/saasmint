@@ -44,7 +44,7 @@ describe("getAuthToken", () => {
 
     await expect(getAuthToken()).rejects.toThrow(AuthError);
     await expect(getAuthToken()).rejects.toMatchObject({
-      code: "UNAUTHENTICATED",
+      code: "NO_SESSION",
     });
   });
 });
@@ -188,6 +188,19 @@ describe("apiFetch", () => {
 
     const headers = fetchSpy.mock.calls[0][1].headers;
     expect(headers["content-type"]).toBe("text/plain");
+  });
+
+  it("throws AuthError with BACKEND_REJECTED on 401 response", async () => {
+    fetchSpy.mockResolvedValue({
+      ok: false,
+      status: 401,
+      text: () => Promise.resolve("Unauthorized"),
+    });
+
+    await expect(apiFetch("/account/")).rejects.toThrow(AuthError);
+    await expect(apiFetch("/account/")).rejects.toMatchObject({
+      code: "BACKEND_REJECTED",
+    });
   });
 
   it("throws AuthError when no user exists", async () => {
