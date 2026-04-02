@@ -22,6 +22,7 @@ interface AuthFormProps {
   showNameField?: boolean;
   showPronouns?: boolean;
   footerLink: { href: string; textKey: string; linkKey: string };
+  serverAlerts?: React.ReactNode;
 }
 
 export function AuthForm({
@@ -31,6 +32,7 @@ export function AuthForm({
   showNameField = false,
   showPronouns = false,
   footerLink,
+  serverAlerts,
 }: AuthFormProps) {
   const t = useTranslations(translationNamespace);
   const [state, formAction, pending] = useActionState(action, null);
@@ -41,10 +43,12 @@ export function AuthForm({
 
   return (
     <>
-      {state?.error && (
+      {state?.error ? (
         <AlertBanner variant="error" className="mb-4">
           {state.error}
         </AlertBanner>
+      ) : (
+        serverAlerts
       )}
       <form action={formAction} className="space-y-4">
         {showNameField && (

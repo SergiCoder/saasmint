@@ -30,16 +30,6 @@ export default async function LoginPage({ searchParams }: Props) {
 
   return (
     <AuthLayout appName="SaaSmint" title={t("title")}>
-      {errorKey && (
-        <AlertBanner variant="error" className="mb-4">
-          {t(errorKey)}
-        </AlertBanner>
-      )}
-      {registered && (
-        <AlertBanner variant="success" className="mb-4">
-          {t("registered")}
-        </AlertBanner>
-      )}
       <AuthForm
         action={signIn}
         translationNamespace="auth.login"
@@ -49,6 +39,20 @@ export default async function LoginPage({ searchParams }: Props) {
           textKey: "noAccount",
           linkKey: "register",
         }}
+        serverAlerts={
+          <>
+            {errorKey && (
+              <AlertBanner variant="error" className="mb-4">
+                {t(errorKey)}
+              </AlertBanner>
+            )}
+            {registered && (
+              <AlertBanner variant="success" className="mb-4">
+                {t("registered")}
+              </AlertBanner>
+            )}
+          </>
+        }
       />
     </AuthLayout>
   );
