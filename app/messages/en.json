@@ -126,6 +126,8 @@
     "jobTitle": "Job title",
     "bio": "Bio",
     "bioPlaceholder": "Tell us a bit about yourself",
+    "avatarUpload": "Upload photo",
+    "avatarRemove": "Remove",
     "save": "Save changes",
     "danger": "Danger zone",
     "deleteAccount": "Delete account",

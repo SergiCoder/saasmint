@@ -126,6 +126,8 @@
     "jobTitle": "Cargo",
     "bio": "Bio",
     "bioPlaceholder": "Conte-nos um pouco sobre si",
+    "avatarUpload": "Carregar foto",
+    "avatarRemove": "Remover",
     "save": "Guardar alterações",
     "danger": "Zona de perigo",
     "deleteAccount": "Eliminar conta",

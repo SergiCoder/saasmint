@@ -126,6 +126,8 @@
     "jobTitle": "Qualifica",
     "bio": "Bio",
     "bioPlaceholder": "Raccontaci qualcosa su di te",
+    "avatarUpload": "Carica foto",
+    "avatarRemove": "Rimuovi",
     "save": "Salva modifiche",
     "danger": "Zona pericolosa",
     "deleteAccount": "Elimina account",

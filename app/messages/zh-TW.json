@@ -126,6 +126,8 @@
     "jobTitle": "職稱",
     "bio": "簡介",
     "bioPlaceholder": "介紹一下自己",
+    "avatarUpload": "上傳照片",
+    "avatarRemove": "移除",
     "save": "儲存變更",
     "danger": "危險區域",
     "deleteAccount": "刪除帳戶",

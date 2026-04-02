@@ -126,6 +126,8 @@
     "jobTitle": "المسمى الوظيفي",
     "bio": "نبذة",
     "bioPlaceholder": "أخبرنا قليلاً عن نفسك",
+    "avatarUpload": "تحميل صورة",
+    "avatarRemove": "إزالة",
     "save": "حفظ التغييرات",
     "danger": "منطقة الخطر",
     "deleteAccount": "حذف الحساب",

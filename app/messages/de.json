@@ -126,6 +126,8 @@
     "jobTitle": "Berufsbezeichnung",
     "bio": "Bio",
     "bioPlaceholder": "Erzählen Sie uns etwas über sich",
+    "avatarUpload": "Foto hochladen",
+    "avatarRemove": "Entfernen",
     "save": "Änderungen speichern",
     "danger": "Gefahrenzone",
     "deleteAccount": "Konto löschen",

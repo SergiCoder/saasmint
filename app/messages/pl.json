@@ -126,6 +126,8 @@
     "jobTitle": "Stanowisko",
     "bio": "Bio",
     "bioPlaceholder": "Powiedz nam coś o sobie",
+    "avatarUpload": "Prześlij zdjęcie",
+    "avatarRemove": "Usuń",
     "save": "Zapisz zmiany",
     "danger": "Strefa zagrożenia",
     "deleteAccount": "Usuń konto",

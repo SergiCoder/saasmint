@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
+import { AvatarUpload } from "@/presentation/components/atoms/AvatarUpload";
 import { Button } from "@/presentation/components/atoms/Button";
 import { Label } from "@/presentation/components/atoms/Label";
 import { updateProfile } from "@/app/actions/user";
@@ -74,17 +75,25 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
       {state?.success && (
         <AlertBanner variant="success">{t("save")}</AlertBanner>
       )}
-      <FormField
-        label={t("fullName")}
-        name="fullName"
-        defaultValue={user.fullName ?? ""}
+
+      <AvatarUpload
+        currentSrc={user.avatarUrl}
+        userName={user.fullName ?? user.email}
+        uploadLabel={t("avatarUpload")}
+        removeLabel={t("avatarRemove")}
       />
+
       <FormField
         label={t("email")}
         name="email"
         type="email"
         defaultValue={user.email}
         disabled
+      />
+      <FormField
+        label={t("fullName")}
+        name="fullName"
+        defaultValue={user.fullName ?? ""}
       />
       <FormField
         label={t("jobTitle")}
@@ -117,53 +126,57 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
           />
         </div>
       </div>
-      <div className="space-y-1">
-        <Label htmlFor="preferredLocale">{t("preferredLocale")}</Label>
-        <select
-          id="preferredLocale"
-          name="preferredLocale"
-          defaultValue={user.preferredLocale}
-          className={selectClassName}
-        >
-          {SUPPORTED_LOCALES.map((locale) => (
-            <option key={locale.value} value={locale.value}>
-              {locale.label}
-            </option>
-          ))}
-        </select>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="space-y-1">
+          <Label htmlFor="preferredLocale">{t("preferredLocale")}</Label>
+          <select
+            id="preferredLocale"
+            name="preferredLocale"
+            defaultValue={user.preferredLocale}
+            className={selectClassName}
+          >
+            {SUPPORTED_LOCALES.map((locale) => (
+              <option key={locale.value} value={locale.value}>
+                {locale.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="preferredCurrency">{t("preferredCurrency")}</Label>
+          <select
+            id="preferredCurrency"
+            name="preferredCurrency"
+            defaultValue={user.preferredCurrency}
+            className={selectClassName}
+          >
+            {SUPPORTED_CURRENCIES.map((currency) => (
+              <option key={currency.value} value={currency.value}>
+                {currency.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="timezone">{t("timezone")}</Label>
+          <select
+            id="timezone"
+            name="timezone"
+            defaultValue={
+              user.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone
+            }
+            className={selectClassName}
+          >
+            {Intl.supportedValuesOf("timeZone").map((tz) => (
+              <option key={tz} value={tz}>
+                {tz.replace(/_/g, " ")}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-      <div className="space-y-1">
-        <Label htmlFor="preferredCurrency">{t("preferredCurrency")}</Label>
-        <select
-          id="preferredCurrency"
-          name="preferredCurrency"
-          defaultValue={user.preferredCurrency}
-          className={selectClassName}
-        >
-          {SUPPORTED_CURRENCIES.map((currency) => (
-            <option key={currency.value} value={currency.value}>
-              {currency.label}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="space-y-1">
-        <Label htmlFor="timezone">{t("timezone")}</Label>
-        <select
-          id="timezone"
-          name="timezone"
-          defaultValue={
-            user.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone
-          }
-          className={selectClassName}
-        >
-          {Intl.supportedValuesOf("timeZone").map((tz) => (
-            <option key={tz} value={tz}>
-              {tz.replace(/_/g, " ")}
-            </option>
-          ))}
-        </select>
-      </div>
+
       <div className="space-y-1">
         <Label htmlFor="bio">{t("bio")}</Label>
         <textarea

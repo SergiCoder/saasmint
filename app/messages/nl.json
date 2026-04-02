@@ -126,6 +126,8 @@
     "jobTitle": "Functietitel",
     "bio": "Bio",
     "bioPlaceholder": "Vertel ons iets over jezelf",
+    "avatarUpload": "Foto uploaden",
+    "avatarRemove": "Verwijderen",
     "save": "Wijzigingen opslaan",
     "danger": "Gevarenzone",
     "deleteAccount": "Account verwijderen",

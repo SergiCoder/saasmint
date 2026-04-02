@@ -126,6 +126,8 @@
     "jobTitle": "Puesto",
     "bio": "Biografía",
     "bioPlaceholder": "Cuéntanos un poco sobre ti",
+    "avatarUpload": "Subir foto",
+    "avatarRemove": "Eliminar",
     "save": "Guardar cambios",
     "danger": "Zona de peligro",
     "deleteAccount": "Eliminar cuenta",

@@ -126,6 +126,8 @@
     "jobTitle": "Должность",
     "bio": "О себе",
     "bioPlaceholder": "Расскажите немного о себе",
+    "avatarUpload": "Загрузить фото",
+    "avatarRemove": "Удалить",
     "save": "Сохранить изменения",
     "danger": "Опасная зона",
     "deleteAccount": "Удалить аккаунт",

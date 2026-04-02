@@ -126,6 +126,8 @@
     "jobTitle": "Jobtitel",
     "bio": "Bio",
     "bioPlaceholder": "Fortæl os lidt om dig selv",
+    "avatarUpload": "Upload foto",
+    "avatarRemove": "Fjern",
     "save": "Gem ændringer",
     "danger": "Farezone",
     "deleteAccount": "Slet konto",

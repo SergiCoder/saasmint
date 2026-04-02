@@ -126,6 +126,8 @@
     "jobTitle": "职位",
     "bio": "简介",
     "bioPlaceholder": "介绍一下自己",
+    "avatarUpload": "上传照片",
+    "avatarRemove": "移除",
     "save": "保存更改",
     "danger": "危险区域",
     "deleteAccount": "删除账户",

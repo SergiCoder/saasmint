@@ -126,6 +126,8 @@
     "jobTitle": "役職",
     "bio": "自己紹介",
     "bioPlaceholder": "自己紹介を入力してください",
+    "avatarUpload": "写真をアップロード",
+    "avatarRemove": "削除",
     "save": "変更を保存",
     "danger": "危険な操作",
     "deleteAccount": "アカウントを削除",

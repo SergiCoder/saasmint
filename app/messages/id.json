@@ -126,6 +126,8 @@
     "jobTitle": "Jabatan",
     "bio": "Bio",
     "bioPlaceholder": "Ceritakan sedikit tentang diri Anda",
+    "avatarUpload": "Unggah foto",
+    "avatarRemove": "Hapus",
     "save": "Simpan perubahan",
     "danger": "Zona bahaya",
     "deleteAccount": "Hapus akun",

@@ -126,6 +126,8 @@
     "jobTitle": "Poste",
     "bio": "Bio",
     "bioPlaceholder": "Parlez-nous un peu de vous",
+    "avatarUpload": "Télécharger une photo",
+    "avatarRemove": "Supprimer",
     "save": "Enregistrer les modifications",
     "danger": "Zone de danger",
     "deleteAccount": "Supprimer le compte",

@@ -126,6 +126,8 @@
     "jobTitle": "Jobbtitel",
     "bio": "Bio",
     "bioPlaceholder": "Berätta lite om dig själv",
+    "avatarUpload": "Ladda upp foto",
+    "avatarRemove": "Ta bort",
     "save": "Spara ändringar",
     "danger": "Farozon",
     "deleteAccount": "Radera konto",
