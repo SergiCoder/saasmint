@@ -88,6 +88,7 @@
     "register": {
       "title": "Konto erstellen",
       "pageTitle": "Registrieren",
+      "fullName": "Vollständiger Name",
       "email": "E-Mail-Adresse",
       "password": "Passwort",
       "submit": "Konto erstellen",
@@ -132,7 +133,15 @@
     "save": "Änderungen speichern",
     "danger": "Gefahrenzone",
     "deleteAccount": "Konto löschen",
-    "deleteConfirm": "Dadurch werden Ihr Konto und alle Daten dauerhaft gelöscht."
+    "deleteConfirm": "Dadurch werden Ihr Konto und alle Daten dauerhaft gelöscht.",
+    "deleteDialogTitle": "Sind Sie sicher?",
+    "deleteDialogDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Geben Sie Ihre E-Mail-Adresse zur Bestätigung ein.",
+    "deleteDialogLabel": "E-Mail-Adresse",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Abbrechen",
+    "deleteDialogSubmit": "Konto dauerhaft löschen",
+    "deleteDialogMismatch": "Die E-Mail-Adresse stimmt nicht mit Ihrem Konto überein.",
+    "deleteDialogError": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
   },
   "org": {
     "title": "Organisation",

@@ -88,6 +88,7 @@
     "register": {
       "title": "Opprett kontoen din",
       "pageTitle": "Registrer deg",
+      "fullName": "Fullt navn",
       "email": "E-postadresse",
       "password": "Passord",
       "submit": "Opprett konto",
@@ -132,7 +133,15 @@
     "save": "Lagre endringer",
     "danger": "Faresone",
     "deleteAccount": "Slett konto",
-    "deleteConfirm": "Dette vil permanent slette kontoen din og alle data."
+    "deleteConfirm": "Dette vil permanent slette kontoen din og alle data.",
+    "deleteDialogTitle": "Er du sikker?",
+    "deleteDialogDescription": "Denne handlingen kan ikke angres. Skriv inn e-postadressen din for å bekrefte.",
+    "deleteDialogLabel": "E-postadresse",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Avbryt",
+    "deleteDialogSubmit": "Slett konto permanent",
+    "deleteDialogMismatch": "E-postadressen samsvarer ikke med kontoen din.",
+    "deleteDialogError": "Kunne ikke slette kontoen. Prøv igjen."
   },
   "org": {
     "title": "Organisasjon",

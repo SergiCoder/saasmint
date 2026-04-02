@@ -88,6 +88,7 @@
     "register": {
       "title": "创建您的账户",
       "pageTitle": "注册",
+      "fullName": "全名",
       "email": "邮箱地址",
       "password": "密码",
       "submit": "创建账户",
@@ -132,7 +133,15 @@
     "save": "保存更改",
     "danger": "危险区域",
     "deleteAccount": "删除账户",
-    "deleteConfirm": "这将永久删除您的账户和所有数据。"
+    "deleteConfirm": "这将永久删除您的账户和所有数据。",
+    "deleteDialogTitle": "您确定吗？",
+    "deleteDialogDescription": "此操作无法撤销。请输入您的电子邮件地址以确认。",
+    "deleteDialogLabel": "电子邮件地址",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "取消",
+    "deleteDialogSubmit": "永久删除账户",
+    "deleteDialogMismatch": "电子邮件与您的账户邮箱不匹配。",
+    "deleteDialogError": "删除账户失败，请重试。"
   },
   "org": {
     "title": "组织",

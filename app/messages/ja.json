@@ -88,6 +88,7 @@
     "register": {
       "title": "アカウントを作成",
       "pageTitle": "新規登録",
+      "fullName": "氏名",
       "email": "メールアドレス",
       "password": "パスワード",
       "submit": "アカウント作成",
@@ -132,7 +133,15 @@
     "save": "変更を保存",
     "danger": "危険な操作",
     "deleteAccount": "アカウントを削除",
-    "deleteConfirm": "アカウントとすべてのデータが完全に削除されます。"
+    "deleteConfirm": "アカウントとすべてのデータが完全に削除されます。",
+    "deleteDialogTitle": "本当によろしいですか？",
+    "deleteDialogDescription": "この操作は元に戻せません。確認のためメールアドレスを入力してください。",
+    "deleteDialogLabel": "メールアドレス",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "キャンセル",
+    "deleteDialogSubmit": "アカウントを完全に削除",
+    "deleteDialogMismatch": "メールアドレスがアカウントのものと一致しません。",
+    "deleteDialogError": "アカウントの削除に失敗しました。もう一度お試しください。"
   },
   "org": {
     "title": "組織",

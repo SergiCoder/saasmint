@@ -88,6 +88,7 @@
     "register": {
       "title": "Create your account",
       "pageTitle": "Sign up",
+      "fullName": "Full name",
       "email": "Email address",
       "password": "Password",
       "submit": "Create account",
@@ -132,7 +133,15 @@
     "save": "Save changes",
     "danger": "Danger zone",
     "deleteAccount": "Delete account",
-    "deleteConfirm": "This will permanently delete your account and all data."
+    "deleteConfirm": "This will permanently delete your account and all data.",
+    "deleteDialogTitle": "Are you sure?",
+    "deleteDialogDescription": "This action cannot be undone. Type your email address to confirm.",
+    "deleteDialogLabel": "Email address",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Cancel",
+    "deleteDialogSubmit": "Permanently delete account",
+    "deleteDialogMismatch": "Email does not match your account email.",
+    "deleteDialogError": "Failed to delete account. Please try again."
   },
   "org": {
     "title": "Organization",

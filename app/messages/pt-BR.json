@@ -88,6 +88,7 @@
     "register": {
       "title": "Crie sua conta",
       "pageTitle": "Cadastrar",
+      "fullName": "Nome completo",
       "email": "Endereço de e-mail",
       "password": "Senha",
       "submit": "Criar conta",
@@ -132,7 +133,15 @@
     "save": "Salvar alterações",
     "danger": "Zona de perigo",
     "deleteAccount": "Excluir conta",
-    "deleteConfirm": "Isso excluirá permanentemente sua conta e todos os dados."
+    "deleteConfirm": "Isso excluirá permanentemente sua conta e todos os dados.",
+    "deleteDialogTitle": "Tem certeza?",
+    "deleteDialogDescription": "Esta ação não pode ser desfeita. Digite seu endereço de e-mail para confirmar.",
+    "deleteDialogLabel": "Endereço de e-mail",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Cancelar",
+    "deleteDialogSubmit": "Excluir conta permanentemente",
+    "deleteDialogMismatch": "O e-mail não corresponde ao da sua conta.",
+    "deleteDialogError": "Falha ao excluir a conta. Tente novamente."
   },
   "org": {
     "title": "Organização",

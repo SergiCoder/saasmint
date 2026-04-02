@@ -88,6 +88,7 @@
     "register": {
       "title": "Créez votre compte",
       "pageTitle": "Inscription",
+      "fullName": "Nom complet",
       "email": "Adresse e-mail",
       "password": "Mot de passe",
       "submit": "Créer un compte",
@@ -132,7 +133,15 @@
     "save": "Enregistrer les modifications",
     "danger": "Zone de danger",
     "deleteAccount": "Supprimer le compte",
-    "deleteConfirm": "Cela supprimera définitivement votre compte et toutes vos données."
+    "deleteConfirm": "Cela supprimera définitivement votre compte et toutes vos données.",
+    "deleteDialogTitle": "Êtes-vous sûr ?",
+    "deleteDialogDescription": "Cette action est irréversible. Saisissez votre adresse e-mail pour confirmer.",
+    "deleteDialogLabel": "Adresse e-mail",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Annuler",
+    "deleteDialogSubmit": "Supprimer définitivement le compte",
+    "deleteDialogMismatch": "L'adresse e-mail ne correspond pas à celle de votre compte.",
+    "deleteDialogError": "Échec de la suppression du compte. Veuillez réessayer."
   },
   "org": {
     "title": "Organisation",

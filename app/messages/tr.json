@@ -88,6 +88,7 @@
     "register": {
       "title": "Hesabınızı oluşturun",
       "pageTitle": "Kayıt ol",
+      "fullName": "Ad soyad",
       "email": "E-posta adresi",
       "password": "Şifre",
       "submit": "Hesap oluştur",
@@ -132,7 +133,15 @@
     "save": "Değişiklikleri kaydet",
     "danger": "Tehlikeli bölge",
     "deleteAccount": "Hesabı sil",
-    "deleteConfirm": "Bu işlem hesabınızı ve tüm verilerinizi kalıcı olarak silecektir."
+    "deleteConfirm": "Bu işlem hesabınızı ve tüm verilerinizi kalıcı olarak silecektir.",
+    "deleteDialogTitle": "Emin misiniz?",
+    "deleteDialogDescription": "Bu işlem geri alınamaz. Onaylamak için e-posta adresinizi yazın.",
+    "deleteDialogLabel": "E-posta adresi",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "İptal",
+    "deleteDialogSubmit": "Hesabı kalıcı olarak sil",
+    "deleteDialogMismatch": "E-posta adresi hesabınızla eşleşmiyor.",
+    "deleteDialogError": "Hesap silinemedi. Lütfen tekrar deneyin."
   },
   "org": {
     "title": "Organizasyon",

@@ -88,6 +88,7 @@
     "register": {
       "title": "Maak uw account aan",
       "pageTitle": "Registreren",
+      "fullName": "Volledige naam",
       "email": "E-mailadres",
       "password": "Wachtwoord",
       "submit": "Account aanmaken",
@@ -132,7 +133,15 @@
     "save": "Wijzigingen opslaan",
     "danger": "Gevarenzone",
     "deleteAccount": "Account verwijderen",
-    "deleteConfirm": "Dit verwijdert uw account en alle gegevens permanent."
+    "deleteConfirm": "Dit verwijdert uw account en alle gegevens permanent.",
+    "deleteDialogTitle": "Weet u het zeker?",
+    "deleteDialogDescription": "Deze actie kan niet ongedaan worden gemaakt. Typ uw e-mailadres ter bevestiging.",
+    "deleteDialogLabel": "E-mailadres",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Annuleren",
+    "deleteDialogSubmit": "Account permanent verwijderen",
+    "deleteDialogMismatch": "Het e-mailadres komt niet overeen met uw account.",
+    "deleteDialogError": "Account verwijderen mislukt. Probeer het opnieuw."
   },
   "org": {
     "title": "Organisatie",

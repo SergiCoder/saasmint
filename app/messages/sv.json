@@ -88,6 +88,7 @@
     "register": {
       "title": "Skapa ditt konto",
       "pageTitle": "Registrera",
+      "fullName": "Fullständigt namn",
       "email": "E-postadress",
       "password": "Lösenord",
       "submit": "Skapa konto",
@@ -132,7 +133,15 @@
     "save": "Spara ändringar",
     "danger": "Farozon",
     "deleteAccount": "Radera konto",
-    "deleteConfirm": "Detta raderar ditt konto och all data permanent."
+    "deleteConfirm": "Detta raderar ditt konto och all data permanent.",
+    "deleteDialogTitle": "Är du säker?",
+    "deleteDialogDescription": "Denna åtgärd kan inte ångras. Skriv in din e-postadress för att bekräfta.",
+    "deleteDialogLabel": "E-postadress",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Avbryt",
+    "deleteDialogSubmit": "Radera konto permanent",
+    "deleteDialogMismatch": "E-postadressen matchar inte ditt konto.",
+    "deleteDialogError": "Det gick inte att radera kontot. Försök igen."
   },
   "org": {
     "title": "Organisation",

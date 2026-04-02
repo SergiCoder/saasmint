@@ -88,6 +88,7 @@
     "register": {
       "title": "Utwórz konto",
       "pageTitle": "Rejestracja",
+      "fullName": "Imię i nazwisko",
       "email": "Adres e-mail",
       "password": "Hasło",
       "submit": "Utwórz konto",
@@ -132,7 +133,15 @@
     "save": "Zapisz zmiany",
     "danger": "Strefa zagrożenia",
     "deleteAccount": "Usuń konto",
-    "deleteConfirm": "To trwale usunie Twoje konto i wszystkie dane."
+    "deleteConfirm": "To trwale usunie Twoje konto i wszystkie dane.",
+    "deleteDialogTitle": "Czy na pewno?",
+    "deleteDialogDescription": "Tej czynności nie można cofnąć. Wpisz swój adres e-mail, aby potwierdzić.",
+    "deleteDialogLabel": "Adres e-mail",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Anuluj",
+    "deleteDialogSubmit": "Trwale usuń konto",
+    "deleteDialogMismatch": "Adres e-mail nie pasuje do konta.",
+    "deleteDialogError": "Nie udało się usunąć konta. Spróbuj ponownie."
   },
   "org": {
     "title": "Organizacja",

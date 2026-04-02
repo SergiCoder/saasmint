@@ -88,6 +88,7 @@
     "register": {
       "title": "Crea il tuo account",
       "pageTitle": "Registrati",
+      "fullName": "Nome completo",
       "email": "Indirizzo email",
       "password": "Password",
       "submit": "Crea account",
@@ -132,7 +133,15 @@
     "save": "Salva modifiche",
     "danger": "Zona pericolosa",
     "deleteAccount": "Elimina account",
-    "deleteConfirm": "Questo eliminerà permanentemente il tuo account e tutti i dati."
+    "deleteConfirm": "Questo eliminerà permanentemente il tuo account e tutti i dati.",
+    "deleteDialogTitle": "Sei sicuro?",
+    "deleteDialogDescription": "Questa azione non può essere annullata. Digita il tuo indirizzo email per confermare.",
+    "deleteDialogLabel": "Indirizzo email",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Annulla",
+    "deleteDialogSubmit": "Elimina account permanentemente",
+    "deleteDialogMismatch": "L'email non corrisponde a quella del tuo account.",
+    "deleteDialogError": "Impossibile eliminare l'account. Riprova."
   },
   "org": {
     "title": "Organizzazione",

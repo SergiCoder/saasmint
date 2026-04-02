@@ -88,6 +88,7 @@
     "register": {
       "title": "Opret din konto",
       "pageTitle": "Opret konto",
+      "fullName": "Fulde navn",
       "email": "E-mailadresse",
       "password": "Adgangskode",
       "submit": "Opret konto",
@@ -132,7 +133,15 @@
     "save": "Gem ændringer",
     "danger": "Farezone",
     "deleteAccount": "Slet konto",
-    "deleteConfirm": "Dette sletter permanent din konto og alle data."
+    "deleteConfirm": "Dette sletter permanent din konto og alle data.",
+    "deleteDialogTitle": "Er du sikker?",
+    "deleteDialogDescription": "Denne handling kan ikke fortrydes. Indtast din e-mailadresse for at bekræfte.",
+    "deleteDialogLabel": "E-mailadresse",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Annuller",
+    "deleteDialogSubmit": "Slet konto permanent",
+    "deleteDialogMismatch": "E-mailadressen stemmer ikke overens med din konto.",
+    "deleteDialogError": "Kontoen kunne ikke slettes. Prøv igen."
   },
   "org": {
     "title": "Organisation",

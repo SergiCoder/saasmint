@@ -88,6 +88,7 @@
     "register": {
       "title": "Создайте аккаунт",
       "pageTitle": "Регистрация",
+      "fullName": "Полное имя",
       "email": "Электронная почта",
       "password": "Пароль",
       "submit": "Создать аккаунт",
@@ -132,7 +133,15 @@
     "save": "Сохранить изменения",
     "danger": "Опасная зона",
     "deleteAccount": "Удалить аккаунт",
-    "deleteConfirm": "Это навсегда удалит ваш аккаунт и все данные."
+    "deleteConfirm": "Это навсегда удалит ваш аккаунт и все данные.",
+    "deleteDialogTitle": "Вы уверены?",
+    "deleteDialogDescription": "Это действие нельзя отменить. Введите свой адрес электронной почты для подтверждения.",
+    "deleteDialogLabel": "Адрес электронной почты",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Отмена",
+    "deleteDialogSubmit": "Удалить аккаунт навсегда",
+    "deleteDialogMismatch": "Электронная почта не совпадает с почтой вашего аккаунта.",
+    "deleteDialogError": "Не удалось удалить аккаунт. Пожалуйста, попробуйте снова."
   },
   "org": {
     "title": "Организация",

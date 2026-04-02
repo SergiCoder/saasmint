@@ -88,6 +88,7 @@
     "register": {
       "title": "Buat akun Anda",
       "pageTitle": "Daftar",
+      "fullName": "Nama lengkap",
       "email": "Alamat email",
       "password": "Kata sandi",
       "submit": "Buat akun",
@@ -132,7 +133,15 @@
     "save": "Simpan perubahan",
     "danger": "Zona bahaya",
     "deleteAccount": "Hapus akun",
-    "deleteConfirm": "Ini akan menghapus akun dan semua data Anda secara permanen."
+    "deleteConfirm": "Ini akan menghapus akun dan semua data Anda secara permanen.",
+    "deleteDialogTitle": "Apakah Anda yakin?",
+    "deleteDialogDescription": "Tindakan ini tidak dapat dibatalkan. Ketik alamat email Anda untuk mengonfirmasi.",
+    "deleteDialogLabel": "Alamat email",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Batal",
+    "deleteDialogSubmit": "Hapus akun secara permanen",
+    "deleteDialogMismatch": "Email tidak cocok dengan email akun Anda.",
+    "deleteDialogError": "Gagal menghapus akun. Silakan coba lagi."
   },
   "org": {
     "title": "Organisasi",

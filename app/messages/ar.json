@@ -88,6 +88,7 @@
     "register": {
       "title": "إنشاء حسابك",
       "pageTitle": "إنشاء حساب",
+      "fullName": "الاسم الكامل",
       "email": "عنوان البريد الإلكتروني",
       "password": "كلمة المرور",
       "submit": "إنشاء حساب",
@@ -132,7 +133,15 @@
     "save": "حفظ التغييرات",
     "danger": "منطقة الخطر",
     "deleteAccount": "حذف الحساب",
-    "deleteConfirm": "سيؤدي هذا إلى حذف حسابك وجميع بياناتك نهائيًا."
+    "deleteConfirm": "سيؤدي هذا إلى حذف حسابك وجميع بياناتك نهائيًا.",
+    "deleteDialogTitle": "هل أنت متأكد؟",
+    "deleteDialogDescription": "لا يمكن التراجع عن هذا الإجراء. اكتب عنوان بريدك الإلكتروني للتأكيد.",
+    "deleteDialogLabel": "عنوان البريد الإلكتروني",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "إلغاء",
+    "deleteDialogSubmit": "حذف الحساب نهائيًا",
+    "deleteDialogMismatch": "البريد الإلكتروني لا يتطابق مع بريد حسابك.",
+    "deleteDialogError": "فشل حذف الحساب. يرجى المحاولة مرة أخرى."
   },
   "org": {
     "title": "المنظمة",
