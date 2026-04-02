@@ -11,7 +11,10 @@
     "admin": "Администрирование",
     "signIn": "Войти",
     "signOut": "Выйти",
-    "contactUs": "Связаться с нами"
+    "contactUs": "Связаться с нами",
+    "profile": "Профиль",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Конфиденциальность",
@@ -210,5 +213,13 @@
     "title": "Политика файлов cookie",
     "lastUpdated": "Последнее обновление: март 2026",
     "intro": "Мы используем файлы cookie для улучшения вашего опыта. Эта политика объясняет, как и почему мы используем файлы cookie на нашем сайте."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Это страница-заглушка для Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Это страница-заглушка для Feature 2."
   }
 }

@@ -11,7 +11,10 @@
     "admin": "Amministrazione",
     "signIn": "Accedi",
     "signOut": "Esci",
-    "contactUs": "Contattaci"
+    "contactUs": "Contattaci",
+    "profile": "Profilo",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Privacy",
@@ -210,5 +213,13 @@
     "title": "Informativa sui cookie",
     "lastUpdated": "Ultimo aggiornamento: marzo 2026",
     "intro": "Utilizziamo i cookie per migliorare la tua esperienza. Questa informativa spiega come e perché utilizziamo i cookie sul nostro sito."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Questa è una pagina segnaposto per Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Questa è una pagina segnaposto per Feature 2."
   }
 }

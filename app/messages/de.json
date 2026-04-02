@@ -11,7 +11,10 @@
     "admin": "Verwaltung",
     "signIn": "Anmelden",
     "signOut": "Abmelden",
-    "contactUs": "Kontakt"
+    "contactUs": "Kontakt",
+    "profile": "Profil",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Datenschutz",
@@ -210,5 +213,13 @@
     "title": "Cookie-Richtlinie",
     "lastUpdated": "Letzte Aktualisierung: März 2026",
     "intro": "Wir verwenden Cookies, um Ihre Erfahrung zu verbessern. Diese Richtlinie erklärt, wie und warum wir Cookies auf unserer Website verwenden."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Dies ist eine Platzhalterseite für Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Dies ist eine Platzhalterseite für Feature 2."
   }
 }

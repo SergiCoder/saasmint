@@ -11,7 +11,10 @@
     "admin": "Administración",
     "signIn": "Iniciar sesión",
     "signOut": "Cerrar sesión",
-    "contactUs": "Contáctanos"
+    "contactUs": "Contáctanos",
+    "profile": "Perfil",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Privacidad",
@@ -210,5 +213,13 @@
     "title": "Política de cookies",
     "lastUpdated": "Última actualización: marzo 2026",
     "intro": "Usamos cookies para mejorar tu experiencia. Esta política explica cómo y por qué usamos cookies en nuestro sitio web."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Esta es una página provisional para Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Esta es una página provisional para Feature 2."
   }
 }

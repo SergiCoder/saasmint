@@ -11,7 +11,10 @@
     "admin": "관리",
     "signIn": "로그인",
     "signOut": "로그아웃",
-    "contactUs": "문의하기"
+    "contactUs": "문의하기",
+    "profile": "프로필",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "개인정보 보호",
@@ -210,5 +213,13 @@
     "title": "쿠키 정책",
     "lastUpdated": "최종 업데이트: 2026년 3월",
     "intro": "경험을 개선하기 위해 쿠키를 사용합니다. 이 정책은 쿠키를 어떻게 왜 사용하는지 설명합니다."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Feature 1의 자리 표시자 페이지입니다."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Feature 2의 자리 표시자 페이지입니다."
   }
 }
