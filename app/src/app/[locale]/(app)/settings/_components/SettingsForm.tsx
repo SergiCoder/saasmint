@@ -11,7 +11,7 @@ import {
   uploadAvatar,
   deleteAvatar,
 } from "@/infrastructure/supabase/avatarStorage";
-import { updateProfile } from "@/app/actions/user";
+import { updateProfile, updateAvatarUrl } from "@/app/actions/user";
 import type { User } from "@/domain/models/User";
 import type { PhonePrefix } from "@/domain/models/PhonePrefix";
 
@@ -78,7 +78,8 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
     if (file) {
       setAvatarUploading(true);
       try {
-        const url = await uploadAvatar(user.id, file);
+        const url = await uploadAvatar(file);
+        await updateAvatarUrl(url);
         setAvatarUrl(url);
       } catch {
         setAvatarError(t("avatarError"));
@@ -88,7 +89,8 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
     } else {
       setAvatarUploading(true);
       try {
-        await deleteAvatar(user.id);
+        await deleteAvatar();
+        await updateAvatarUrl(null);
         setAvatarUrl(null);
       } catch {
         setAvatarError(t("avatarError"));

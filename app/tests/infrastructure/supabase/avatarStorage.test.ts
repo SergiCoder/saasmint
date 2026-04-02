@@ -7,9 +7,11 @@ import {
 const mockUpload = vi.fn();
 const mockRemove = vi.fn();
 const mockGetPublicUrl = vi.fn();
+const mockGetUser = vi.fn();
 
 vi.mock("@/infrastructure/supabase/client", () => ({
   createClient: () => ({
+    auth: { getUser: mockGetUser },
     storage: {
       from: () => ({
         upload: mockUpload,
@@ -28,6 +30,7 @@ describe("avatarStorage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(Date, "now").mockReturnValue(1234567890);
+    mockGetUser.mockResolvedValue({ data: { user: { id: "uid" } } });
   });
 
   describe("uploadAvatar", () => {
@@ -40,7 +43,7 @@ describe("avatarStorage", () => {
       });
 
       const file = new File(["img"], "photo.png", { type: "image/png" });
-      const url = await uploadAvatar("uid", file);
+      const url = await uploadAvatar(file);
 
       expect(mockUpload).toHaveBeenCalledWith(
         "uid/avatar.webp",
@@ -57,7 +60,14 @@ describe("avatarStorage", () => {
       mockUpload.mockResolvedValue({ error: new Error("Upload failed") });
 
       const file = new File(["img"], "photo.png", { type: "image/png" });
-      await expect(uploadAvatar("uid", file)).rejects.toThrow("Upload failed");
+      await expect(uploadAvatar(file)).rejects.toThrow("Upload failed");
+    });
+
+    it("throws when not authenticated", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: null } });
+
+      const file = new File(["img"], "photo.png", { type: "image/png" });
+      await expect(uploadAvatar(file)).rejects.toThrow("Not authenticated");
     });
   });
 
@@ -65,7 +75,7 @@ describe("avatarStorage", () => {
     it("removes the avatar file", async () => {
       mockRemove.mockResolvedValue({ error: null });
 
-      await deleteAvatar("uid");
+      await deleteAvatar();
 
       expect(mockRemove).toHaveBeenCalledWith(["uid/avatar.webp"]);
     });
@@ -73,7 +83,7 @@ describe("avatarStorage", () => {
     it("throws when delete fails", async () => {
       mockRemove.mockResolvedValue({ error: new Error("Delete failed") });
 
-      await expect(deleteAvatar("uid")).rejects.toThrow("Delete failed");
+      await expect(deleteAvatar()).rejects.toThrow("Delete failed");
     });
   });
 });

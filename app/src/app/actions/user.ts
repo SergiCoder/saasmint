@@ -5,6 +5,12 @@ import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
 import { UpdateUserProfile } from "@/application/use-cases/user/UpdateUserProfile";
 import { authGateway, userGateway } from "@/infrastructure/registry";
 
+export async function updateAvatarUrl(avatarUrl: string | null) {
+  const user = await new GetCurrentUser(authGateway).execute();
+  await new UpdateUserProfile(userGateway).execute(user.id, { avatarUrl });
+  revalidatePath("/settings");
+}
+
 export async function updateProfile(_prevState: unknown, formData: FormData) {
   const user = await new GetCurrentUser(authGateway).execute();
 

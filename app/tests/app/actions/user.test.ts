@@ -39,12 +39,14 @@ const mockUser = {
 };
 
 let updateProfile: typeof import("@/app/actions/user").updateProfile;
+let updateAvatarUrl: typeof import("@/app/actions/user").updateAvatarUrl;
 
 beforeEach(async () => {
   vi.clearAllMocks();
   mockGetCurrentUserExecute.mockResolvedValue(mockUser);
   const mod = await import("@/app/actions/user");
   updateProfile = mod.updateProfile;
+  updateAvatarUrl = mod.updateAvatarUrl;
 });
 
 describe("user server actions", () => {
@@ -166,6 +168,30 @@ describe("user server actions", () => {
 
       const result = await updateProfile(undefined, formData);
       expect(result).toEqual({ error: "Failed to update profile" });
+    });
+  });
+
+  describe("updateAvatarUrl", () => {
+    it("updates avatar URL and revalidates /settings", async () => {
+      mockUpdateUserProfileExecute.mockResolvedValue(undefined);
+
+      await updateAvatarUrl("https://example.com/avatar.webp");
+
+      expect(mockGetCurrentUserExecute).toHaveBeenCalledOnce();
+      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
+        avatarUrl: "https://example.com/avatar.webp",
+      });
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/settings");
+    });
+
+    it("sends null to clear avatar", async () => {
+      mockUpdateUserProfileExecute.mockResolvedValue(undefined);
+
+      await updateAvatarUrl(null);
+
+      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
+        avatarUrl: null,
+      });
     });
   });
 });

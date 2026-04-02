@@ -3,12 +3,19 @@ import { compressImage } from "./compressImage";
 
 const BUCKET = "avatars";
 
-export async function uploadAvatar(
-  userId: string,
-  file: File,
-): Promise<string> {
+async function getSupabaseUid(): Promise<string> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+  return user.id;
+}
+
+export async function uploadAvatar(file: File): Promise<string> {
+  const uid = await getSupabaseUid();
   const blob = await compressImage(file);
-  const path = `${userId}/avatar.webp`;
+  const path = `${uid}/avatar.webp`;
   const supabase = createClient();
 
   const { error } = await supabase.storage
@@ -25,8 +32,9 @@ export async function uploadAvatar(
   return `${publicUrl}?t=${Date.now()}`;
 }
 
-export async function deleteAvatar(userId: string): Promise<void> {
-  const path = `${userId}/avatar.webp`;
+export async function deleteAvatar(): Promise<void> {
+  const uid = await getSupabaseUid();
+  const path = `${uid}/avatar.webp`;
   const supabase = createClient();
   const { error } = await supabase.storage.from(BUCKET).remove([path]);
   if (error) throw error;
