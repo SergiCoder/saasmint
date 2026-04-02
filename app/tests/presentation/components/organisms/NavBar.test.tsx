@@ -112,6 +112,42 @@ describe("NavBar", () => {
     ).toBeInTheDocument();
   });
 
+  describe("user menu dropdown", () => {
+    const userMenuProps = {
+      ...defaultProps,
+      user: { fullName: "Jane Doe", avatarUrl: null },
+      userMenuItems: [
+        { href: "/settings", label: "Profile" },
+        { href: "/billing", label: "Billing" },
+      ],
+      userMenuSignOut: <button>Sign Out</button>,
+    };
+
+    it("renders UserMenu instead of plain Avatar when userMenuItems provided", () => {
+      render(<NavBar {...userMenuProps} />);
+      const buttons = screen.getAllByRole("button");
+      const menuTrigger = buttons.find(
+        (btn) => btn.getAttribute("aria-haspopup") === "menu",
+      );
+      expect(menuTrigger).toBeDefined();
+      expect(menuTrigger).toHaveAttribute("aria-expanded", "false");
+    });
+
+    it("renders user menu items in mobile panel", async () => {
+      const user = userEvent.setup();
+      render(<NavBar {...userMenuProps} />);
+      const toggle = screen.getByRole("button", {
+        name: "Toggle navigation",
+      });
+
+      await user.click(toggle);
+
+      expect(screen.getByText("Jane Doe")).toBeInTheDocument();
+      expect(screen.getAllByText("Profile").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("Billing").length).toBeGreaterThanOrEqual(1);
+    });
+  });
+
   it("applies custom className", () => {
     const { container } = render(
       <NavBar {...defaultProps} className="sticky top-0" />,
