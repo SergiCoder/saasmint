@@ -83,7 +83,13 @@
       "password": "비밀번호",
       "submit": "로그인",
       "noAccount": "계정이 없으신가요?",
-      "register": "회원가입"
+      "register": "회원가입",
+      "registered": "계정이 생성되었습니다! 이메일을 확인하여 계정을 인증해 주세요.",
+      "errorNoSession": "세션이 만료되었습니다. 다시 로그인해 주세요.",
+      "errorEmailNotVerified": "로그인하기 전에 이메일 주소를 인증해 주세요. 받은 편지함을 확인하세요.",
+      "errorTokenExpired": "세션이 만료되었습니다. 다시 로그인해 주세요.",
+      "errorAccountDeactivated": "이 계정은 비활성화되었습니다.",
+      "errorBackendRejected": "인증에 실패했습니다. 다시 로그인해 주세요."
     },
     "register": {
       "title": "계정 만들기",
@@ -93,7 +99,14 @@
       "password": "비밀번호",
       "submit": "계정 만들기",
       "hasAccount": "이미 계정이 있으신가요?",
-      "login": "로그인"
+      "login": "로그인",
+      "pronouns": "대명사",
+      "pronounsDontSpecify": "지정하지 않음",
+      "pronounsCustom": "사용자 지정",
+      "pronounsCustomPlaceholder": "대명사를 입력하세요",
+      "pronounsHeHim": "그/Him",
+      "pronounsSheHer": "그녀/Her",
+      "pronounsTheyThem": "They/Them"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "취소",
     "deleteDialogSubmit": "계정 영구 삭제",
     "deleteDialogMismatch": "이메일이 계정 이메일과 일치하지 않습니다.",
-    "deleteDialogError": "계정 삭제에 실패했습니다. 다시 시도해 주세요."
+    "deleteDialogError": "계정 삭제에 실패했습니다. 다시 시도해 주세요.",
+    "pronounsHeHim": "그/Him",
+    "pronounsSheHer": "그녀/Her",
+    "pronounsTheyThem": "They/Them"
   },
   "org": {
     "title": "조직",

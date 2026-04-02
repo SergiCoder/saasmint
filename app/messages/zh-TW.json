@@ -83,7 +83,13 @@
       "password": "密碼",
       "submit": "登入",
       "noAccount": "還沒有帳戶？",
-      "register": "註冊"
+      "register": "註冊",
+      "registered": "帳戶已建立！請檢查您的電子郵件以驗證帳戶。",
+      "errorNoSession": "您的工作階段已過期，請重新登入。",
+      "errorEmailNotVerified": "登入前請驗證您的電子郵件地址。請檢查您的收件匣。",
+      "errorTokenExpired": "您的工作階段已過期，請重新登入。",
+      "errorAccountDeactivated": "此帳戶已被停用。",
+      "errorBackendRejected": "驗證失敗。請重新登入。"
     },
     "register": {
       "title": "建立您的帳戶",
@@ -93,7 +99,14 @@
       "password": "密碼",
       "submit": "建立帳戶",
       "hasAccount": "已有帳戶？",
-      "login": "登入"
+      "login": "登入",
+      "pronouns": "代名詞",
+      "pronounsDontSpecify": "不指定",
+      "pronounsCustom": "自訂",
+      "pronounsCustomPlaceholder": "輸入您的代名詞",
+      "pronounsHeHim": "他/Him",
+      "pronounsSheHer": "她/Her",
+      "pronounsTheyThem": "They/Them"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "取消",
     "deleteDialogSubmit": "永久刪除帳戶",
     "deleteDialogMismatch": "電子郵件與您的帳戶信箱不符。",
-    "deleteDialogError": "刪除帳戶失敗，請重試。"
+    "deleteDialogError": "刪除帳戶失敗，請重試。",
+    "pronounsHeHim": "他/Him",
+    "pronounsSheHer": "她/Her",
+    "pronounsTheyThem": "They/Them"
   },
   "org": {
     "title": "組織",

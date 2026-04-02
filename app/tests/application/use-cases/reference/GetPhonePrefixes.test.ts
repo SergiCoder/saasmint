@@ -13,7 +13,6 @@ function makeGateway(
 ): IReferenceGateway {
   return {
     getPhonePrefixes: vi.fn().mockResolvedValue(phonePrefixes),
-    getPronouns: vi.fn(),
     ...overrides,
   };
 }

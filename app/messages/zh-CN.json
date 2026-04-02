@@ -83,7 +83,13 @@
       "password": "密码",
       "submit": "登录",
       "noAccount": "还没有账户？",
-      "register": "注册"
+      "register": "注册",
+      "registered": "账户已创建！请检查您的邮箱以验证账户。",
+      "errorNoSession": "您的会话已过期，请重新登录。",
+      "errorEmailNotVerified": "登录前请验证您的邮箱地址。请检查您的收件箱。",
+      "errorTokenExpired": "您的会话已过期，请重新登录。",
+      "errorAccountDeactivated": "此账户已被停用。",
+      "errorBackendRejected": "身份验证失败。请重新登录。"
     },
     "register": {
       "title": "创建您的账户",
@@ -93,7 +99,14 @@
       "password": "密码",
       "submit": "创建账户",
       "hasAccount": "已有账户？",
-      "login": "登录"
+      "login": "登录",
+      "pronouns": "代词",
+      "pronounsDontSpecify": "不指定",
+      "pronounsCustom": "自定义",
+      "pronounsCustomPlaceholder": "输入您的代词",
+      "pronounsHeHim": "他/Him",
+      "pronounsSheHer": "她/Her",
+      "pronounsTheyThem": "They/Them"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "取消",
     "deleteDialogSubmit": "永久删除账户",
     "deleteDialogMismatch": "电子邮件与您的账户邮箱不匹配。",
-    "deleteDialogError": "删除账户失败，请重试。"
+    "deleteDialogError": "删除账户失败，请重试。",
+    "pronounsHeHim": "他/Him",
+    "pronounsSheHer": "她/Her",
+    "pronounsTheyThem": "They/Them"
   },
   "org": {
     "title": "组织",

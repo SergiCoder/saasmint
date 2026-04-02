@@ -12,13 +12,4 @@ export class DjangoApiReferenceGateway implements IReferenceGateway {
     }
     return res.json() as Promise<PhonePrefix[]>;
   }
-
-  async getPronouns(): Promise<string[]> {
-    const res = await fetch(`${API_URL}/api/v1/pronouns/`);
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(`API ${res.status}: ${text}`);
-    }
-    return res.json() as Promise<string[]>;
-  }
 }

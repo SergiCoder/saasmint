@@ -83,7 +83,13 @@
       "password": "Passwort",
       "submit": "Anmelden",
       "noAccount": "Noch kein Konto?",
-      "register": "Registrieren"
+      "register": "Registrieren",
+      "registered": "Konto erstellt! Überprüfen Sie Ihre E-Mail, um Ihr Konto zu bestätigen.",
+      "errorNoSession": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+      "errorEmailNotVerified": "Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden. Prüfen Sie Ihren Posteingang.",
+      "errorTokenExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+      "errorAccountDeactivated": "Dieses Konto wurde deaktiviert.",
+      "errorBackendRejected": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut."
     },
     "register": {
       "title": "Konto erstellen",
@@ -93,7 +99,14 @@
       "password": "Passwort",
       "submit": "Konto erstellen",
       "hasAccount": "Bereits ein Konto?",
-      "login": "Anmelden"
+      "login": "Anmelden",
+      "pronouns": "Pronomen",
+      "pronounsDontSpecify": "Nicht angeben",
+      "pronounsCustom": "Benutzerdefiniert",
+      "pronounsCustomPlaceholder": "Geben Sie Ihre Pronomen ein",
+      "pronounsHeHim": "Er/Ihm",
+      "pronounsSheHer": "Sie/Ihr",
+      "pronounsTheyThem": "They/Them"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "Abbrechen",
     "deleteDialogSubmit": "Konto dauerhaft löschen",
     "deleteDialogMismatch": "Die E-Mail-Adresse stimmt nicht mit Ihrem Konto überein.",
-    "deleteDialogError": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
+    "deleteDialogError": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+    "pronounsHeHim": "Er/Ihm",
+    "pronounsSheHer": "Sie/Ihr",
+    "pronounsTheyThem": "They/Them"
   },
   "org": {
     "title": "Organisation",

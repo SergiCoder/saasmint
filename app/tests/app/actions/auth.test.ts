@@ -96,7 +96,7 @@ describe("auth server actions", () => {
           password: "secret123",
           options: {
             emailRedirectTo: "http://localhost:3000/auth/callback",
-            data: { full_name: "Jane Doe" },
+            data: { full_name: "Jane Doe", pronouns: null },
           },
         }),
       );

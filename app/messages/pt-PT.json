@@ -83,7 +83,13 @@
       "password": "Palavra-passe",
       "submit": "Iniciar sessão",
       "noAccount": "Não tem uma conta?",
-      "register": "Registar-se"
+      "register": "Registar-se",
+      "registered": "Conta criada! Verifique o seu e-mail para confirmar a sua conta.",
+      "errorNoSession": "A sua sessão expirou. Inicie sessão novamente.",
+      "errorEmailNotVerified": "Verifique o seu endereço de e-mail antes de iniciar sessão. Consulte a sua caixa de entrada.",
+      "errorTokenExpired": "A sua sessão expirou. Inicie sessão novamente.",
+      "errorAccountDeactivated": "Esta conta foi desativada.",
+      "errorBackendRejected": "Falha na autenticação. Tente iniciar sessão novamente."
     },
     "register": {
       "title": "Crie a sua conta",
@@ -93,7 +99,14 @@
       "password": "Palavra-passe",
       "submit": "Criar conta",
       "hasAccount": "Já tem uma conta?",
-      "login": "Iniciar sessão"
+      "login": "Iniciar sessão",
+      "pronouns": "Pronomes",
+      "pronounsDontSpecify": "Não especificar",
+      "pronounsCustom": "Personalizado",
+      "pronounsCustomPlaceholder": "Introduza os seus pronomes",
+      "pronounsHeHim": "Ele/Dele",
+      "pronounsSheHer": "Ela/Dela",
+      "pronounsTheyThem": "Elu/Delu"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "Cancelar",
     "deleteDialogSubmit": "Eliminar conta permanentemente",
     "deleteDialogMismatch": "O e-mail não corresponde ao da sua conta.",
-    "deleteDialogError": "Não foi possível eliminar a conta. Tente novamente."
+    "deleteDialogError": "Não foi possível eliminar a conta. Tente novamente.",
+    "pronounsHeHim": "Ele/Dele",
+    "pronounsSheHer": "Ela/Dela",
+    "pronounsTheyThem": "Elu/Delu"
   },
   "org": {
     "title": "Organização",

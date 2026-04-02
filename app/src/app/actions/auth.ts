@@ -45,6 +45,8 @@ export async function signUp(_prevState: unknown, formData: FormData) {
     return { error: "Full name must be between 3 and 255 characters" };
   }
 
+  const pronouns = formData.get("pronouns");
+
   const origin = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
   const supabase = await createClient();
@@ -52,7 +54,10 @@ export async function signUp(_prevState: unknown, formData: FormData) {
     ...result,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
-      data: { full_name: fullName },
+      data: {
+        full_name: fullName,
+        pronouns: typeof pronouns === "string" && pronouns ? pronouns : null,
+      },
     },
   });
 

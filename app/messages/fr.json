@@ -83,7 +83,13 @@
       "password": "Mot de passe",
       "submit": "Se connecter",
       "noAccount": "Vous n'avez pas de compte ?",
-      "register": "S'inscrire"
+      "register": "S'inscrire",
+      "registered": "Compte créé ! Vérifiez votre e-mail pour confirmer votre compte.",
+      "errorNoSession": "Votre session a expiré. Veuillez vous reconnecter.",
+      "errorEmailNotVerified": "Veuillez vérifier votre adresse e-mail avant de vous connecter. Consultez votre boîte de réception.",
+      "errorTokenExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+      "errorAccountDeactivated": "Ce compte a été désactivé.",
+      "errorBackendRejected": "Échec de l'authentification. Veuillez réessayer."
     },
     "register": {
       "title": "Créez votre compte",
@@ -93,7 +99,14 @@
       "password": "Mot de passe",
       "submit": "Créer un compte",
       "hasAccount": "Vous avez déjà un compte ?",
-      "login": "Se connecter"
+      "login": "Se connecter",
+      "pronouns": "Pronoms",
+      "pronounsDontSpecify": "Ne pas préciser",
+      "pronounsCustom": "Personnalisé",
+      "pronounsCustomPlaceholder": "Saisissez vos pronoms",
+      "pronounsHeHim": "Il/Lui",
+      "pronounsSheHer": "Elle",
+      "pronounsTheyThem": "Iel"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "Annuler",
     "deleteDialogSubmit": "Supprimer définitivement le compte",
     "deleteDialogMismatch": "L'adresse e-mail ne correspond pas à celle de votre compte.",
-    "deleteDialogError": "Échec de la suppression du compte. Veuillez réessayer."
+    "deleteDialogError": "Échec de la suppression du compte. Veuillez réessayer.",
+    "pronounsHeHim": "Il/Lui",
+    "pronounsSheHer": "Elle",
+    "pronounsTheyThem": "Iel"
   },
   "org": {
     "title": "Organisation",

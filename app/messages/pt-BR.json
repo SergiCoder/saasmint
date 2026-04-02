@@ -83,7 +83,13 @@
       "password": "Senha",
       "submit": "Entrar",
       "noAccount": "Não tem uma conta?",
-      "register": "Cadastre-se"
+      "register": "Cadastre-se",
+      "registered": "Conta criada! Verifique seu e-mail para confirmar sua conta.",
+      "errorNoSession": "Sua sessão expirou. Faça login novamente.",
+      "errorEmailNotVerified": "Verifique seu endereço de e-mail antes de fazer login. Confira sua caixa de entrada.",
+      "errorTokenExpired": "Sua sessão expirou. Faça login novamente.",
+      "errorAccountDeactivated": "Esta conta foi desativada.",
+      "errorBackendRejected": "Falha na autenticação. Tente fazer login novamente."
     },
     "register": {
       "title": "Crie sua conta",
@@ -93,7 +99,14 @@
       "password": "Senha",
       "submit": "Criar conta",
       "hasAccount": "Já tem uma conta?",
-      "login": "Entrar"
+      "login": "Entrar",
+      "pronouns": "Pronomes",
+      "pronounsDontSpecify": "Não especificar",
+      "pronounsCustom": "Personalizado",
+      "pronounsCustomPlaceholder": "Digite seus pronomes",
+      "pronounsHeHim": "Ele/Dele",
+      "pronounsSheHer": "Ela/Dela",
+      "pronounsTheyThem": "Elu/Delu"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "Cancelar",
     "deleteDialogSubmit": "Excluir conta permanentemente",
     "deleteDialogMismatch": "O e-mail não corresponde ao da sua conta.",
-    "deleteDialogError": "Falha ao excluir a conta. Tente novamente."
+    "deleteDialogError": "Falha ao excluir a conta. Tente novamente.",
+    "pronounsHeHim": "Ele/Dele",
+    "pronounsSheHer": "Ela/Dela",
+    "pronounsTheyThem": "Elu/Delu"
   },
   "org": {
     "title": "Organização",

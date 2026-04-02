@@ -1,17 +1,26 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Button } from "@/presentation/components/atoms/Button";
+import { Label } from "@/presentation/components/atoms/Label";
+
+const CUSTOM_PRONOUNS_VALUE = "__custom__";
+const PRONOUN_KEYS = [
+  "pronounsHeHim",
+  "pronounsSheHer",
+  "pronounsTheyThem",
+] as const;
 
 interface AuthFormProps {
   action: (prev: unknown, fd: FormData) => Promise<{ error: string } | void>;
   translationNamespace: string;
   passwordAutoComplete: string;
   showNameField?: boolean;
+  showPronouns?: boolean;
   footerLink: { href: string; textKey: string; linkKey: string };
 }
 
@@ -20,10 +29,15 @@ export function AuthForm({
   translationNamespace,
   passwordAutoComplete,
   showNameField = false,
+  showPronouns = false,
   footerLink,
 }: AuthFormProps) {
   const t = useTranslations(translationNamespace);
   const [state, formAction, pending] = useActionState(action, null);
+  const [pronounsSelect, setPronounsSelect] = useState("");
+  const [customPronouns, setCustomPronouns] = useState("");
+
+  const pronounOptions = showPronouns ? PRONOUN_KEYS.map((key) => t(key)) : [];
 
   return (
     <>
@@ -42,6 +56,43 @@ export function AuthForm({
             maxLength={255}
             autoComplete="name"
           />
+        )}
+        {showPronouns && (
+          <div className="space-y-1">
+            <Label htmlFor="pronouns">{t("pronouns")}</Label>
+            <select
+              id="pronouns"
+              name={
+                pronounsSelect === CUSTOM_PRONOUNS_VALUE
+                  ? undefined
+                  : "pronouns"
+              }
+              value={pronounsSelect}
+              onChange={(e) => setPronounsSelect(e.target.value)}
+              className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors focus:ring-2 focus:ring-offset-0 focus:outline-none"
+            >
+              <option value="">{t("pronounsDontSpecify")}</option>
+              {pronounOptions.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+              <option value={CUSTOM_PRONOUNS_VALUE}>
+                {t("pronounsCustom")}
+              </option>
+            </select>
+            {pronounsSelect === CUSTOM_PRONOUNS_VALUE && (
+              <input
+                name="pronouns"
+                type="text"
+                maxLength={50}
+                value={customPronouns}
+                onChange={(e) => setCustomPronouns(e.target.value)}
+                placeholder={t("pronounsCustomPlaceholder")}
+                className="focus:border-primary-500 focus:ring-primary-500 mt-2 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-offset-0 focus:outline-none"
+              />
+            )}
+          </div>
         )}
         <FormField
           label={t("email")}

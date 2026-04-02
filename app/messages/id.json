@@ -83,7 +83,13 @@
       "password": "Kata sandi",
       "submit": "Masuk",
       "noAccount": "Belum punya akun?",
-      "register": "Daftar"
+      "register": "Daftar",
+      "registered": "Akun dibuat! Periksa email Anda untuk memverifikasi akun.",
+      "errorNoSession": "Sesi Anda telah berakhir. Silakan masuk kembali.",
+      "errorEmailNotVerified": "Verifikasi alamat email Anda sebelum masuk. Periksa kotak masuk Anda.",
+      "errorTokenExpired": "Sesi Anda telah berakhir. Silakan masuk kembali.",
+      "errorAccountDeactivated": "Akun ini telah dinonaktifkan.",
+      "errorBackendRejected": "Autentikasi gagal. Silakan coba masuk kembali."
     },
     "register": {
       "title": "Buat akun Anda",
@@ -93,7 +99,14 @@
       "password": "Kata sandi",
       "submit": "Buat akun",
       "hasAccount": "Sudah punya akun?",
-      "login": "Masuk"
+      "login": "Masuk",
+      "pronouns": "Kata ganti",
+      "pronounsDontSpecify": "Tidak ditentukan",
+      "pronounsCustom": "Kustom",
+      "pronounsCustomPlaceholder": "Masukkan kata ganti Anda",
+      "pronounsHeHim": "Dia (laki-laki)",
+      "pronounsSheHer": "Dia (perempuan)",
+      "pronounsTheyThem": "Mereka"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "Batal",
     "deleteDialogSubmit": "Hapus akun secara permanen",
     "deleteDialogMismatch": "Email tidak cocok dengan email akun Anda.",
-    "deleteDialogError": "Gagal menghapus akun. Silakan coba lagi."
+    "deleteDialogError": "Gagal menghapus akun. Silakan coba lagi.",
+    "pronounsHeHim": "Dia (laki-laki)",
+    "pronounsSheHer": "Dia (perempuan)",
+    "pronounsTheyThem": "Mereka"
   },
   "org": {
     "title": "Organisasi",

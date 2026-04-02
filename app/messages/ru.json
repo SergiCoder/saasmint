@@ -83,7 +83,13 @@
       "password": "Пароль",
       "submit": "Войти",
       "noAccount": "Нет аккаунта?",
-      "register": "Зарегистрироваться"
+      "register": "Зарегистрироваться",
+      "registered": "Аккаунт создан! Проверьте электронную почту для подтверждения.",
+      "errorNoSession": "Ваша сессия истекла. Пожалуйста, войдите снова.",
+      "errorEmailNotVerified": "Подтвердите адрес электронной почты перед входом. Проверьте папку «Входящие».",
+      "errorTokenExpired": "Ваша сессия истекла. Пожалуйста, войдите снова.",
+      "errorAccountDeactivated": "Этот аккаунт деактивирован.",
+      "errorBackendRejected": "Ошибка аутентификации. Попробуйте войти снова."
     },
     "register": {
       "title": "Создайте аккаунт",
@@ -93,7 +99,14 @@
       "password": "Пароль",
       "submit": "Создать аккаунт",
       "hasAccount": "Уже есть аккаунт?",
-      "login": "Войти"
+      "login": "Войти",
+      "pronouns": "Местоимения",
+      "pronounsDontSpecify": "Не указывать",
+      "pronounsCustom": "Другое",
+      "pronounsCustomPlaceholder": "Введите ваши местоимения",
+      "pronounsHeHim": "Он/Его",
+      "pronounsSheHer": "Она/Её",
+      "pronounsTheyThem": "Они/Их"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "Отмена",
     "deleteDialogSubmit": "Удалить аккаунт навсегда",
     "deleteDialogMismatch": "Электронная почта не совпадает с почтой вашего аккаунта.",
-    "deleteDialogError": "Не удалось удалить аккаунт. Пожалуйста, попробуйте снова."
+    "deleteDialogError": "Не удалось удалить аккаунт. Пожалуйста, попробуйте снова.",
+    "pronounsHeHim": "Он/Его",
+    "pronounsSheHer": "Она/Её",
+    "pronounsTheyThem": "Они/Их"
   },
   "org": {
     "title": "Организация",

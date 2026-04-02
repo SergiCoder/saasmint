@@ -83,7 +83,13 @@
       "password": "Password",
       "submit": "Accedi",
       "noAccount": "Non hai un account?",
-      "register": "Registrati"
+      "register": "Registrati",
+      "registered": "Account creato! Controlla la tua email per verificare il tuo account.",
+      "errorNoSession": "La tua sessione è scaduta. Accedi di nuovo.",
+      "errorEmailNotVerified": "Verifica il tuo indirizzo email prima di accedere. Controlla la tua casella di posta.",
+      "errorTokenExpired": "La tua sessione è scaduta. Accedi di nuovo.",
+      "errorAccountDeactivated": "Questo account è stato disattivato.",
+      "errorBackendRejected": "Autenticazione fallita. Riprova ad accedere."
     },
     "register": {
       "title": "Crea il tuo account",
@@ -93,7 +99,14 @@
       "password": "Password",
       "submit": "Crea account",
       "hasAccount": "Hai già un account?",
-      "login": "Accedi"
+      "login": "Accedi",
+      "pronouns": "Pronomi",
+      "pronounsDontSpecify": "Non specificare",
+      "pronounsCustom": "Personalizzato",
+      "pronounsCustomPlaceholder": "Inserisci i tuoi pronomi",
+      "pronounsHeHim": "Lui",
+      "pronounsSheHer": "Lei",
+      "pronounsTheyThem": "Their"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "Annulla",
     "deleteDialogSubmit": "Elimina account permanentemente",
     "deleteDialogMismatch": "L'email non corrisponde a quella del tuo account.",
-    "deleteDialogError": "Impossibile eliminare l'account. Riprova."
+    "deleteDialogError": "Impossibile eliminare l'account. Riprova.",
+    "pronounsHeHim": "Lui",
+    "pronounsSheHer": "Lei",
+    "pronounsTheyThem": "Their"
   },
   "org": {
     "title": "Organizzazione",

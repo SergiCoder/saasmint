@@ -83,7 +83,13 @@
       "password": "Passord",
       "submit": "Logg inn",
       "noAccount": "Har du ikke en konto?",
-      "register": "Registrer deg"
+      "register": "Registrer deg",
+      "registered": "Konto opprettet! Sjekk e-posten din for å bekrefte kontoen.",
+      "errorNoSession": "Økten din har utløpt. Vennligst logg inn igjen.",
+      "errorEmailNotVerified": "Bekreft e-postadressen din før du logger inn. Sjekk innboksen din.",
+      "errorTokenExpired": "Økten din har utløpt. Vennligst logg inn igjen.",
+      "errorAccountDeactivated": "Denne kontoen er deaktivert.",
+      "errorBackendRejected": "Autentisering mislyktes. Prøv å logge inn igjen."
     },
     "register": {
       "title": "Opprett kontoen din",
@@ -93,7 +99,14 @@
       "password": "Passord",
       "submit": "Opprett konto",
       "hasAccount": "Har du allerede en konto?",
-      "login": "Logg inn"
+      "login": "Logg inn",
+      "pronouns": "Pronomen",
+      "pronounsDontSpecify": "Ikke oppgi",
+      "pronounsCustom": "Egendefinert",
+      "pronounsCustomPlaceholder": "Skriv inn dine pronomen",
+      "pronounsHeHim": "Han/Ham",
+      "pronounsSheHer": "Hun/Henne",
+      "pronounsTheyThem": "Hen"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "Avbryt",
     "deleteDialogSubmit": "Slett konto permanent",
     "deleteDialogMismatch": "E-postadressen samsvarer ikke med kontoen din.",
-    "deleteDialogError": "Kunne ikke slette kontoen. Prøv igjen."
+    "deleteDialogError": "Kunne ikke slette kontoen. Prøv igjen.",
+    "pronounsHeHim": "Han/Ham",
+    "pronounsSheHer": "Hun/Henne",
+    "pronounsTheyThem": "Hen"
   },
   "org": {
     "title": "Organisasjon",

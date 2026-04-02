@@ -83,7 +83,13 @@
       "password": "كلمة المرور",
       "submit": "تسجيل الدخول",
       "noAccount": "ليس لديك حساب؟",
-      "register": "إنشاء حساب"
+      "register": "إنشاء حساب",
+      "registered": "تم إنشاء الحساب! تحقق من بريدك الإلكتروني لتأكيد حسابك.",
+      "errorNoSession": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
+      "errorEmailNotVerified": "يرجى التحقق من عنوان بريدك الإلكتروني قبل تسجيل الدخول. تحقق من صندوق الوارد.",
+      "errorTokenExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
+      "errorAccountDeactivated": "تم إلغاء تنشيط هذا الحساب.",
+      "errorBackendRejected": "فشل المصادقة. يرجى المحاولة مرة أخرى."
     },
     "register": {
       "title": "إنشاء حسابك",
@@ -93,7 +99,14 @@
       "password": "كلمة المرور",
       "submit": "إنشاء حساب",
       "hasAccount": "لديك حساب بالفعل؟",
-      "login": "تسجيل الدخول"
+      "login": "تسجيل الدخول",
+      "pronouns": "الضمائر",
+      "pronounsDontSpecify": "عدم التحديد",
+      "pronounsCustom": "مخصص",
+      "pronounsCustomPlaceholder": "أدخل ضمائرك",
+      "pronounsHeHim": "هو/له",
+      "pronounsSheHer": "هي/لها",
+      "pronounsTheyThem": "هم/لهم"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "إلغاء",
     "deleteDialogSubmit": "حذف الحساب نهائيًا",
     "deleteDialogMismatch": "البريد الإلكتروني لا يتطابق مع بريد حسابك.",
-    "deleteDialogError": "فشل حذف الحساب. يرجى المحاولة مرة أخرى."
+    "deleteDialogError": "فشل حذف الحساب. يرجى المحاولة مرة أخرى.",
+    "pronounsHeHim": "هو/له",
+    "pronounsSheHer": "هي/لها",
+    "pronounsTheyThem": "هم/لهم"
   },
   "org": {
     "title": "المنظمة",

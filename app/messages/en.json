@@ -83,7 +83,13 @@
       "password": "Password",
       "submit": "Sign in",
       "noAccount": "Don't have an account?",
-      "register": "Sign up"
+      "register": "Sign up",
+      "registered": "Account created! Check your email to verify your account.",
+      "errorNoSession": "Your session has expired. Please sign in again.",
+      "errorEmailNotVerified": "Please verify your email address before signing in. Check your inbox for a verification link.",
+      "errorTokenExpired": "Your session has expired. Please sign in again.",
+      "errorAccountDeactivated": "This account has been deactivated.",
+      "errorBackendRejected": "Authentication failed. Please try signing in again."
     },
     "register": {
       "title": "Create your account",
@@ -93,7 +99,14 @@
       "password": "Password",
       "submit": "Create account",
       "hasAccount": "Already have an account?",
-      "login": "Sign in"
+      "login": "Sign in",
+      "pronouns": "Pronouns",
+      "pronounsDontSpecify": "Don't specify",
+      "pronounsCustom": "Custom",
+      "pronounsCustomPlaceholder": "Enter your pronouns",
+      "pronounsHeHim": "He/Him",
+      "pronounsSheHer": "She/Her",
+      "pronounsTheyThem": "They/Them"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "Cancel",
     "deleteDialogSubmit": "Permanently delete account",
     "deleteDialogMismatch": "Email does not match your account email.",
-    "deleteDialogError": "Failed to delete account. Please try again."
+    "deleteDialogError": "Failed to delete account. Please try again.",
+    "pronounsHeHim": "He/Him",
+    "pronounsSheHer": "She/Her",
+    "pronounsTheyThem": "They/Them"
   },
   "org": {
     "title": "Organization",

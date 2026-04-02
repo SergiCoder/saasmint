@@ -83,7 +83,13 @@
       "password": "Lösenord",
       "submit": "Logga in",
       "noAccount": "Har du inget konto?",
-      "register": "Registrera dig"
+      "register": "Registrera dig",
+      "registered": "Konto skapat! Kontrollera din e-post för att verifiera ditt konto.",
+      "errorNoSession": "Din session har löpt ut. Logga in igen.",
+      "errorEmailNotVerified": "Verifiera din e-postadress innan du loggar in. Kontrollera din inkorg.",
+      "errorTokenExpired": "Din session har löpt ut. Logga in igen.",
+      "errorAccountDeactivated": "Detta konto har inaktiverats.",
+      "errorBackendRejected": "Autentisering misslyckades. Försök logga in igen."
     },
     "register": {
       "title": "Skapa ditt konto",
@@ -93,7 +99,14 @@
       "password": "Lösenord",
       "submit": "Skapa konto",
       "hasAccount": "Har du redan ett konto?",
-      "login": "Logga in"
+      "login": "Logga in",
+      "pronouns": "Pronomen",
+      "pronounsDontSpecify": "Ange inte",
+      "pronounsCustom": "Anpassad",
+      "pronounsCustomPlaceholder": "Ange dina pronomen",
+      "pronounsHeHim": "Han/Honom",
+      "pronounsSheHer": "Hon/Henne",
+      "pronounsTheyThem": "Hen"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "Avbryt",
     "deleteDialogSubmit": "Radera konto permanent",
     "deleteDialogMismatch": "E-postadressen matchar inte ditt konto.",
-    "deleteDialogError": "Det gick inte att radera kontot. Försök igen."
+    "deleteDialogError": "Det gick inte att radera kontot. Försök igen.",
+    "pronounsHeHim": "Han/Honom",
+    "pronounsSheHer": "Hon/Henne",
+    "pronounsTheyThem": "Hen"
   },
   "org": {
     "title": "Organisation",

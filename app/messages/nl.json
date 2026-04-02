@@ -83,7 +83,13 @@
       "password": "Wachtwoord",
       "submit": "Inloggen",
       "noAccount": "Nog geen account?",
-      "register": "Registreren"
+      "register": "Registreren",
+      "registered": "Account aangemaakt! Controleer uw e-mail om uw account te verifiëren.",
+      "errorNoSession": "Uw sessie is verlopen. Log opnieuw in.",
+      "errorEmailNotVerified": "Verifieer uw e-mailadres voordat u inlogt. Controleer uw inbox.",
+      "errorTokenExpired": "Uw sessie is verlopen. Log opnieuw in.",
+      "errorAccountDeactivated": "Dit account is gedeactiveerd.",
+      "errorBackendRejected": "Authenticatie mislukt. Probeer opnieuw in te loggen."
     },
     "register": {
       "title": "Maak uw account aan",
@@ -93,7 +99,14 @@
       "password": "Wachtwoord",
       "submit": "Account aanmaken",
       "hasAccount": "Heeft u al een account?",
-      "login": "Inloggen"
+      "login": "Inloggen",
+      "pronouns": "Voornaamwoorden",
+      "pronounsDontSpecify": "Niet opgeven",
+      "pronounsCustom": "Aangepast",
+      "pronounsCustomPlaceholder": "Voer uw voornaamwoorden in",
+      "pronounsHeHim": "Hij/Hem",
+      "pronounsSheHer": "Zij/Haar",
+      "pronounsTheyThem": "Hen/Hun"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "Annuleren",
     "deleteDialogSubmit": "Account permanent verwijderen",
     "deleteDialogMismatch": "Het e-mailadres komt niet overeen met uw account.",
-    "deleteDialogError": "Account verwijderen mislukt. Probeer het opnieuw."
+    "deleteDialogError": "Account verwijderen mislukt. Probeer het opnieuw.",
+    "pronounsHeHim": "Hij/Hem",
+    "pronounsSheHer": "Zij/Haar",
+    "pronounsTheyThem": "Hen/Hun"
   },
   "org": {
     "title": "Organisatie",

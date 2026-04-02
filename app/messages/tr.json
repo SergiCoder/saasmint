@@ -83,7 +83,13 @@
       "password": "Şifre",
       "submit": "Giriş yap",
       "noAccount": "Hesabınız yok mu?",
-      "register": "Kaydol"
+      "register": "Kaydol",
+      "registered": "Hesap oluşturuldu! Hesabınızı doğrulamak için e-postanızı kontrol edin.",
+      "errorNoSession": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
+      "errorEmailNotVerified": "Giriş yapmadan önce e-posta adresinizi doğrulayın. Gelen kutunuzu kontrol edin.",
+      "errorTokenExpired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
+      "errorAccountDeactivated": "Bu hesap devre dışı bırakılmıştır.",
+      "errorBackendRejected": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin."
     },
     "register": {
       "title": "Hesabınızı oluşturun",
@@ -93,7 +99,14 @@
       "password": "Şifre",
       "submit": "Hesap oluştur",
       "hasAccount": "Zaten hesabınız var mı?",
-      "login": "Giriş yap"
+      "login": "Giriş yap",
+      "pronouns": "Zamirler",
+      "pronounsDontSpecify": "Belirtme",
+      "pronounsCustom": "Özel",
+      "pronounsCustomPlaceholder": "Zamirlerinizi girin",
+      "pronounsHeHim": "O (erkek)",
+      "pronounsSheHer": "O (kadın)",
+      "pronounsTheyThem": "O (nötr)"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "İptal",
     "deleteDialogSubmit": "Hesabı kalıcı olarak sil",
     "deleteDialogMismatch": "E-posta adresi hesabınızla eşleşmiyor.",
-    "deleteDialogError": "Hesap silinemedi. Lütfen tekrar deneyin."
+    "deleteDialogError": "Hesap silinemedi. Lütfen tekrar deneyin.",
+    "pronounsHeHim": "O (erkek)",
+    "pronounsSheHer": "O (kadın)",
+    "pronounsTheyThem": "O (nötr)"
   },
   "org": {
     "title": "Organizasyon",

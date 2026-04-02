@@ -83,7 +83,13 @@
       "password": "Hasło",
       "submit": "Zaloguj się",
       "noAccount": "Nie masz konta?",
-      "register": "Zarejestruj się"
+      "register": "Zarejestruj się",
+      "registered": "Konto utworzone! Sprawdź e-mail, aby zweryfikować konto.",
+      "errorNoSession": "Twoja sesja wygasła. Zaloguj się ponownie.",
+      "errorEmailNotVerified": "Zweryfikuj swój adres e-mail przed zalogowaniem. Sprawdź skrzynkę odbiorczą.",
+      "errorTokenExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",
+      "errorAccountDeactivated": "To konto zostało dezaktywowane.",
+      "errorBackendRejected": "Uwierzytelnianie nie powiodło się. Spróbuj ponownie."
     },
     "register": {
       "title": "Utwórz konto",
@@ -93,7 +99,14 @@
       "password": "Hasło",
       "submit": "Utwórz konto",
       "hasAccount": "Masz już konto?",
-      "login": "Zaloguj się"
+      "login": "Zaloguj się",
+      "pronouns": "Zaimki",
+      "pronounsDontSpecify": "Nie określaj",
+      "pronounsCustom": "Niestandardowe",
+      "pronounsCustomPlaceholder": "Wpisz swoje zaimki",
+      "pronounsHeHim": "On/Jego",
+      "pronounsSheHer": "Ona/Jej",
+      "pronounsTheyThem": "Ono/Ich"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "Anuluj",
     "deleteDialogSubmit": "Trwale usuń konto",
     "deleteDialogMismatch": "Adres e-mail nie pasuje do konta.",
-    "deleteDialogError": "Nie udało się usunąć konta. Spróbuj ponownie."
+    "deleteDialogError": "Nie udało się usunąć konta. Spróbuj ponownie.",
+    "pronounsHeHim": "On/Jego",
+    "pronounsSheHer": "Ona/Jej",
+    "pronounsTheyThem": "Ono/Ich"
   },
   "org": {
     "title": "Organizacja",

@@ -83,7 +83,13 @@
       "password": "パスワード",
       "submit": "サインイン",
       "noAccount": "アカウントをお持ちでないですか？",
-      "register": "新規登録"
+      "register": "新規登録",
+      "registered": "アカウントが作成されました！メールを確認してアカウントを認証してください。",
+      "errorNoSession": "セッションの有効期限が切れました。再度ログインしてください。",
+      "errorEmailNotVerified": "ログインする前にメールアドレスを確認してください。受信トレイをご確認ください。",
+      "errorTokenExpired": "セッションの有効期限が切れました。再度ログインしてください。",
+      "errorAccountDeactivated": "このアカウントは無効化されています。",
+      "errorBackendRejected": "認証に失敗しました。再度ログインしてください。"
     },
     "register": {
       "title": "アカウントを作成",
@@ -93,7 +99,14 @@
       "password": "パスワード",
       "submit": "アカウント作成",
       "hasAccount": "すでにアカウントをお持ちですか？",
-      "login": "サインイン"
+      "login": "サインイン",
+      "pronouns": "代名詞",
+      "pronounsDontSpecify": "指定しない",
+      "pronounsCustom": "カスタム",
+      "pronounsCustomPlaceholder": "代名詞を入力してください",
+      "pronounsHeHim": "彼/Him",
+      "pronounsSheHer": "彼女/Her",
+      "pronounsTheyThem": "They/Them"
     }
   },
   "dashboard": {
@@ -145,7 +158,10 @@
     "deleteDialogCancel": "キャンセル",
     "deleteDialogSubmit": "アカウントを完全に削除",
     "deleteDialogMismatch": "メールアドレスがアカウントのものと一致しません。",
-    "deleteDialogError": "アカウントの削除に失敗しました。もう一度お試しください。"
+    "deleteDialogError": "アカウントの削除に失敗しました。もう一度お試しください。",
+    "pronounsHeHim": "彼/Him",
+    "pronounsSheHer": "彼女/Her",
+    "pronounsTheyThem": "They/Them"
   },
   "org": {
     "title": "組織",

@@ -62,26 +62,27 @@ const SUPPORTED_CURRENCIES = [
 ] as const;
 
 const CUSTOM_PRONOUNS_VALUE = "__custom__";
+const PRONOUN_KEYS = [
+  "pronounsHeHim",
+  "pronounsSheHer",
+  "pronounsTheyThem",
+] as const;
 
 interface SettingsFormProps {
   user: User;
   phonePrefixes: PhonePrefix[];
-  pronounSuggestions: string[];
 }
 
-export function SettingsForm({
-  user,
-  phonePrefixes,
-  pronounSuggestions,
-}: SettingsFormProps) {
+export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
   const t = useTranslations("settings");
   const [state, formAction, pending] = useActionState(updateProfile, null);
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
+  const pronounOptions = PRONOUN_KEYS.map((key) => t(key));
   const isCustomPronouns =
-    user.pronouns !== null && !pronounSuggestions.includes(user.pronouns);
+    user.pronouns !== null && !pronounOptions.includes(user.pronouns);
   const [pronounsSelect, setPronounsSelect] = useState(
     user.pronouns === null
       ? ""
@@ -192,7 +193,7 @@ export function SettingsForm({
           className={selectClassName}
         >
           <option value="">{t("pronounsDontSpecify")}</option>
-          {pronounSuggestions.map((p) => (
+          {pronounOptions.map((p) => (
             <option key={p} value={p}>
               {p}
             </option>
