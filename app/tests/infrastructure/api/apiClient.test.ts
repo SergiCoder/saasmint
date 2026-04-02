@@ -79,13 +79,12 @@ describe("apiFetch", () => {
       expect.objectContaining({
         headers: expect.objectContaining({
           authorization: "Bearer tok_abc",
-          "content-type": "application/json",
         }),
       }),
     );
   });
 
-  it("sends Content-Type application/json by default", async () => {
+  it("sets Content-Type application/json only when body is present", async () => {
     fetchSpy.mockResolvedValue({
       ok: true,
       status: 200,
@@ -93,9 +92,13 @@ describe("apiFetch", () => {
     });
 
     await apiFetch("/test/");
+    expect(fetchSpy.mock.calls[0][1].headers["content-type"]).toBeUndefined();
 
-    const headers = fetchSpy.mock.calls[0][1].headers;
-    expect(headers["content-type"]).toBe("application/json");
+    fetchSpy.mockClear();
+    await apiFetch("/test/", { method: "POST", body: JSON.stringify({}) });
+    expect(fetchSpy.mock.calls[0][1].headers["content-type"]).toBe(
+      "application/json",
+    );
   });
 
   it("merges custom options (method, body)", async () => {
