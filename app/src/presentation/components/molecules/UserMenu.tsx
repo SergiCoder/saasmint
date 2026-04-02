@@ -10,7 +10,11 @@ export interface UserMenuItem {
 }
 
 export interface UserMenuProps {
-  user: { fullName: string; avatarUrl?: string | null };
+  user: {
+    fullName: string;
+    pronouns?: string | null;
+    avatarUrl?: string | null;
+  };
   menuItems: UserMenuItem[];
   signOutSlot: React.ReactNode;
 }
@@ -54,8 +58,13 @@ export function UserMenu({ user, menuItems, signOutSlot }: UserMenuProps) {
           role="menu"
           className="absolute right-0 z-50 mt-1 w-48 rounded-md border border-gray-200 bg-white py-1 shadow-lg"
         >
-          <div className="px-3 py-2 text-sm font-medium text-gray-900">
-            {user.fullName}
+          <div className="px-3 py-2">
+            <div className="text-sm font-medium text-gray-900">
+              {user.fullName}
+            </div>
+            {user.pronouns && (
+              <div className="text-xs text-gray-500">{user.pronouns}</div>
+            )}
           </div>
           <hr className="my-1 border-gray-200" />
           {menuItems.map((item) => (

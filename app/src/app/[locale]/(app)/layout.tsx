@@ -34,6 +34,7 @@ export default async function AppLayoutRoute({
       navLinks={navLinks}
       user={{
         fullName: user.fullName ?? user.email,
+        pronouns: user.pronouns,
         avatarUrl: user.avatarUrl,
       }}
       userMenuItems={userMenuItems}

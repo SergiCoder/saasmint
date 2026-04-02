@@ -41,7 +41,11 @@ export default async function MarketingLayoutRoute({
   ];
 
   const navUser = user
-    ? { fullName: user.fullName ?? user.email, avatarUrl: user.avatarUrl }
+    ? {
+        fullName: user.fullName ?? user.email,
+        pronouns: user.pronouns,
+        avatarUrl: user.avatarUrl,
+      }
     : undefined;
 
   const navActions = user ? undefined : (

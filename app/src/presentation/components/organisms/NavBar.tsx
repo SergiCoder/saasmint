@@ -14,6 +14,7 @@ export interface NavBarLink {
 
 export interface NavBarUser {
   fullName: string;
+  pronouns?: string | null;
   avatarUrl?: string | null;
 }
 

@@ -24,6 +24,7 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
   const phone = formData.get("phone");
   const timezone = formData.get("timezone");
   const jobTitle = formData.get("jobTitle");
+  const pronouns = formData.get("pronouns");
   const bio = formData.get("bio");
 
   if (
@@ -47,6 +48,7 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
       phone: typeof phone === "string" && phone ? phone : null,
       timezone: typeof timezone === "string" && timezone ? timezone : null,
       jobTitle: typeof jobTitle === "string" && jobTitle ? jobTitle : null,
+      pronouns: typeof pronouns === "string" && pronouns ? pronouns : null,
       bio: typeof bio === "string" && bio ? bio : null,
     });
   } catch {
