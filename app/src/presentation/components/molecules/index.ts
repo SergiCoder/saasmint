@@ -7,3 +7,4 @@ export { PlanCard, type PlanCardProps } from "./PlanCard";
 export { FeatureCard, type FeatureCardProps } from "./FeatureCard";
 export { StatItem, type StatItemProps } from "./StatItem";
 export { TrustBar, type TrustBarProps, type TrustBarUser } from "./TrustBar";
+export { UserMenu, type UserMenuProps, type UserMenuItem } from "./UserMenu";
