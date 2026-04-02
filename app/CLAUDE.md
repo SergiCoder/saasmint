@@ -41,6 +41,8 @@ Gateway implementations in `src/infrastructure/`, organised by provider:
 - `api/` — `DjangoApi*Gateway` classes that call `SaaSmint Core` via `apiFetch`
 - `supabase/` — `SupabaseAuthGateway` plus `client.ts` / `server.ts` Supabase client factories
 
+Avatar uploads use Supabase Storage. A **public** bucket named `avatars` must exist in the Supabase project. Files are stored as `{supabase_uid}/avatar.webp`.
+
 Each gateway implements a port interface from `src/application/ports/` (e.g. `IOrgGateway`, `IAuthGateway`).
 
 `src/infrastructure/registry.ts` exports singleton instances of every gateway — import gateways from the registry, not by instantiating classes directly.
