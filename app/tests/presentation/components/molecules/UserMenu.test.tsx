@@ -119,6 +119,32 @@ describe("UserMenu", () => {
     ).toBeInTheDocument();
   });
 
+  it("displays pronouns when provided", async () => {
+    const user = userEvent.setup();
+    render(
+      <UserMenu
+        {...defaultProps}
+        user={{ fullName: "Jane Doe", pronouns: "she/her", avatarUrl: null }}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { expanded: false }));
+    expect(screen.getByText("she/her")).toBeInTheDocument();
+  });
+
+  it("does not display pronouns when null", async () => {
+    const user = userEvent.setup();
+    render(
+      <UserMenu
+        {...defaultProps}
+        user={{ fullName: "Jane Doe", pronouns: null, avatarUrl: null }}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { expanded: false }));
+    expect(screen.queryByText("she/her")).not.toBeInTheDocument();
+  });
+
   it("sets aria-expanded correctly", async () => {
     const user = userEvent.setup();
     render(<UserMenu {...defaultProps} />);

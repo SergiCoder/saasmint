@@ -47,6 +47,7 @@ const mockUser = {
   phone: null,
   timezone: null,
   jobTitle: null,
+  pronouns: null,
   bio: null,
 };
 
@@ -84,6 +85,7 @@ describe("user server actions", () => {
         phone: null,
         timezone: null,
         jobTitle: null,
+        pronouns: null,
         bio: null,
       });
       expect(mockRevalidatePath).toHaveBeenCalledWith("/settings");
@@ -131,6 +133,7 @@ describe("user server actions", () => {
       formData.set("phone", "+1234567890");
       formData.set("timezone", "Europe/Madrid");
       formData.set("jobTitle", "Engineer");
+      formData.set("pronouns", "she/her");
       formData.set("bio", "Hello world");
 
       const result = await updateProfile(undefined, formData);
@@ -141,6 +144,7 @@ describe("user server actions", () => {
         phone: "+1234567890",
         timezone: "Europe/Madrid",
         jobTitle: "Engineer",
+        pronouns: "she/her",
         bio: "Hello world",
       });
       expect(result).toEqual({ success: true });
@@ -164,6 +168,7 @@ describe("user server actions", () => {
         phone: null,
         timezone: null,
         jobTitle: null,
+        pronouns: null,
         bio: null,
       });
       expect(result).toEqual({ success: true });
@@ -183,6 +188,7 @@ describe("user server actions", () => {
         phone: null,
         timezone: null,
         jobTitle: null,
+        pronouns: null,
         bio: null,
       });
       expect(result).toEqual({ success: true });
