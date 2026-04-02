@@ -26,6 +26,7 @@ function makeGateway(overrides?: Partial<IAuthGateway>): IAuthGateway {
   return {
     getCurrentUser: vi.fn().mockResolvedValue(user),
     signOut: vi.fn().mockResolvedValue(undefined),
+    deleteAccount: vi.fn(),
     ...overrides,
   };
 }

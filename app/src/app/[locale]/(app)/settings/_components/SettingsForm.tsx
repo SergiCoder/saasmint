@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
@@ -72,6 +72,11 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
+  const [dirty, setDirty] = useState(false);
+
+  useEffect(() => {
+    if (state?.success) setDirty(false);
+  }, [state]);
 
   async function handleAvatarChange(file: File | null) {
     setAvatarError(null);
@@ -104,7 +109,14 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
     "block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50";
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form
+      action={formAction}
+      onChange={(e) => {
+        if ((e.target as HTMLElement).closest("[data-auto-save]")) return;
+        setDirty(true);
+      }}
+      className="space-y-6"
+    >
       {state?.error && <AlertBanner variant="error">{state.error}</AlertBanner>}
       {state?.success && (
         <AlertBanner variant="success">{t("save")}</AlertBanner>
@@ -119,7 +131,12 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
         onChange={handleAvatarChange}
       />
       {avatarError && <AlertBanner variant="error">{avatarError}</AlertBanner>}
-      <input type="hidden" name="avatarUrl" value={avatarUrl ?? ""} />
+      <input
+        type="hidden"
+        name="avatarUrl"
+        value={avatarUrl ?? ""}
+        data-auto-save
+      />
 
       <FormField
         label={t("email")}
@@ -131,6 +148,9 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
       <FormField
         label={t("fullName")}
         name="fullName"
+        required
+        minLength={3}
+        maxLength={255}
         defaultValue={user.fullName ?? ""}
       />
       <FormField
@@ -226,7 +246,7 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
           className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-offset-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         />
       </div>
-      <Button type="submit" loading={pending}>
+      <Button type="submit" loading={pending} disabled={!dirty}>
         {t("save")}
       </Button>
     </form>

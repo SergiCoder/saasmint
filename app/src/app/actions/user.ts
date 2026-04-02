@@ -1,14 +1,16 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
+import { DeleteAccount } from "@/application/use-cases/auth/DeleteAccount";
 import { UpdateUserProfile } from "@/application/use-cases/user/UpdateUserProfile";
 import { authGateway, userGateway } from "@/infrastructure/registry";
 
 export async function updateAvatarUrl(avatarUrl: string | null) {
   const user = await new GetCurrentUser(authGateway).execute();
   await new UpdateUserProfile(userGateway).execute(user.id, { avatarUrl });
-  revalidatePath("/settings");
+  revalidatePath("/", "layout");
 }
 
 export async function updateProfile(_prevState: unknown, formData: FormData) {
@@ -24,9 +26,17 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
   const jobTitle = formData.get("jobTitle");
   const bio = formData.get("bio");
 
+  if (
+    typeof fullName !== "string" ||
+    fullName.length < 3 ||
+    fullName.length > 255
+  ) {
+    return { error: "Full name must be between 3 and 255 characters" };
+  }
+
   try {
     await new UpdateUserProfile(userGateway).execute(user.id, {
-      fullName: typeof fullName === "string" && fullName ? fullName : null,
+      fullName,
       avatarUrl: typeof avatarUrl === "string" && avatarUrl ? avatarUrl : null,
       ...(typeof preferredLocale === "string" &&
         preferredLocale && { preferredLocale }),
@@ -45,4 +55,13 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
 
   revalidatePath("/settings");
   return { success: true };
+}
+
+export async function deleteAccount(): Promise<{ error: string } | never> {
+  try {
+    await new DeleteAccount(authGateway).execute();
+  } catch {
+    return { error: "Failed to delete account" };
+  }
+  redirect("/login");
 }

@@ -1,7 +1,7 @@
 import type { User } from "@/domain/models/User";
 
 export interface UpdateProfileInput {
-  fullName?: string | null;
+  fullName?: string;
   avatarUrl?: string | null;
   preferredLocale?: string;
   preferredCurrency?: string;

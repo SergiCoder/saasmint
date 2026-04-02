@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+const mockRedirect = vi.fn();
+vi.mock("next/navigation", () => ({
+  redirect: (...args: unknown[]) => mockRedirect(...args),
+}));
+
 const mockRevalidatePath = vi.fn();
 vi.mock("next/cache", () => ({
   revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
@@ -9,6 +14,13 @@ const mockGetCurrentUserExecute = vi.fn();
 vi.mock("@/application/use-cases/auth/GetCurrentUser", () => ({
   GetCurrentUser: function GetCurrentUser() {
     return { execute: mockGetCurrentUserExecute };
+  },
+}));
+
+const mockDeleteAccountExecute = vi.fn();
+vi.mock("@/application/use-cases/auth/DeleteAccount", () => ({
+  DeleteAccount: function DeleteAccount() {
+    return { execute: mockDeleteAccountExecute };
   },
 }));
 
@@ -40,6 +52,7 @@ const mockUser = {
 
 let updateProfile: typeof import("@/app/actions/user").updateProfile;
 let updateAvatarUrl: typeof import("@/app/actions/user").updateAvatarUrl;
+let deleteAccount: typeof import("@/app/actions/user").deleteAccount;
 
 beforeEach(async () => {
   vi.clearAllMocks();
@@ -47,6 +60,7 @@ beforeEach(async () => {
   const mod = await import("@/app/actions/user");
   updateProfile = mod.updateProfile;
   updateAvatarUrl = mod.updateAvatarUrl;
+  deleteAccount = mod.deleteAccount;
 });
 
 describe("user server actions", () => {
@@ -76,23 +90,37 @@ describe("user server actions", () => {
       expect(result).toEqual({ success: true });
     });
 
-    it("sends null for empty fullName", async () => {
-      mockUpdateUserProfileExecute.mockResolvedValue(undefined);
-
+    it("rejects empty fullName", async () => {
       const formData = new FormData();
       formData.set("fullName", "");
 
       const result = await updateProfile(undefined, formData);
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
-        fullName: null,
-        avatarUrl: null,
-        phonePrefix: null,
-        phone: null,
-        timezone: null,
-        jobTitle: null,
-        bio: null,
+      expect(result).toEqual({
+        error: "Full name must be between 3 and 255 characters",
       });
-      expect(result).toEqual({ success: true });
+      expect(mockUpdateUserProfileExecute).not.toHaveBeenCalled();
+    });
+
+    it("rejects fullName shorter than 3 characters", async () => {
+      const formData = new FormData();
+      formData.set("fullName", "Ab");
+
+      const result = await updateProfile(undefined, formData);
+      expect(result).toEqual({
+        error: "Full name must be between 3 and 255 characters",
+      });
+      expect(mockUpdateUserProfileExecute).not.toHaveBeenCalled();
+    });
+
+    it("rejects fullName longer than 255 characters", async () => {
+      const formData = new FormData();
+      formData.set("fullName", "A".repeat(256));
+
+      const result = await updateProfile(undefined, formData);
+      expect(result).toEqual({
+        error: "Full name must be between 3 and 255 characters",
+      });
+      expect(mockUpdateUserProfileExecute).not.toHaveBeenCalled();
     });
 
     it("updates profile with new custom fields", async () => {
@@ -181,7 +209,7 @@ describe("user server actions", () => {
       expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
         avatarUrl: "https://example.com/avatar.webp",
       });
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/settings");
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/", "layout");
     });
 
     it("sends null to clear avatar", async () => {
@@ -192,6 +220,26 @@ describe("user server actions", () => {
       expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
         avatarUrl: null,
       });
+    });
+  });
+
+  describe("deleteAccount", () => {
+    it("deletes account and redirects to /login", async () => {
+      mockDeleteAccountExecute.mockResolvedValue(undefined);
+
+      await deleteAccount();
+
+      expect(mockDeleteAccountExecute).toHaveBeenCalledOnce();
+      expect(mockRedirect).toHaveBeenCalledWith("/login");
+    });
+
+    it("returns error on failure", async () => {
+      mockDeleteAccountExecute.mockRejectedValue(new Error("Server error"));
+
+      const result = await deleteAccount();
+
+      expect(result).toEqual({ error: "Failed to delete account" });
+      expect(mockRedirect).not.toHaveBeenCalled();
     });
   });
 });
