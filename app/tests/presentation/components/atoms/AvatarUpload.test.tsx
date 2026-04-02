@@ -83,4 +83,16 @@ describe("AvatarUpload", () => {
     await user.click(screen.getByRole("button", { name: "Upload photo" }));
     expect(clickSpy).toHaveBeenCalled();
   });
+
+  it("disables buttons and shows spinner when loading", () => {
+    render(
+      <AvatarUpload
+        {...defaultProps}
+        currentSrc="https://example.com/a.jpg"
+        loading
+      />,
+    );
+    expect(screen.getByRole("button", { name: "Upload photo" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Remove" })).toBeDisabled();
+  });
 });
