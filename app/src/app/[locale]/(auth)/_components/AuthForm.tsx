@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
-import { PronounsPicker } from "@/presentation/components/molecules/PronounsPicker";
 import { Button } from "@/presentation/components/atoms/Button";
 
 interface AuthFormProps {
@@ -13,7 +12,6 @@ interface AuthFormProps {
   translationNamespace: string;
   passwordAutoComplete: string;
   showNameField?: boolean;
-  showPronouns?: boolean;
   footerLink: { href: string; textKey: string; linkKey: string };
   serverAlerts?: React.ReactNode;
 }
@@ -23,7 +21,6 @@ export function AuthForm({
   translationNamespace,
   passwordAutoComplete,
   showNameField = false,
-  showPronouns = false,
   footerLink,
   serverAlerts,
 }: AuthFormProps) {
@@ -50,7 +47,6 @@ export function AuthForm({
             autoComplete="name"
           />
         )}
-        {showPronouns && <PronounsPicker t={t} />}
         <FormField
           label={t("email")}
           name="email"
