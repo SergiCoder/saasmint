@@ -101,4 +101,43 @@ describe("compressImage", () => {
       "Canvas toBlob returned null",
     );
   });
+
+  it("rejects unsupported image types", async () => {
+    const file = new File(["img"], "photo.bmp", { type: "image/bmp" });
+    await expect(compressImage(file)).rejects.toThrow(
+      "Unsupported image type: image/bmp",
+    );
+  });
+
+  it("rejects when image fails to load", async () => {
+    vi.stubGlobal(
+      "Image",
+      class {
+        width = 0;
+        height = 0;
+        onload: (() => void) | null = null;
+        onerror: (() => void) | null = null;
+        set src(_val: string) {
+          setTimeout(() => this.onerror?.(), 0);
+        }
+      },
+    );
+
+    const file = new File(["img"], "photo.png", { type: "image/png" });
+    await expect(compressImage(file)).rejects.toThrow("Failed to load image");
+  });
+
+  it("rejects when canvas 2D context is unavailable", async () => {
+    mockImage(256, 256);
+    mockCanvas.getContext.mockReturnValue(null);
+    const fakeBlob = new Blob(["compressed"], { type: "image/webp" });
+    mockCanvas.toBlob.mockImplementation((cb: (b: Blob | null) => void) =>
+      cb(fakeBlob),
+    );
+
+    const file = new File(["img"], "photo.png", { type: "image/png" });
+    await expect(compressImage(file)).rejects.toThrow(
+      "Canvas 2D context unavailable",
+    );
+  });
 });

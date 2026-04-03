@@ -206,11 +206,37 @@ describe("apiFetch", () => {
     });
   });
 
+  it("extracts custom code from 401 JSON body", async () => {
+    fetchSpy.mockResolvedValue({
+      ok: false,
+      status: 401,
+      text: () => Promise.resolve(JSON.stringify({ code: "TOKEN_EXPIRED" })),
+    });
+
+    await expect(apiFetch("/account/")).rejects.toThrow(AuthError);
+    await expect(apiFetch("/account/")).rejects.toMatchObject({
+      code: "TOKEN_EXPIRED",
+    });
+  });
+
   it("throws AuthError when no user exists", async () => {
     mockGetUser.mockResolvedValue({
       data: { user: null },
     });
 
     await expect(apiFetch("/account/")).rejects.toThrow(AuthError);
+  });
+});
+
+describe("getAuthToken — session edge cases", () => {
+  it("throws AuthError when user exists but session is null", async () => {
+    mockGetSession.mockResolvedValue({
+      data: { session: null },
+    });
+
+    await expect(getAuthToken()).rejects.toThrow(AuthError);
+    await expect(getAuthToken()).rejects.toMatchObject({
+      code: "NO_SESSION",
+    });
   });
 });
