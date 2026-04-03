@@ -14,21 +14,6 @@ vi.mock("next-intl/server", () => ({
   getTranslations: vi.fn(() => Promise.resolve(mockTranslate)),
 }));
 
-vi.mock("next/link", async () => {
-  const React = await import("react");
-  return {
-    default: ({
-      href,
-      children,
-      ...props
-    }: {
-      href: string;
-      children: React.ReactNode;
-      [k: string]: unknown;
-    }) => React.createElement("a", { href, ...props }, children),
-  };
-});
-
 vi.mock("next", () => ({
   default: {},
 }));

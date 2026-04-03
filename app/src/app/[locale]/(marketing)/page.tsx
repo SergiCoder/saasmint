@@ -13,8 +13,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: "SaaSmint" };
 }
 
-const TRUST_USERS: { name: string; src?: string }[] = [];
-
 const LOGOS = [
   "Next.js",
   "Stripe",
@@ -125,11 +123,7 @@ export default async function LandingPage() {
               {t("ctaSecondary")}
             </a>
           </div>
-          <TrustBar
-            users={TRUST_USERS}
-            text={t("trustText")}
-            className="mt-11"
-          />
+          <TrustBar text={t("trustText")} className="mt-11" />
         </div>
         <div>
           <DashboardMock

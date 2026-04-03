@@ -45,7 +45,7 @@ export function NavBar({
     <nav
       className={`fixed top-0 right-0 left-0 z-50 border-b border-gray-200 bg-white/85 backdrop-blur-xl ${className}`}
     >
-      <div className="flex h-[62px] items-center justify-between px-5 sm:px-8 lg:px-16">
+      <div className="flex h-(--navbar-height) items-center justify-between px-5 sm:px-8 lg:px-16">
         <Logo appName={appName} />
 
         <div className="hidden items-center gap-8 md:flex">
