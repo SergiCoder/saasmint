@@ -29,16 +29,15 @@ export function UserMenu({ user, menuItems, signOutSlot }: UserMenuProps) {
         setOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
     function handleEscape(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false);
     }
+    document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, []);
 
   return (

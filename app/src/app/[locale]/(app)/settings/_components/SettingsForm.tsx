@@ -4,6 +4,7 @@ import { useActionState, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
+import { PronounsPicker } from "@/presentation/components/molecules/PronounsPicker";
 import { AvatarUpload } from "@/presentation/components/atoms/AvatarUpload";
 import { Button } from "@/presentation/components/atoms/Button";
 import { Label } from "@/presentation/components/atoms/Label";
@@ -61,12 +62,7 @@ const SUPPORTED_CURRENCIES = [
   { value: "aed", label: "AED — UAE Dirham" },
 ] as const;
 
-const CUSTOM_PRONOUNS_VALUE = "__custom__";
-const PRONOUN_KEYS = [
-  "pronounsHeHim",
-  "pronounsSheHer",
-  "pronounsTheyThem",
-] as const;
+const TIMEZONES = Intl.supportedValuesOf("timeZone");
 
 interface SettingsFormProps {
   user: User;
@@ -80,19 +76,6 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
-  const pronounOptions = PRONOUN_KEYS.map((key) => t(key));
-  const isCustomPronouns =
-    user.pronouns !== null && !pronounOptions.includes(user.pronouns);
-  const [pronounsSelect, setPronounsSelect] = useState(
-    user.pronouns === null
-      ? ""
-      : isCustomPronouns
-        ? CUSTOM_PRONOUNS_VALUE
-        : user.pronouns,
-  );
-  const [customPronouns, setCustomPronouns] = useState(
-    isCustomPronouns ? (user.pronouns ?? "") : "",
-  );
 
   useEffect(() => {
     if (state?.success) setDirty(false);
@@ -100,28 +83,21 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
 
   async function handleAvatarChange(file: File | null) {
     setAvatarError(null);
-    if (file) {
-      setAvatarUploading(true);
-      try {
+    setAvatarUploading(true);
+    try {
+      if (file) {
         const url = await uploadAvatar(file);
         await updateAvatarUrl(url);
         setAvatarUrl(url);
-      } catch {
-        setAvatarError(t("avatarError"));
-      } finally {
-        setAvatarUploading(false);
-      }
-    } else {
-      setAvatarUploading(true);
-      try {
+      } else {
         await deleteAvatar();
         await updateAvatarUrl(null);
         setAvatarUrl(null);
-      } catch {
-        setAvatarError(t("avatarError"));
-      } finally {
-        setAvatarUploading(false);
       }
+    } catch {
+      setAvatarError(t("avatarError"));
+    } finally {
+      setAvatarUploading(false);
     }
   }
 
@@ -178,43 +154,12 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
         name="jobTitle"
         defaultValue={user.jobTitle ?? ""}
       />
-      <div className="space-y-1">
-        <Label htmlFor="pronouns">{t("pronouns")}</Label>
-        <select
-          id="pronouns"
-          name={
-            pronounsSelect === CUSTOM_PRONOUNS_VALUE ? undefined : "pronouns"
-          }
-          value={pronounsSelect}
-          onChange={(e) => {
-            setPronounsSelect(e.target.value);
-            setDirty(true);
-          }}
-          className={selectClassName}
-        >
-          <option value="">{t("pronounsDontSpecify")}</option>
-          {pronounOptions.map((p) => (
-            <option key={p} value={p}>
-              {p}
-            </option>
-          ))}
-          <option value={CUSTOM_PRONOUNS_VALUE}>{t("pronounsCustom")}</option>
-        </select>
-        {pronounsSelect === CUSTOM_PRONOUNS_VALUE && (
-          <input
-            name="pronouns"
-            type="text"
-            maxLength={50}
-            value={customPronouns}
-            onChange={(e) => {
-              setCustomPronouns(e.target.value);
-              setDirty(true);
-            }}
-            placeholder={t("pronounsCustomPlaceholder")}
-            className="focus:border-primary-500 focus:ring-primary-500 mt-2 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-offset-0 focus:outline-none"
-          />
-        )}
-      </div>
+      <PronounsPicker
+        t={t}
+        defaultValue={user.pronouns}
+        onDirty={() => setDirty(true)}
+        selectClassName={selectClassName}
+      />
       <div className="space-y-1">
         <Label htmlFor="phone">{t("phone")}</Label>
         <div className="flex gap-2">
@@ -283,7 +228,7 @@ export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
             }
             className={selectClassName}
           >
-            {Intl.supportedValuesOf("timeZone").map((tz) => (
+            {TIMEZONES.map((tz) => (
               <option key={tz} value={tz}>
                 {tz.replace(/_/g, " ")}
               </option>
