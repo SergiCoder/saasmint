@@ -13,21 +13,16 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: "SaaSmint" };
 }
 
-const TRUST_USERS = [
-  { name: "JK" },
-  { name: "SM" },
-  { name: "RL" },
-  { name: "TP" },
-];
+const TRUST_USERS: { name: string; src?: string }[] = [];
 
 const LOGOS = [
+  "Next.js",
   "Stripe",
-  "Vercel",
-  "Notion",
-  "Linear",
-  "Loom",
-  "Figma",
-  "Retool",
+  "Supabase",
+  "Tailwind CSS",
+  "TypeScript",
+  "Vitest",
+  "next-intl",
 ];
 
 const CHART_BARS = [35, 55, 45, 70, 60, 80, 95, 75, 88, 65, 72, 58];
@@ -37,32 +32,32 @@ export default async function LandingPage() {
 
   const features = [
     {
-      icon: <span>⚡</span>,
+      icon: <span>🔐</span>,
       title: t("featureDeploysTitle"),
       description: t("featureDeploysDesc"),
     },
     {
-      icon: <span>🧠</span>,
+      icon: <span>💳</span>,
       title: t("featureAiTitle"),
       description: t("featureAiDesc"),
     },
     {
-      icon: <span>🌐</span>,
+      icon: <span>👥</span>,
       title: t("featureEdgeTitle"),
       description: t("featureEdgeDesc"),
     },
     {
-      icon: <span>📊</span>,
+      icon: <span>🌐</span>,
       title: t("featureObsTitle"),
       description: t("featureObsDesc"),
     },
     {
-      icon: <span>🔐</span>,
+      icon: <span>⚙️</span>,
       title: t("featureSecTitle"),
       description: t("featureSecDesc"),
     },
     {
-      icon: <span>🔌</span>,
+      icon: <span>🎨</span>,
       title: t("featureIntTitle"),
       description: t("featureIntDesc"),
     },
@@ -95,12 +90,12 @@ export default async function LandingPage() {
       time: t("dashActivity1Time"),
     },
     {
-      icon: <span>⚡</span>,
+      icon: <span>💳</span>,
       text: t("dashActivity2"),
       time: t("dashActivity2Time"),
     },
     {
-      icon: <span>🔍</span>,
+      icon: <span>👥</span>,
       text: t("dashActivity3"),
       time: t("dashActivity3Time"),
     },
@@ -150,7 +145,7 @@ export default async function LandingPage() {
           </div>
           <TrustBar
             users={TRUST_USERS}
-            text={t("trustText", { count: "12,400" })}
+            text={t("trustText")}
             className="mt-11"
           />
         </div>

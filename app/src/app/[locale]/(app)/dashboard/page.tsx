@@ -26,23 +26,23 @@ export default async function DashboardPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           title={t("uptime")}
-          value="99.98%"
-          change={{ value: "0.02%", positive: true }}
-        />
-        <MetricCard
-          title={t("latency")}
-          value="42ms"
-          change={{ value: "3ms", positive: true }}
-        />
-        <MetricCard
-          title={t("requests")}
-          value="1.2M"
+          value="1,248"
           change={{ value: "12%", positive: true }}
         />
         <MetricCard
+          title={t("latency")}
+          value="$8.4k"
+          change={{ value: "22%", positive: true }}
+        />
+        <MetricCard
+          title={t("requests")}
+          value="+18%"
+          change={{ value: "4%", positive: true }}
+        />
+        <MetricCard
           title={t("errors")}
-          value="0.03%"
-          change={{ value: "0.01%", positive: false }}
+          value="2.1%"
+          change={{ value: "0.3%", positive: true }}
         />
       </div>
 
