@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Tableau de bord",
-    "uptime": "Utilisateurs",
-    "latency": "Revenus",
-    "requests": "Croissance",
-    "errors": "Attrition"
+    "welcome": "Bienvenue, {name}",
+    "subtitle": "Ceci est le tableau de bord de votre modèle SaaS. Personnalisez-le pour votre produit.",
+    "quickStart": "Démarrage rapide",
+    "actionBillingTitle": "Configurer la facturation",
+    "actionBillingDesc": "Connectez Stripe et configurez vos plans tarifaires.",
+    "actionProfileTitle": "Compléter votre profil",
+    "actionProfileDesc": "Ajoutez votre avatar, bio et préférences.",
+    "actionOrgTitle": "Créer une organisation",
+    "actionOrgDesc": "Invitez votre équipe et commencez à collaborer.",
+    "actionCustomizeTitle": "Personnaliser le modèle",
+    "actionCustomizeDesc": "Modifiez les composants, couleurs et textes pour correspondre à votre marque."
   },
   "billing": {
     "title": "Facturation",

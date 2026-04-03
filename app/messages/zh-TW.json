@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "儀表板",
-    "uptime": "使用者",
-    "latency": "營收",
-    "requests": "成長",
-    "errors": "流失"
+    "welcome": "歡迎，{name}",
+    "subtitle": "這是您的 SaaS 範本儀表板。根據您的產品進行自訂。",
+    "quickStart": "快速開始",
+    "actionBillingTitle": "設定帳務",
+    "actionBillingDesc": "連接 Stripe 並設定您的定價方案。",
+    "actionProfileTitle": "完善個人資料",
+    "actionProfileDesc": "新增頭像、簡介和偏好設定。",
+    "actionOrgTitle": "建立組織",
+    "actionOrgDesc": "邀請團隊成員，開始協作。",
+    "actionCustomizeTitle": "自訂範本",
+    "actionCustomizeDesc": "編輯元件、色彩和文案以符合您的品牌。"
   },
   "billing": {
     "title": "帳單",

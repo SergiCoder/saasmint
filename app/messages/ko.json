@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "대시보드",
-    "uptime": "사용자",
-    "latency": "매출",
-    "requests": "성장률",
-    "errors": "이탈률"
+    "welcome": "환영합니다, {name}",
+    "subtitle": "SaaS 템플릿 대시보드입니다. 제품에 맞게 커스터마이즈하세요.",
+    "quickStart": "빠른 시작",
+    "actionBillingTitle": "결제 설정",
+    "actionBillingDesc": "Stripe를 연결하고 요금제를 구성하세요.",
+    "actionProfileTitle": "프로필 완성",
+    "actionProfileDesc": "아바타, 자기소개, 환경설정을 추가하세요.",
+    "actionOrgTitle": "조직 만들기",
+    "actionOrgDesc": "팀을 초대하고 협업을 시작하세요.",
+    "actionCustomizeTitle": "템플릿 커스터마이즈",
+    "actionCustomizeDesc": "브랜드에 맞게 컴포넌트, 색상, 텍스트를 편집하세요."
   },
   "billing": {
     "title": "결제",

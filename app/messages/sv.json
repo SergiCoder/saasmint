@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Instrumentpanel",
-    "uptime": "Användare",
-    "latency": "Intäkter",
-    "requests": "Tillväxt",
-    "errors": "Churn"
+    "welcome": "Välkommen, {name}",
+    "subtitle": "Det här är din SaaS-mall instrumentpanel. Anpassa den efter din produkt.",
+    "quickStart": "Snabbstart",
+    "actionBillingTitle": "Konfigurera fakturering",
+    "actionBillingDesc": "Anslut Stripe och konfigurera dina prisplaner.",
+    "actionProfileTitle": "Fyll i din profil",
+    "actionProfileDesc": "Lägg till din avatar, bio och inställningar.",
+    "actionOrgTitle": "Skapa en organisation",
+    "actionOrgDesc": "Bjud in ditt team och börja samarbeta.",
+    "actionCustomizeTitle": "Anpassa mallen",
+    "actionCustomizeDesc": "Redigera komponenter, färger och text för att matcha ditt varumärke."
   },
   "billing": {
     "title": "Fakturering",

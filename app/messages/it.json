@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "uptime": "Utenti",
-    "latency": "Ricavi",
-    "requests": "Crescita",
-    "errors": "Abbandono"
+    "welcome": "Benvenuto, {name}",
+    "subtitle": "Questa è la dashboard del tuo template SaaS. Personalizzala per il tuo prodotto.",
+    "quickStart": "Avvio rapido",
+    "actionBillingTitle": "Configura la fatturazione",
+    "actionBillingDesc": "Collega Stripe e configura i tuoi piani tariffari.",
+    "actionProfileTitle": "Completa il tuo profilo",
+    "actionProfileDesc": "Aggiungi il tuo avatar, la bio e le preferenze.",
+    "actionOrgTitle": "Crea un'organizzazione",
+    "actionOrgDesc": "Invita il tuo team e inizia a collaborare.",
+    "actionCustomizeTitle": "Personalizza il template",
+    "actionCustomizeDesc": "Modifica componenti, colori e testi per adattarli al tuo brand."
   },
   "billing": {
     "title": "Fatturazione",

@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Panel",
-    "uptime": "Usuarios",
-    "latency": "Ingresos",
-    "requests": "Crecimiento",
-    "errors": "Cancelaciones"
+    "welcome": "Bienvenido, {name}",
+    "subtitle": "Este es el panel de tu plantilla SaaS. Personalízalo para tu producto.",
+    "quickStart": "Inicio rápido",
+    "actionBillingTitle": "Configurar facturación",
+    "actionBillingDesc": "Conecta Stripe y configura tus planes de precios.",
+    "actionProfileTitle": "Completa tu perfil",
+    "actionProfileDesc": "Añade tu avatar, biografía y preferencias.",
+    "actionOrgTitle": "Crear una organización",
+    "actionOrgDesc": "Invita a tu equipo y empieza a colaborar.",
+    "actionCustomizeTitle": "Personalizar la plantilla",
+    "actionCustomizeDesc": "Edita componentes, colores y textos para que coincidan con tu marca."
   },
   "billing": {
     "title": "Facturación",

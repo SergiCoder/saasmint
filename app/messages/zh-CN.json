@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "仪表盘",
-    "uptime": "用户",
-    "latency": "收入",
-    "requests": "增长",
-    "errors": "流失"
+    "welcome": "欢迎，{name}",
+    "subtitle": "这是您的 SaaS 模板仪表盘。根据您的产品进行自定义。",
+    "quickStart": "快速开始",
+    "actionBillingTitle": "设置计费",
+    "actionBillingDesc": "连接 Stripe 并配置您的定价方案。",
+    "actionProfileTitle": "完善个人资料",
+    "actionProfileDesc": "添加头像、简介和偏好设置。",
+    "actionOrgTitle": "创建组织",
+    "actionOrgDesc": "邀请团队成员，开始协作。",
+    "actionCustomizeTitle": "自定义模板",
+    "actionCustomizeDesc": "编辑组件、颜色和文案以匹配您的品牌。"
   },
   "billing": {
     "title": "账单",

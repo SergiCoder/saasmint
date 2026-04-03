@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Панель управления",
-    "uptime": "Пользователи",
-    "latency": "Выручка",
-    "requests": "Рост",
-    "errors": "Отток"
+    "welcome": "Добро пожаловать, {name}",
+    "subtitle": "Это панель управления вашего SaaS-шаблона. Настройте её под свой продукт.",
+    "quickStart": "Быстрый старт",
+    "actionBillingTitle": "Настроить оплату",
+    "actionBillingDesc": "Подключите Stripe и настройте тарифные планы.",
+    "actionProfileTitle": "Заполнить профиль",
+    "actionProfileDesc": "Добавьте аватар, био и настройки.",
+    "actionOrgTitle": "Создать организацию",
+    "actionOrgDesc": "Пригласите команду и начните сотрудничество.",
+    "actionCustomizeTitle": "Настроить шаблон",
+    "actionCustomizeDesc": "Измените компоненты, цвета и тексты под ваш бренд."
   },
   "billing": {
     "title": "Оплата",

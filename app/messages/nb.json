@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Kontrollpanel",
-    "uptime": "Brukere",
-    "latency": "Inntekter",
-    "requests": "Vekst",
-    "errors": "Churn"
+    "welcome": "Velkommen, {name}",
+    "subtitle": "Dette er dashbordet for SaaS-malen din. Tilpass det til produktet ditt.",
+    "quickStart": "Hurtigstart",
+    "actionBillingTitle": "Sett opp fakturering",
+    "actionBillingDesc": "Koble til Stripe og konfigurer prisplanene dine.",
+    "actionProfileTitle": "Fullfør profilen din",
+    "actionProfileDesc": "Legg til avatar, bio og preferanser.",
+    "actionOrgTitle": "Opprett en organisasjon",
+    "actionOrgDesc": "Inviter teamet ditt og begynn å samarbeide.",
+    "actionCustomizeTitle": "Tilpass malen",
+    "actionCustomizeDesc": "Rediger komponenter, farger og tekst for å matche merkevaren din."
   },
   "billing": {
     "title": "Fakturering",

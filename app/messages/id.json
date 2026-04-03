@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Dasbor",
-    "uptime": "Pengguna",
-    "latency": "Pendapatan",
-    "requests": "Pertumbuhan",
-    "errors": "Churn"
+    "welcome": "Selamat datang, {name}",
+    "subtitle": "Ini adalah dasbor template SaaS Anda. Sesuaikan dengan produk Anda.",
+    "quickStart": "Mulai cepat",
+    "actionBillingTitle": "Atur penagihan",
+    "actionBillingDesc": "Hubungkan Stripe dan konfigurasikan paket harga Anda.",
+    "actionProfileTitle": "Lengkapi profil Anda",
+    "actionProfileDesc": "Tambahkan avatar, bio, dan preferensi Anda.",
+    "actionOrgTitle": "Buat organisasi",
+    "actionOrgDesc": "Undang tim Anda dan mulai berkolaborasi.",
+    "actionCustomizeTitle": "Sesuaikan template",
+    "actionCustomizeDesc": "Edit komponen, warna, dan teks agar sesuai dengan merek Anda."
   },
   "billing": {
     "title": "Tagihan",

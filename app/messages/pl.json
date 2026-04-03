@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Panel",
-    "uptime": "Użytkownicy",
-    "latency": "Przychody",
-    "requests": "Wzrost",
-    "errors": "Odpływ"
+    "welcome": "Witaj, {name}",
+    "subtitle": "To jest panel szablonu SaaS. Dostosuj go do swojego produktu.",
+    "quickStart": "Szybki start",
+    "actionBillingTitle": "Skonfiguruj płatności",
+    "actionBillingDesc": "Połącz Stripe i skonfiguruj plany cenowe.",
+    "actionProfileTitle": "Uzupełnij profil",
+    "actionProfileDesc": "Dodaj avatar, bio i preferencje.",
+    "actionOrgTitle": "Utwórz organizację",
+    "actionOrgDesc": "Zaproś swój zespół i zacznij współpracować.",
+    "actionCustomizeTitle": "Dostosuj szablon",
+    "actionCustomizeDesc": "Edytuj komponenty, kolory i teksty, aby pasowały do Twojej marki."
   },
   "billing": {
     "title": "Płatności",

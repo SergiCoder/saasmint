@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "uptime": "Users",
-    "latency": "Revenue",
-    "requests": "Growth",
-    "errors": "Churn"
+    "welcome": "Welcome, {name}",
+    "subtitle": "This is your SaaS template dashboard. Customize it to fit your product.",
+    "quickStart": "Quick start",
+    "actionBillingTitle": "Set up billing",
+    "actionBillingDesc": "Connect Stripe and configure your pricing plans.",
+    "actionProfileTitle": "Complete your profile",
+    "actionProfileDesc": "Add your avatar, bio, and preferences.",
+    "actionOrgTitle": "Create an organization",
+    "actionOrgDesc": "Invite your team and start collaborating.",
+    "actionCustomizeTitle": "Customize the template",
+    "actionCustomizeDesc": "Edit components, colors, and copy to match your brand."
   },
   "billing": {
     "title": "Billing",

@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Kontrolpanel",
-    "uptime": "Brugere",
-    "latency": "Omsætning",
-    "requests": "Vækst",
-    "errors": "Churn"
+    "welcome": "Velkommen, {name}",
+    "subtitle": "Dette er dit SaaS-skabelon dashboard. Tilpas det til dit produkt.",
+    "quickStart": "Hurtig start",
+    "actionBillingTitle": "Opsæt fakturering",
+    "actionBillingDesc": "Tilslut Stripe og konfigurer dine prisplaner.",
+    "actionProfileTitle": "Færdiggør din profil",
+    "actionProfileDesc": "Tilføj din avatar, bio og præferencer.",
+    "actionOrgTitle": "Opret en organisation",
+    "actionOrgDesc": "Inviter dit team og begynd at samarbejde.",
+    "actionCustomizeTitle": "Tilpas skabelonen",
+    "actionCustomizeDesc": "Rediger komponenter, farver og tekst, så det matcher dit brand."
   },
   "billing": {
     "title": "Fakturering",

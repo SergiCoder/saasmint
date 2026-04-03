@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "uptime": "Benutzer",
-    "latency": "Umsatz",
-    "requests": "Wachstum",
-    "errors": "Abwanderung"
+    "welcome": "Willkommen, {name}",
+    "subtitle": "Dies ist dein SaaS-Vorlagen-Dashboard. Passe es an dein Produkt an.",
+    "quickStart": "Schnellstart",
+    "actionBillingTitle": "Abrechnung einrichten",
+    "actionBillingDesc": "Verbinde Stripe und konfiguriere deine Preispläne.",
+    "actionProfileTitle": "Profil vervollständigen",
+    "actionProfileDesc": "Füge deinen Avatar, deine Bio und Einstellungen hinzu.",
+    "actionOrgTitle": "Organisation erstellen",
+    "actionOrgDesc": "Lade dein Team ein und beginne zusammenzuarbeiten.",
+    "actionCustomizeTitle": "Vorlage anpassen",
+    "actionCustomizeDesc": "Bearbeite Komponenten, Farben und Texte passend zu deiner Marke."
   },
   "billing": {
     "title": "Abrechnung",

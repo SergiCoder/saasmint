@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "uptime": "Gebruikers",
-    "latency": "Omzet",
-    "requests": "Groei",
-    "errors": "Churn"
+    "welcome": "Welkom, {name}",
+    "subtitle": "Dit is je SaaS-sjabloon dashboard. Pas het aan voor jouw product.",
+    "quickStart": "Snel starten",
+    "actionBillingTitle": "Facturering instellen",
+    "actionBillingDesc": "Verbind Stripe en configureer je prijsplannen.",
+    "actionProfileTitle": "Profiel voltooien",
+    "actionProfileDesc": "Voeg je avatar, bio en voorkeuren toe.",
+    "actionOrgTitle": "Organisatie aanmaken",
+    "actionOrgDesc": "Nodig je team uit en begin samen te werken.",
+    "actionCustomizeTitle": "Sjabloon aanpassen",
+    "actionCustomizeDesc": "Bewerk componenten, kleuren en tekst zodat het bij je merk past."
   },
   "billing": {
     "title": "Facturering",

@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "ダッシュボード",
-    "uptime": "ユーザー",
-    "latency": "売上",
-    "requests": "成長率",
-    "errors": "解約率"
+    "welcome": "ようこそ、{name}さん",
+    "subtitle": "これはSaaSテンプレートのダッシュボードです。プロダクトに合わせてカスタマイズしてください。",
+    "quickStart": "クイックスタート",
+    "actionBillingTitle": "請求設定",
+    "actionBillingDesc": "Stripeを接続し、料金プランを設定します。",
+    "actionProfileTitle": "プロフィールを完成",
+    "actionProfileDesc": "アバター、自己紹介、設定を追加します。",
+    "actionOrgTitle": "組織を作成",
+    "actionOrgDesc": "チームを招待してコラボレーションを開始します。",
+    "actionCustomizeTitle": "テンプレートをカスタマイズ",
+    "actionCustomizeDesc": "コンポーネント、カラー、テキストをブランドに合わせて編集します。"
   },
   "billing": {
     "title": "請求",

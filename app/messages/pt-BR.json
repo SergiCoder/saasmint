@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Painel",
-    "uptime": "Usuários",
-    "latency": "Receita",
-    "requests": "Crescimento",
-    "errors": "Cancelamentos"
+    "welcome": "Bem-vindo, {name}",
+    "subtitle": "Este é o painel do seu template SaaS. Personalize-o para o seu produto.",
+    "quickStart": "Início rápido",
+    "actionBillingTitle": "Configurar cobrança",
+    "actionBillingDesc": "Conecte o Stripe e configure seus planos de preços.",
+    "actionProfileTitle": "Complete seu perfil",
+    "actionProfileDesc": "Adicione seu avatar, bio e preferências.",
+    "actionOrgTitle": "Criar uma organização",
+    "actionOrgDesc": "Convide sua equipe e comece a colaborar.",
+    "actionCustomizeTitle": "Personalizar o template",
+    "actionCustomizeDesc": "Edite componentes, cores e textos para combinar com sua marca."
   },
   "billing": {
     "title": "Faturamento",

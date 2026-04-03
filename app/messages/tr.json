@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "Kontrol paneli",
-    "uptime": "Kullanıcılar",
-    "latency": "Gelir",
-    "requests": "Büyüme",
-    "errors": "Kayıp"
+    "welcome": "Hoş geldiniz, {name}",
+    "subtitle": "Bu, SaaS şablonunuzun kontrol panelidir. Ürününüze göre özelleştirin.",
+    "quickStart": "Hızlı başlangıç",
+    "actionBillingTitle": "Faturalandırmayı ayarla",
+    "actionBillingDesc": "Stripe'ı bağlayın ve fiyat planlarınızı yapılandırın.",
+    "actionProfileTitle": "Profilinizi tamamlayın",
+    "actionProfileDesc": "Avatar, biyografi ve tercihlerinizi ekleyin.",
+    "actionOrgTitle": "Organizasyon oluştur",
+    "actionOrgDesc": "Ekibinizi davet edin ve iş birliğine başlayın.",
+    "actionCustomizeTitle": "Şablonu özelleştir",
+    "actionCustomizeDesc": "Markanıza uygun bileşenleri, renkleri ve metinleri düzenleyin."
   },
   "billing": {
     "title": "Faturalandırma",

@@ -112,10 +112,17 @@
   },
   "dashboard": {
     "title": "لوحة التحكم",
-    "uptime": "المستخدمون",
-    "latency": "الإيرادات",
-    "requests": "النمو",
-    "errors": "التسرب"
+    "welcome": "مرحباً، {name}",
+    "subtitle": "هذه لوحة تحكم قالب SaaS الخاص بك. خصّصها لتناسب منتجك.",
+    "quickStart": "البدء السريع",
+    "actionBillingTitle": "إعداد الفوترة",
+    "actionBillingDesc": "اربط Stripe وقم بتكوين خطط الأسعار.",
+    "actionProfileTitle": "أكمل ملفك الشخصي",
+    "actionProfileDesc": "أضف صورتك الرمزية والسيرة الذاتية والتفضيلات.",
+    "actionOrgTitle": "أنشئ منظمة",
+    "actionOrgDesc": "ادعُ فريقك وابدأ التعاون.",
+    "actionCustomizeTitle": "خصّص القالب",
+    "actionCustomizeDesc": "عدّل المكونات والألوان والنصوص لتناسب علامتك التجارية."
   },
   "billing": {
     "title": "الفوترة",
