@@ -27,41 +27,23 @@ const LOGOS = [
 
 const CHART_BARS = [35, 55, 45, 70, 60, 80, 95, 75, 88, 65, 72, 58];
 
+const FEATURE_ITEMS = [
+  { key: "featureDeploys", icon: "🔐" },
+  { key: "featureAi", icon: "💳" },
+  { key: "featureEdge", icon: "👥" },
+  { key: "featureObs", icon: "🌐" },
+  { key: "featureSec", icon: "⚙️" },
+  { key: "featureInt", icon: "🎨" },
+] as const;
+
 export default async function LandingPage() {
   const t = await getTranslations("landing");
 
-  const features = [
-    {
-      icon: <span>🔐</span>,
-      title: t("featureDeploysTitle"),
-      description: t("featureDeploysDesc"),
-    },
-    {
-      icon: <span>💳</span>,
-      title: t("featureAiTitle"),
-      description: t("featureAiDesc"),
-    },
-    {
-      icon: <span>👥</span>,
-      title: t("featureEdgeTitle"),
-      description: t("featureEdgeDesc"),
-    },
-    {
-      icon: <span>🌐</span>,
-      title: t("featureObsTitle"),
-      description: t("featureObsDesc"),
-    },
-    {
-      icon: <span>⚙️</span>,
-      title: t("featureSecTitle"),
-      description: t("featureSecDesc"),
-    },
-    {
-      icon: <span>🎨</span>,
-      title: t("featureIntTitle"),
-      description: t("featureIntDesc"),
-    },
-  ];
+  const features = FEATURE_ITEMS.map(({ key, icon }) => ({
+    icon: <span>{icon}</span>,
+    title: t(`${key}Title`),
+    description: t(`${key}Desc`),
+  }));
 
   const stats = [
     { value: t("statDevs"), label: t("statDevsLabel") },
