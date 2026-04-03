@@ -2,6 +2,7 @@ import { DjangoApiOrgGateway } from "./api/DjangoApiOrgGateway";
 import { DjangoApiOrgMemberGateway } from "./api/DjangoApiOrgMemberGateway";
 import { DjangoApiPlanGateway } from "./api/DjangoApiPlanGateway";
 import { DjangoApiSubscriptionGateway } from "./api/DjangoApiSubscriptionGateway";
+import { DjangoApiReferenceGateway } from "./api/DjangoApiReferenceGateway";
 import { DjangoApiUserGateway } from "./api/DjangoApiUserGateway";
 import { SupabaseAuthGateway } from "./supabase/SupabaseAuthGateway";
 
@@ -11,3 +12,4 @@ export const planGateway = new DjangoApiPlanGateway();
 export const subscriptionGateway = new DjangoApiSubscriptionGateway();
 export const orgGateway = new DjangoApiOrgGateway();
 export const orgMemberGateway = new DjangoApiOrgMemberGateway();
+export const referenceGateway = new DjangoApiReferenceGateway();

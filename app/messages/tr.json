@@ -11,7 +11,10 @@
     "admin": "Yönetim",
     "signIn": "Giriş yap",
     "signOut": "Çıkış yap",
-    "contactUs": "Bize ulaşın"
+    "contactUs": "Bize ulaşın",
+    "profile": "Profil",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Gizlilik",
@@ -80,16 +83,31 @@
       "password": "Şifre",
       "submit": "Giriş yap",
       "noAccount": "Hesabınız yok mu?",
-      "register": "Kaydol"
+      "register": "Kaydol",
+      "registered": "Hesap oluşturuldu! Hesabınızı doğrulamak için e-postanızı kontrol edin.",
+      "accountDeleted": "Hesabınız silindi. Gittiğinizi görmek bizi üzüyor.",
+      "errorNoSession": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
+      "errorEmailNotVerified": "Giriş yapmadan önce e-posta adresinizi doğrulayın. Gelen kutunuzu kontrol edin.",
+      "errorTokenExpired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
+      "errorAccountDeactivated": "Bu hesap devre dışı bırakılmıştır.",
+      "errorBackendRejected": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin."
     },
     "register": {
       "title": "Hesabınızı oluşturun",
       "pageTitle": "Kayıt ol",
+      "fullName": "Ad soyad",
       "email": "E-posta adresi",
       "password": "Şifre",
       "submit": "Hesap oluştur",
       "hasAccount": "Zaten hesabınız var mı?",
-      "login": "Giriş yap"
+      "login": "Giriş yap",
+      "pronouns": "Zamirler",
+      "pronounsDontSpecify": "Belirtme",
+      "pronounsCustom": "Özel",
+      "pronounsCustomPlaceholder": "Zamirlerinizi girin",
+      "pronounsHeHim": "O (erkek)",
+      "pronounsSheHer": "O (kadın)",
+      "pronounsTheyThem": "O (nötr)"
     }
   },
   "dashboard": {
@@ -115,10 +133,36 @@
     "profile": "Profil",
     "fullName": "Ad soyad",
     "email": "E-posta",
+    "preferredLocale": "Dil",
+    "preferredCurrency": "Para birimi",
+    "phonePrefix": "Ülke kodu",
+    "phone": "Telefon",
+    "timezone": "Saat dilimi",
+    "jobTitle": "Unvan",
+    "pronouns": "Zamirler",
+    "pronounsDontSpecify": "Belirtme",
+    "pronounsCustom": "Özel",
+    "pronounsCustomPlaceholder": "Zamirlerinizi girin",
+    "bio": "Hakkında",
+    "bioPlaceholder": "Bize kendinizden bahsedin",
+    "avatarUpload": "Fotoğraf yükle",
+    "avatarRemove": "Kaldır",
+    "avatarError": "Avatar güncellenemedi",
     "save": "Değişiklikleri kaydet",
     "danger": "Tehlikeli bölge",
     "deleteAccount": "Hesabı sil",
-    "deleteConfirm": "Bu işlem hesabınızı ve tüm verilerinizi kalıcı olarak silecektir."
+    "deleteConfirm": "Bu işlem hesabınızı ve tüm verilerinizi kalıcı olarak silecektir.",
+    "deleteDialogTitle": "Emin misiniz?",
+    "deleteDialogDescription": "Bu işlem geri alınamaz. Onaylamak için e-posta adresinizi yazın.",
+    "deleteDialogLabel": "E-posta adresi",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "İptal",
+    "deleteDialogSubmit": "Hesabı kalıcı olarak sil",
+    "deleteDialogMismatch": "E-posta adresi hesabınızla eşleşmiyor.",
+    "deleteDialogError": "Hesap silinemedi. Lütfen tekrar deneyin.",
+    "pronounsHeHim": "O (erkek)",
+    "pronounsSheHer": "O (kadın)",
+    "pronounsTheyThem": "O (nötr)"
   },
   "org": {
     "title": "Organizasyon",
@@ -202,5 +246,13 @@
     "title": "Çerez Politikası",
     "lastUpdated": "Son güncelleme: Mart 2026",
     "intro": "Deneyiminizi iyileştirmek için çerezler kullanıyoruz. Bu politika, web sitemizde çerezleri nasıl ve neden kullandığımızı açıklar."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Bu, Feature 1 için bir yer tutucu sayfadır."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Bu, Feature 2 için bir yer tutucu sayfadır."
   }
 }

@@ -11,7 +11,10 @@
     "admin": "Admin",
     "signIn": "Sign in",
     "signOut": "Sign out",
-    "contactUs": "Contact us"
+    "contactUs": "Contact us",
+    "profile": "Profile",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Privacy",
@@ -80,16 +83,31 @@
       "password": "Password",
       "submit": "Sign in",
       "noAccount": "Don't have an account?",
-      "register": "Sign up"
+      "register": "Sign up",
+      "registered": "Account created! Check your email to verify your account.",
+      "accountDeleted": "Your account has been deleted. We're sorry to see you go.",
+      "errorNoSession": "Your session has expired. Please sign in again.",
+      "errorEmailNotVerified": "Please verify your email address before signing in. Check your inbox for a verification link.",
+      "errorTokenExpired": "Your session has expired. Please sign in again.",
+      "errorAccountDeactivated": "This account has been deactivated.",
+      "errorBackendRejected": "Authentication failed. Please try signing in again."
     },
     "register": {
       "title": "Create your account",
       "pageTitle": "Sign up",
+      "fullName": "Full name",
       "email": "Email address",
       "password": "Password",
       "submit": "Create account",
       "hasAccount": "Already have an account?",
-      "login": "Sign in"
+      "login": "Sign in",
+      "pronouns": "Pronouns",
+      "pronounsDontSpecify": "Don't specify",
+      "pronounsCustom": "Custom",
+      "pronounsCustomPlaceholder": "Enter your pronouns",
+      "pronounsHeHim": "He/Him",
+      "pronounsSheHer": "She/Her",
+      "pronounsTheyThem": "They/Them"
     }
   },
   "dashboard": {
@@ -115,10 +133,36 @@
     "profile": "Profile",
     "fullName": "Full name",
     "email": "Email",
+    "preferredLocale": "Language",
+    "preferredCurrency": "Currency",
+    "phonePrefix": "Country code",
+    "phone": "Phone number",
+    "timezone": "Timezone",
+    "jobTitle": "Job title",
+    "pronouns": "Pronouns",
+    "pronounsDontSpecify": "Don't specify",
+    "pronounsCustom": "Custom",
+    "pronounsCustomPlaceholder": "Enter your pronouns",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell us a bit about yourself",
+    "avatarUpload": "Upload photo",
+    "avatarRemove": "Remove",
+    "avatarError": "Failed to update avatar",
     "save": "Save changes",
     "danger": "Danger zone",
     "deleteAccount": "Delete account",
-    "deleteConfirm": "This will permanently delete your account and all data."
+    "deleteConfirm": "This will permanently delete your account and all data.",
+    "deleteDialogTitle": "Are you sure?",
+    "deleteDialogDescription": "This action cannot be undone. Type your email address to confirm.",
+    "deleteDialogLabel": "Email address",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Cancel",
+    "deleteDialogSubmit": "Permanently delete account",
+    "deleteDialogMismatch": "Email does not match your account email.",
+    "deleteDialogError": "Failed to delete account. Please try again.",
+    "pronounsHeHim": "He/Him",
+    "pronounsSheHer": "She/Her",
+    "pronounsTheyThem": "They/Them"
   },
   "org": {
     "title": "Organization",
@@ -202,5 +246,13 @@
     "title": "Cookie Policy",
     "lastUpdated": "Last updated: March 2026",
     "intro": "We use cookies to improve your experience. This policy explains how and why we use cookies on our website."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "This is a placeholder page for Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "This is a placeholder page for Feature 2."
   }
 }

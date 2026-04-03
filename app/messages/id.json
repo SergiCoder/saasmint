@@ -11,7 +11,10 @@
     "admin": "Administrasi",
     "signIn": "Masuk",
     "signOut": "Keluar",
-    "contactUs": "Hubungi kami"
+    "contactUs": "Hubungi kami",
+    "profile": "Profil",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Privasi",
@@ -80,16 +83,31 @@
       "password": "Kata sandi",
       "submit": "Masuk",
       "noAccount": "Belum punya akun?",
-      "register": "Daftar"
+      "register": "Daftar",
+      "registered": "Akun dibuat! Periksa email Anda untuk memverifikasi akun.",
+      "accountDeleted": "Akun Anda telah dihapus. Kami menyesal melihat Anda pergi.",
+      "errorNoSession": "Sesi Anda telah berakhir. Silakan masuk kembali.",
+      "errorEmailNotVerified": "Verifikasi alamat email Anda sebelum masuk. Periksa kotak masuk Anda.",
+      "errorTokenExpired": "Sesi Anda telah berakhir. Silakan masuk kembali.",
+      "errorAccountDeactivated": "Akun ini telah dinonaktifkan.",
+      "errorBackendRejected": "Autentikasi gagal. Silakan coba masuk kembali."
     },
     "register": {
       "title": "Buat akun Anda",
       "pageTitle": "Daftar",
+      "fullName": "Nama lengkap",
       "email": "Alamat email",
       "password": "Kata sandi",
       "submit": "Buat akun",
       "hasAccount": "Sudah punya akun?",
-      "login": "Masuk"
+      "login": "Masuk",
+      "pronouns": "Kata ganti",
+      "pronounsDontSpecify": "Tidak ditentukan",
+      "pronounsCustom": "Kustom",
+      "pronounsCustomPlaceholder": "Masukkan kata ganti Anda",
+      "pronounsHeHim": "Dia (laki-laki)",
+      "pronounsSheHer": "Dia (perempuan)",
+      "pronounsTheyThem": "Mereka"
     }
   },
   "dashboard": {
@@ -115,10 +133,36 @@
     "profile": "Profil",
     "fullName": "Nama lengkap",
     "email": "Email",
+    "preferredLocale": "Bahasa",
+    "preferredCurrency": "Mata uang",
+    "phonePrefix": "Kode negara",
+    "phone": "Telepon",
+    "timezone": "Zona waktu",
+    "jobTitle": "Jabatan",
+    "pronouns": "Kata ganti",
+    "pronounsDontSpecify": "Tidak ditentukan",
+    "pronounsCustom": "Kustom",
+    "pronounsCustomPlaceholder": "Masukkan kata ganti Anda",
+    "bio": "Bio",
+    "bioPlaceholder": "Ceritakan sedikit tentang diri Anda",
+    "avatarUpload": "Unggah foto",
+    "avatarRemove": "Hapus",
+    "avatarError": "Gagal memperbarui avatar",
     "save": "Simpan perubahan",
     "danger": "Zona bahaya",
     "deleteAccount": "Hapus akun",
-    "deleteConfirm": "Ini akan menghapus akun dan semua data Anda secara permanen."
+    "deleteConfirm": "Ini akan menghapus akun dan semua data Anda secara permanen.",
+    "deleteDialogTitle": "Apakah Anda yakin?",
+    "deleteDialogDescription": "Tindakan ini tidak dapat dibatalkan. Ketik alamat email Anda untuk mengonfirmasi.",
+    "deleteDialogLabel": "Alamat email",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Batal",
+    "deleteDialogSubmit": "Hapus akun secara permanen",
+    "deleteDialogMismatch": "Email tidak cocok dengan email akun Anda.",
+    "deleteDialogError": "Gagal menghapus akun. Silakan coba lagi.",
+    "pronounsHeHim": "Dia (laki-laki)",
+    "pronounsSheHer": "Dia (perempuan)",
+    "pronounsTheyThem": "Mereka"
   },
   "org": {
     "title": "Organisasi",
@@ -202,5 +246,13 @@
     "title": "Kebijakan Cookie",
     "lastUpdated": "Terakhir diperbarui: Maret 2026",
     "intro": "Kami menggunakan cookie untuk meningkatkan pengalaman Anda. Kebijakan ini menjelaskan bagaimana dan mengapa kami menggunakan cookie di situs web kami."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Ini adalah halaman placeholder untuk Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Ini adalah halaman placeholder untuk Feature 2."
   }
 }

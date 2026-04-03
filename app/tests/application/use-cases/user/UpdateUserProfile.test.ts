@@ -12,6 +12,12 @@ const user: User = {
   accountType: "personal",
   preferredLocale: "fr",
   preferredCurrency: "EUR",
+  phonePrefix: null,
+  phone: null,
+  timezone: null,
+  jobTitle: null,
+  pronouns: null,
+  bio: null,
   isVerified: true,
   createdAt: "2024-01-01T00:00:00Z",
 };

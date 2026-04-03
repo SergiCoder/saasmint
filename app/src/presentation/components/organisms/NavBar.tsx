@@ -5,6 +5,7 @@ import { Logo } from "../atoms/Logo";
 import { Avatar } from "../atoms/Avatar";
 import { LocaleDropdown } from "../atoms/LocaleDropdown";
 import { NavLink } from "../molecules/NavLink";
+import { UserMenu, type UserMenuItem } from "../molecules/UserMenu";
 
 export interface NavBarLink {
   href: string;
@@ -13,6 +14,7 @@ export interface NavBarLink {
 
 export interface NavBarUser {
   fullName: string;
+  pronouns?: string | null;
   avatarUrl?: string | null;
 }
 
@@ -21,6 +23,8 @@ export interface NavBarProps {
   links: NavBarLink[];
   user?: NavBarUser | null;
   actions?: React.ReactNode;
+  userMenuItems?: UserMenuItem[];
+  userMenuSignOut?: React.ReactNode;
   toggleNavLabel: string;
   className?: string;
 }
@@ -30,6 +34,8 @@ export function NavBar({
   links,
   user,
   actions,
+  userMenuItems,
+  userMenuSignOut,
   toggleNavLabel,
   className = "",
 }: NavBarProps) {
@@ -53,8 +59,16 @@ export function NavBar({
         <div className="flex items-center gap-2">
           <LocaleDropdown />
           {actions}
-          {user && (
-            <Avatar src={user.avatarUrl} alt={user.fullName} size="sm" />
+          {user && userMenuItems ? (
+            <UserMenu
+              user={user}
+              menuItems={userMenuItems}
+              signOutSlot={userMenuSignOut}
+            />
+          ) : (
+            user && (
+              <Avatar src={user.avatarUrl} alt={user.fullName} size="sm" />
+            )
           )}
           <button
             type="button"
@@ -97,6 +111,26 @@ export function NavBar({
                 {link.label}
               </NavLink>
             ))}
+            {user && userMenuItems && (
+              <>
+                <hr className="my-2 border-gray-200" />
+                <div className="py-1 text-xs font-medium tracking-wide text-gray-400 uppercase">
+                  {user.fullName}
+                </div>
+                {userMenuItems.map((item) => (
+                  <NavLink
+                    key={item.label}
+                    href={item.href}
+                    className="block py-2"
+                  >
+                    {item.label}
+                  </NavLink>
+                ))}
+                {userMenuSignOut && (
+                  <div className="pt-1">{userMenuSignOut}</div>
+                )}
+              </>
+            )}
           </div>
         </div>
       )}

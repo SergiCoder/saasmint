@@ -18,6 +18,8 @@ export default async function SignupPage() {
         action={signUp}
         translationNamespace="auth.register"
         passwordAutoComplete="new-password"
+        showNameField
+        showPronouns
         footerLink={{
           href: "/login",
           textKey: "hasAccount",

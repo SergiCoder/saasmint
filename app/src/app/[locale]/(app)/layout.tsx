@@ -18,9 +18,14 @@ export default async function AppLayoutRoute({
 
   const navLinks = [
     { href: "/dashboard", label: t("dashboard") },
+    { href: "/feature1", label: t("feature1") },
+    { href: "/feature2", label: t("feature2") },
+  ];
+
+  const userMenuItems = [
+    { href: "/dashboard", label: t("dashboard") },
+    { href: "/settings", label: t("profile") },
     { href: "/billing", label: t("billing") },
-    { href: "/settings", label: t("settings") },
-    { href: "/org", label: t("org") },
   ];
 
   return (
@@ -29,9 +34,11 @@ export default async function AppLayoutRoute({
       navLinks={navLinks}
       user={{
         fullName: user.fullName ?? user.email,
+        pronouns: user.pronouns,
         avatarUrl: user.avatarUrl,
       }}
-      navActions={<SignOutButton label={t("signOut")} />}
+      userMenuItems={userMenuItems}
+      userMenuSignOut={<SignOutButton label={t("signOut")} />}
       toggleNavLabel={tCommon("toggleNav")}
     >
       {children}

@@ -83,6 +83,7 @@ describe("auth server actions", () => {
       mockSignUp.mockResolvedValue({ error: null });
 
       const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
       formData.set("email", "new@example.com");
       formData.set("password", "secret123");
 
@@ -93,7 +94,10 @@ describe("auth server actions", () => {
         expect.objectContaining({
           email: "new@example.com",
           password: "secret123",
-          options: { emailRedirectTo: "http://localhost:3000/auth/callback" },
+          options: {
+            emailRedirectTo: "http://localhost:3000/auth/callback",
+            data: { full_name: "Jane Doe", pronouns: null },
+          },
         }),
       );
       expect(mockRedirect).toHaveBeenCalledWith("/login?registered=true");
@@ -105,11 +109,59 @@ describe("auth server actions", () => {
       });
 
       const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
       formData.set("email", "existing@example.com");
       formData.set("password", "secret123");
 
       const result = await signUp(undefined, formData);
       expect(result).toEqual({ error: "Email already in use" });
+    });
+
+    it("passes pronouns when provided in form data", async () => {
+      mockSignUp.mockResolvedValue({ error: null });
+
+      const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
+      formData.set("email", "new@example.com");
+      formData.set("password", "secret123");
+      formData.set("pronouns", "she/her");
+
+      await expect(signUp(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockSignUp).toHaveBeenCalledWith(
+        expect.objectContaining({
+          options: {
+            emailRedirectTo: "http://localhost:3000/auth/callback",
+            data: { full_name: "Jane Doe", pronouns: "she/her" },
+          },
+        }),
+      );
+    });
+
+    it("returns error when fullName is too short", async () => {
+      const formData = new FormData();
+      formData.set("fullName", "Ab");
+      formData.set("email", "new@example.com");
+      formData.set("password", "secret123");
+
+      const result = await signUp(undefined, formData);
+      expect(result).toEqual({
+        error: "Full name must be between 3 and 255 characters",
+      });
+      expect(mockSignUp).not.toHaveBeenCalled();
+    });
+
+    it("returns error when fullName is missing", async () => {
+      const formData = new FormData();
+      formData.set("email", "new@example.com");
+      formData.set("password", "secret123");
+
+      const result = await signUp(undefined, formData);
+      expect(result).toEqual({
+        error: "Full name must be between 3 and 255 characters",
+      });
+      expect(mockSignUp).not.toHaveBeenCalled();
     });
   });
 

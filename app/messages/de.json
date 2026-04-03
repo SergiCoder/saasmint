@@ -11,7 +11,10 @@
     "admin": "Verwaltung",
     "signIn": "Anmelden",
     "signOut": "Abmelden",
-    "contactUs": "Kontakt"
+    "contactUs": "Kontakt",
+    "profile": "Profil",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Datenschutz",
@@ -80,16 +83,31 @@
       "password": "Passwort",
       "submit": "Anmelden",
       "noAccount": "Noch kein Konto?",
-      "register": "Registrieren"
+      "register": "Registrieren",
+      "registered": "Konto erstellt! Überprüfen Sie Ihre E-Mail, um Ihr Konto zu bestätigen.",
+      "accountDeleted": "Ihr Konto wurde gelöscht. Es tut uns leid, Sie gehen zu sehen.",
+      "errorNoSession": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+      "errorEmailNotVerified": "Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden. Prüfen Sie Ihren Posteingang.",
+      "errorTokenExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+      "errorAccountDeactivated": "Dieses Konto wurde deaktiviert.",
+      "errorBackendRejected": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut."
     },
     "register": {
       "title": "Konto erstellen",
       "pageTitle": "Registrieren",
+      "fullName": "Vollständiger Name",
       "email": "E-Mail-Adresse",
       "password": "Passwort",
       "submit": "Konto erstellen",
       "hasAccount": "Bereits ein Konto?",
-      "login": "Anmelden"
+      "login": "Anmelden",
+      "pronouns": "Pronomen",
+      "pronounsDontSpecify": "Nicht angeben",
+      "pronounsCustom": "Benutzerdefiniert",
+      "pronounsCustomPlaceholder": "Geben Sie Ihre Pronomen ein",
+      "pronounsHeHim": "Er/Ihm",
+      "pronounsSheHer": "Sie/Ihr",
+      "pronounsTheyThem": "They/Them"
     }
   },
   "dashboard": {
@@ -115,10 +133,36 @@
     "profile": "Profil",
     "fullName": "Vollständiger Name",
     "email": "E-Mail",
+    "preferredLocale": "Sprache",
+    "preferredCurrency": "Währung",
+    "phonePrefix": "Ländervorwahl",
+    "phone": "Telefonnummer",
+    "timezone": "Zeitzone",
+    "jobTitle": "Berufsbezeichnung",
+    "pronouns": "Pronomen",
+    "pronounsDontSpecify": "Nicht angeben",
+    "pronounsCustom": "Benutzerdefiniert",
+    "pronounsCustomPlaceholder": "Geben Sie Ihre Pronomen ein",
+    "bio": "Bio",
+    "bioPlaceholder": "Erzählen Sie uns etwas über sich",
+    "avatarUpload": "Foto hochladen",
+    "avatarRemove": "Entfernen",
+    "avatarError": "Avatar konnte nicht aktualisiert werden",
     "save": "Änderungen speichern",
     "danger": "Gefahrenzone",
     "deleteAccount": "Konto löschen",
-    "deleteConfirm": "Dadurch werden Ihr Konto und alle Daten dauerhaft gelöscht."
+    "deleteConfirm": "Dadurch werden Ihr Konto und alle Daten dauerhaft gelöscht.",
+    "deleteDialogTitle": "Sind Sie sicher?",
+    "deleteDialogDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Geben Sie Ihre E-Mail-Adresse zur Bestätigung ein.",
+    "deleteDialogLabel": "E-Mail-Adresse",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Abbrechen",
+    "deleteDialogSubmit": "Konto dauerhaft löschen",
+    "deleteDialogMismatch": "Die E-Mail-Adresse stimmt nicht mit Ihrem Konto überein.",
+    "deleteDialogError": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+    "pronounsHeHim": "Er/Ihm",
+    "pronounsSheHer": "Sie/Ihr",
+    "pronounsTheyThem": "They/Them"
   },
   "org": {
     "title": "Organisation",
@@ -202,5 +246,13 @@
     "title": "Cookie-Richtlinie",
     "lastUpdated": "Letzte Aktualisierung: März 2026",
     "intro": "Wir verwenden Cookies, um Ihre Erfahrung zu verbessern. Diese Richtlinie erklärt, wie und warum wir Cookies auf unserer Website verwenden."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Dies ist eine Platzhalterseite für Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Dies ist eine Platzhalterseite für Feature 2."
   }
 }

@@ -1,11 +1,14 @@
 import { NavBar, type NavBarLink, type NavBarUser } from "../organisms/NavBar";
 import { Footer, type FooterSection } from "../organisms/Footer";
+import type { UserMenuItem } from "../molecules/UserMenu";
 
 export interface MarketingLayoutProps {
   appName: string;
   navLinks: NavBarLink[];
   navUser?: NavBarUser | null;
   navActions?: React.ReactNode;
+  userMenuItems?: UserMenuItem[];
+  userMenuSignOut?: React.ReactNode;
   toggleNavLabel: string;
   footerSections: FooterSection[];
   copyright: string;
@@ -17,6 +20,8 @@ export function MarketingLayout({
   navLinks,
   navUser,
   navActions,
+  userMenuItems,
+  userMenuSignOut,
   toggleNavLabel,
   footerSections,
   copyright,
@@ -29,6 +34,8 @@ export function MarketingLayout({
         links={navLinks}
         user={navUser}
         actions={navActions}
+        userMenuItems={userMenuItems}
+        userMenuSignOut={userMenuSignOut}
         toggleNavLabel={toggleNavLabel}
       />
       <main className="mt-[62px] flex-1">{children}</main>

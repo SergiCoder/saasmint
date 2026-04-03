@@ -5,32 +5,52 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
+import { PronounsPicker } from "@/presentation/components/molecules/PronounsPicker";
 import { Button } from "@/presentation/components/atoms/Button";
 
 interface AuthFormProps {
   action: (prev: unknown, fd: FormData) => Promise<{ error: string } | void>;
   translationNamespace: string;
   passwordAutoComplete: string;
+  showNameField?: boolean;
+  showPronouns?: boolean;
   footerLink: { href: string; textKey: string; linkKey: string };
+  serverAlerts?: React.ReactNode;
 }
 
 export function AuthForm({
   action,
   translationNamespace,
   passwordAutoComplete,
+  showNameField = false,
+  showPronouns = false,
   footerLink,
+  serverAlerts,
 }: AuthFormProps) {
   const t = useTranslations(translationNamespace);
   const [state, formAction, pending] = useActionState(action, null);
 
   return (
     <>
-      {state?.error && (
+      {state?.error ? (
         <AlertBanner variant="error" className="mb-4">
           {state.error}
         </AlertBanner>
+      ) : (
+        serverAlerts
       )}
       <form action={formAction} className="space-y-4">
+        {showNameField && (
+          <FormField
+            label={t("fullName")}
+            name="fullName"
+            required
+            minLength={3}
+            maxLength={255}
+            autoComplete="name"
+          />
+        )}
+        {showPronouns && <PronounsPicker t={t} />}
         <FormField
           label={t("email")}
           name="email"
@@ -45,7 +65,7 @@ export function AuthForm({
           required
           autoComplete={passwordAutoComplete}
         />
-        <Button type="submit" loading={pending} className="w-full">
+        <Button type="submit" loading={pending} className="mt-6 w-full">
           {t("submit")}
         </Button>
       </form>

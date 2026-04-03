@@ -11,7 +11,10 @@
     "admin": "Beheer",
     "signIn": "Inloggen",
     "signOut": "Uitloggen",
-    "contactUs": "Contact"
+    "contactUs": "Contact",
+    "profile": "Profiel",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Privacy",
@@ -80,16 +83,31 @@
       "password": "Wachtwoord",
       "submit": "Inloggen",
       "noAccount": "Nog geen account?",
-      "register": "Registreren"
+      "register": "Registreren",
+      "registered": "Account aangemaakt! Controleer uw e-mail om uw account te verifiëren.",
+      "accountDeleted": "Uw account is verwijderd. Het spijt ons u te zien gaan.",
+      "errorNoSession": "Uw sessie is verlopen. Log opnieuw in.",
+      "errorEmailNotVerified": "Verifieer uw e-mailadres voordat u inlogt. Controleer uw inbox.",
+      "errorTokenExpired": "Uw sessie is verlopen. Log opnieuw in.",
+      "errorAccountDeactivated": "Dit account is gedeactiveerd.",
+      "errorBackendRejected": "Authenticatie mislukt. Probeer opnieuw in te loggen."
     },
     "register": {
       "title": "Maak uw account aan",
       "pageTitle": "Registreren",
+      "fullName": "Volledige naam",
       "email": "E-mailadres",
       "password": "Wachtwoord",
       "submit": "Account aanmaken",
       "hasAccount": "Heeft u al een account?",
-      "login": "Inloggen"
+      "login": "Inloggen",
+      "pronouns": "Voornaamwoorden",
+      "pronounsDontSpecify": "Niet opgeven",
+      "pronounsCustom": "Aangepast",
+      "pronounsCustomPlaceholder": "Voer uw voornaamwoorden in",
+      "pronounsHeHim": "Hij/Hem",
+      "pronounsSheHer": "Zij/Haar",
+      "pronounsTheyThem": "Hen/Hun"
     }
   },
   "dashboard": {
@@ -115,10 +133,36 @@
     "profile": "Profiel",
     "fullName": "Volledige naam",
     "email": "E-mail",
+    "preferredLocale": "Taal",
+    "preferredCurrency": "Valuta",
+    "phonePrefix": "Landcode",
+    "phone": "Telefoon",
+    "timezone": "Tijdzone",
+    "jobTitle": "Functietitel",
+    "pronouns": "Voornaamwoorden",
+    "pronounsDontSpecify": "Niet opgeven",
+    "pronounsCustom": "Aangepast",
+    "pronounsCustomPlaceholder": "Voer uw voornaamwoorden in",
+    "bio": "Bio",
+    "bioPlaceholder": "Vertel ons iets over jezelf",
+    "avatarUpload": "Foto uploaden",
+    "avatarRemove": "Verwijderen",
+    "avatarError": "Avatar bijwerken mislukt",
     "save": "Wijzigingen opslaan",
     "danger": "Gevarenzone",
     "deleteAccount": "Account verwijderen",
-    "deleteConfirm": "Dit verwijdert uw account en alle gegevens permanent."
+    "deleteConfirm": "Dit verwijdert uw account en alle gegevens permanent.",
+    "deleteDialogTitle": "Weet u het zeker?",
+    "deleteDialogDescription": "Deze actie kan niet ongedaan worden gemaakt. Typ uw e-mailadres ter bevestiging.",
+    "deleteDialogLabel": "E-mailadres",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Annuleren",
+    "deleteDialogSubmit": "Account permanent verwijderen",
+    "deleteDialogMismatch": "Het e-mailadres komt niet overeen met uw account.",
+    "deleteDialogError": "Account verwijderen mislukt. Probeer het opnieuw.",
+    "pronounsHeHim": "Hij/Hem",
+    "pronounsSheHer": "Zij/Haar",
+    "pronounsTheyThem": "Hen/Hun"
   },
   "org": {
     "title": "Organisatie",
@@ -202,5 +246,13 @@
     "title": "Cookiebeleid",
     "lastUpdated": "Laatst bijgewerkt: maart 2026",
     "intro": "We gebruiken cookies om uw ervaring te verbeteren. Dit beleid legt uit hoe en waarom we cookies op onze website gebruiken."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Dit is een tijdelijke pagina voor Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Dit is een tijdelijke pagina voor Feature 2."
   }
 }

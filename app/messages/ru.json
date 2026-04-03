@@ -11,7 +11,10 @@
     "admin": "Администрирование",
     "signIn": "Войти",
     "signOut": "Выйти",
-    "contactUs": "Связаться с нами"
+    "contactUs": "Связаться с нами",
+    "profile": "Профиль",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Конфиденциальность",
@@ -80,16 +83,31 @@
       "password": "Пароль",
       "submit": "Войти",
       "noAccount": "Нет аккаунта?",
-      "register": "Зарегистрироваться"
+      "register": "Зарегистрироваться",
+      "registered": "Аккаунт создан! Проверьте электронную почту для подтверждения.",
+      "accountDeleted": "Ваш аккаунт был удалён. Нам жаль, что вы уходите.",
+      "errorNoSession": "Ваша сессия истекла. Пожалуйста, войдите снова.",
+      "errorEmailNotVerified": "Подтвердите адрес электронной почты перед входом. Проверьте папку «Входящие».",
+      "errorTokenExpired": "Ваша сессия истекла. Пожалуйста, войдите снова.",
+      "errorAccountDeactivated": "Этот аккаунт деактивирован.",
+      "errorBackendRejected": "Ошибка аутентификации. Попробуйте войти снова."
     },
     "register": {
       "title": "Создайте аккаунт",
       "pageTitle": "Регистрация",
+      "fullName": "Полное имя",
       "email": "Электронная почта",
       "password": "Пароль",
       "submit": "Создать аккаунт",
       "hasAccount": "Уже есть аккаунт?",
-      "login": "Войти"
+      "login": "Войти",
+      "pronouns": "Местоимения",
+      "pronounsDontSpecify": "Не указывать",
+      "pronounsCustom": "Другое",
+      "pronounsCustomPlaceholder": "Введите ваши местоимения",
+      "pronounsHeHim": "Он/Его",
+      "pronounsSheHer": "Она/Её",
+      "pronounsTheyThem": "Они/Их"
     }
   },
   "dashboard": {
@@ -115,10 +133,36 @@
     "profile": "Профиль",
     "fullName": "Полное имя",
     "email": "Эл. почта",
+    "preferredLocale": "Язык",
+    "preferredCurrency": "Валюта",
+    "phonePrefix": "Код страны",
+    "phone": "Телефон",
+    "timezone": "Часовой пояс",
+    "jobTitle": "Должность",
+    "pronouns": "Местоимения",
+    "pronounsDontSpecify": "Не указывать",
+    "pronounsCustom": "Другое",
+    "pronounsCustomPlaceholder": "Введите ваши местоимения",
+    "bio": "О себе",
+    "bioPlaceholder": "Расскажите немного о себе",
+    "avatarUpload": "Загрузить фото",
+    "avatarRemove": "Удалить",
+    "avatarError": "Не удалось обновить аватар",
     "save": "Сохранить изменения",
     "danger": "Опасная зона",
     "deleteAccount": "Удалить аккаунт",
-    "deleteConfirm": "Это навсегда удалит ваш аккаунт и все данные."
+    "deleteConfirm": "Это навсегда удалит ваш аккаунт и все данные.",
+    "deleteDialogTitle": "Вы уверены?",
+    "deleteDialogDescription": "Это действие нельзя отменить. Введите свой адрес электронной почты для подтверждения.",
+    "deleteDialogLabel": "Адрес электронной почты",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Отмена",
+    "deleteDialogSubmit": "Удалить аккаунт навсегда",
+    "deleteDialogMismatch": "Электронная почта не совпадает с почтой вашего аккаунта.",
+    "deleteDialogError": "Не удалось удалить аккаунт. Пожалуйста, попробуйте снова.",
+    "pronounsHeHim": "Он/Его",
+    "pronounsSheHer": "Она/Её",
+    "pronounsTheyThem": "Они/Их"
   },
   "org": {
     "title": "Организация",
@@ -202,5 +246,13 @@
     "title": "Политика файлов cookie",
     "lastUpdated": "Последнее обновление: март 2026",
     "intro": "Мы используем файлы cookie для улучшения вашего опыта. Эта политика объясняет, как и почему мы используем файлы cookie на нашем сайте."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Это страница-заглушка для Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Это страница-заглушка для Feature 2."
   }
 }

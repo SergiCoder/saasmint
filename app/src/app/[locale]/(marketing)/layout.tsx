@@ -41,17 +41,14 @@ export default async function MarketingLayoutRoute({
   ];
 
   const navUser = user
-    ? { fullName: user.fullName ?? user.email, avatarUrl: user.avatarUrl }
+    ? {
+        fullName: user.fullName ?? user.email,
+        pronouns: user.pronouns,
+        avatarUrl: user.avatarUrl,
+      }
     : undefined;
 
-  const navActions = user ? (
-    <>
-      <Link href="/dashboard" className={primaryLinkClass}>
-        {t("dashboard")}
-      </Link>
-      <SignOutButton label={t("signOut")} />
-    </>
-  ) : (
+  const navActions = user ? undefined : (
     <>
       <Link
         href="/login"
@@ -65,12 +62,24 @@ export default async function MarketingLayoutRoute({
     </>
   );
 
+  const userMenuItems = user
+    ? [
+        { href: "/dashboard", label: t("dashboard") },
+        { href: "/settings", label: t("profile") },
+        { href: "/billing", label: t("billing") },
+      ]
+    : undefined;
+
   return (
     <MarketingLayout
       appName="SaaSmint"
       navLinks={navLinks}
       navUser={navUser}
       navActions={navActions}
+      userMenuItems={userMenuItems}
+      userMenuSignOut={
+        user ? <SignOutButton label={t("signOut")} /> : undefined
+      }
       toggleNavLabel={tCommon("toggleNav")}
       footerSections={footerSections}
       copyright={tFooter("copyright")}

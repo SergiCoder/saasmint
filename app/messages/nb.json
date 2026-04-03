@@ -11,7 +11,10 @@
     "admin": "Administrasjon",
     "signIn": "Logg inn",
     "signOut": "Logg ut",
-    "contactUs": "Kontakt oss"
+    "contactUs": "Kontakt oss",
+    "profile": "Profil",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Personvern",
@@ -80,16 +83,31 @@
       "password": "Passord",
       "submit": "Logg inn",
       "noAccount": "Har du ikke en konto?",
-      "register": "Registrer deg"
+      "register": "Registrer deg",
+      "registered": "Konto opprettet! Sjekk e-posten din for å bekrefte kontoen.",
+      "accountDeleted": "Kontoen din er slettet. Vi er lei for at du forlater oss.",
+      "errorNoSession": "Økten din har utløpt. Vennligst logg inn igjen.",
+      "errorEmailNotVerified": "Bekreft e-postadressen din før du logger inn. Sjekk innboksen din.",
+      "errorTokenExpired": "Økten din har utløpt. Vennligst logg inn igjen.",
+      "errorAccountDeactivated": "Denne kontoen er deaktivert.",
+      "errorBackendRejected": "Autentisering mislyktes. Prøv å logge inn igjen."
     },
     "register": {
       "title": "Opprett kontoen din",
       "pageTitle": "Registrer deg",
+      "fullName": "Fullt navn",
       "email": "E-postadresse",
       "password": "Passord",
       "submit": "Opprett konto",
       "hasAccount": "Har du allerede en konto?",
-      "login": "Logg inn"
+      "login": "Logg inn",
+      "pronouns": "Pronomen",
+      "pronounsDontSpecify": "Ikke oppgi",
+      "pronounsCustom": "Egendefinert",
+      "pronounsCustomPlaceholder": "Skriv inn dine pronomen",
+      "pronounsHeHim": "Han/Ham",
+      "pronounsSheHer": "Hun/Henne",
+      "pronounsTheyThem": "Hen"
     }
   },
   "dashboard": {
@@ -115,10 +133,36 @@
     "profile": "Profil",
     "fullName": "Fullt navn",
     "email": "E-post",
+    "preferredLocale": "Språk",
+    "preferredCurrency": "Valuta",
+    "phonePrefix": "Landskode",
+    "phone": "Telefon",
+    "timezone": "Tidssone",
+    "jobTitle": "Stillingstittel",
+    "pronouns": "Pronomen",
+    "pronounsDontSpecify": "Ikke oppgi",
+    "pronounsCustom": "Egendefinert",
+    "pronounsCustomPlaceholder": "Skriv inn dine pronomen",
+    "bio": "Bio",
+    "bioPlaceholder": "Fortell oss litt om deg selv",
+    "avatarUpload": "Last opp bilde",
+    "avatarRemove": "Fjern",
+    "avatarError": "Kunne ikke oppdatere avatar",
     "save": "Lagre endringer",
     "danger": "Faresone",
     "deleteAccount": "Slett konto",
-    "deleteConfirm": "Dette vil permanent slette kontoen din og alle data."
+    "deleteConfirm": "Dette vil permanent slette kontoen din og alle data.",
+    "deleteDialogTitle": "Er du sikker?",
+    "deleteDialogDescription": "Denne handlingen kan ikke angres. Skriv inn e-postadressen din for å bekrefte.",
+    "deleteDialogLabel": "E-postadresse",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Avbryt",
+    "deleteDialogSubmit": "Slett konto permanent",
+    "deleteDialogMismatch": "E-postadressen samsvarer ikke med kontoen din.",
+    "deleteDialogError": "Kunne ikke slette kontoen. Prøv igjen.",
+    "pronounsHeHim": "Han/Ham",
+    "pronounsSheHer": "Hun/Henne",
+    "pronounsTheyThem": "Hen"
   },
   "org": {
     "title": "Organisasjon",
@@ -202,5 +246,13 @@
     "title": "Retningslinjer for informasjonskapsler",
     "lastUpdated": "Sist oppdatert: mars 2026",
     "intro": "Vi bruker informasjonskapsler for å forbedre din opplevelse. Disse retningslinjene forklarer hvordan og hvorfor vi bruker informasjonskapsler på vår nettside."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Dette er en plassholderside for Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Dette er en plassholderside for Feature 2."
   }
 }

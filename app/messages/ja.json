@@ -11,7 +11,10 @@
     "admin": "管理",
     "signIn": "ログイン",
     "signOut": "ログアウト",
-    "contactUs": "お問い合わせ"
+    "contactUs": "お問い合わせ",
+    "profile": "プロフィール",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "プライバシー",
@@ -80,16 +83,31 @@
       "password": "パスワード",
       "submit": "サインイン",
       "noAccount": "アカウントをお持ちでないですか？",
-      "register": "新規登録"
+      "register": "新規登録",
+      "registered": "アカウントが作成されました！メールを確認してアカウントを認証してください。",
+      "accountDeleted": "アカウントが削除されました。ご利用ありがとうございました。",
+      "errorNoSession": "セッションの有効期限が切れました。再度ログインしてください。",
+      "errorEmailNotVerified": "ログインする前にメールアドレスを確認してください。受信トレイをご確認ください。",
+      "errorTokenExpired": "セッションの有効期限が切れました。再度ログインしてください。",
+      "errorAccountDeactivated": "このアカウントは無効化されています。",
+      "errorBackendRejected": "認証に失敗しました。再度ログインしてください。"
     },
     "register": {
       "title": "アカウントを作成",
       "pageTitle": "新規登録",
+      "fullName": "氏名",
       "email": "メールアドレス",
       "password": "パスワード",
       "submit": "アカウント作成",
       "hasAccount": "すでにアカウントをお持ちですか？",
-      "login": "サインイン"
+      "login": "サインイン",
+      "pronouns": "代名詞",
+      "pronounsDontSpecify": "指定しない",
+      "pronounsCustom": "カスタム",
+      "pronounsCustomPlaceholder": "代名詞を入力してください",
+      "pronounsHeHim": "彼/Him",
+      "pronounsSheHer": "彼女/Her",
+      "pronounsTheyThem": "They/Them"
     }
   },
   "dashboard": {
@@ -115,10 +133,36 @@
     "profile": "プロフィール",
     "fullName": "氏名",
     "email": "メール",
+    "preferredLocale": "言語",
+    "preferredCurrency": "通貨",
+    "phonePrefix": "国番号",
+    "phone": "電話番号",
+    "timezone": "タイムゾーン",
+    "jobTitle": "役職",
+    "pronouns": "代名詞",
+    "pronounsDontSpecify": "指定しない",
+    "pronounsCustom": "カスタム",
+    "pronounsCustomPlaceholder": "代名詞を入力してください",
+    "bio": "自己紹介",
+    "bioPlaceholder": "自己紹介を入力してください",
+    "avatarUpload": "写真をアップロード",
+    "avatarRemove": "削除",
+    "avatarError": "アバターの更新に失敗しました",
     "save": "変更を保存",
     "danger": "危険な操作",
     "deleteAccount": "アカウントを削除",
-    "deleteConfirm": "アカウントとすべてのデータが完全に削除されます。"
+    "deleteConfirm": "アカウントとすべてのデータが完全に削除されます。",
+    "deleteDialogTitle": "本当によろしいですか？",
+    "deleteDialogDescription": "この操作は元に戻せません。確認のためメールアドレスを入力してください。",
+    "deleteDialogLabel": "メールアドレス",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "キャンセル",
+    "deleteDialogSubmit": "アカウントを完全に削除",
+    "deleteDialogMismatch": "メールアドレスがアカウントのものと一致しません。",
+    "deleteDialogError": "アカウントの削除に失敗しました。もう一度お試しください。",
+    "pronounsHeHim": "彼/Him",
+    "pronounsSheHer": "彼女/Her",
+    "pronounsTheyThem": "They/Them"
   },
   "org": {
     "title": "組織",
@@ -202,5 +246,13 @@
     "title": "Cookieポリシー",
     "lastUpdated": "最終更新日: 2026年3月",
     "intro": "お客様の体験を向上させるためにCookieを使用しています。このポリシーでは、Cookieの使用方法と理由について説明します。"
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Feature 1のプレースホルダーページです。"
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Feature 2のプレースホルダーページです。"
   }
 }

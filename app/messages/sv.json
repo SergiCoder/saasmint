@@ -11,7 +11,10 @@
     "admin": "Administration",
     "signIn": "Logga in",
     "signOut": "Logga ut",
-    "contactUs": "Kontakta oss"
+    "contactUs": "Kontakta oss",
+    "profile": "Profil",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Integritet",
@@ -80,16 +83,31 @@
       "password": "Lösenord",
       "submit": "Logga in",
       "noAccount": "Har du inget konto?",
-      "register": "Registrera dig"
+      "register": "Registrera dig",
+      "registered": "Konto skapat! Kontrollera din e-post för att verifiera ditt konto.",
+      "accountDeleted": "Ditt konto har raderats. Vi är ledsna att se dig gå.",
+      "errorNoSession": "Din session har löpt ut. Logga in igen.",
+      "errorEmailNotVerified": "Verifiera din e-postadress innan du loggar in. Kontrollera din inkorg.",
+      "errorTokenExpired": "Din session har löpt ut. Logga in igen.",
+      "errorAccountDeactivated": "Detta konto har inaktiverats.",
+      "errorBackendRejected": "Autentisering misslyckades. Försök logga in igen."
     },
     "register": {
       "title": "Skapa ditt konto",
       "pageTitle": "Registrera",
+      "fullName": "Fullständigt namn",
       "email": "E-postadress",
       "password": "Lösenord",
       "submit": "Skapa konto",
       "hasAccount": "Har du redan ett konto?",
-      "login": "Logga in"
+      "login": "Logga in",
+      "pronouns": "Pronomen",
+      "pronounsDontSpecify": "Ange inte",
+      "pronounsCustom": "Anpassad",
+      "pronounsCustomPlaceholder": "Ange dina pronomen",
+      "pronounsHeHim": "Han/Honom",
+      "pronounsSheHer": "Hon/Henne",
+      "pronounsTheyThem": "Hen"
     }
   },
   "dashboard": {
@@ -115,10 +133,36 @@
     "profile": "Profil",
     "fullName": "Fullständigt namn",
     "email": "E-post",
+    "preferredLocale": "Språk",
+    "preferredCurrency": "Valuta",
+    "phonePrefix": "Landskod",
+    "phone": "Telefon",
+    "timezone": "Tidszon",
+    "jobTitle": "Jobbtitel",
+    "pronouns": "Pronomen",
+    "pronounsDontSpecify": "Ange inte",
+    "pronounsCustom": "Anpassad",
+    "pronounsCustomPlaceholder": "Ange dina pronomen",
+    "bio": "Bio",
+    "bioPlaceholder": "Berätta lite om dig själv",
+    "avatarUpload": "Ladda upp foto",
+    "avatarRemove": "Ta bort",
+    "avatarError": "Kunde inte uppdatera avatar",
     "save": "Spara ändringar",
     "danger": "Farozon",
     "deleteAccount": "Radera konto",
-    "deleteConfirm": "Detta raderar ditt konto och all data permanent."
+    "deleteConfirm": "Detta raderar ditt konto och all data permanent.",
+    "deleteDialogTitle": "Är du säker?",
+    "deleteDialogDescription": "Denna åtgärd kan inte ångras. Skriv in din e-postadress för att bekräfta.",
+    "deleteDialogLabel": "E-postadress",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Avbryt",
+    "deleteDialogSubmit": "Radera konto permanent",
+    "deleteDialogMismatch": "E-postadressen matchar inte ditt konto.",
+    "deleteDialogError": "Det gick inte att radera kontot. Försök igen.",
+    "pronounsHeHim": "Han/Honom",
+    "pronounsSheHer": "Hon/Henne",
+    "pronounsTheyThem": "Hen"
   },
   "org": {
     "title": "Organisation",
@@ -202,5 +246,13 @@
     "title": "Cookiepolicy",
     "lastUpdated": "Senast uppdaterad: mars 2026",
     "intro": "Vi använder cookies för att förbättra din upplevelse. Denna policy förklarar hur och varför vi använder cookies på vår webbplats."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Detta är en platshållarsida för Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Detta är en platshållarsida för Feature 2."
   }
 }

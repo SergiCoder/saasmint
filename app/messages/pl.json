@@ -11,7 +11,10 @@
     "admin": "Administracja",
     "signIn": "Zaloguj się",
     "signOut": "Wyloguj się",
-    "contactUs": "Kontakt"
+    "contactUs": "Kontakt",
+    "profile": "Profil",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Prywatność",
@@ -80,16 +83,31 @@
       "password": "Hasło",
       "submit": "Zaloguj się",
       "noAccount": "Nie masz konta?",
-      "register": "Zarejestruj się"
+      "register": "Zarejestruj się",
+      "registered": "Konto utworzone! Sprawdź e-mail, aby zweryfikować konto.",
+      "accountDeleted": "Twoje konto zostało usunięte. Przykro nam, że odchodzisz.",
+      "errorNoSession": "Twoja sesja wygasła. Zaloguj się ponownie.",
+      "errorEmailNotVerified": "Zweryfikuj swój adres e-mail przed zalogowaniem. Sprawdź skrzynkę odbiorczą.",
+      "errorTokenExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",
+      "errorAccountDeactivated": "To konto zostało dezaktywowane.",
+      "errorBackendRejected": "Uwierzytelnianie nie powiodło się. Spróbuj ponownie."
     },
     "register": {
       "title": "Utwórz konto",
       "pageTitle": "Rejestracja",
+      "fullName": "Imię i nazwisko",
       "email": "Adres e-mail",
       "password": "Hasło",
       "submit": "Utwórz konto",
       "hasAccount": "Masz już konto?",
-      "login": "Zaloguj się"
+      "login": "Zaloguj się",
+      "pronouns": "Zaimki",
+      "pronounsDontSpecify": "Nie określaj",
+      "pronounsCustom": "Niestandardowe",
+      "pronounsCustomPlaceholder": "Wpisz swoje zaimki",
+      "pronounsHeHim": "On/Jego",
+      "pronounsSheHer": "Ona/Jej",
+      "pronounsTheyThem": "Ono/Ich"
     }
   },
   "dashboard": {
@@ -115,10 +133,36 @@
     "profile": "Profil",
     "fullName": "Imię i nazwisko",
     "email": "E-mail",
+    "preferredLocale": "Język",
+    "preferredCurrency": "Waluta",
+    "phonePrefix": "Numer kierunkowy",
+    "phone": "Telefon",
+    "timezone": "Strefa czasowa",
+    "jobTitle": "Stanowisko",
+    "pronouns": "Zaimki",
+    "pronounsDontSpecify": "Nie określaj",
+    "pronounsCustom": "Niestandardowe",
+    "pronounsCustomPlaceholder": "Wpisz swoje zaimki",
+    "bio": "Bio",
+    "bioPlaceholder": "Powiedz nam coś o sobie",
+    "avatarUpload": "Prześlij zdjęcie",
+    "avatarRemove": "Usuń",
+    "avatarError": "Nie udało się zaktualizować avatara",
     "save": "Zapisz zmiany",
     "danger": "Strefa zagrożenia",
     "deleteAccount": "Usuń konto",
-    "deleteConfirm": "To trwale usunie Twoje konto i wszystkie dane."
+    "deleteConfirm": "To trwale usunie Twoje konto i wszystkie dane.",
+    "deleteDialogTitle": "Czy na pewno?",
+    "deleteDialogDescription": "Tej czynności nie można cofnąć. Wpisz swój adres e-mail, aby potwierdzić.",
+    "deleteDialogLabel": "Adres e-mail",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Anuluj",
+    "deleteDialogSubmit": "Trwale usuń konto",
+    "deleteDialogMismatch": "Adres e-mail nie pasuje do konta.",
+    "deleteDialogError": "Nie udało się usunąć konta. Spróbuj ponownie.",
+    "pronounsHeHim": "On/Jego",
+    "pronounsSheHer": "Ona/Jej",
+    "pronounsTheyThem": "Ono/Ich"
   },
   "org": {
     "title": "Organizacja",
@@ -202,5 +246,13 @@
     "title": "Polityka cookies",
     "lastUpdated": "Ostatnia aktualizacja: marzec 2026",
     "intro": "Używamy plików cookie, aby poprawić Twoje doświadczenie. Ta polityka wyjaśnia, jak i dlaczego używamy plików cookie na naszej stronie."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "To jest strona zastępcza dla Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "To jest strona zastępcza dla Feature 2."
   }
 }

@@ -18,7 +18,7 @@ export const getCurrentUser = cache(async function getCurrentUser() {
     return await new GetCurrentUser(authGateway).execute();
   } catch (err) {
     if (err instanceof AuthError) {
-      redirect("/login");
+      redirect(`/login?error=${err.code}`);
     }
     throw err;
   }

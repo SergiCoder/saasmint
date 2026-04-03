@@ -21,7 +21,26 @@ vi.mock("@/infrastructure/api/apiClient", () => ({
 const { SupabaseAuthGateway } =
   await import("@/infrastructure/supabase/SupabaseAuthGateway");
 
-const user: User = {
+const snakeUser = {
+  id: "u1",
+  supabase_uid: "sb-u1",
+  email: "alice@example.com",
+  full_name: "Alice",
+  avatar_url: null,
+  account_type: "personal",
+  preferred_locale: "en",
+  preferred_currency: "USD",
+  phone_prefix: null,
+  phone: null,
+  timezone: null,
+  job_title: null,
+  pronouns: null,
+  bio: null,
+  is_verified: true,
+  created_at: "2024-01-01T00:00:00Z",
+};
+
+const camelUser: User = {
   id: "u1",
   supabaseUid: "sb-u1",
   email: "alice@example.com",
@@ -30,6 +49,12 @@ const user: User = {
   accountType: "personal",
   preferredLocale: "en",
   preferredCurrency: "USD",
+  phonePrefix: null,
+  phone: null,
+  timezone: null,
+  jobTitle: null,
+  pronouns: null,
+  bio: null,
   isVerified: true,
   createdAt: "2024-01-01T00:00:00Z",
 };
@@ -42,13 +67,13 @@ describe("SupabaseAuthGateway", () => {
   const gateway = new SupabaseAuthGateway();
 
   describe("getCurrentUser", () => {
-    it("returns user from API via apiFetch", async () => {
-      mockApiFetch.mockResolvedValue(user);
+    it("returns user from API with keys converted to camelCase", async () => {
+      mockApiFetch.mockResolvedValue(snakeUser);
 
       const result = await gateway.getCurrentUser();
 
       expect(mockApiFetch).toHaveBeenCalledWith("/account/");
-      expect(result).toEqual(user);
+      expect(result).toEqual(camelUser);
     });
 
     it("propagates apiFetch errors", async () => {
@@ -79,6 +104,28 @@ describe("SupabaseAuthGateway", () => {
         code: "SIGN_OUT_FAILED",
         message: "Session expired",
       });
+    });
+  });
+
+  describe("deleteAccount", () => {
+    it("calls DELETE /account/ and signs out", async () => {
+      mockApiFetch.mockResolvedValue(undefined);
+      mockSignOut.mockResolvedValue({ error: null });
+
+      await gateway.deleteAccount();
+
+      expect(mockApiFetch).toHaveBeenCalledWith("/account/", {
+        method: "DELETE",
+      });
+      expect(mockSignOut).toHaveBeenCalledOnce();
+    });
+
+    it("propagates apiFetch errors", async () => {
+      mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
+
+      await expect(gateway.deleteAccount()).rejects.toThrow(
+        "API 403: Forbidden",
+      );
     });
   });
 });

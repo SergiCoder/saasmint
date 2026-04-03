@@ -36,12 +36,29 @@ export async function signUp(_prevState: unknown, formData: FormData) {
   const result = extractCredentials(formData);
   if ("error" in result) return result;
 
+  const fullName = formData.get("fullName");
+  if (
+    typeof fullName !== "string" ||
+    fullName.length < 3 ||
+    fullName.length > 255
+  ) {
+    return { error: "Full name must be between 3 and 255 characters" };
+  }
+
+  const pronouns = formData.get("pronouns");
+
   const origin = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     ...result,
-    options: { emailRedirectTo: `${origin}/auth/callback` },
+    options: {
+      emailRedirectTo: `${origin}/auth/callback`,
+      data: {
+        full_name: fullName,
+        pronouns: typeof pronouns === "string" && pronouns ? pronouns : null,
+      },
+    },
   });
 
   if (error) {

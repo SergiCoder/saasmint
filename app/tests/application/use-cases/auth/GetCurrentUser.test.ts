@@ -13,6 +13,12 @@ const user: User = {
   accountType: "personal",
   preferredLocale: "en",
   preferredCurrency: "USD",
+  phonePrefix: null,
+  phone: null,
+  timezone: null,
+  jobTitle: null,
+  pronouns: null,
+  bio: null,
   isVerified: true,
   createdAt: "2024-01-01T00:00:00Z",
 };
@@ -21,6 +27,7 @@ function makeGateway(overrides?: Partial<IAuthGateway>): IAuthGateway {
   return {
     getCurrentUser: vi.fn().mockResolvedValue(user),
     signOut: vi.fn().mockResolvedValue(undefined),
+    deleteAccount: vi.fn(),
     ...overrides,
   };
 }

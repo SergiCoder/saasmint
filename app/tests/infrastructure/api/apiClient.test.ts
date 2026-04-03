@@ -44,7 +44,7 @@ describe("getAuthToken", () => {
 
     await expect(getAuthToken()).rejects.toThrow(AuthError);
     await expect(getAuthToken()).rejects.toMatchObject({
-      code: "UNAUTHENTICATED",
+      code: "NO_SESSION",
     });
   });
 });
@@ -79,13 +79,12 @@ describe("apiFetch", () => {
       expect.objectContaining({
         headers: expect.objectContaining({
           authorization: "Bearer tok_abc",
-          "content-type": "application/json",
         }),
       }),
     );
   });
 
-  it("sends Content-Type application/json by default", async () => {
+  it("sets Content-Type application/json only when body is present", async () => {
     fetchSpy.mockResolvedValue({
       ok: true,
       status: 200,
@@ -93,9 +92,13 @@ describe("apiFetch", () => {
     });
 
     await apiFetch("/test/");
+    expect(fetchSpy.mock.calls[0][1].headers["content-type"]).toBeUndefined();
 
-    const headers = fetchSpy.mock.calls[0][1].headers;
-    expect(headers["content-type"]).toBe("application/json");
+    fetchSpy.mockClear();
+    await apiFetch("/test/", { method: "POST", body: JSON.stringify({}) });
+    expect(fetchSpy.mock.calls[0][1].headers["content-type"]).toBe(
+      "application/json",
+    );
   });
 
   it("merges custom options (method, body)", async () => {
@@ -190,11 +193,50 @@ describe("apiFetch", () => {
     expect(headers["content-type"]).toBe("text/plain");
   });
 
+  it("throws AuthError with BACKEND_REJECTED on 401 response", async () => {
+    fetchSpy.mockResolvedValue({
+      ok: false,
+      status: 401,
+      text: () => Promise.resolve("Unauthorized"),
+    });
+
+    await expect(apiFetch("/account/")).rejects.toThrow(AuthError);
+    await expect(apiFetch("/account/")).rejects.toMatchObject({
+      code: "BACKEND_REJECTED",
+    });
+  });
+
+  it("extracts custom code from 401 JSON body", async () => {
+    fetchSpy.mockResolvedValue({
+      ok: false,
+      status: 401,
+      text: () => Promise.resolve(JSON.stringify({ code: "TOKEN_EXPIRED" })),
+    });
+
+    await expect(apiFetch("/account/")).rejects.toThrow(AuthError);
+    await expect(apiFetch("/account/")).rejects.toMatchObject({
+      code: "TOKEN_EXPIRED",
+    });
+  });
+
   it("throws AuthError when no user exists", async () => {
     mockGetUser.mockResolvedValue({
       data: { user: null },
     });
 
     await expect(apiFetch("/account/")).rejects.toThrow(AuthError);
+  });
+});
+
+describe("getAuthToken — session edge cases", () => {
+  it("throws AuthError when user exists but session is null", async () => {
+    mockGetSession.mockResolvedValue({
+      data: { session: null },
+    });
+
+    await expect(getAuthToken()).rejects.toThrow(AuthError);
+    await expect(getAuthToken()).rejects.toMatchObject({
+      code: "NO_SESSION",
+    });
   });
 });

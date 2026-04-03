@@ -11,7 +11,10 @@
     "admin": "Administração",
     "signIn": "Entrar",
     "signOut": "Sair",
-    "contactUs": "Fale conosco"
+    "contactUs": "Fale conosco",
+    "profile": "Perfil",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Privacidade",
@@ -80,16 +83,31 @@
       "password": "Senha",
       "submit": "Entrar",
       "noAccount": "Não tem uma conta?",
-      "register": "Cadastre-se"
+      "register": "Cadastre-se",
+      "registered": "Conta criada! Verifique seu e-mail para confirmar sua conta.",
+      "accountDeleted": "Sua conta foi excluída. Lamentamos vê-lo partir.",
+      "errorNoSession": "Sua sessão expirou. Faça login novamente.",
+      "errorEmailNotVerified": "Verifique seu endereço de e-mail antes de fazer login. Confira sua caixa de entrada.",
+      "errorTokenExpired": "Sua sessão expirou. Faça login novamente.",
+      "errorAccountDeactivated": "Esta conta foi desativada.",
+      "errorBackendRejected": "Falha na autenticação. Tente fazer login novamente."
     },
     "register": {
       "title": "Crie sua conta",
       "pageTitle": "Cadastrar",
+      "fullName": "Nome completo",
       "email": "Endereço de e-mail",
       "password": "Senha",
       "submit": "Criar conta",
       "hasAccount": "Já tem uma conta?",
-      "login": "Entrar"
+      "login": "Entrar",
+      "pronouns": "Pronomes",
+      "pronounsDontSpecify": "Não especificar",
+      "pronounsCustom": "Personalizado",
+      "pronounsCustomPlaceholder": "Digite seus pronomes",
+      "pronounsHeHim": "Ele/Dele",
+      "pronounsSheHer": "Ela/Dela",
+      "pronounsTheyThem": "Elu/Delu"
     }
   },
   "dashboard": {
@@ -115,10 +133,36 @@
     "profile": "Perfil",
     "fullName": "Nome completo",
     "email": "E-mail",
+    "preferredLocale": "Idioma",
+    "preferredCurrency": "Moeda",
+    "phonePrefix": "Código do país",
+    "phone": "Telefone",
+    "timezone": "Fuso horário",
+    "jobTitle": "Cargo",
+    "pronouns": "Pronomes",
+    "pronounsDontSpecify": "Não especificar",
+    "pronounsCustom": "Personalizado",
+    "pronounsCustomPlaceholder": "Digite seus pronomes",
+    "bio": "Bio",
+    "bioPlaceholder": "Conte-nos um pouco sobre você",
+    "avatarUpload": "Enviar foto",
+    "avatarRemove": "Remover",
+    "avatarError": "Falha ao atualizar o avatar",
     "save": "Salvar alterações",
     "danger": "Zona de perigo",
     "deleteAccount": "Excluir conta",
-    "deleteConfirm": "Isso excluirá permanentemente sua conta e todos os dados."
+    "deleteConfirm": "Isso excluirá permanentemente sua conta e todos os dados.",
+    "deleteDialogTitle": "Tem certeza?",
+    "deleteDialogDescription": "Esta ação não pode ser desfeita. Digite seu endereço de e-mail para confirmar.",
+    "deleteDialogLabel": "Endereço de e-mail",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Cancelar",
+    "deleteDialogSubmit": "Excluir conta permanentemente",
+    "deleteDialogMismatch": "O e-mail não corresponde ao da sua conta.",
+    "deleteDialogError": "Falha ao excluir a conta. Tente novamente.",
+    "pronounsHeHim": "Ele/Dele",
+    "pronounsSheHer": "Ela/Dela",
+    "pronounsTheyThem": "Elu/Delu"
   },
   "org": {
     "title": "Organização",
@@ -202,5 +246,13 @@
     "title": "Política de cookies",
     "lastUpdated": "Última atualização: março de 2026",
     "intro": "Usamos cookies para melhorar sua experiência. Esta política explica como e por que usamos cookies em nosso site."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Esta é uma página provisória para Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Esta é uma página provisória para Feature 2."
   }
 }

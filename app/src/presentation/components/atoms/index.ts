@@ -1,4 +1,5 @@
 export { Avatar, type AvatarProps } from "./Avatar";
+export { AvatarUpload, type AvatarUploadProps } from "./AvatarUpload";
 export { Badge, type BadgeProps } from "./Badge";
 export { SectionLabel, type SectionLabelProps } from "./SectionLabel";
 export { Button, type ButtonProps } from "./Button";

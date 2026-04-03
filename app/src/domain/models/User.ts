@@ -2,11 +2,17 @@ export interface User {
   id: string;
   supabaseUid: string;
   email: string;
-  fullName: string | null;
+  fullName: string;
   avatarUrl: string | null;
   accountType: "personal" | "org_member";
   preferredLocale: string;
   preferredCurrency: string;
+  phonePrefix: string | null;
+  phone: string | null;
+  timezone: string | null;
+  jobTitle: string | null;
+  pronouns: string | null;
+  bio: string | null;
   isVerified: boolean;
   createdAt: string;
 }

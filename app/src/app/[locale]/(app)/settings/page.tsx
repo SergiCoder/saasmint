@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { GetPhonePrefixes } from "@/application/use-cases/reference/GetPhonePrefixes";
 import { GetUserProfile } from "@/application/use-cases/user/GetUserProfile";
-import { userGateway } from "@/infrastructure/registry";
+import { referenceGateway, userGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../_data/getCurrentUser";
+import { DeleteAccountDialog } from "./_components/DeleteAccountDialog";
 import { SettingsForm } from "./_components/SettingsForm";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,7 +17,10 @@ export default async function SettingsPage() {
     getTranslations("settings"),
     getCurrentUser(),
   ]);
-  const user = await new GetUserProfile(userGateway).execute(currentUser.id);
+  const [user, phonePrefixes] = await Promise.all([
+    new GetUserProfile(userGateway).execute(currentUser.id),
+    new GetPhonePrefixes(referenceGateway).execute(),
+  ]);
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">
@@ -24,7 +29,7 @@ export default async function SettingsPage() {
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
           {t("profile")}
         </h2>
-        <SettingsForm user={user} />
+        <SettingsForm user={user} phonePrefixes={phonePrefixes} />
       </section>
       <section className="rounded-lg border border-red-200 bg-white p-6 shadow-sm">
         <h2 className="mb-2 text-lg font-semibold text-red-600">
@@ -32,13 +37,7 @@ export default async function SettingsPage() {
         </h2>
         <p className="text-sm text-gray-600">{t("deleteConfirm")}</p>
         <div className="mt-4">
-          <button
-            type="button"
-            disabled
-            className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white opacity-50"
-          >
-            {t("deleteAccount")}
-          </button>
+          <DeleteAccountDialog userEmail={user.email} />
         </div>
       </section>
     </div>

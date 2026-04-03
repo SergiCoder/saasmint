@@ -11,7 +11,10 @@
     "admin": "Amministrazione",
     "signIn": "Accedi",
     "signOut": "Esci",
-    "contactUs": "Contattaci"
+    "contactUs": "Contattaci",
+    "profile": "Profilo",
+    "feature1": "Feature 1",
+    "feature2": "Feature 2"
   },
   "footer": {
     "privacy": "Privacy",
@@ -80,16 +83,31 @@
       "password": "Password",
       "submit": "Accedi",
       "noAccount": "Non hai un account?",
-      "register": "Registrati"
+      "register": "Registrati",
+      "registered": "Account creato! Controlla la tua email per verificare il tuo account.",
+      "accountDeleted": "Il tuo account è stato eliminato. Ci dispiace vederti andare.",
+      "errorNoSession": "La tua sessione è scaduta. Accedi di nuovo.",
+      "errorEmailNotVerified": "Verifica il tuo indirizzo email prima di accedere. Controlla la tua casella di posta.",
+      "errorTokenExpired": "La tua sessione è scaduta. Accedi di nuovo.",
+      "errorAccountDeactivated": "Questo account è stato disattivato.",
+      "errorBackendRejected": "Autenticazione fallita. Riprova ad accedere."
     },
     "register": {
       "title": "Crea il tuo account",
       "pageTitle": "Registrati",
+      "fullName": "Nome completo",
       "email": "Indirizzo email",
       "password": "Password",
       "submit": "Crea account",
       "hasAccount": "Hai già un account?",
-      "login": "Accedi"
+      "login": "Accedi",
+      "pronouns": "Pronomi",
+      "pronounsDontSpecify": "Non specificare",
+      "pronounsCustom": "Personalizzato",
+      "pronounsCustomPlaceholder": "Inserisci i tuoi pronomi",
+      "pronounsHeHim": "Lui",
+      "pronounsSheHer": "Lei",
+      "pronounsTheyThem": "Their"
     }
   },
   "dashboard": {
@@ -115,10 +133,36 @@
     "profile": "Profilo",
     "fullName": "Nome completo",
     "email": "Email",
+    "preferredLocale": "Lingua",
+    "preferredCurrency": "Valuta",
+    "phonePrefix": "Prefisso paese",
+    "phone": "Telefono",
+    "timezone": "Fuso orario",
+    "jobTitle": "Qualifica",
+    "pronouns": "Pronomi",
+    "pronounsDontSpecify": "Non specificare",
+    "pronounsCustom": "Personalizzato",
+    "pronounsCustomPlaceholder": "Inserisci i tuoi pronomi",
+    "bio": "Bio",
+    "bioPlaceholder": "Raccontaci qualcosa su di te",
+    "avatarUpload": "Carica foto",
+    "avatarRemove": "Rimuovi",
+    "avatarError": "Impossibile aggiornare l'avatar",
     "save": "Salva modifiche",
     "danger": "Zona pericolosa",
     "deleteAccount": "Elimina account",
-    "deleteConfirm": "Questo eliminerà permanentemente il tuo account e tutti i dati."
+    "deleteConfirm": "Questo eliminerà permanentemente il tuo account e tutti i dati.",
+    "deleteDialogTitle": "Sei sicuro?",
+    "deleteDialogDescription": "Questa azione non può essere annullata. Digita il tuo indirizzo email per confermare.",
+    "deleteDialogLabel": "Indirizzo email",
+    "deleteDialogPlaceholder": "you@example.com",
+    "deleteDialogCancel": "Annulla",
+    "deleteDialogSubmit": "Elimina account permanentemente",
+    "deleteDialogMismatch": "L'email non corrisponde a quella del tuo account.",
+    "deleteDialogError": "Impossibile eliminare l'account. Riprova.",
+    "pronounsHeHim": "Lui",
+    "pronounsSheHer": "Lei",
+    "pronounsTheyThem": "Their"
   },
   "org": {
     "title": "Organizzazione",
@@ -202,5 +246,13 @@
     "title": "Informativa sui cookie",
     "lastUpdated": "Ultimo aggiornamento: marzo 2026",
     "intro": "Utilizziamo i cookie per migliorare la tua esperienza. Questa informativa spiega come e perché utilizziamo i cookie sul nostro sito."
+  },
+  "feature1": {
+    "title": "Feature 1",
+    "description": "Questa è una pagina segnaposto per Feature 1."
+  },
+  "feature2": {
+    "title": "Feature 2",
+    "description": "Questa è una pagina segnaposto per Feature 2."
   }
 }
