@@ -112,7 +112,7 @@ export function AuthForm({
           required
           autoComplete={passwordAutoComplete}
         />
-        <Button type="submit" loading={pending} className="w-full">
+        <Button type="submit" loading={pending} className="mt-6 w-full">
           {t("submit")}
         </Button>
       </form>
