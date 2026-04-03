@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
+import { Link } from "@/lib/i18n/navigation";
 import { ListUserOrgs } from "@/application/use-cases/org/ListUserOrgs";
 import { orgGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../_data/getCurrentUser";
@@ -43,15 +43,13 @@ export default async function DashboardPage() {
             <Link
               key={key}
               href={href}
-              className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:border-primary-300 hover:shadow-md"
+              className="hover:border-primary-300 rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
             >
               <span className="text-2xl">{icon}</span>
               <p className="mt-3 text-sm font-semibold text-gray-900">
                 {t(`${key}Title`)}
               </p>
-              <p className="mt-1 text-sm text-gray-500">
-                {t(`${key}Desc`)}
-              </p>
+              <p className="mt-1 text-sm text-gray-500">{t(`${key}Desc`)}</p>
             </Link>
           ))}
         </div>
