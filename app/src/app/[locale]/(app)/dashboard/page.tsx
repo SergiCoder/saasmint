@@ -4,7 +4,6 @@ import Link from "next/link";
 import { ListUserOrgs } from "@/application/use-cases/org/ListUserOrgs";
 import { orgGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../_data/getCurrentUser";
-import { MetricCard } from "@/presentation/components/molecules/MetricCard";
 import { OrgCard } from "@/presentation/components/molecules/OrgCard";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -12,61 +11,63 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
+const ACTIONS = [
+  { key: "actionBilling", href: "/billing", icon: "💳" },
+  { key: "actionProfile", href: "/settings", icon: "👤" },
+  { key: "actionOrg", href: "/org", icon: "👥" },
+  { key: "actionCustomize", href: "#", icon: "🎨" },
+] as const;
+
 export default async function DashboardPage() {
-  const [t, tOrg, user] = await Promise.all([
+  const [t, user] = await Promise.all([
     getTranslations("dashboard"),
-    getTranslations("org"),
     getCurrentUser(),
   ]);
   const orgs = await new ListUserOrgs(orgGateway).execute(user.id);
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricCard
-          title={t("uptime")}
-          value="1,248"
-          change={{ value: "12%", positive: true }}
-        />
-        <MetricCard
-          title={t("latency")}
-          value="$8.4k"
-          change={{ value: "22%", positive: true }}
-        />
-        <MetricCard
-          title={t("requests")}
-          value="+18%"
-          change={{ value: "4%", positive: true }}
-        />
-        <MetricCard
-          title={t("errors")}
-          value="2.1%"
-          change={{ value: "0.3%", positive: true }}
-        />
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">
+          {t("welcome", { name: user.fullName || user.email })}
+        </h1>
+        <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
       </div>
 
       <section>
-        <h2 className="text-lg font-semibold text-gray-900">{tOrg("title")}</h2>
-        {orgs.length === 0 ? (
-          <p className="mt-4 text-sm text-gray-500">
+        <h2 className="text-lg font-semibold text-gray-900">
+          {t("quickStart")}
+        </h2>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {ACTIONS.map(({ key, href, icon }) => (
             <Link
-              href="/org"
-              className="text-primary-600 hover:text-primary-500 font-medium"
+              key={key}
+              href={href}
+              className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:border-primary-300 hover:shadow-md"
             >
-              {tOrg("create")}
+              <span className="text-2xl">{icon}</span>
+              <p className="mt-3 text-sm font-semibold text-gray-900">
+                {t(`${key}Title`)}
+              </p>
+              <p className="mt-1 text-sm text-gray-500">
+                {t(`${key}Desc`)}
+              </p>
             </Link>
-          </p>
-        ) : (
-          <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          ))}
+        </div>
+      </section>
+
+      {orgs.length > 0 && (
+        <section>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {orgs.map((org) => (
               <li key={org.id}>
                 <OrgCard slug={org.slug} name={org.name} />
               </li>
             ))}
           </ul>
-        )}
-      </section>
+        </section>
+      )}
     </div>
   );
 }
