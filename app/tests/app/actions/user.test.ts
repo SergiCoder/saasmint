@@ -230,13 +230,13 @@ describe("user server actions", () => {
   });
 
   describe("deleteAccount", () => {
-    it("deletes account and redirects to /login", async () => {
+    it("deletes account and returns success", async () => {
       mockDeleteAccountExecute.mockResolvedValue(undefined);
 
-      await deleteAccount();
+      const result = await deleteAccount();
 
       expect(mockDeleteAccountExecute).toHaveBeenCalledOnce();
-      expect(mockRedirect).toHaveBeenCalledWith("/login");
+      expect(result).toEqual({ success: true });
     });
 
     it("returns error on failure", async () => {

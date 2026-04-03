@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "@/lib/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/presentation/components/atoms/Button";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
@@ -16,6 +17,7 @@ export function DeleteAccountDialog({ userEmail }: DeleteAccountDialogProps) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const router = useRouter();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -41,10 +43,12 @@ export function DeleteAccountDialog({ userEmail }: DeleteAccountDialogProps) {
     setPending(true);
     setError(null);
     const result = await deleteAccount();
-    if (result?.error) {
+    if (result.error) {
       setError(t("deleteDialogError"));
       setPending(false);
+      return;
     }
+    router.replace("/login");
   }
 
   return (

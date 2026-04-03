@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
 import { DeleteAccount } from "@/application/use-cases/auth/DeleteAccount";
@@ -59,11 +58,14 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
   return { success: true };
 }
 
-export async function deleteAccount(): Promise<{ error: string } | never> {
+export async function deleteAccount(): Promise<{
+  error?: string;
+  success?: boolean;
+}> {
   try {
     await new DeleteAccount(authGateway).execute();
   } catch {
     return { error: "Failed to delete account" };
   }
-  redirect("/login");
+  return { success: true };
 }
