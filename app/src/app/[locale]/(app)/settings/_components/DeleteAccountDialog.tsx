@@ -25,13 +25,14 @@ export function DeleteAccountDialog({ userEmail }: DeleteAccountDialogProps) {
       dialogRef.current?.showModal();
     } else {
       dialogRef.current?.close();
-      setEmail("");
-      setError(null);
     }
   }, [open]);
 
   function handleClose() {
-    if (!pending) setOpen(false);
+    if (pending) return;
+    setOpen(false);
+    setEmail("");
+    setError(null);
   }
 
   async function handleSubmit() {

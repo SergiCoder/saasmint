@@ -24,14 +24,12 @@ export function AvatarUpload({
   const [hasFile, setHasFile] = useState(false);
   const [removed, setRemoved] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const previewRef = useRef(preview);
-  previewRef.current = preview;
 
   useEffect(() => {
     return () => {
-      if (previewRef.current) URL.revokeObjectURL(previewRef.current);
+      if (preview) URL.revokeObjectURL(preview);
     };
-  }, []);
+  }, [preview]);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
