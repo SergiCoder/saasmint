@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Avatar } from "./Avatar";
 
 export interface AvatarUploadProps {
@@ -24,10 +24,19 @@ export function AvatarUpload({
   const [hasFile, setHasFile] = useState(false);
   const [removed, setRemoved] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const previewRef = useRef(preview);
+  previewRef.current = preview;
+
+  useEffect(() => {
+    return () => {
+      if (previewRef.current) URL.revokeObjectURL(previewRef.current);
+    };
+  }, []);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
     if (file) {
+      if (preview) URL.revokeObjectURL(preview);
       const url = URL.createObjectURL(file);
       setPreview(url);
       setHasFile(true);
@@ -37,6 +46,7 @@ export function AvatarUpload({
   }
 
   function handleRemove() {
+    if (preview) URL.revokeObjectURL(preview);
     setPreview(null);
     setHasFile(false);
     setRemoved(true);

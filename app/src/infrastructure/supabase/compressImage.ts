@@ -8,7 +8,9 @@ export function compressImage(file: File): Promise<Blob> {
   }
   return new Promise((resolve, reject) => {
     const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
     img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
       const scale = Math.min(MAX_SIZE / img.width, MAX_SIZE / img.height, 1);
       const w = Math.round(img.width * scale);
       const h = Math.round(img.height * scale);
@@ -31,7 +33,10 @@ export function compressImage(file: File): Promise<Blob> {
         QUALITY,
       );
     };
-    img.onerror = () => reject(new Error("Failed to load image"));
-    img.src = URL.createObjectURL(file);
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("Failed to load image"));
+    };
+    img.src = objectUrl;
   });
 }
