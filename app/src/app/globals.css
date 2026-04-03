@@ -21,6 +21,7 @@
   --color-primary-light: #f0fdfa;
   --color-primary-dark: #0f766e;
   --navbar-height: 62px;
+  --content-top: calc(var(--navbar-height) + 2rem);
 }
 
 @layer base {
