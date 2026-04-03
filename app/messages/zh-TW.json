@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "登入前請驗證您的電子郵件地址。請檢查您的收件匣。",
       "errorTokenExpired": "您的工作階段已過期，請重新登入。",
       "errorAccountDeactivated": "此帳戶已被停用。",
-      "errorBackendRejected": "驗證失敗。請重新登入。"
+      "errorBackendRejected": "驗證失敗。請重新登入。",
+      "errorOAuth": "社群登入失敗。請重試。"
+    },
+    "oauth": {
+      "continueWithGoogle": "使用 Google 繼續",
+      "continueWithGitHub": "使用 GitHub 繼續",
+      "continueWithMicrosoft": "使用 Microsoft 繼續",
+      "divider": "或",
+      "error": "發生錯誤。請重試。"
     },
     "register": {
       "title": "建立您的帳戶",

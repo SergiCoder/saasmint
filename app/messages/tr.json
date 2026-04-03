@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "Giriş yapmadan önce e-posta adresinizi doğrulayın. Gelen kutunuzu kontrol edin.",
       "errorTokenExpired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
       "errorAccountDeactivated": "Bu hesap devre dışı bırakılmıştır.",
-      "errorBackendRejected": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin."
+      "errorBackendRejected": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin.",
+      "errorOAuth": "Sosyal giriş başarısız oldu. Lütfen tekrar deneyin."
+    },
+    "oauth": {
+      "continueWithGoogle": "Google ile devam et",
+      "continueWithGitHub": "GitHub ile devam et",
+      "continueWithMicrosoft": "Microsoft ile devam et",
+      "divider": "veya",
+      "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin."
     },
     "register": {
       "title": "Hesabınızı oluşturun",

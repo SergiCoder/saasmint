@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "Bekræft din e-mailadresse, før du logger ind. Tjek din indbakke.",
       "errorTokenExpired": "Din session er udløbet. Log venligst ind igen.",
       "errorAccountDeactivated": "Denne konto er deaktiveret.",
-      "errorBackendRejected": "Godkendelse mislykkedes. Prøv at logge ind igen."
+      "errorBackendRejected": "Godkendelse mislykkedes. Prøv at logge ind igen.",
+      "errorOAuth": "Socialt login mislykkedes. Prøv venligst igen."
+    },
+    "oauth": {
+      "continueWithGoogle": "Fortsæt med Google",
+      "continueWithGitHub": "Fortsæt med GitHub",
+      "continueWithMicrosoft": "Fortsæt med Microsoft",
+      "divider": "eller",
+      "error": "Noget gik galt. Prøv venligst igen."
     },
     "register": {
       "title": "Opret din konto",

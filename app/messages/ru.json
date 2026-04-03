@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "Подтвердите адрес электронной почты перед входом. Проверьте папку «Входящие».",
       "errorTokenExpired": "Ваша сессия истекла. Пожалуйста, войдите снова.",
       "errorAccountDeactivated": "Этот аккаунт деактивирован.",
-      "errorBackendRejected": "Ошибка аутентификации. Попробуйте войти снова."
+      "errorBackendRejected": "Ошибка аутентификации. Попробуйте войти снова.",
+      "errorOAuth": "Ошибка социального входа. Пожалуйста, попробуйте снова."
+    },
+    "oauth": {
+      "continueWithGoogle": "Продолжить с Google",
+      "continueWithGitHub": "Продолжить с GitHub",
+      "continueWithMicrosoft": "Продолжить с Microsoft",
+      "divider": "или",
+      "error": "Что-то пошло не так. Пожалуйста, попробуйте снова."
     },
     "register": {
       "title": "Создайте аккаунт",

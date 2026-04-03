@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "Zweryfikuj swój adres e-mail przed zalogowaniem. Sprawdź skrzynkę odbiorczą.",
       "errorTokenExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",
       "errorAccountDeactivated": "To konto zostało dezaktywowane.",
-      "errorBackendRejected": "Uwierzytelnianie nie powiodło się. Spróbuj ponownie."
+      "errorBackendRejected": "Uwierzytelnianie nie powiodło się. Spróbuj ponownie.",
+      "errorOAuth": "Logowanie społecznościowe nie powiodło się. Spróbuj ponownie."
+    },
+    "oauth": {
+      "continueWithGoogle": "Kontynuuj z Google",
+      "continueWithGitHub": "Kontynuuj z GitHub",
+      "continueWithMicrosoft": "Kontynuuj z Microsoft",
+      "divider": "lub",
+      "error": "Coś poszło nie tak. Spróbuj ponownie."
     },
     "register": {
       "title": "Utwórz konto",

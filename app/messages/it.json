@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "Verifica il tuo indirizzo email prima di accedere. Controlla la tua casella di posta.",
       "errorTokenExpired": "La tua sessione è scaduta. Accedi di nuovo.",
       "errorAccountDeactivated": "Questo account è stato disattivato.",
-      "errorBackendRejected": "Autenticazione fallita. Riprova ad accedere."
+      "errorBackendRejected": "Autenticazione fallita. Riprova ad accedere.",
+      "errorOAuth": "Accesso social non riuscito. Riprova."
+    },
+    "oauth": {
+      "continueWithGoogle": "Continua con Google",
+      "continueWithGitHub": "Continua con GitHub",
+      "continueWithMicrosoft": "Continua con Microsoft",
+      "divider": "o",
+      "error": "Qualcosa è andato storto. Riprova."
     },
     "register": {
       "title": "Crea il tuo account",

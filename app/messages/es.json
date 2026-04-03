@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "Verifica tu dirección de correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada.",
       "errorTokenExpired": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
       "errorAccountDeactivated": "Esta cuenta ha sido desactivada.",
-      "errorBackendRejected": "Error de autenticación. Intenta iniciar sesión de nuevo."
+      "errorBackendRejected": "Error de autenticación. Intenta iniciar sesión de nuevo.",
+      "errorOAuth": "El inicio de sesión social falló. Por favor, inténtalo de nuevo."
+    },
+    "oauth": {
+      "continueWithGoogle": "Continuar con Google",
+      "continueWithGitHub": "Continuar con GitHub",
+      "continueWithMicrosoft": "Continuar con Microsoft",
+      "divider": "o",
+      "error": "Algo salió mal. Por favor, inténtalo de nuevo."
     },
     "register": {
       "title": "Crea tu cuenta",

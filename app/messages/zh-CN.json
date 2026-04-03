@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "登录前请验证您的邮箱地址。请检查您的收件箱。",
       "errorTokenExpired": "您的会话已过期，请重新登录。",
       "errorAccountDeactivated": "此账户已被停用。",
-      "errorBackendRejected": "身份验证失败。请重新登录。"
+      "errorBackendRejected": "身份验证失败。请重新登录。",
+      "errorOAuth": "社交登录失败。请重试。"
+    },
+    "oauth": {
+      "continueWithGoogle": "使用 Google 继续",
+      "continueWithGitHub": "使用 GitHub 继续",
+      "continueWithMicrosoft": "使用 Microsoft 继续",
+      "divider": "或",
+      "error": "出了点问题。请重试。"
     },
     "register": {
       "title": "创建您的账户",

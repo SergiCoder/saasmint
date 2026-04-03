@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "Verifieer uw e-mailadres voordat u inlogt. Controleer uw inbox.",
       "errorTokenExpired": "Uw sessie is verlopen. Log opnieuw in.",
       "errorAccountDeactivated": "Dit account is gedeactiveerd.",
-      "errorBackendRejected": "Authenticatie mislukt. Probeer opnieuw in te loggen."
+      "errorBackendRejected": "Authenticatie mislukt. Probeer opnieuw in te loggen.",
+      "errorOAuth": "Sociale login mislukt. Probeer het opnieuw."
+    },
+    "oauth": {
+      "continueWithGoogle": "Doorgaan met Google",
+      "continueWithGitHub": "Doorgaan met GitHub",
+      "continueWithMicrosoft": "Doorgaan met Microsoft",
+      "divider": "of",
+      "error": "Er is iets misgegaan. Probeer het opnieuw."
     },
     "register": {
       "title": "Maak uw account aan",

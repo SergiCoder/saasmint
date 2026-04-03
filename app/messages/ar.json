@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "يرجى التحقق من عنوان بريدك الإلكتروني قبل تسجيل الدخول. تحقق من صندوق الوارد.",
       "errorTokenExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
       "errorAccountDeactivated": "تم إلغاء تنشيط هذا الحساب.",
-      "errorBackendRejected": "فشل المصادقة. يرجى المحاولة مرة أخرى."
+      "errorBackendRejected": "فشل المصادقة. يرجى المحاولة مرة أخرى.",
+      "errorOAuth": "فشل تسجيل الدخول الاجتماعي. يرجى المحاولة مرة أخرى."
+    },
+    "oauth": {
+      "continueWithGoogle": "المتابعة مع Google",
+      "continueWithGitHub": "المتابعة مع GitHub",
+      "continueWithMicrosoft": "المتابعة مع Microsoft",
+      "divider": "أو",
+      "error": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
     },
     "register": {
       "title": "إنشاء حسابك",

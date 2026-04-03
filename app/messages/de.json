@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden. Prüfen Sie Ihren Posteingang.",
       "errorTokenExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
       "errorAccountDeactivated": "Dieses Konto wurde deaktiviert.",
-      "errorBackendRejected": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut."
+      "errorBackendRejected": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "errorOAuth": "Social-Login fehlgeschlagen. Bitte versuchen Sie es erneut."
+    },
+    "oauth": {
+      "continueWithGoogle": "Weiter mit Google",
+      "continueWithGitHub": "Weiter mit GitHub",
+      "continueWithMicrosoft": "Weiter mit Microsoft",
+      "divider": "oder",
+      "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
     },
     "register": {
       "title": "Konto erstellen",

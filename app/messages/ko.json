@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "로그인하기 전에 이메일 주소를 인증해 주세요. 받은 편지함을 확인하세요.",
       "errorTokenExpired": "세션이 만료되었습니다. 다시 로그인해 주세요.",
       "errorAccountDeactivated": "이 계정은 비활성화되었습니다.",
-      "errorBackendRejected": "인증에 실패했습니다. 다시 로그인해 주세요."
+      "errorBackendRejected": "인증에 실패했습니다. 다시 로그인해 주세요.",
+      "errorOAuth": "소셜 로그인에 실패했습니다. 다시 시도해 주세요."
+    },
+    "oauth": {
+      "continueWithGoogle": "Google로 계속",
+      "continueWithGitHub": "GitHub로 계속",
+      "continueWithMicrosoft": "Microsoft로 계속",
+      "divider": "또는",
+      "error": "문제가 발생했습니다. 다시 시도해 주세요."
     },
     "register": {
       "title": "계정 만들기",

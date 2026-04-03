@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "Verifikasi alamat email Anda sebelum masuk. Periksa kotak masuk Anda.",
       "errorTokenExpired": "Sesi Anda telah berakhir. Silakan masuk kembali.",
       "errorAccountDeactivated": "Akun ini telah dinonaktifkan.",
-      "errorBackendRejected": "Autentikasi gagal. Silakan coba masuk kembali."
+      "errorBackendRejected": "Autentikasi gagal. Silakan coba masuk kembali.",
+      "errorOAuth": "Login sosial gagal. Silakan coba lagi."
+    },
+    "oauth": {
+      "continueWithGoogle": "Lanjutkan dengan Google",
+      "continueWithGitHub": "Lanjutkan dengan GitHub",
+      "continueWithMicrosoft": "Lanjutkan dengan Microsoft",
+      "divider": "atau",
+      "error": "Terjadi kesalahan. Silakan coba lagi."
     },
     "register": {
       "title": "Buat akun Anda",

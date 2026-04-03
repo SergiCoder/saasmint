@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "Please verify your email address before signing in. Check your inbox for a verification link.",
       "errorTokenExpired": "Your session has expired. Please sign in again.",
       "errorAccountDeactivated": "This account has been deactivated.",
-      "errorBackendRejected": "Authentication failed. Please try signing in again."
+      "errorBackendRejected": "Authentication failed. Please try signing in again.",
+      "errorOAuth": "Social login failed. Please try again."
+    },
+    "oauth": {
+      "continueWithGoogle": "Continue with Google",
+      "continueWithGitHub": "Continue with GitHub",
+      "continueWithMicrosoft": "Continue with Microsoft",
+      "divider": "or",
+      "error": "Something went wrong. Please try again."
     },
     "register": {
       "title": "Create your account",

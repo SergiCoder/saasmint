@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "Verifiera din e-postadress innan du loggar in. Kontrollera din inkorg.",
       "errorTokenExpired": "Din session har löpt ut. Logga in igen.",
       "errorAccountDeactivated": "Detta konto har inaktiverats.",
-      "errorBackendRejected": "Autentisering misslyckades. Försök logga in igen."
+      "errorBackendRejected": "Autentisering misslyckades. Försök logga in igen.",
+      "errorOAuth": "Social inloggning misslyckades. Försök igen."
+    },
+    "oauth": {
+      "continueWithGoogle": "Fortsätt med Google",
+      "continueWithGitHub": "Fortsätt med GitHub",
+      "continueWithMicrosoft": "Fortsätt med Microsoft",
+      "divider": "eller",
+      "error": "Något gick fel. Försök igen."
     },
     "register": {
       "title": "Skapa ditt konto",

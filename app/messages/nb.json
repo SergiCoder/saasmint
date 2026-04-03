@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "Bekreft e-postadressen din før du logger inn. Sjekk innboksen din.",
       "errorTokenExpired": "Økten din har utløpt. Vennligst logg inn igjen.",
       "errorAccountDeactivated": "Denne kontoen er deaktivert.",
-      "errorBackendRejected": "Autentisering mislyktes. Prøv å logge inn igjen."
+      "errorBackendRejected": "Autentisering mislyktes. Prøv å logge inn igjen.",
+      "errorOAuth": "Sosial pålogging mislyktes. Vennligst prøv igjen."
+    },
+    "oauth": {
+      "continueWithGoogle": "Fortsett med Google",
+      "continueWithGitHub": "Fortsett med GitHub",
+      "continueWithMicrosoft": "Fortsett med Microsoft",
+      "divider": "eller",
+      "error": "Noe gikk galt. Vennligst prøv igjen."
     },
     "register": {
       "title": "Opprett kontoen din",

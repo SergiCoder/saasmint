@@ -90,7 +90,15 @@
       "errorEmailNotVerified": "Veuillez vérifier votre adresse e-mail avant de vous connecter. Consultez votre boîte de réception.",
       "errorTokenExpired": "Votre session a expiré. Veuillez vous reconnecter.",
       "errorAccountDeactivated": "Ce compte a été désactivé.",
-      "errorBackendRejected": "Échec de l'authentification. Veuillez réessayer."
+      "errorBackendRejected": "Échec de l'authentification. Veuillez réessayer.",
+      "errorOAuth": "La connexion sociale a échoué. Veuillez réessayer."
+    },
+    "oauth": {
+      "continueWithGoogle": "Continuer avec Google",
+      "continueWithGitHub": "Continuer avec GitHub",
+      "continueWithMicrosoft": "Continuer avec Microsoft",
+      "divider": "ou",
+      "error": "Une erreur est survenue. Veuillez réessayer."
     },
     "register": {
       "title": "Créez votre compte",
