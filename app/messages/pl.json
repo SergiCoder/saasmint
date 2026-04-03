@@ -85,6 +85,7 @@
       "noAccount": "Nie masz konta?",
       "register": "Zarejestruj się",
       "registered": "Konto utworzone! Sprawdź e-mail, aby zweryfikować konto.",
+      "accountDeleted": "Twoje konto zostało usunięte. Przykro nam, że odchodzisz.",
       "errorNoSession": "Twoja sesja wygasła. Zaloguj się ponownie.",
       "errorEmailNotVerified": "Zweryfikuj swój adres e-mail przed zalogowaniem. Sprawdź skrzynkę odbiorczą.",
       "errorTokenExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",

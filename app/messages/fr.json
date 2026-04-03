@@ -85,6 +85,7 @@
       "noAccount": "Vous n'avez pas de compte ?",
       "register": "S'inscrire",
       "registered": "Compte créé ! Vérifiez votre e-mail pour confirmer votre compte.",
+      "accountDeleted": "Votre compte a été supprimé. Nous sommes désolés de vous voir partir.",
       "errorNoSession": "Votre session a expiré. Veuillez vous reconnecter.",
       "errorEmailNotVerified": "Veuillez vérifier votre adresse e-mail avant de vous connecter. Consultez votre boîte de réception.",
       "errorTokenExpired": "Votre session a expiré. Veuillez vous reconnecter.",

@@ -48,7 +48,7 @@ export function DeleteAccountDialog({ userEmail }: DeleteAccountDialogProps) {
       setPending(false);
       return;
     }
-    router.replace("/login");
+    router.replace("/login?deleted=true");
   }
 
   return (

@@ -85,6 +85,7 @@
       "noAccount": "Hesabınız yok mu?",
       "register": "Kaydol",
       "registered": "Hesap oluşturuldu! Hesabınızı doğrulamak için e-postanızı kontrol edin.",
+      "accountDeleted": "Hesabınız silindi. Gittiğinizi görmek bizi üzüyor.",
       "errorNoSession": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
       "errorEmailNotVerified": "Giriş yapmadan önce e-posta adresinizi doğrulayın. Gelen kutunuzu kontrol edin.",
       "errorTokenExpired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",

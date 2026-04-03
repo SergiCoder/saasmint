@@ -85,6 +85,7 @@
       "noAccount": "還沒有帳戶？",
       "register": "註冊",
       "registered": "帳戶已建立！請檢查您的電子郵件以驗證帳戶。",
+      "accountDeleted": "您的帳戶已被刪除。很遺憾看到您離開。",
       "errorNoSession": "您的工作階段已過期，請重新登入。",
       "errorEmailNotVerified": "登入前請驗證您的電子郵件地址。請檢查您的收件匣。",
       "errorTokenExpired": "您的工作階段已過期，請重新登入。",

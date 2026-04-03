@@ -85,6 +85,7 @@
       "noAccount": "Non hai un account?",
       "register": "Registrati",
       "registered": "Account creato! Controlla la tua email per verificare il tuo account.",
+      "accountDeleted": "Il tuo account è stato eliminato. Ci dispiace vederti andare.",
       "errorNoSession": "La tua sessione è scaduta. Accedi di nuovo.",
       "errorEmailNotVerified": "Verifica il tuo indirizzo email prima di accedere. Controlla la tua casella di posta.",
       "errorTokenExpired": "La tua sessione è scaduta. Accedi di nuovo.",

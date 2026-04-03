@@ -85,6 +85,7 @@
       "noAccount": "Nog geen account?",
       "register": "Registreren",
       "registered": "Account aangemaakt! Controleer uw e-mail om uw account te verifiëren.",
+      "accountDeleted": "Uw account is verwijderd. Het spijt ons u te zien gaan.",
       "errorNoSession": "Uw sessie is verlopen. Log opnieuw in.",
       "errorEmailNotVerified": "Verifieer uw e-mailadres voordat u inlogt. Controleer uw inbox.",
       "errorTokenExpired": "Uw sessie is verlopen. Log opnieuw in.",

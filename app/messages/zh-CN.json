@@ -85,6 +85,7 @@
       "noAccount": "还没有账户？",
       "register": "注册",
       "registered": "账户已创建！请检查您的邮箱以验证账户。",
+      "accountDeleted": "您的账户已被删除。很遗憾看到您离开。",
       "errorNoSession": "您的会话已过期，请重新登录。",
       "errorEmailNotVerified": "登录前请验证您的邮箱地址。请检查您的收件箱。",
       "errorTokenExpired": "您的会话已过期，请重新登录。",

@@ -85,6 +85,7 @@
       "noAccount": "Noch kein Konto?",
       "register": "Registrieren",
       "registered": "Konto erstellt! Überprüfen Sie Ihre E-Mail, um Ihr Konto zu bestätigen.",
+      "accountDeleted": "Ihr Konto wurde gelöscht. Es tut uns leid, Sie gehen zu sehen.",
       "errorNoSession": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
       "errorEmailNotVerified": "Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden. Prüfen Sie Ihren Posteingang.",
       "errorTokenExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",

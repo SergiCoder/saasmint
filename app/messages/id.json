@@ -85,6 +85,7 @@
       "noAccount": "Belum punya akun?",
       "register": "Daftar",
       "registered": "Akun dibuat! Periksa email Anda untuk memverifikasi akun.",
+      "accountDeleted": "Akun Anda telah dihapus. Kami menyesal melihat Anda pergi.",
       "errorNoSession": "Sesi Anda telah berakhir. Silakan masuk kembali.",
       "errorEmailNotVerified": "Verifikasi alamat email Anda sebelum masuk. Periksa kotak masuk Anda.",
       "errorTokenExpired": "Sesi Anda telah berakhir. Silakan masuk kembali.",

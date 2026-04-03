@@ -16,15 +16,20 @@ const ERROR_KEYS: Record<string, string> = {
   token_expired: "errorTokenExpired",
   account_deactivated: "errorAccountDeactivated",
   BACKEND_REJECTED: "errorBackendRejected",
+  account_deleted: "accountDeleted",
 };
 
 interface Props {
-  searchParams: Promise<{ error?: string; registered?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    registered?: string;
+    deleted?: string;
+  }>;
 }
 
 export default async function LoginPage({ searchParams }: Props) {
   const t = await getTranslations("auth.login");
-  const { error, registered } = await searchParams;
+  const { error, registered, deleted } = await searchParams;
 
   const errorKey = error ? ERROR_KEYS[error] : undefined;
 
@@ -42,13 +47,21 @@ export default async function LoginPage({ searchParams }: Props) {
         serverAlerts={
           <>
             {errorKey && (
-              <AlertBanner variant="error" className="mb-4">
+              <AlertBanner
+                variant={error === "account_deleted" ? "success" : "error"}
+                className="mb-4"
+              >
                 {t(errorKey)}
               </AlertBanner>
             )}
             {registered && (
               <AlertBanner variant="success" className="mb-4">
                 {t("registered")}
+              </AlertBanner>
+            )}
+            {deleted && (
+              <AlertBanner variant="success" className="mb-4">
+                {t("accountDeleted")}
               </AlertBanner>
             )}
           </>

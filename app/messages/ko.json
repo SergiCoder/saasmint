@@ -85,6 +85,7 @@
       "noAccount": "계정이 없으신가요?",
       "register": "회원가입",
       "registered": "계정이 생성되었습니다! 이메일을 확인하여 계정을 인증해 주세요.",
+      "accountDeleted": "계정이 삭제되었습니다. 이용해 주셔서 감사합니다.",
       "errorNoSession": "세션이 만료되었습니다. 다시 로그인해 주세요.",
       "errorEmailNotVerified": "로그인하기 전에 이메일 주소를 인증해 주세요. 받은 편지함을 확인하세요.",
       "errorTokenExpired": "세션이 만료되었습니다. 다시 로그인해 주세요.",

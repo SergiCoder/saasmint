@@ -85,6 +85,7 @@
       "noAccount": "Don't have an account?",
       "register": "Sign up",
       "registered": "Account created! Check your email to verify your account.",
+      "accountDeleted": "Your account has been deleted. We're sorry to see you go.",
       "errorNoSession": "Your session has expired. Please sign in again.",
       "errorEmailNotVerified": "Please verify your email address before signing in. Check your inbox for a verification link.",
       "errorTokenExpired": "Your session has expired. Please sign in again.",
