@@ -4,6 +4,7 @@ import { GetPhonePrefixes } from "@/application/use-cases/reference/GetPhonePref
 import { GetUserProfile } from "@/application/use-cases/user/GetUserProfile";
 import { referenceGateway, userGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../_data/getCurrentUser";
+import { ChangePasswordForm } from "./_components/ChangePasswordForm";
 import { DeleteAccountDialog } from "./_components/DeleteAccountDialog";
 import { SettingsForm } from "./_components/SettingsForm";
 
@@ -30,6 +31,12 @@ export default async function SettingsPage() {
           {t("profile")}
         </h2>
         <SettingsForm user={user} phonePrefixes={phonePrefixes} />
+      </section>
+      <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+          {t("changePassword")}
+        </h2>
+        <ChangePasswordForm />
       </section>
       <section className="rounded-lg border border-red-200 bg-white p-6 shadow-sm">
         <h2 className="mb-2 text-lg font-semibold text-red-600">

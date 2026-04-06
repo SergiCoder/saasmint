@@ -76,8 +76,30 @@ export async function resetPassword(_prevState: unknown, formData: FormData) {
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?next=/settings`,
+    redirectTo: `${origin}/auth/callback?next=/reset-password`,
   });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: true };
+}
+
+export async function updatePassword(_prevState: unknown, formData: FormData) {
+  const password = formData.get("password");
+  const confirmPassword = formData.get("confirmPassword");
+
+  if (typeof password !== "string" || password.length < 8) {
+    return { error: "Password must be at least 8 characters" };
+  }
+
+  if (password !== confirmPassword) {
+    return { error: "Passwords do not match" };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({ password });
 
   if (error) {
     return { error: error.message };
