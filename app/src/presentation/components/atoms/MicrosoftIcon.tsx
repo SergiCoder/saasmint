@@ -1,4 +1,4 @@
-interface MicrosoftIconProps {
+export interface MicrosoftIconProps {
   className?: string;
 }
 

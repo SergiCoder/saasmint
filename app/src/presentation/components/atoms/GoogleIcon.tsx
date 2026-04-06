@@ -1,4 +1,4 @@
-interface GoogleIconProps {
+export interface GoogleIconProps {
   className?: string;
 }
 

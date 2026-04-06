@@ -5,6 +5,8 @@ import { createClient } from "@/infrastructure/supabase/server";
 import { SignOut } from "@/application/use-cases/auth/SignOut";
 import { authGateway } from "@/infrastructure/registry";
 
+const APP_ORIGIN = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
 function extractCredentials(
   formData: FormData,
 ): { email: string; password: string } | { error: string } {
@@ -45,13 +47,11 @@ export async function signUp(_prevState: unknown, formData: FormData) {
     return { error: "Full name must be between 3 and 255 characters" };
   }
 
-  const origin = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     ...result,
     options: {
-      emailRedirectTo: `${origin}/auth/callback`,
+      emailRedirectTo: `${APP_ORIGIN}/auth/callback`,
       data: {
         full_name: fullName,
       },
@@ -72,11 +72,9 @@ export async function resetPassword(_prevState: unknown, formData: FormData) {
     return { error: "Email is required" };
   }
 
-  const origin = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?next=/reset-password`,
+    redirectTo: `${APP_ORIGIN}/auth/callback?next=/reset-password`,
   });
 
   if (error) {

@@ -1,4 +1,4 @@
-interface GitHubIconProps {
+export interface GitHubIconProps {
   className?: string;
 }
 
