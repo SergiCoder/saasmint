@@ -11,7 +11,9 @@ interface ForgotPasswordFormProps {
   action: (
     prev: unknown,
     fd: FormData,
-  ) => Promise<{ error: string } | { success: boolean }>;
+  ) => Promise<
+    { error: string; success?: never } | { success: boolean; error?: never }
+  >;
 }
 
 export function ForgotPasswordForm({ action }: ForgotPasswordFormProps) {

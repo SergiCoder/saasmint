@@ -30,7 +30,7 @@ const providers = [
 
 export function OAuthButtons() {
   const t = useTranslations("auth.oauth");
-  const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
+  const [loadingProvider, setLoadingProvider] = useState<Provider | null>(null);
 
   async function handleOAuth(provider: Provider) {
     setLoadingProvider(provider);
