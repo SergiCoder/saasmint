@@ -73,4 +73,26 @@ describe("auth callback route", () => {
     expect(location.pathname).toBe("/login");
     expect(location.searchParams.get("error")).toBe("oauth_error");
   });
+
+  it("blocks protocol-relative open redirect (//evil.com)", async () => {
+    mockExchangeCodeForSession.mockResolvedValue({ error: null });
+
+    const response = await GET(
+      makeRequest({ code: "valid-code", next: "//evil.com" }),
+    );
+    expect(new URL(response.headers.get("location")!).pathname).toBe(
+      "/dashboard",
+    );
+  });
+
+  it("blocks absolute URL open redirect", async () => {
+    mockExchangeCodeForSession.mockResolvedValue({ error: null });
+
+    const response = await GET(
+      makeRequest({ code: "valid-code", next: "https://evil.com" }),
+    );
+    expect(new URL(response.headers.get("location")!).pathname).toBe(
+      "/dashboard",
+    );
+  });
 });
