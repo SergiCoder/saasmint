@@ -127,6 +127,15 @@
       "pronounsHeHim": "Han/Ham",
       "pronounsSheHer": "Hun/Henne",
       "pronounsTheyThem": "Hen"
+    },
+    "resetPassword": {
+      "pageTitle": "Tilbakestill passord",
+      "title": "Sett et nytt passord",
+      "newPassword": "Nytt passord",
+      "confirmPassword": "Bekreft passord",
+      "submit": "Tilbakestill passord",
+      "successMessage": "Passordet ditt er oppdatert. Du kan nå logge inn med det nye passordet.",
+      "backToLogin": "Logg inn"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "Kunne ikke slette kontoen. Prøv igjen.",
     "pronounsHeHim": "Han/Ham",
     "pronounsSheHer": "Hun/Henne",
-    "pronounsTheyThem": "Hen"
+    "pronounsTheyThem": "Hen",
+    "changePassword": "Endre passord",
+    "newPassword": "Nytt passord",
+    "confirmPassword": "Bekreft passord",
+    "passwordChangeSubmit": "Oppdater passord",
+    "passwordChangeSuccess": "Passordet ditt er oppdatert."
   },
   "org": {
     "title": "Organisasjon",

@@ -127,6 +127,15 @@
       "pronounsHeHim": "Dia (laki-laki)",
       "pronounsSheHer": "Dia (perempuan)",
       "pronounsTheyThem": "Mereka"
+    },
+    "resetPassword": {
+      "pageTitle": "Atur ulang kata sandi",
+      "title": "Tetapkan kata sandi baru",
+      "newPassword": "Kata sandi baru",
+      "confirmPassword": "Konfirmasi kata sandi",
+      "submit": "Atur ulang kata sandi",
+      "successMessage": "Kata sandi Anda telah diperbarui. Anda sekarang dapat masuk dengan kata sandi baru Anda.",
+      "backToLogin": "Masuk"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "Gagal menghapus akun. Silakan coba lagi.",
     "pronounsHeHim": "Dia (laki-laki)",
     "pronounsSheHer": "Dia (perempuan)",
-    "pronounsTheyThem": "Mereka"
+    "pronounsTheyThem": "Mereka",
+    "changePassword": "Ubah kata sandi",
+    "newPassword": "Kata sandi baru",
+    "confirmPassword": "Konfirmasi kata sandi",
+    "passwordChangeSubmit": "Perbarui kata sandi",
+    "passwordChangeSuccess": "Kata sandi Anda telah diperbarui."
   },
   "org": {
     "title": "Organisasi",

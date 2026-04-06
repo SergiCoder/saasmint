@@ -127,6 +127,15 @@
       "pronounsHeHim": "On/Jego",
       "pronounsSheHer": "Ona/Jej",
       "pronounsTheyThem": "Ono/Ich"
+    },
+    "resetPassword": {
+      "pageTitle": "Resetowanie hasła",
+      "title": "Ustaw nowe hasło",
+      "newPassword": "Nowe hasło",
+      "confirmPassword": "Potwierdź hasło",
+      "submit": "Zresetuj hasło",
+      "successMessage": "Twoje hasło zostało zaktualizowane. Możesz teraz zalogować się nowym hasłem.",
+      "backToLogin": "Zaloguj się"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "Nie udało się usunąć konta. Spróbuj ponownie.",
     "pronounsHeHim": "On/Jego",
     "pronounsSheHer": "Ona/Jej",
-    "pronounsTheyThem": "Ono/Ich"
+    "pronounsTheyThem": "Ono/Ich",
+    "changePassword": "Zmień hasło",
+    "newPassword": "Nowe hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "passwordChangeSubmit": "Zaktualizuj hasło",
+    "passwordChangeSuccess": "Twoje hasło zostało zaktualizowane."
   },
   "org": {
     "title": "Organizacja",

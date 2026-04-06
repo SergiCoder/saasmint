@@ -127,6 +127,15 @@
       "pronounsHeHim": "그/Him",
       "pronounsSheHer": "그녀/Her",
       "pronounsTheyThem": "They/Them"
+    },
+    "resetPassword": {
+      "pageTitle": "비밀번호 재설정",
+      "title": "새 비밀번호 설정",
+      "newPassword": "새 비밀번호",
+      "confirmPassword": "비밀번호 확인",
+      "submit": "비밀번호 재설정",
+      "successMessage": "비밀번호가 업데이트되었습니다. 새 비밀번호로 로그인할 수 있습니다.",
+      "backToLogin": "로그인"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "계정 삭제에 실패했습니다. 다시 시도해 주세요.",
     "pronounsHeHim": "그/Him",
     "pronounsSheHer": "그녀/Her",
-    "pronounsTheyThem": "They/Them"
+    "pronounsTheyThem": "They/Them",
+    "changePassword": "비밀번호 변경",
+    "newPassword": "새 비밀번호",
+    "confirmPassword": "비밀번호 확인",
+    "passwordChangeSubmit": "비밀번호 업데이트",
+    "passwordChangeSuccess": "비밀번호가 업데이트되었습니다."
   },
   "org": {
     "title": "조직",

@@ -101,7 +101,7 @@
       "email": "E-Mail-Adresse",
       "submit": "Link zum Zurücksetzen senden",
       "successMessage": "Wenn ein Konto mit dieser E-Mail existiert, erhalten Sie in Kürze einen Link zum Zurücksetzen des Passworts.",
-      "rememberPassword": "Passwort erinnerst du dich?",
+      "rememberPassword": "Erinnern Sie sich an Ihr Passwort?",
       "backToLogin": "Anmelden"
     },
     "oauth": {
@@ -127,6 +127,15 @@
       "pronounsHeHim": "Er/Ihm",
       "pronounsSheHer": "Sie/Ihr",
       "pronounsTheyThem": "They/Them"
+    },
+    "resetPassword": {
+      "pageTitle": "Passwort zurücksetzen",
+      "title": "Neues Passwort festlegen",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "submit": "Passwort zurücksetzen",
+      "successMessage": "Ihr Passwort wurde aktualisiert. Sie können sich jetzt mit Ihrem neuen Passwort anmelden.",
+      "backToLogin": "Anmelden"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
     "pronounsHeHim": "Er/Ihm",
     "pronounsSheHer": "Sie/Ihr",
-    "pronounsTheyThem": "They/Them"
+    "pronounsTheyThem": "They/Them",
+    "changePassword": "Passwort ändern",
+    "newPassword": "Neues Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "passwordChangeSubmit": "Passwort aktualisieren",
+    "passwordChangeSuccess": "Ihr Passwort wurde aktualisiert."
   },
   "org": {
     "title": "Organisation",

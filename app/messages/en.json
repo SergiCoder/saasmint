@@ -104,6 +104,15 @@
       "rememberPassword": "Remember your password?",
       "backToLogin": "Sign in"
     },
+    "resetPassword": {
+      "pageTitle": "Reset password",
+      "title": "Set a new password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "submit": "Reset password",
+      "successMessage": "Your password has been updated. You can now sign in with your new password.",
+      "backToLogin": "Sign in"
+    },
     "oauth": {
       "continueWithGoogle": "Continue with Google",
       "continueWithGitHub": "Continue with GitHub",
@@ -188,7 +197,12 @@
     "deleteDialogError": "Failed to delete account. Please try again.",
     "pronounsHeHim": "He/Him",
     "pronounsSheHer": "She/Her",
-    "pronounsTheyThem": "They/Them"
+    "pronounsTheyThem": "They/Them",
+    "changePassword": "Change password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "passwordChangeSubmit": "Update password",
+    "passwordChangeSuccess": "Your password has been updated."
   },
   "org": {
     "title": "Organization",

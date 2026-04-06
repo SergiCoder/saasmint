@@ -127,6 +127,15 @@
       "pronounsHeHim": "Él",
       "pronounsSheHer": "Ella",
       "pronounsTheyThem": "Elle"
+    },
+    "resetPassword": {
+      "pageTitle": "Restablecer contraseña",
+      "title": "Establecer nueva contraseña",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "submit": "Restablecer contraseña",
+      "successMessage": "Tu contraseña ha sido actualizada. Ahora puedes iniciar sesión con tu nueva contraseña.",
+      "backToLogin": "Iniciar sesión"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "No se pudo eliminar la cuenta. Por favor, inténtalo de nuevo.",
     "pronounsHeHim": "Él",
     "pronounsSheHer": "Ella",
-    "pronounsTheyThem": "Elle"
+    "pronounsTheyThem": "Elle",
+    "changePassword": "Cambiar contraseña",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "passwordChangeSubmit": "Actualizar contraseña",
+    "passwordChangeSuccess": "Tu contraseña ha sido actualizada."
   },
   "org": {
     "title": "Organización",

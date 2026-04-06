@@ -127,6 +127,15 @@
       "pronounsHeHim": "Ele/Dele",
       "pronounsSheHer": "Ela/Dela",
       "pronounsTheyThem": "Elu/Delu"
+    },
+    "resetPassword": {
+      "pageTitle": "Redefinir palavra-passe",
+      "title": "Definir nova palavra-passe",
+      "newPassword": "Nova palavra-passe",
+      "confirmPassword": "Confirmar palavra-passe",
+      "submit": "Redefinir palavra-passe",
+      "successMessage": "A sua palavra-passe foi atualizada. Pode agora iniciar sessão com a nova palavra-passe.",
+      "backToLogin": "Iniciar sessão"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "Não foi possível eliminar a conta. Tente novamente.",
     "pronounsHeHim": "Ele/Dele",
     "pronounsSheHer": "Ela/Dela",
-    "pronounsTheyThem": "Elu/Delu"
+    "pronounsTheyThem": "Elu/Delu",
+    "changePassword": "Alterar palavra-passe",
+    "newPassword": "Nova palavra-passe",
+    "confirmPassword": "Confirmar palavra-passe",
+    "passwordChangeSubmit": "Atualizar palavra-passe",
+    "passwordChangeSuccess": "A sua palavra-passe foi atualizada."
   },
   "org": {
     "title": "Organização",

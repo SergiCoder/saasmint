@@ -127,6 +127,15 @@
       "pronounsHeHim": "Lui",
       "pronounsSheHer": "Lei",
       "pronounsTheyThem": "Their"
+    },
+    "resetPassword": {
+      "pageTitle": "Reimposta password",
+      "title": "Imposta una nuova password",
+      "newPassword": "Nuova password",
+      "confirmPassword": "Conferma password",
+      "submit": "Reimposta password",
+      "successMessage": "La tua password è stata aggiornata. Ora puoi accedere con la tua nuova password.",
+      "backToLogin": "Accedi"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "Impossibile eliminare l'account. Riprova.",
     "pronounsHeHim": "Lui",
     "pronounsSheHer": "Lei",
-    "pronounsTheyThem": "Their"
+    "pronounsTheyThem": "Their",
+    "changePassword": "Cambia password",
+    "newPassword": "Nuova password",
+    "confirmPassword": "Conferma password",
+    "passwordChangeSubmit": "Aggiorna password",
+    "passwordChangeSuccess": "La tua password è stata aggiornata."
   },
   "org": {
     "title": "Organizzazione",

@@ -127,6 +127,15 @@
       "pronounsHeHim": "Ele/Dele",
       "pronounsSheHer": "Ela/Dela",
       "pronounsTheyThem": "Elu/Delu"
+    },
+    "resetPassword": {
+      "pageTitle": "Redefinir senha",
+      "title": "Definir nova senha",
+      "newPassword": "Nova senha",
+      "confirmPassword": "Confirmar senha",
+      "submit": "Redefinir senha",
+      "successMessage": "Sua senha foi atualizada. Agora você pode entrar com sua nova senha.",
+      "backToLogin": "Entrar"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "Falha ao excluir a conta. Tente novamente.",
     "pronounsHeHim": "Ele/Dele",
     "pronounsSheHer": "Ela/Dela",
-    "pronounsTheyThem": "Elu/Delu"
+    "pronounsTheyThem": "Elu/Delu",
+    "changePassword": "Alterar senha",
+    "newPassword": "Nova senha",
+    "confirmPassword": "Confirmar senha",
+    "passwordChangeSubmit": "Atualizar senha",
+    "passwordChangeSuccess": "Sua senha foi atualizada."
   },
   "org": {
     "title": "Organização",

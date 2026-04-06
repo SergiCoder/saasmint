@@ -127,6 +127,15 @@
       "pronounsHeHim": "Han/Honom",
       "pronounsSheHer": "Hon/Henne",
       "pronounsTheyThem": "Hen"
+    },
+    "resetPassword": {
+      "pageTitle": "Återställ lösenord",
+      "title": "Ange nytt lösenord",
+      "newPassword": "Nytt lösenord",
+      "confirmPassword": "Bekräfta lösenord",
+      "submit": "Återställ lösenord",
+      "successMessage": "Ditt lösenord har uppdaterats. Du kan nu logga in med ditt nya lösenord.",
+      "backToLogin": "Logga in"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "Det gick inte att radera kontot. Försök igen.",
     "pronounsHeHim": "Han/Honom",
     "pronounsSheHer": "Hon/Henne",
-    "pronounsTheyThem": "Hen"
+    "pronounsTheyThem": "Hen",
+    "changePassword": "Ändra lösenord",
+    "newPassword": "Nytt lösenord",
+    "confirmPassword": "Bekräfta lösenord",
+    "passwordChangeSubmit": "Uppdatera lösenord",
+    "passwordChangeSuccess": "Ditt lösenord har uppdaterats."
   },
   "org": {
     "title": "Organisation",

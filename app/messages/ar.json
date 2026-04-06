@@ -127,6 +127,15 @@
       "pronounsHeHim": "هو/له",
       "pronounsSheHer": "هي/لها",
       "pronounsTheyThem": "هم/لهم"
+    },
+    "resetPassword": {
+      "pageTitle": "إعادة تعيين كلمة المرور",
+      "title": "تعيين كلمة مرور جديدة",
+      "newPassword": "كلمة المرور الجديدة",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "submit": "إعادة تعيين كلمة المرور",
+      "successMessage": "تم تحديث كلمة المرور الخاصة بك. يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.",
+      "backToLogin": "تسجيل الدخول"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "فشل حذف الحساب. يرجى المحاولة مرة أخرى.",
     "pronounsHeHim": "هو/له",
     "pronounsSheHer": "هي/لها",
-    "pronounsTheyThem": "هم/لهم"
+    "pronounsTheyThem": "هم/لهم",
+    "changePassword": "تغيير كلمة المرور",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "passwordChangeSubmit": "تحديث كلمة المرور",
+    "passwordChangeSuccess": "تم تحديث كلمة المرور الخاصة بك."
   },
   "org": {
     "title": "المنظمة",

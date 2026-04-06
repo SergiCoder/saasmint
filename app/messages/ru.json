@@ -127,6 +127,15 @@
       "pronounsHeHim": "Он/Его",
       "pronounsSheHer": "Она/Её",
       "pronounsTheyThem": "Они/Их"
+    },
+    "resetPassword": {
+      "pageTitle": "Сброс пароля",
+      "title": "Установить новый пароль",
+      "newPassword": "Новый пароль",
+      "confirmPassword": "Подтвердите пароль",
+      "submit": "Сбросить пароль",
+      "successMessage": "Ваш пароль обновлён. Теперь вы можете войти с новым паролем.",
+      "backToLogin": "Войти"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "Не удалось удалить аккаунт. Пожалуйста, попробуйте снова.",
     "pronounsHeHim": "Он/Его",
     "pronounsSheHer": "Она/Её",
-    "pronounsTheyThem": "Они/Их"
+    "pronounsTheyThem": "Они/Их",
+    "changePassword": "Изменить пароль",
+    "newPassword": "Новый пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "passwordChangeSubmit": "Обновить пароль",
+    "passwordChangeSuccess": "Ваш пароль обновлён."
   },
   "org": {
     "title": "Организация",

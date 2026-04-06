@@ -127,6 +127,15 @@
       "pronounsHeHim": "Il/Lui",
       "pronounsSheHer": "Elle",
       "pronounsTheyThem": "Iel"
+    },
+    "resetPassword": {
+      "pageTitle": "Réinitialiser le mot de passe",
+      "title": "Définir un nouveau mot de passe",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "submit": "Réinitialiser le mot de passe",
+      "successMessage": "Votre mot de passe a été mis à jour. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+      "backToLogin": "Se connecter"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "Échec de la suppression du compte. Veuillez réessayer.",
     "pronounsHeHim": "Il/Lui",
     "pronounsSheHer": "Elle",
-    "pronounsTheyThem": "Iel"
+    "pronounsTheyThem": "Iel",
+    "changePassword": "Changer le mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "passwordChangeSubmit": "Mettre à jour le mot de passe",
+    "passwordChangeSuccess": "Votre mot de passe a été mis à jour."
   },
   "org": {
     "title": "Organisation",

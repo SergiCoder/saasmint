@@ -127,6 +127,15 @@
       "pronounsHeHim": "他/Him",
       "pronounsSheHer": "她/Her",
       "pronounsTheyThem": "They/Them"
+    },
+    "resetPassword": {
+      "pageTitle": "重置密码",
+      "title": "设置新密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认密码",
+      "submit": "重置密码",
+      "successMessage": "您的密码已更新。您现在可以使用新密码登录。",
+      "backToLogin": "登录"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "删除账户失败，请重试。",
     "pronounsHeHim": "他/Him",
     "pronounsSheHer": "她/Her",
-    "pronounsTheyThem": "They/Them"
+    "pronounsTheyThem": "They/Them",
+    "changePassword": "更改密码",
+    "newPassword": "新密码",
+    "confirmPassword": "确认密码",
+    "passwordChangeSubmit": "更新密码",
+    "passwordChangeSuccess": "您的密码已更新。"
   },
   "org": {
     "title": "组织",

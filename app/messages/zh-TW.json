@@ -127,6 +127,15 @@
       "pronounsHeHim": "他/Him",
       "pronounsSheHer": "她/Her",
       "pronounsTheyThem": "They/Them"
+    },
+    "resetPassword": {
+      "pageTitle": "重設密碼",
+      "title": "設定新密碼",
+      "newPassword": "新密碼",
+      "confirmPassword": "確認密碼",
+      "submit": "重設密碼",
+      "successMessage": "您的密碼已更新。您現在可以使用新密碼登入。",
+      "backToLogin": "登入"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "刪除帳戶失敗，請重試。",
     "pronounsHeHim": "他/Him",
     "pronounsSheHer": "她/Her",
-    "pronounsTheyThem": "They/Them"
+    "pronounsTheyThem": "They/Them",
+    "changePassword": "變更密碼",
+    "newPassword": "新密碼",
+    "confirmPassword": "確認密碼",
+    "passwordChangeSubmit": "更新密碼",
+    "passwordChangeSuccess": "您的密碼已更新。"
   },
   "org": {
     "title": "組織",

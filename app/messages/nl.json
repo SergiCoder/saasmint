@@ -127,6 +127,15 @@
       "pronounsHeHim": "Hij/Hem",
       "pronounsSheHer": "Zij/Haar",
       "pronounsTheyThem": "Hen/Hun"
+    },
+    "resetPassword": {
+      "pageTitle": "Wachtwoord resetten",
+      "title": "Nieuw wachtwoord instellen",
+      "newPassword": "Nieuw wachtwoord",
+      "confirmPassword": "Wachtwoord bevestigen",
+      "submit": "Wachtwoord resetten",
+      "successMessage": "Je wachtwoord is bijgewerkt. Je kunt nu inloggen met je nieuwe wachtwoord.",
+      "backToLogin": "Inloggen"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "Account verwijderen mislukt. Probeer het opnieuw.",
     "pronounsHeHim": "Hij/Hem",
     "pronounsSheHer": "Zij/Haar",
-    "pronounsTheyThem": "Hen/Hun"
+    "pronounsTheyThem": "Hen/Hun",
+    "changePassword": "Wachtwoord wijzigen",
+    "newPassword": "Nieuw wachtwoord",
+    "confirmPassword": "Wachtwoord bevestigen",
+    "passwordChangeSubmit": "Wachtwoord bijwerken",
+    "passwordChangeSuccess": "Je wachtwoord is bijgewerkt."
   },
   "org": {
     "title": "Organisatie",

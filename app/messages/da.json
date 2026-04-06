@@ -127,6 +127,15 @@
       "pronounsHeHim": "Han/Ham",
       "pronounsSheHer": "Hun/Hende",
       "pronounsTheyThem": "De/Dem"
+    },
+    "resetPassword": {
+      "pageTitle": "Nulstil adgangskode",
+      "title": "Angiv ny adgangskode",
+      "newPassword": "Ny adgangskode",
+      "confirmPassword": "Bekræft adgangskode",
+      "submit": "Nulstil adgangskode",
+      "successMessage": "Din adgangskode er blevet opdateret. Du kan nu logge ind med din nye adgangskode.",
+      "backToLogin": "Log ind"
     }
   },
   "dashboard": {
@@ -188,7 +197,12 @@
     "deleteDialogError": "Kontoen kunne ikke slettes. Prøv igen.",
     "pronounsHeHim": "Han/Ham",
     "pronounsSheHer": "Hun/Hende",
-    "pronounsTheyThem": "De/Dem"
+    "pronounsTheyThem": "De/Dem",
+    "changePassword": "Skift adgangskode",
+    "newPassword": "Ny adgangskode",
+    "confirmPassword": "Bekræft adgangskode",
+    "passwordChangeSubmit": "Opdater adgangskode",
+    "passwordChangeSuccess": "Din adgangskode er blevet opdateret."
   },
   "org": {
     "title": "Organisation",
