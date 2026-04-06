@@ -73,13 +73,10 @@ export async function resetPassword(_prevState: unknown, formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  // Fire-and-forget: always return success to avoid leaking whether the email exists.
+  await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${APP_ORIGIN}/auth/callback?next=/reset-password`,
   });
-
-  if (error) {
-    return { error: error.message };
-  }
 
   return { success: true };
 }

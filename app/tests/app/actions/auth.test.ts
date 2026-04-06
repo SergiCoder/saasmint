@@ -205,7 +205,7 @@ describe("auth server actions", () => {
       expect(mockResetPasswordForEmail).not.toHaveBeenCalled();
     });
 
-    it("returns error message on Supabase failure", async () => {
+    it("returns success even on Supabase failure to avoid email enumeration", async () => {
       mockResetPasswordForEmail.mockResolvedValue({
         error: { message: "Rate limit exceeded" },
       });
@@ -214,7 +214,7 @@ describe("auth server actions", () => {
       formData.set("email", "user@example.com");
 
       const result = await resetPassword(undefined, formData);
-      expect(result).toEqual({ error: "Rate limit exceeded" });
+      expect(result).toEqual({ success: true });
     });
   });
 
