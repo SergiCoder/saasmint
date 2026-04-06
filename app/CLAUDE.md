@@ -51,8 +51,8 @@ Each gateway implements a port interface from `src/application/ports/` (e.g. `IO
 
 Strict atomic design in `src/presentation/components/`:
 
-- `atoms/` — Button, Input, Badge, Avatar, Label, Spinner, Logo, SectionLabel, LocaleDropdown
-- `molecules/` — FormField, MetricCard, NavLink, PlanCard, AlertBanner, FeatureCard, StatItem, TrustBar, OrgCard
+- `atoms/` — Button, Input, Badge, Avatar, Label, Spinner, Logo, SectionLabel, LocaleDropdown, Divider, GitHubIcon, GoogleIcon, MicrosoftIcon
+- `molecules/` — FormField, MetricCard, NavLink, PlanCard, AlertBanner, FeatureCard, StatItem, TrustBar, OrgCard, OAuthButtons
 - `organisms/` — NavBar, Footer, PricingTable, SubscriptionCard, OrgMemberList, InvoiceTable, CtaSection, DashboardMock, FeaturesGrid, LogoCloud, StatsSection
 - `templates/` — MarketingLayout, AuthLayout, AppLayout, PolicyPage
 
@@ -74,7 +74,7 @@ Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, 
 `src/app/[locale]/` uses three route groups with distinct layouts:
 
 - `(marketing)/` — public pages (landing, pricing, blog, about, contact, privacy, terms, cookies) using `MarketingLayout`
-- `(auth)/` — login/signup pages using `AuthLayout`
+- `(auth)/` — login/signup/forgot-password/reset-password pages using `AuthLayout`
 - `(app)/` — authenticated pages (dashboard, billing, settings, org) using `AppLayout`
 
 Route-specific client components live in co-located `_components/` directories (e.g. `(app)/billing/_components/CheckoutButton.tsx`).

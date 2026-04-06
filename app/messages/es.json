@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "Verifica tu dirección de correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada.",
       "errorTokenExpired": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
       "errorAccountDeactivated": "Esta cuenta ha sido desactivada.",
-      "errorBackendRejected": "Error de autenticación. Intenta iniciar sesión de nuevo."
+      "errorBackendRejected": "Error de autenticación. Intenta iniciar sesión de nuevo.",
+      "errorOAuth": "El inicio de sesión social falló. Por favor, inténtalo de nuevo.",
+      "forgotPassword": "¿Olvidaste tu contraseña?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Olvidé mi contraseña",
+      "title": "Restablecer tu contraseña",
+      "description": "Introduce tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+      "email": "Dirección de correo electrónico",
+      "submit": "Enviar enlace de restablecimiento",
+      "successMessage": "Si existe una cuenta con ese correo electrónico, recibirás un enlace para restablecer tu contraseña en breve.",
+      "rememberPassword": "¿Recuerdas tu contraseña?",
+      "backToLogin": "Iniciar sesión"
+    },
+    "oauth": {
+      "continueWithGoogle": "Continuar con Google",
+      "continueWithGitHub": "Continuar con GitHub",
+      "continueWithMicrosoft": "Continuar con Microsoft",
+      "divider": "o",
+      "error": "Algo salió mal. Por favor, inténtalo de nuevo."
     },
     "register": {
       "title": "Crea tu cuenta",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "Él",
       "pronounsSheHer": "Ella",
       "pronounsTheyThem": "Elle"
+    },
+    "resetPassword": {
+      "pageTitle": "Restablecer contraseña",
+      "title": "Establecer nueva contraseña",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "submit": "Restablecer contraseña",
+      "successMessage": "Tu contraseña ha sido actualizada. Ahora puedes iniciar sesión con tu nueva contraseña.",
+      "backToLogin": "Iniciar sesión"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "No se pudo eliminar la cuenta. Por favor, inténtalo de nuevo.",
     "pronounsHeHim": "Él",
     "pronounsSheHer": "Ella",
-    "pronounsTheyThem": "Elle"
+    "pronounsTheyThem": "Elle",
+    "changePassword": "Cambiar contraseña",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "passwordChangeSubmit": "Actualizar contraseña",
+    "passwordChangeSuccess": "Tu contraseña ha sido actualizada."
   },
   "org": {
     "title": "Organización",

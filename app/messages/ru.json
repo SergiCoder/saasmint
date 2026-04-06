@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "Подтвердите адрес электронной почты перед входом. Проверьте папку «Входящие».",
       "errorTokenExpired": "Ваша сессия истекла. Пожалуйста, войдите снова.",
       "errorAccountDeactivated": "Этот аккаунт деактивирован.",
-      "errorBackendRejected": "Ошибка аутентификации. Попробуйте войти снова."
+      "errorBackendRejected": "Ошибка аутентификации. Попробуйте войти снова.",
+      "errorOAuth": "Ошибка социального входа. Пожалуйста, попробуйте снова.",
+      "forgotPassword": "Забыли пароль?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Забыли пароль",
+      "title": "Сбросить пароль",
+      "description": "Введите ваш адрес электронной почты, и мы отправим вам ссылку для сброса пароля.",
+      "email": "Адрес электронной почты",
+      "submit": "Отправить ссылку для сброса",
+      "successMessage": "Если учётная запись с таким email существует, вы скоро получите ссылку для сброса пароля.",
+      "rememberPassword": "Помните пароль?",
+      "backToLogin": "Войти"
+    },
+    "oauth": {
+      "continueWithGoogle": "Продолжить с Google",
+      "continueWithGitHub": "Продолжить с GitHub",
+      "continueWithMicrosoft": "Продолжить с Microsoft",
+      "divider": "или",
+      "error": "Что-то пошло не так. Пожалуйста, попробуйте снова."
     },
     "register": {
       "title": "Создайте аккаунт",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "Он/Его",
       "pronounsSheHer": "Она/Её",
       "pronounsTheyThem": "Они/Их"
+    },
+    "resetPassword": {
+      "pageTitle": "Сброс пароля",
+      "title": "Установить новый пароль",
+      "newPassword": "Новый пароль",
+      "confirmPassword": "Подтвердите пароль",
+      "submit": "Сбросить пароль",
+      "successMessage": "Ваш пароль обновлён. Теперь вы можете войти с новым паролем.",
+      "backToLogin": "Войти"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "Не удалось удалить аккаунт. Пожалуйста, попробуйте снова.",
     "pronounsHeHim": "Он/Его",
     "pronounsSheHer": "Она/Её",
-    "pronounsTheyThem": "Они/Их"
+    "pronounsTheyThem": "Они/Их",
+    "changePassword": "Изменить пароль",
+    "newPassword": "Новый пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "passwordChangeSubmit": "Обновить пароль",
+    "passwordChangeSuccess": "Ваш пароль обновлён."
   },
   "org": {
     "title": "Организация",

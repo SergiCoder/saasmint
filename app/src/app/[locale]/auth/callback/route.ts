@@ -4,15 +4,28 @@ import { createClient } from "@/infrastructure/supabase/server";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
+  const error = searchParams.get("error");
+  const nextParam = searchParams.get("next") ?? "/dashboard";
+
+  // Prevent open redirect: only allow relative paths (reject protocol-relative URLs like //evil.com)
+  const next =
+    nextParam.startsWith("/") && !nextParam.startsWith("//")
+      ? nextParam
+      : "/dashboard";
+
+  if (error) {
+    return NextResponse.redirect(new URL("/login?error=oauth_error", origin));
+  }
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { error: exchangeError } =
+      await supabase.auth.exchangeCodeForSession(code);
 
-    if (!error) {
-      return NextResponse.redirect(new URL("/dashboard", origin));
+    if (!exchangeError) {
+      return NextResponse.redirect(new URL(next, origin));
     }
   }
 
-  return NextResponse.redirect(new URL("/login", origin));
+  return NextResponse.redirect(new URL("/login?error=oauth_error", origin));
 }

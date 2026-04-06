@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "Verifique seu endereço de e-mail antes de fazer login. Confira sua caixa de entrada.",
       "errorTokenExpired": "Sua sessão expirou. Faça login novamente.",
       "errorAccountDeactivated": "Esta conta foi desativada.",
-      "errorBackendRejected": "Falha na autenticação. Tente fazer login novamente."
+      "errorBackendRejected": "Falha na autenticação. Tente fazer login novamente.",
+      "errorOAuth": "Login social falhou. Por favor, tente novamente.",
+      "forgotPassword": "Esqueceu a senha?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Esqueci a senha",
+      "title": "Redefinir sua senha",
+      "description": "Digite seu endereço de e-mail e enviaremos um link para redefinir sua senha.",
+      "email": "Endereço de e-mail",
+      "submit": "Enviar link de redefinição",
+      "successMessage": "Se existir uma conta com esse e-mail, você receberá um link para redefinição de senha em breve.",
+      "rememberPassword": "Lembra da sua senha?",
+      "backToLogin": "Entrar"
+    },
+    "oauth": {
+      "continueWithGoogle": "Continuar com Google",
+      "continueWithGitHub": "Continuar com GitHub",
+      "continueWithMicrosoft": "Continuar com Microsoft",
+      "divider": "ou",
+      "error": "Algo deu errado. Por favor, tente novamente."
     },
     "register": {
       "title": "Crie sua conta",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "Ele/Dele",
       "pronounsSheHer": "Ela/Dela",
       "pronounsTheyThem": "Elu/Delu"
+    },
+    "resetPassword": {
+      "pageTitle": "Redefinir senha",
+      "title": "Definir nova senha",
+      "newPassword": "Nova senha",
+      "confirmPassword": "Confirmar senha",
+      "submit": "Redefinir senha",
+      "successMessage": "Sua senha foi atualizada. Agora você pode entrar com sua nova senha.",
+      "backToLogin": "Entrar"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "Falha ao excluir a conta. Tente novamente.",
     "pronounsHeHim": "Ele/Dele",
     "pronounsSheHer": "Ela/Dela",
-    "pronounsTheyThem": "Elu/Delu"
+    "pronounsTheyThem": "Elu/Delu",
+    "changePassword": "Alterar senha",
+    "newPassword": "Nova senha",
+    "confirmPassword": "Confirmar senha",
+    "passwordChangeSubmit": "Atualizar senha",
+    "passwordChangeSuccess": "Sua senha foi atualizada."
   },
   "org": {
     "title": "Organização",

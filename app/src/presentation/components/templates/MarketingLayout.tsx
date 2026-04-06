@@ -38,7 +38,7 @@ export function MarketingLayout({
         userMenuSignOut={userMenuSignOut}
         toggleNavLabel={toggleNavLabel}
       />
-      <main className="mt-[62px] flex-1">{children}</main>
+      <main className="mt-(--navbar-height) flex-1">{children}</main>
       <Footer
         appName={appName}
         sections={footerSections}

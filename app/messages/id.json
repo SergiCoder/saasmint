@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "Verifikasi alamat email Anda sebelum masuk. Periksa kotak masuk Anda.",
       "errorTokenExpired": "Sesi Anda telah berakhir. Silakan masuk kembali.",
       "errorAccountDeactivated": "Akun ini telah dinonaktifkan.",
-      "errorBackendRejected": "Autentikasi gagal. Silakan coba masuk kembali."
+      "errorBackendRejected": "Autentikasi gagal. Silakan coba masuk kembali.",
+      "errorOAuth": "Login sosial gagal. Silakan coba lagi.",
+      "forgotPassword": "Lupa kata sandi?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Lupa kata sandi",
+      "title": "Atur ulang kata sandi Anda",
+      "description": "Masukkan alamat email Anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi Anda.",
+      "email": "Alamat email",
+      "submit": "Kirim tautan atur ulang",
+      "successMessage": "Jika ada akun dengan email tersebut, Anda akan segera menerima tautan pengaturan ulang kata sandi.",
+      "rememberPassword": "Ingat kata sandi Anda?",
+      "backToLogin": "Masuk"
+    },
+    "oauth": {
+      "continueWithGoogle": "Lanjutkan dengan Google",
+      "continueWithGitHub": "Lanjutkan dengan GitHub",
+      "continueWithMicrosoft": "Lanjutkan dengan Microsoft",
+      "divider": "atau",
+      "error": "Terjadi kesalahan. Silakan coba lagi."
     },
     "register": {
       "title": "Buat akun Anda",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "Dia (laki-laki)",
       "pronounsSheHer": "Dia (perempuan)",
       "pronounsTheyThem": "Mereka"
+    },
+    "resetPassword": {
+      "pageTitle": "Atur ulang kata sandi",
+      "title": "Tetapkan kata sandi baru",
+      "newPassword": "Kata sandi baru",
+      "confirmPassword": "Konfirmasi kata sandi",
+      "submit": "Atur ulang kata sandi",
+      "successMessage": "Kata sandi Anda telah diperbarui. Anda sekarang dapat masuk dengan kata sandi baru Anda.",
+      "backToLogin": "Masuk"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "Gagal menghapus akun. Silakan coba lagi.",
     "pronounsHeHim": "Dia (laki-laki)",
     "pronounsSheHer": "Dia (perempuan)",
-    "pronounsTheyThem": "Mereka"
+    "pronounsTheyThem": "Mereka",
+    "changePassword": "Ubah kata sandi",
+    "newPassword": "Kata sandi baru",
+    "confirmPassword": "Konfirmasi kata sandi",
+    "passwordChangeSubmit": "Perbarui kata sandi",
+    "passwordChangeSuccess": "Kata sandi Anda telah diperbarui."
   },
   "org": {
     "title": "Organisasi",

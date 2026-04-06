@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "Verifique o seu endereço de e-mail antes de iniciar sessão. Consulte a sua caixa de entrada.",
       "errorTokenExpired": "A sua sessão expirou. Inicie sessão novamente.",
       "errorAccountDeactivated": "Esta conta foi desativada.",
-      "errorBackendRejected": "Falha na autenticação. Tente iniciar sessão novamente."
+      "errorBackendRejected": "Falha na autenticação. Tente iniciar sessão novamente.",
+      "errorOAuth": "Início de sessão social falhou. Por favor, tente novamente.",
+      "forgotPassword": "Esqueceu a palavra-passe?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Esqueci a palavra-passe",
+      "title": "Redefinir a sua palavra-passe",
+      "description": "Introduza o seu endereço de e-mail e enviaremos um link para redefinir a sua palavra-passe.",
+      "email": "Endereço de e-mail",
+      "submit": "Enviar link de redefinição",
+      "successMessage": "Se existir uma conta com esse e-mail, receberá em breve um link para redefinição da palavra-passe.",
+      "rememberPassword": "Lembra-se da sua palavra-passe?",
+      "backToLogin": "Iniciar sessão"
+    },
+    "oauth": {
+      "continueWithGoogle": "Continuar com Google",
+      "continueWithGitHub": "Continuar com GitHub",
+      "continueWithMicrosoft": "Continuar com Microsoft",
+      "divider": "ou",
+      "error": "Algo correu mal. Por favor, tente novamente."
     },
     "register": {
       "title": "Crie a sua conta",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "Ele/Dele",
       "pronounsSheHer": "Ela/Dela",
       "pronounsTheyThem": "Elu/Delu"
+    },
+    "resetPassword": {
+      "pageTitle": "Redefinir palavra-passe",
+      "title": "Definir nova palavra-passe",
+      "newPassword": "Nova palavra-passe",
+      "confirmPassword": "Confirmar palavra-passe",
+      "submit": "Redefinir palavra-passe",
+      "successMessage": "A sua palavra-passe foi atualizada. Pode agora iniciar sessão com a nova palavra-passe.",
+      "backToLogin": "Iniciar sessão"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "Não foi possível eliminar a conta. Tente novamente.",
     "pronounsHeHim": "Ele/Dele",
     "pronounsSheHer": "Ela/Dela",
-    "pronounsTheyThem": "Elu/Delu"
+    "pronounsTheyThem": "Elu/Delu",
+    "changePassword": "Alterar palavra-passe",
+    "newPassword": "Nova palavra-passe",
+    "confirmPassword": "Confirmar palavra-passe",
+    "passwordChangeSubmit": "Atualizar palavra-passe",
+    "passwordChangeSuccess": "A sua palavra-passe foi atualizada."
   },
   "org": {
     "title": "Organização",

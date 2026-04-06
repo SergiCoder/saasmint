@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "ログインする前にメールアドレスを確認してください。受信トレイをご確認ください。",
       "errorTokenExpired": "セッションの有効期限が切れました。再度ログインしてください。",
       "errorAccountDeactivated": "このアカウントは無効化されています。",
-      "errorBackendRejected": "認証に失敗しました。再度ログインしてください。"
+      "errorBackendRejected": "認証に失敗しました。再度ログインしてください。",
+      "errorOAuth": "ソーシャルログインに失敗しました。もう一度お試しください。",
+      "forgotPassword": "パスワードを忘れましたか？"
+    },
+    "forgotPassword": {
+      "pageTitle": "パスワードを忘れた場合",
+      "title": "パスワードのリセット",
+      "description": "メールアドレスを入力してください。パスワードリセットのリンクをお送りします。",
+      "email": "メールアドレス",
+      "submit": "リセットリンクを送信",
+      "successMessage": "そのメールアドレスにアカウントが存在する場合、パスワードリセットリンクがまもなく届きます。",
+      "rememberPassword": "パスワードを覚えていますか？",
+      "backToLogin": "ログイン"
+    },
+    "oauth": {
+      "continueWithGoogle": "Googleで続行",
+      "continueWithGitHub": "GitHubで続行",
+      "continueWithMicrosoft": "Microsoftで続行",
+      "divider": "または",
+      "error": "問題が発生しました。もう一度お試しください。"
     },
     "register": {
       "title": "アカウントを作成",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "彼/Him",
       "pronounsSheHer": "彼女/Her",
       "pronounsTheyThem": "They/Them"
+    },
+    "resetPassword": {
+      "pageTitle": "パスワードリセット",
+      "title": "新しいパスワードを設定",
+      "newPassword": "新しいパスワード",
+      "confirmPassword": "パスワードの確認",
+      "submit": "パスワードをリセット",
+      "successMessage": "パスワードが更新されました。新しいパスワードでログインできます。",
+      "backToLogin": "ログイン"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "アカウントの削除に失敗しました。もう一度お試しください。",
     "pronounsHeHim": "彼/Him",
     "pronounsSheHer": "彼女/Her",
-    "pronounsTheyThem": "They/Them"
+    "pronounsTheyThem": "They/Them",
+    "changePassword": "パスワード変更",
+    "newPassword": "新しいパスワード",
+    "confirmPassword": "パスワードの確認",
+    "passwordChangeSubmit": "パスワードを更新",
+    "passwordChangeSuccess": "パスワードが更新されました。"
   },
   "org": {
     "title": "組織",

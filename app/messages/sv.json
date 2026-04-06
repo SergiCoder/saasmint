@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "Verifiera din e-postadress innan du loggar in. Kontrollera din inkorg.",
       "errorTokenExpired": "Din session har löpt ut. Logga in igen.",
       "errorAccountDeactivated": "Detta konto har inaktiverats.",
-      "errorBackendRejected": "Autentisering misslyckades. Försök logga in igen."
+      "errorBackendRejected": "Autentisering misslyckades. Försök logga in igen.",
+      "errorOAuth": "Social inloggning misslyckades. Försök igen.",
+      "forgotPassword": "Glömt lösenord?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Glömt lösenord",
+      "title": "Återställ ditt lösenord",
+      "description": "Ange din e-postadress så skickar vi en länk för att återställa ditt lösenord.",
+      "email": "E-postadress",
+      "submit": "Skicka återställningslänk",
+      "successMessage": "Om det finns ett konto med den e-postadressen kommer du snart att få en länk för lösenordsåterställning.",
+      "rememberPassword": "Kommer du ihåg ditt lösenord?",
+      "backToLogin": "Logga in"
+    },
+    "oauth": {
+      "continueWithGoogle": "Fortsätt med Google",
+      "continueWithGitHub": "Fortsätt med GitHub",
+      "continueWithMicrosoft": "Fortsätt med Microsoft",
+      "divider": "eller",
+      "error": "Något gick fel. Försök igen."
     },
     "register": {
       "title": "Skapa ditt konto",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "Han/Honom",
       "pronounsSheHer": "Hon/Henne",
       "pronounsTheyThem": "Hen"
+    },
+    "resetPassword": {
+      "pageTitle": "Återställ lösenord",
+      "title": "Ange nytt lösenord",
+      "newPassword": "Nytt lösenord",
+      "confirmPassword": "Bekräfta lösenord",
+      "submit": "Återställ lösenord",
+      "successMessage": "Ditt lösenord har uppdaterats. Du kan nu logga in med ditt nya lösenord.",
+      "backToLogin": "Logga in"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "Det gick inte att radera kontot. Försök igen.",
     "pronounsHeHim": "Han/Honom",
     "pronounsSheHer": "Hon/Henne",
-    "pronounsTheyThem": "Hen"
+    "pronounsTheyThem": "Hen",
+    "changePassword": "Ändra lösenord",
+    "newPassword": "Nytt lösenord",
+    "confirmPassword": "Bekräfta lösenord",
+    "passwordChangeSubmit": "Uppdatera lösenord",
+    "passwordChangeSuccess": "Ditt lösenord har uppdaterats."
   },
   "org": {
     "title": "Organisation",

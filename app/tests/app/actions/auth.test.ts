@@ -10,12 +10,17 @@ vi.mock("next/navigation", () => ({
 
 const mockSignInWithPassword = vi.fn();
 const mockSignUp = vi.fn();
+const mockResetPasswordForEmail = vi.fn();
+const mockUpdateUser = vi.fn();
 vi.mock("@/infrastructure/supabase/server", () => ({
   createClient: vi.fn().mockResolvedValue({
     auth: {
       signInWithPassword: (...args: unknown[]) =>
         mockSignInWithPassword(...args),
       signUp: (...args: unknown[]) => mockSignUp(...args),
+      resetPasswordForEmail: (...args: unknown[]) =>
+        mockResetPasswordForEmail(...args),
+      updateUser: (...args: unknown[]) => mockUpdateUser(...args),
     },
   }),
 }));
@@ -35,6 +40,8 @@ vi.mock("@/infrastructure/registry", () => ({
 let signIn: typeof import("@/app/actions/auth").signIn;
 let signUp: typeof import("@/app/actions/auth").signUp;
 let signOut: typeof import("@/app/actions/auth").signOut;
+let resetPassword: typeof import("@/app/actions/auth").resetPassword;
+let updatePassword: typeof import("@/app/actions/auth").updatePassword;
 
 beforeEach(async () => {
   vi.clearAllMocks();
@@ -42,6 +49,8 @@ beforeEach(async () => {
   signIn = mod.signIn;
   signUp = mod.signUp;
   signOut = mod.signOut;
+  resetPassword = mod.resetPassword;
+  updatePassword = mod.updatePassword;
 });
 
 describe("auth server actions", () => {
@@ -96,7 +105,7 @@ describe("auth server actions", () => {
           password: "secret123",
           options: {
             emailRedirectTo: "http://localhost:3000/auth/callback",
-            data: { full_name: "Jane Doe", pronouns: null },
+            data: { full_name: "Jane Doe" },
           },
         }),
       );
@@ -115,28 +124,6 @@ describe("auth server actions", () => {
 
       const result = await signUp(undefined, formData);
       expect(result).toEqual({ error: "Email already in use" });
-    });
-
-    it("passes pronouns when provided in form data", async () => {
-      mockSignUp.mockResolvedValue({ error: null });
-
-      const formData = new FormData();
-      formData.set("fullName", "Jane Doe");
-      formData.set("email", "new@example.com");
-      formData.set("password", "secret123");
-      formData.set("pronouns", "she/her");
-
-      await expect(signUp(undefined, formData)).rejects.toThrow(
-        "NEXT_REDIRECT",
-      );
-      expect(mockSignUp).toHaveBeenCalledWith(
-        expect.objectContaining({
-          options: {
-            emailRedirectTo: "http://localhost:3000/auth/callback",
-            data: { full_name: "Jane Doe", pronouns: "she/her" },
-          },
-        }),
-      );
     });
 
     it("returns error when fullName is too short", async () => {
@@ -189,6 +176,107 @@ describe("auth server actions", () => {
 
       const result = await signIn(undefined, formData);
       expect(result).toEqual({ error: "Email and password are required" });
+    });
+  });
+
+  describe("resetPassword", () => {
+    it("returns success when reset email is sent", async () => {
+      mockResetPasswordForEmail.mockResolvedValue({ error: null });
+
+      const formData = new FormData();
+      formData.set("email", "user@example.com");
+
+      const result = await resetPassword(undefined, formData);
+      expect(result).toEqual({ success: true });
+      expect(mockResetPasswordForEmail).toHaveBeenCalledWith(
+        "user@example.com",
+        {
+          redirectTo:
+            "http://localhost:3000/auth/callback?next=/reset-password",
+        },
+      );
+    });
+
+    it("returns error when email is missing", async () => {
+      const formData = new FormData();
+
+      const result = await resetPassword(undefined, formData);
+      expect(result).toEqual({ error: "Email is required" });
+      expect(mockResetPasswordForEmail).not.toHaveBeenCalled();
+    });
+
+    it("returns success even on Supabase failure to avoid email enumeration", async () => {
+      mockResetPasswordForEmail.mockResolvedValue({
+        error: { message: "Rate limit exceeded" },
+      });
+
+      const formData = new FormData();
+      formData.set("email", "user@example.com");
+
+      const result = await resetPassword(undefined, formData);
+      expect(result).toEqual({ success: true });
+    });
+  });
+
+  describe("updatePassword", () => {
+    it("returns success when password is updated", async () => {
+      mockUpdateUser.mockResolvedValue({ error: null });
+
+      const formData = new FormData();
+      formData.set("password", "newpassword123");
+      formData.set("confirmPassword", "newpassword123");
+
+      const result = await updatePassword(undefined, formData);
+      expect(result).toEqual({ success: true });
+      expect(mockUpdateUser).toHaveBeenCalledWith({
+        password: "newpassword123",
+      });
+    });
+
+    it("returns error when password is too short", async () => {
+      const formData = new FormData();
+      formData.set("password", "short");
+      formData.set("confirmPassword", "short");
+
+      const result = await updatePassword(undefined, formData);
+      expect(result).toEqual({
+        error: "Password must be at least 8 characters",
+      });
+      expect(mockUpdateUser).not.toHaveBeenCalled();
+    });
+
+    it("returns error when password is missing", async () => {
+      const formData = new FormData();
+      formData.set("confirmPassword", "newpassword123");
+
+      const result = await updatePassword(undefined, formData);
+      expect(result).toEqual({
+        error: "Password must be at least 8 characters",
+      });
+      expect(mockUpdateUser).not.toHaveBeenCalled();
+    });
+
+    it("returns error when passwords do not match", async () => {
+      const formData = new FormData();
+      formData.set("password", "newpassword123");
+      formData.set("confirmPassword", "differentpassword");
+
+      const result = await updatePassword(undefined, formData);
+      expect(result).toEqual({ error: "Passwords do not match" });
+      expect(mockUpdateUser).not.toHaveBeenCalled();
+    });
+
+    it("returns error message on Supabase failure", async () => {
+      mockUpdateUser.mockResolvedValue({
+        error: { message: "Session expired" },
+      });
+
+      const formData = new FormData();
+      formData.set("password", "newpassword123");
+      formData.set("confirmPassword", "newpassword123");
+
+      const result = await updatePassword(undefined, formData);
+      expect(result).toEqual({ error: "Session expired" });
     });
   });
 

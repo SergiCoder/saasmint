@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "登入前請驗證您的電子郵件地址。請檢查您的收件匣。",
       "errorTokenExpired": "您的工作階段已過期，請重新登入。",
       "errorAccountDeactivated": "此帳戶已被停用。",
-      "errorBackendRejected": "驗證失敗。請重新登入。"
+      "errorBackendRejected": "驗證失敗。請重新登入。",
+      "errorOAuth": "社群登入失敗。請重試。",
+      "forgotPassword": "忘記密碼？"
+    },
+    "forgotPassword": {
+      "pageTitle": "忘記密碼",
+      "title": "重設密碼",
+      "description": "輸入您的電子郵件地址，我們將向您發送一個重設密碼的連結。",
+      "email": "電子郵件地址",
+      "submit": "發送重設連結",
+      "successMessage": "如果該電子郵件存在對應帳戶，您將很快收到密碼重設連結。",
+      "rememberPassword": "記得密碼？",
+      "backToLogin": "登入"
+    },
+    "oauth": {
+      "continueWithGoogle": "使用 Google 繼續",
+      "continueWithGitHub": "使用 GitHub 繼續",
+      "continueWithMicrosoft": "使用 Microsoft 繼續",
+      "divider": "或",
+      "error": "發生錯誤。請重試。"
     },
     "register": {
       "title": "建立您的帳戶",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "他/Him",
       "pronounsSheHer": "她/Her",
       "pronounsTheyThem": "They/Them"
+    },
+    "resetPassword": {
+      "pageTitle": "重設密碼",
+      "title": "設定新密碼",
+      "newPassword": "新密碼",
+      "confirmPassword": "確認密碼",
+      "submit": "重設密碼",
+      "successMessage": "您的密碼已更新。您現在可以使用新密碼登入。",
+      "backToLogin": "登入"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "刪除帳戶失敗，請重試。",
     "pronounsHeHim": "他/Him",
     "pronounsSheHer": "她/Her",
-    "pronounsTheyThem": "They/Them"
+    "pronounsTheyThem": "They/Them",
+    "changePassword": "變更密碼",
+    "newPassword": "新密碼",
+    "confirmPassword": "確認密碼",
+    "passwordChangeSubmit": "更新密碼",
+    "passwordChangeSuccess": "您的密碼已更新。"
   },
   "org": {
     "title": "組織",

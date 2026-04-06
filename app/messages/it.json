@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "Verifica il tuo indirizzo email prima di accedere. Controlla la tua casella di posta.",
       "errorTokenExpired": "La tua sessione è scaduta. Accedi di nuovo.",
       "errorAccountDeactivated": "Questo account è stato disattivato.",
-      "errorBackendRejected": "Autenticazione fallita. Riprova ad accedere."
+      "errorBackendRejected": "Autenticazione fallita. Riprova ad accedere.",
+      "errorOAuth": "Accesso social non riuscito. Riprova.",
+      "forgotPassword": "Password dimenticata?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Password dimenticata",
+      "title": "Reimposta la tua password",
+      "description": "Inserisci il tuo indirizzo email e ti invieremo un link per reimpostare la tua password.",
+      "email": "Indirizzo email",
+      "submit": "Invia link di reimpostazione",
+      "successMessage": "Se esiste un account con quella email, riceverai a breve un link per reimpostare la password.",
+      "rememberPassword": "Ricordi la tua password?",
+      "backToLogin": "Accedi"
+    },
+    "oauth": {
+      "continueWithGoogle": "Continua con Google",
+      "continueWithGitHub": "Continua con GitHub",
+      "continueWithMicrosoft": "Continua con Microsoft",
+      "divider": "o",
+      "error": "Qualcosa è andato storto. Riprova."
     },
     "register": {
       "title": "Crea il tuo account",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "Lui",
       "pronounsSheHer": "Lei",
       "pronounsTheyThem": "Their"
+    },
+    "resetPassword": {
+      "pageTitle": "Reimposta password",
+      "title": "Imposta una nuova password",
+      "newPassword": "Nuova password",
+      "confirmPassword": "Conferma password",
+      "submit": "Reimposta password",
+      "successMessage": "La tua password è stata aggiornata. Ora puoi accedere con la tua nuova password.",
+      "backToLogin": "Accedi"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "Impossibile eliminare l'account. Riprova.",
     "pronounsHeHim": "Lui",
     "pronounsSheHer": "Lei",
-    "pronounsTheyThem": "Their"
+    "pronounsTheyThem": "Their",
+    "changePassword": "Cambia password",
+    "newPassword": "Nuova password",
+    "confirmPassword": "Conferma password",
+    "passwordChangeSubmit": "Aggiorna password",
+    "passwordChangeSuccess": "La tua password è stata aggiornata."
   },
   "org": {
     "title": "Organizzazione",

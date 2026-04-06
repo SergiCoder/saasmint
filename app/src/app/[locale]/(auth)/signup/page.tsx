@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
+import { OAuthButtons } from "@/presentation/components/molecules/OAuthButtons";
 import { signUp } from "@/app/actions/auth";
 import { AuthForm } from "../_components/AuthForm";
 
@@ -14,12 +15,12 @@ export default async function SignupPage() {
 
   return (
     <AuthLayout appName="SaaSmint" title={t("title")}>
+      <OAuthButtons />
       <AuthForm
         action={signUp}
         translationNamespace="auth.register"
         passwordAutoComplete="new-password"
         showNameField
-        showPronouns
         footerLink={{
           href: "/login",
           textKey: "hasAccount",

@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden. Prüfen Sie Ihren Posteingang.",
       "errorTokenExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
       "errorAccountDeactivated": "Dieses Konto wurde deaktiviert.",
-      "errorBackendRejected": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut."
+      "errorBackendRejected": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "errorOAuth": "Social-Login fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "forgotPassword": "Passwort vergessen?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Passwort vergessen",
+      "title": "Passwort zurücksetzen",
+      "description": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
+      "email": "E-Mail-Adresse",
+      "submit": "Link zum Zurücksetzen senden",
+      "successMessage": "Wenn ein Konto mit dieser E-Mail existiert, erhalten Sie in Kürze einen Link zum Zurücksetzen des Passworts.",
+      "rememberPassword": "Erinnern Sie sich an Ihr Passwort?",
+      "backToLogin": "Anmelden"
+    },
+    "oauth": {
+      "continueWithGoogle": "Weiter mit Google",
+      "continueWithGitHub": "Weiter mit GitHub",
+      "continueWithMicrosoft": "Weiter mit Microsoft",
+      "divider": "oder",
+      "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
     },
     "register": {
       "title": "Konto erstellen",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "Er/Ihm",
       "pronounsSheHer": "Sie/Ihr",
       "pronounsTheyThem": "They/Them"
+    },
+    "resetPassword": {
+      "pageTitle": "Passwort zurücksetzen",
+      "title": "Neues Passwort festlegen",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "submit": "Passwort zurücksetzen",
+      "successMessage": "Ihr Passwort wurde aktualisiert. Sie können sich jetzt mit Ihrem neuen Passwort anmelden.",
+      "backToLogin": "Anmelden"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
     "pronounsHeHim": "Er/Ihm",
     "pronounsSheHer": "Sie/Ihr",
-    "pronounsTheyThem": "They/Them"
+    "pronounsTheyThem": "They/Them",
+    "changePassword": "Passwort ändern",
+    "newPassword": "Neues Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "passwordChangeSubmit": "Passwort aktualisieren",
+    "passwordChangeSuccess": "Ihr Passwort wurde aktualisiert."
   },
   "org": {
     "title": "Organisation",

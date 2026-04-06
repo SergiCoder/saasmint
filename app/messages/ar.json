@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "يرجى التحقق من عنوان بريدك الإلكتروني قبل تسجيل الدخول. تحقق من صندوق الوارد.",
       "errorTokenExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
       "errorAccountDeactivated": "تم إلغاء تنشيط هذا الحساب.",
-      "errorBackendRejected": "فشل المصادقة. يرجى المحاولة مرة أخرى."
+      "errorBackendRejected": "فشل المصادقة. يرجى المحاولة مرة أخرى.",
+      "errorOAuth": "فشل تسجيل الدخول الاجتماعي. يرجى المحاولة مرة أخرى.",
+      "forgotPassword": "هل نسيت كلمة المرور؟"
+    },
+    "forgotPassword": {
+      "pageTitle": "نسيت كلمة المرور",
+      "title": "إعادة تعيين كلمة المرور",
+      "description": "أدخل عنوان بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.",
+      "email": "عنوان البريد الإلكتروني",
+      "submit": "إرسال رابط إعادة التعيين",
+      "successMessage": "إذا كان هناك حساب مرتبط بهذا البريد الإلكتروني، ستتلقى رابط إعادة تعيين كلمة المرور قريبًا.",
+      "rememberPassword": "تتذكر كلمة المرور؟",
+      "backToLogin": "تسجيل الدخول"
+    },
+    "oauth": {
+      "continueWithGoogle": "المتابعة مع Google",
+      "continueWithGitHub": "المتابعة مع GitHub",
+      "continueWithMicrosoft": "المتابعة مع Microsoft",
+      "divider": "أو",
+      "error": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
     },
     "register": {
       "title": "إنشاء حسابك",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "هو/له",
       "pronounsSheHer": "هي/لها",
       "pronounsTheyThem": "هم/لهم"
+    },
+    "resetPassword": {
+      "pageTitle": "إعادة تعيين كلمة المرور",
+      "title": "تعيين كلمة مرور جديدة",
+      "newPassword": "كلمة المرور الجديدة",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "submit": "إعادة تعيين كلمة المرور",
+      "successMessage": "تم تحديث كلمة المرور الخاصة بك. يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.",
+      "backToLogin": "تسجيل الدخول"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "فشل حذف الحساب. يرجى المحاولة مرة أخرى.",
     "pronounsHeHim": "هو/له",
     "pronounsSheHer": "هي/لها",
-    "pronounsTheyThem": "هم/لهم"
+    "pronounsTheyThem": "هم/لهم",
+    "changePassword": "تغيير كلمة المرور",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "passwordChangeSubmit": "تحديث كلمة المرور",
+    "passwordChangeSuccess": "تم تحديث كلمة المرور الخاصة بك."
   },
   "org": {
     "title": "المنظمة",

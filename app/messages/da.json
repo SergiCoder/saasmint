@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "Bekræft din e-mailadresse, før du logger ind. Tjek din indbakke.",
       "errorTokenExpired": "Din session er udløbet. Log venligst ind igen.",
       "errorAccountDeactivated": "Denne konto er deaktiveret.",
-      "errorBackendRejected": "Godkendelse mislykkedes. Prøv at logge ind igen."
+      "errorBackendRejected": "Godkendelse mislykkedes. Prøv at logge ind igen.",
+      "errorOAuth": "Socialt login mislykkedes. Prøv venligst igen.",
+      "forgotPassword": "Glemt adgangskode?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Glemt adgangskode",
+      "title": "Nulstil din adgangskode",
+      "description": "Indtast din e-mailadresse, og vi sender dig et link til at nulstille din adgangskode.",
+      "email": "E-mailadresse",
+      "submit": "Send nulstillingslink",
+      "successMessage": "Hvis der findes en konto med den e-mail, vil du snart modtage et link til nulstilling af adgangskode.",
+      "rememberPassword": "Husker du din adgangskode?",
+      "backToLogin": "Log ind"
+    },
+    "oauth": {
+      "continueWithGoogle": "Fortsæt med Google",
+      "continueWithGitHub": "Fortsæt med GitHub",
+      "continueWithMicrosoft": "Fortsæt med Microsoft",
+      "divider": "eller",
+      "error": "Noget gik galt. Prøv venligst igen."
     },
     "register": {
       "title": "Opret din konto",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "Han/Ham",
       "pronounsSheHer": "Hun/Hende",
       "pronounsTheyThem": "De/Dem"
+    },
+    "resetPassword": {
+      "pageTitle": "Nulstil adgangskode",
+      "title": "Angiv ny adgangskode",
+      "newPassword": "Ny adgangskode",
+      "confirmPassword": "Bekræft adgangskode",
+      "submit": "Nulstil adgangskode",
+      "successMessage": "Din adgangskode er blevet opdateret. Du kan nu logge ind med din nye adgangskode.",
+      "backToLogin": "Log ind"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "Kontoen kunne ikke slettes. Prøv igen.",
     "pronounsHeHim": "Han/Ham",
     "pronounsSheHer": "Hun/Hende",
-    "pronounsTheyThem": "De/Dem"
+    "pronounsTheyThem": "De/Dem",
+    "changePassword": "Skift adgangskode",
+    "newPassword": "Ny adgangskode",
+    "confirmPassword": "Bekræft adgangskode",
+    "passwordChangeSubmit": "Opdater adgangskode",
+    "passwordChangeSuccess": "Din adgangskode er blevet opdateret."
   },
   "org": {
     "title": "Organisation",

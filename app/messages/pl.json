@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "Zweryfikuj swój adres e-mail przed zalogowaniem. Sprawdź skrzynkę odbiorczą.",
       "errorTokenExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",
       "errorAccountDeactivated": "To konto zostało dezaktywowane.",
-      "errorBackendRejected": "Uwierzytelnianie nie powiodło się. Spróbuj ponownie."
+      "errorBackendRejected": "Uwierzytelnianie nie powiodło się. Spróbuj ponownie.",
+      "errorOAuth": "Logowanie społecznościowe nie powiodło się. Spróbuj ponownie.",
+      "forgotPassword": "Nie pamiętasz hasła?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Zapomniałem hasła",
+      "title": "Zresetuj hasło",
+      "description": "Wpisz swój adres e-mail, a wyślemy Ci link do zresetowania hasła.",
+      "email": "Adres e-mail",
+      "submit": "Wyślij link resetujący",
+      "successMessage": "Jeśli istnieje konto z tym adresem e-mail, wkrótce otrzymasz link do zresetowania hasła.",
+      "rememberPassword": "Pamiętasz hasło?",
+      "backToLogin": "Zaloguj się"
+    },
+    "oauth": {
+      "continueWithGoogle": "Kontynuuj z Google",
+      "continueWithGitHub": "Kontynuuj z GitHub",
+      "continueWithMicrosoft": "Kontynuuj z Microsoft",
+      "divider": "lub",
+      "error": "Coś poszło nie tak. Spróbuj ponownie."
     },
     "register": {
       "title": "Utwórz konto",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "On/Jego",
       "pronounsSheHer": "Ona/Jej",
       "pronounsTheyThem": "Ono/Ich"
+    },
+    "resetPassword": {
+      "pageTitle": "Resetowanie hasła",
+      "title": "Ustaw nowe hasło",
+      "newPassword": "Nowe hasło",
+      "confirmPassword": "Potwierdź hasło",
+      "submit": "Zresetuj hasło",
+      "successMessage": "Twoje hasło zostało zaktualizowane. Możesz teraz zalogować się nowym hasłem.",
+      "backToLogin": "Zaloguj się"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "Nie udało się usunąć konta. Spróbuj ponownie.",
     "pronounsHeHim": "On/Jego",
     "pronounsSheHer": "Ona/Jej",
-    "pronounsTheyThem": "Ono/Ich"
+    "pronounsTheyThem": "Ono/Ich",
+    "changePassword": "Zmień hasło",
+    "newPassword": "Nowe hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "passwordChangeSubmit": "Zaktualizuj hasło",
+    "passwordChangeSuccess": "Twoje hasło zostało zaktualizowane."
   },
   "org": {
     "title": "Organizacja",

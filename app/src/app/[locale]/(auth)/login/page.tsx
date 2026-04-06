@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
+import { OAuthButtons } from "@/presentation/components/molecules/OAuthButtons";
 import { signIn } from "@/app/actions/auth";
 import { AuthForm } from "../_components/AuthForm";
 
@@ -17,6 +18,7 @@ const ERROR_KEYS: Record<string, string> = {
   account_deactivated: "errorAccountDeactivated",
   BACKEND_REJECTED: "errorBackendRejected",
   account_deleted: "accountDeleted",
+  oauth_error: "errorOAuth",
 };
 
 interface Props {
@@ -35,10 +37,12 @@ export default async function LoginPage({ searchParams }: Props) {
 
   return (
     <AuthLayout appName="SaaSmint" title={t("title")}>
+      <OAuthButtons />
       <AuthForm
         action={signIn}
         translationNamespace="auth.login"
         passwordAutoComplete="current-password"
+        forgotPasswordHref="/forgot-password"
         footerLink={{
           href: "/signup",
           textKey: "noAccount",

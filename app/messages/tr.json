@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "Giriş yapmadan önce e-posta adresinizi doğrulayın. Gelen kutunuzu kontrol edin.",
       "errorTokenExpired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
       "errorAccountDeactivated": "Bu hesap devre dışı bırakılmıştır.",
-      "errorBackendRejected": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin."
+      "errorBackendRejected": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin.",
+      "errorOAuth": "Sosyal giriş başarısız oldu. Lütfen tekrar deneyin.",
+      "forgotPassword": "Şifrenizi mi unuttunuz?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Şifremi unuttum",
+      "title": "Şifrenizi sıfırlayın",
+      "description": "E-posta adresinizi girin, size şifrenizi sıfırlamak için bir bağlantı gönderelim.",
+      "email": "E-posta adresi",
+      "submit": "Sıfırlama bağlantısı gönder",
+      "successMessage": "Bu e-posta ile ilişkili bir hesap varsa, kısa süre içinde bir şifre sıfırlama bağlantısı alacaksınız.",
+      "rememberPassword": "Şifrenizi hatırlıyor musunuz?",
+      "backToLogin": "Giriş yap"
+    },
+    "oauth": {
+      "continueWithGoogle": "Google ile devam et",
+      "continueWithGitHub": "GitHub ile devam et",
+      "continueWithMicrosoft": "Microsoft ile devam et",
+      "divider": "veya",
+      "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin."
     },
     "register": {
       "title": "Hesabınızı oluşturun",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "O (erkek)",
       "pronounsSheHer": "O (kadın)",
       "pronounsTheyThem": "O (nötr)"
+    },
+    "resetPassword": {
+      "pageTitle": "Şifre sıfırlama",
+      "title": "Yeni şifre belirleyin",
+      "newPassword": "Yeni şifre",
+      "confirmPassword": "Şifreyi onaylayın",
+      "submit": "Şifreyi sıfırla",
+      "successMessage": "Şifreniz güncellendi. Artık yeni şifrenizle giriş yapabilirsiniz.",
+      "backToLogin": "Giriş yap"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "Hesap silinemedi. Lütfen tekrar deneyin.",
     "pronounsHeHim": "O (erkek)",
     "pronounsSheHer": "O (kadın)",
-    "pronounsTheyThem": "O (nötr)"
+    "pronounsTheyThem": "O (nötr)",
+    "changePassword": "Şifre değiştir",
+    "newPassword": "Yeni şifre",
+    "confirmPassword": "Şifreyi onaylayın",
+    "passwordChangeSubmit": "Şifreyi güncelle",
+    "passwordChangeSuccess": "Şifreniz güncellendi."
   },
   "org": {
     "title": "Organizasyon",

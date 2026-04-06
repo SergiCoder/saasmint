@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
-import { PronounsPicker } from "@/presentation/components/molecules/PronounsPicker";
 import { Button } from "@/presentation/components/atoms/Button";
 
 interface AuthFormProps {
@@ -13,7 +12,7 @@ interface AuthFormProps {
   translationNamespace: string;
   passwordAutoComplete: string;
   showNameField?: boolean;
-  showPronouns?: boolean;
+  forgotPasswordHref?: string;
   footerLink: { href: string; textKey: string; linkKey: string };
   serverAlerts?: React.ReactNode;
 }
@@ -23,7 +22,7 @@ export function AuthForm({
   translationNamespace,
   passwordAutoComplete,
   showNameField = false,
-  showPronouns = false,
+  forgotPasswordHref,
   footerLink,
   serverAlerts,
 }: AuthFormProps) {
@@ -50,7 +49,6 @@ export function AuthForm({
             autoComplete="name"
           />
         )}
-        {showPronouns && <PronounsPicker t={t} />}
         <FormField
           label={t("email")}
           name="email"
@@ -65,6 +63,16 @@ export function AuthForm({
           required
           autoComplete={passwordAutoComplete}
         />
+        {forgotPasswordHref && (
+          <div className="text-right">
+            <Link
+              href={forgotPasswordHref}
+              className="text-primary-600 hover:text-primary-500 text-sm font-medium"
+            >
+              {t("forgotPassword")}
+            </Link>
+          </div>
+        )}
         <Button type="submit" loading={pending} className="mt-6 w-full">
           {t("submit")}
         </Button>

@@ -90,7 +90,26 @@
       "errorEmailNotVerified": "Bekreft e-postadressen din før du logger inn. Sjekk innboksen din.",
       "errorTokenExpired": "Økten din har utløpt. Vennligst logg inn igjen.",
       "errorAccountDeactivated": "Denne kontoen er deaktivert.",
-      "errorBackendRejected": "Autentisering mislyktes. Prøv å logge inn igjen."
+      "errorBackendRejected": "Autentisering mislyktes. Prøv å logge inn igjen.",
+      "errorOAuth": "Sosial pålogging mislyktes. Vennligst prøv igjen.",
+      "forgotPassword": "Glemt passord?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Glemt passord",
+      "title": "Tilbakestill passordet ditt",
+      "description": "Skriv inn e-postadressen din, så sender vi deg en lenke for å tilbakestille passordet ditt.",
+      "email": "E-postadresse",
+      "submit": "Send tilbakestillingslenke",
+      "successMessage": "Hvis det finnes en konto med den e-postadressen, vil du snart motta en lenke for tilbakestilling av passord.",
+      "rememberPassword": "Husker du passordet ditt?",
+      "backToLogin": "Logg inn"
+    },
+    "oauth": {
+      "continueWithGoogle": "Fortsett med Google",
+      "continueWithGitHub": "Fortsett med GitHub",
+      "continueWithMicrosoft": "Fortsett med Microsoft",
+      "divider": "eller",
+      "error": "Noe gikk galt. Vennligst prøv igjen."
     },
     "register": {
       "title": "Opprett kontoen din",
@@ -108,6 +127,15 @@
       "pronounsHeHim": "Han/Ham",
       "pronounsSheHer": "Hun/Henne",
       "pronounsTheyThem": "Hen"
+    },
+    "resetPassword": {
+      "pageTitle": "Tilbakestill passord",
+      "title": "Sett et nytt passord",
+      "newPassword": "Nytt passord",
+      "confirmPassword": "Bekreft passord",
+      "submit": "Tilbakestill passord",
+      "successMessage": "Passordet ditt er oppdatert. Du kan nå logge inn med det nye passordet.",
+      "backToLogin": "Logg inn"
     }
   },
   "dashboard": {
@@ -169,7 +197,12 @@
     "deleteDialogError": "Kunne ikke slette kontoen. Prøv igjen.",
     "pronounsHeHim": "Han/Ham",
     "pronounsSheHer": "Hun/Henne",
-    "pronounsTheyThem": "Hen"
+    "pronounsTheyThem": "Hen",
+    "changePassword": "Endre passord",
+    "newPassword": "Nytt passord",
+    "confirmPassword": "Bekreft passord",
+    "passwordChangeSubmit": "Oppdater passord",
+    "passwordChangeSuccess": "Passordet ditt er oppdatert."
   },
   "org": {
     "title": "Organisasjon",

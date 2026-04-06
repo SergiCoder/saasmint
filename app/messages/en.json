@@ -90,7 +90,35 @@
       "errorEmailNotVerified": "Please verify your email address before signing in. Check your inbox for a verification link.",
       "errorTokenExpired": "Your session has expired. Please sign in again.",
       "errorAccountDeactivated": "This account has been deactivated.",
-      "errorBackendRejected": "Authentication failed. Please try signing in again."
+      "errorBackendRejected": "Authentication failed. Please try signing in again.",
+      "errorOAuth": "Social login failed. Please try again.",
+      "forgotPassword": "Forgot password?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Forgot password",
+      "title": "Reset your password",
+      "description": "Enter your email address and we'll send you a link to reset your password.",
+      "email": "Email address",
+      "submit": "Send reset link",
+      "successMessage": "If an account exists with that email, you'll receive a password reset link shortly.",
+      "rememberPassword": "Remember your password?",
+      "backToLogin": "Sign in"
+    },
+    "resetPassword": {
+      "pageTitle": "Reset password",
+      "title": "Set a new password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "submit": "Reset password",
+      "successMessage": "Your password has been updated. You can now sign in with your new password.",
+      "backToLogin": "Sign in"
+    },
+    "oauth": {
+      "continueWithGoogle": "Continue with Google",
+      "continueWithGitHub": "Continue with GitHub",
+      "continueWithMicrosoft": "Continue with Microsoft",
+      "divider": "or",
+      "error": "Something went wrong. Please try again."
     },
     "register": {
       "title": "Create your account",
@@ -169,7 +197,12 @@
     "deleteDialogError": "Failed to delete account. Please try again.",
     "pronounsHeHim": "He/Him",
     "pronounsSheHer": "She/Her",
-    "pronounsTheyThem": "They/Them"
+    "pronounsTheyThem": "They/Them",
+    "changePassword": "Change password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "passwordChangeSubmit": "Update password",
+    "passwordChangeSuccess": "Your password has been updated."
   },
   "org": {
     "title": "Organization",
