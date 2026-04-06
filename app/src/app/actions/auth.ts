@@ -65,6 +65,27 @@ export async function signUp(_prevState: unknown, formData: FormData) {
   redirect("/login?registered=true");
 }
 
+export async function resetPassword(_prevState: unknown, formData: FormData) {
+  const email = formData.get("email");
+
+  if (typeof email !== "string") {
+    return { error: "Email is required" };
+  }
+
+  const origin = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/auth/callback?next=/settings`,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: true };
+}
+
 export async function signOut() {
   await new SignOut(authGateway).execute();
   redirect("/login");

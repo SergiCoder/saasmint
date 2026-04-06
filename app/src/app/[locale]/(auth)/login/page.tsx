@@ -42,6 +42,7 @@ export default async function LoginPage({ searchParams }: Props) {
         action={signIn}
         translationNamespace="auth.login"
         passwordAutoComplete="current-password"
+        forgotPasswordHref="/forgot-password"
         footerLink={{
           href: "/signup",
           textKey: "noAccount",

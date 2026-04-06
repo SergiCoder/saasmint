@@ -12,6 +12,7 @@ interface AuthFormProps {
   translationNamespace: string;
   passwordAutoComplete: string;
   showNameField?: boolean;
+  forgotPasswordHref?: string;
   footerLink: { href: string; textKey: string; linkKey: string };
   serverAlerts?: React.ReactNode;
 }
@@ -21,6 +22,7 @@ export function AuthForm({
   translationNamespace,
   passwordAutoComplete,
   showNameField = false,
+  forgotPasswordHref,
   footerLink,
   serverAlerts,
 }: AuthFormProps) {
@@ -61,6 +63,16 @@ export function AuthForm({
           required
           autoComplete={passwordAutoComplete}
         />
+        {forgotPasswordHref && (
+          <div className="text-right">
+            <Link
+              href={forgotPasswordHref}
+              className="text-primary-600 hover:text-primary-500 text-sm font-medium"
+            >
+              {t("forgotPassword")}
+            </Link>
+          </div>
+        )}
         <Button type="submit" loading={pending} className="mt-6 w-full">
           {t("submit")}
         </Button>
