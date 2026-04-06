@@ -5,7 +5,13 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
   const error = searchParams.get("error");
-  const next = searchParams.get("next") ?? "/dashboard";
+  const nextParam = searchParams.get("next") ?? "/dashboard";
+
+  // Prevent open redirect: only allow relative paths (reject protocol-relative URLs like //evil.com)
+  const next =
+    nextParam.startsWith("/") && !nextParam.startsWith("//")
+      ? nextParam
+      : "/dashboard";
 
   if (error) {
     return NextResponse.redirect(new URL("/login?error=oauth_error", origin));
