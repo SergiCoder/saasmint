@@ -91,7 +91,18 @@
       "errorTokenExpired": "Your session has expired. Please sign in again.",
       "errorAccountDeactivated": "This account has been deactivated.",
       "errorBackendRejected": "Authentication failed. Please try signing in again.",
-      "errorOAuth": "Social login failed. Please try again."
+      "errorOAuth": "Social login failed. Please try again.",
+      "forgotPassword": "Forgot password?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Forgot password",
+      "title": "Reset your password",
+      "description": "Enter your email address and we'll send you a link to reset your password.",
+      "email": "Email address",
+      "submit": "Send reset link",
+      "successMessage": "If an account exists with that email, you'll receive a password reset link shortly.",
+      "rememberPassword": "Remember your password?",
+      "backToLogin": "Sign in"
     },
     "oauth": {
       "continueWithGoogle": "Continue with Google",

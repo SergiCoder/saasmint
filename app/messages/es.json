@@ -91,7 +91,18 @@
       "errorTokenExpired": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
       "errorAccountDeactivated": "Esta cuenta ha sido desactivada.",
       "errorBackendRejected": "Error de autenticación. Intenta iniciar sesión de nuevo.",
-      "errorOAuth": "El inicio de sesión social falló. Por favor, inténtalo de nuevo."
+      "errorOAuth": "El inicio de sesión social falló. Por favor, inténtalo de nuevo.",
+      "forgotPassword": "¿Olvidaste tu contraseña?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Olvidé mi contraseña",
+      "title": "Restablecer tu contraseña",
+      "description": "Introduce tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+      "email": "Dirección de correo electrónico",
+      "submit": "Enviar enlace de restablecimiento",
+      "successMessage": "Si existe una cuenta con ese correo electrónico, recibirás un enlace para restablecer tu contraseña en breve.",
+      "rememberPassword": "¿Recuerdas tu contraseña?",
+      "backToLogin": "Iniciar sesión"
     },
     "oauth": {
       "continueWithGoogle": "Continuar con Google",

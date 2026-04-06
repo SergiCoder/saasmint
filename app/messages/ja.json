@@ -91,7 +91,18 @@
       "errorTokenExpired": "セッションの有効期限が切れました。再度ログインしてください。",
       "errorAccountDeactivated": "このアカウントは無効化されています。",
       "errorBackendRejected": "認証に失敗しました。再度ログインしてください。",
-      "errorOAuth": "ソーシャルログインに失敗しました。もう一度お試しください。"
+      "errorOAuth": "ソーシャルログインに失敗しました。もう一度お試しください。",
+      "forgotPassword": "パスワードを忘れましたか？"
+    },
+    "forgotPassword": {
+      "pageTitle": "パスワードを忘れた場合",
+      "title": "パスワードのリセット",
+      "description": "メールアドレスを入力してください。パスワードリセットのリンクをお送りします。",
+      "email": "メールアドレス",
+      "submit": "リセットリンクを送信",
+      "successMessage": "そのメールアドレスにアカウントが存在する場合、パスワードリセットリンクがまもなく届きます。",
+      "rememberPassword": "パスワードを覚えていますか？",
+      "backToLogin": "ログイン"
     },
     "oauth": {
       "continueWithGoogle": "Googleで続行",

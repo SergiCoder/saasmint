@@ -91,7 +91,18 @@
       "errorTokenExpired": "Sesi Anda telah berakhir. Silakan masuk kembali.",
       "errorAccountDeactivated": "Akun ini telah dinonaktifkan.",
       "errorBackendRejected": "Autentikasi gagal. Silakan coba masuk kembali.",
-      "errorOAuth": "Login sosial gagal. Silakan coba lagi."
+      "errorOAuth": "Login sosial gagal. Silakan coba lagi.",
+      "forgotPassword": "Lupa kata sandi?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Lupa kata sandi",
+      "title": "Atur ulang kata sandi Anda",
+      "description": "Masukkan alamat email Anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi Anda.",
+      "email": "Alamat email",
+      "submit": "Kirim tautan atur ulang",
+      "successMessage": "Jika ada akun dengan email tersebut, Anda akan segera menerima tautan pengaturan ulang kata sandi.",
+      "rememberPassword": "Ingat kata sandi Anda?",
+      "backToLogin": "Masuk"
     },
     "oauth": {
       "continueWithGoogle": "Lanjutkan dengan Google",

@@ -91,7 +91,18 @@
       "errorTokenExpired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
       "errorAccountDeactivated": "Bu hesap devre dışı bırakılmıştır.",
       "errorBackendRejected": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin.",
-      "errorOAuth": "Sosyal giriş başarısız oldu. Lütfen tekrar deneyin."
+      "errorOAuth": "Sosyal giriş başarısız oldu. Lütfen tekrar deneyin.",
+      "forgotPassword": "Şifrenizi mi unuttunuz?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Şifremi unuttum",
+      "title": "Şifrenizi sıfırlayın",
+      "description": "E-posta adresinizi girin, size şifrenizi sıfırlamak için bir bağlantı gönderelim.",
+      "email": "E-posta adresi",
+      "submit": "Sıfırlama bağlantısı gönder",
+      "successMessage": "Bu e-posta ile ilişkili bir hesap varsa, kısa süre içinde bir şifre sıfırlama bağlantısı alacaksınız.",
+      "rememberPassword": "Şifrenizi hatırlıyor musunuz?",
+      "backToLogin": "Giriş yap"
     },
     "oauth": {
       "continueWithGoogle": "Google ile devam et",

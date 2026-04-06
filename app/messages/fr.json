@@ -91,7 +91,18 @@
       "errorTokenExpired": "Votre session a expiré. Veuillez vous reconnecter.",
       "errorAccountDeactivated": "Ce compte a été désactivé.",
       "errorBackendRejected": "Échec de l'authentification. Veuillez réessayer.",
-      "errorOAuth": "La connexion sociale a échoué. Veuillez réessayer."
+      "errorOAuth": "La connexion sociale a échoué. Veuillez réessayer.",
+      "forgotPassword": "Mot de passe oublié ?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Mot de passe oublié",
+      "title": "Réinitialiser votre mot de passe",
+      "description": "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+      "email": "Adresse e-mail",
+      "submit": "Envoyer le lien de réinitialisation",
+      "successMessage": "Si un compte existe avec cette adresse e-mail, vous recevrez bientôt un lien de réinitialisation de mot de passe.",
+      "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
+      "backToLogin": "Se connecter"
     },
     "oauth": {
       "continueWithGoogle": "Continuer avec Google",

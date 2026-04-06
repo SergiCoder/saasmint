@@ -91,7 +91,18 @@
       "errorTokenExpired": "La tua sessione è scaduta. Accedi di nuovo.",
       "errorAccountDeactivated": "Questo account è stato disattivato.",
       "errorBackendRejected": "Autenticazione fallita. Riprova ad accedere.",
-      "errorOAuth": "Accesso social non riuscito. Riprova."
+      "errorOAuth": "Accesso social non riuscito. Riprova.",
+      "forgotPassword": "Password dimenticata?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Password dimenticata",
+      "title": "Reimposta la tua password",
+      "description": "Inserisci il tuo indirizzo email e ti invieremo un link per reimpostare la tua password.",
+      "email": "Indirizzo email",
+      "submit": "Invia link di reimpostazione",
+      "successMessage": "Se esiste un account con quella email, riceverai a breve un link per reimpostare la password.",
+      "rememberPassword": "Ricordi la tua password?",
+      "backToLogin": "Accedi"
     },
     "oauth": {
       "continueWithGoogle": "Continua con Google",

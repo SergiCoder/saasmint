@@ -91,7 +91,18 @@
       "errorTokenExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",
       "errorAccountDeactivated": "To konto zostało dezaktywowane.",
       "errorBackendRejected": "Uwierzytelnianie nie powiodło się. Spróbuj ponownie.",
-      "errorOAuth": "Logowanie społecznościowe nie powiodło się. Spróbuj ponownie."
+      "errorOAuth": "Logowanie społecznościowe nie powiodło się. Spróbuj ponownie.",
+      "forgotPassword": "Nie pamiętasz hasła?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Zapomniałem hasła",
+      "title": "Zresetuj hasło",
+      "description": "Wpisz swój adres e-mail, a wyślemy Ci link do zresetowania hasła.",
+      "email": "Adres e-mail",
+      "submit": "Wyślij link resetujący",
+      "successMessage": "Jeśli istnieje konto z tym adresem e-mail, wkrótce otrzymasz link do zresetowania hasła.",
+      "rememberPassword": "Pamiętasz hasło?",
+      "backToLogin": "Zaloguj się"
     },
     "oauth": {
       "continueWithGoogle": "Kontynuuj z Google",

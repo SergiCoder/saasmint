@@ -91,7 +91,18 @@
       "errorTokenExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
       "errorAccountDeactivated": "Dieses Konto wurde deaktiviert.",
       "errorBackendRejected": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
-      "errorOAuth": "Social-Login fehlgeschlagen. Bitte versuchen Sie es erneut."
+      "errorOAuth": "Social-Login fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "forgotPassword": "Passwort vergessen?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Passwort vergessen",
+      "title": "Passwort zurücksetzen",
+      "description": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
+      "email": "E-Mail-Adresse",
+      "submit": "Link zum Zurücksetzen senden",
+      "successMessage": "Wenn ein Konto mit dieser E-Mail existiert, erhalten Sie in Kürze einen Link zum Zurücksetzen des Passworts.",
+      "rememberPassword": "Passwort erinnerst du dich?",
+      "backToLogin": "Anmelden"
     },
     "oauth": {
       "continueWithGoogle": "Weiter mit Google",

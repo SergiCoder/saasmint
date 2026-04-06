@@ -91,7 +91,18 @@
       "errorTokenExpired": "Din session har löpt ut. Logga in igen.",
       "errorAccountDeactivated": "Detta konto har inaktiverats.",
       "errorBackendRejected": "Autentisering misslyckades. Försök logga in igen.",
-      "errorOAuth": "Social inloggning misslyckades. Försök igen."
+      "errorOAuth": "Social inloggning misslyckades. Försök igen.",
+      "forgotPassword": "Glömt lösenord?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Glömt lösenord",
+      "title": "Återställ ditt lösenord",
+      "description": "Ange din e-postadress så skickar vi en länk för att återställa ditt lösenord.",
+      "email": "E-postadress",
+      "submit": "Skicka återställningslänk",
+      "successMessage": "Om det finns ett konto med den e-postadressen kommer du snart att få en länk för lösenordsåterställning.",
+      "rememberPassword": "Kommer du ihåg ditt lösenord?",
+      "backToLogin": "Logga in"
     },
     "oauth": {
       "continueWithGoogle": "Fortsätt med Google",

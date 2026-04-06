@@ -91,7 +91,18 @@
       "errorTokenExpired": "Uw sessie is verlopen. Log opnieuw in.",
       "errorAccountDeactivated": "Dit account is gedeactiveerd.",
       "errorBackendRejected": "Authenticatie mislukt. Probeer opnieuw in te loggen.",
-      "errorOAuth": "Sociale login mislukt. Probeer het opnieuw."
+      "errorOAuth": "Sociale login mislukt. Probeer het opnieuw.",
+      "forgotPassword": "Wachtwoord vergeten?"
+    },
+    "forgotPassword": {
+      "pageTitle": "Wachtwoord vergeten",
+      "title": "Wachtwoord resetten",
+      "description": "Voer je e-mailadres in en we sturen je een link om je wachtwoord te resetten.",
+      "email": "E-mailadres",
+      "submit": "Resetlink versturen",
+      "successMessage": "Als er een account bestaat met dat e-mailadres, ontvang je binnenkort een link om je wachtwoord te resetten.",
+      "rememberPassword": "Weet je je wachtwoord nog?",
+      "backToLogin": "Inloggen"
     },
     "oauth": {
       "continueWithGoogle": "Doorgaan met Google",
