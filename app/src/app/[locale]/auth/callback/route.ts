@@ -25,6 +25,11 @@ export async function GET(request: NextRequest) {
     if (!exchangeError) {
       return NextResponse.redirect(new URL(next, origin));
     }
+
+    console.error(
+      "[auth/callback] exchangeCodeForSession failed:",
+      exchangeError,
+    );
   }
 
   return NextResponse.redirect(new URL("/login?error=oauth_error", origin));

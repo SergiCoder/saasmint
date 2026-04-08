@@ -85,6 +85,22 @@ describe("auth server actions", () => {
       expect(result).toEqual({ error: "Invalid credentials" });
       expect(mockRedirect).not.toHaveBeenCalled();
     });
+
+    it("redirects to billing checkout when plan is supplied", async () => {
+      mockSignInWithPassword.mockResolvedValue({ error: null });
+
+      const formData = new FormData();
+      formData.set("email", "user@example.com");
+      formData.set("password", "secret123");
+      formData.set("plan", "price_pro_monthly");
+
+      await expect(signIn(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockRedirect).toHaveBeenCalledWith(
+        "/subscription/checkout?plan=price_pro_monthly",
+      );
+    });
   });
 
   describe("signUp", () => {
@@ -137,6 +153,45 @@ describe("auth server actions", () => {
         error: "Full name must be between 3 and 255 characters",
       });
       expect(mockSignUp).not.toHaveBeenCalled();
+    });
+
+    it("encodes plan into emailRedirectTo next param when plan is supplied", async () => {
+      mockSignUp.mockResolvedValue({ error: null });
+
+      const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
+      formData.set("email", "new@example.com");
+      formData.set("password", "secret123");
+      formData.set("plan", "price_pro_monthly");
+
+      await expect(signUp(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+
+      const call = mockSignUp.mock.calls[0][0];
+      const redirectUrl = new URL(call.options.emailRedirectTo);
+      expect(redirectUrl.pathname).toBe("/auth/callback");
+      expect(redirectUrl.searchParams.get("next")).toBe(
+        "/subscription/checkout?plan=price_pro_monthly",
+      );
+    });
+
+    it("does not set next param when plan is empty string", async () => {
+      mockSignUp.mockResolvedValue({ error: null });
+
+      const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
+      formData.set("email", "new@example.com");
+      formData.set("password", "secret123");
+      formData.set("plan", "");
+
+      await expect(signUp(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+
+      const call = mockSignUp.mock.calls[0][0];
+      const redirectUrl = new URL(call.options.emailRedirectTo);
+      expect(redirectUrl.searchParams.get("next")).toBeNull();
     });
 
     it("returns error when fullName is missing", async () => {

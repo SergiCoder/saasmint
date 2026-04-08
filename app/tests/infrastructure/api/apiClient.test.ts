@@ -14,7 +14,7 @@ const fetchSpy = vi.fn();
 vi.stubGlobal("fetch", fetchSpy);
 
 // Import after mocks are set up
-const { getAuthToken, apiFetch } =
+const { getAuthToken, apiFetch, publicApiFetch } =
   await import("@/infrastructure/api/apiClient");
 
 beforeEach(() => {
@@ -225,6 +225,90 @@ describe("apiFetch", () => {
     });
 
     await expect(apiFetch("/account/")).rejects.toThrow(AuthError);
+  });
+});
+
+describe("publicApiFetch", () => {
+  it("constructs the correct URL without an Authorization header", async () => {
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve([{ id: "p1" }]),
+    });
+
+    const result = await publicApiFetch("/billing/plans/");
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      "http://localhost:8001/api/v1/billing/plans/",
+      expect.any(Object),
+    );
+    const headers = fetchSpy.mock.calls[0][1].headers;
+    expect(headers.authorization).toBeUndefined();
+    expect(result).toEqual([{ id: "p1" }]);
+  });
+
+  it("does not call Supabase / getAuthToken", async () => {
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve([]),
+    });
+
+    mockGetUser.mockClear();
+    mockGetSession.mockClear();
+    await publicApiFetch("/billing/plans/");
+
+    expect(mockGetUser).not.toHaveBeenCalled();
+    expect(mockGetSession).not.toHaveBeenCalled();
+  });
+
+  it("sets Content-Type when a body is present", async () => {
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({}),
+    });
+
+    await publicApiFetch("/public/", {
+      method: "POST",
+      body: JSON.stringify({ a: 1 }),
+    });
+
+    const headers = fetchSpy.mock.calls[0][1].headers;
+    expect(headers["content-type"]).toBe("application/json");
+  });
+
+  it("returns undefined on 204", async () => {
+    fetchSpy.mockResolvedValue({ ok: true, status: 204 });
+    const result = await publicApiFetch("/public/");
+    expect(result).toBeUndefined();
+  });
+
+  it("throws a generic error on non-2xx response", async () => {
+    fetchSpy.mockResolvedValue({
+      ok: false,
+      status: 500,
+      text: () => Promise.resolve("boom"),
+    });
+
+    await expect(publicApiFetch("/billing/plans/")).rejects.toThrow(
+      "API 500: boom",
+    );
+  });
+
+  it("does NOT wrap 401 in AuthError (no auth token sent)", async () => {
+    fetchSpy.mockResolvedValue({
+      ok: false,
+      status: 401,
+      text: () => Promise.resolve("Unauthorized"),
+    });
+
+    await expect(publicApiFetch("/billing/plans/")).rejects.toThrow(
+      "API 401: Unauthorized",
+    );
+    await expect(publicApiFetch("/billing/plans/")).rejects.not.toBeInstanceOf(
+      AuthError,
+    );
   });
 });
 

@@ -6,23 +6,24 @@ const defaultProps = {
   planName: "Pro Plan",
   status: "active" as const,
   statusLabel: "Active",
-  interval: "month",
-  price: "$29",
-  currentPeriodEnd: "Jan 15, 2027",
-  periodEndLabel: "Next billing date",
+  subtitle: "Billed monthly",
+  currentPeriodEndIso: "2027-01-15T00:00:00.000Z",
+  periodEndLabel: "Renews on",
   cancelAtPeriodEnd: false,
 };
 
 describe("SubscriptionCard", () => {
-  it("renders plan name, price, and interval", () => {
+  it("renders plan name and subtitle", () => {
     render(<SubscriptionCard {...defaultProps} />);
     expect(screen.getByText("Pro Plan")).toBeInTheDocument();
-    expect(screen.getByText("$29/month")).toBeInTheDocument();
+    expect(screen.getByText("Billed monthly")).toBeInTheDocument();
   });
 
-  it("renders the period end date", () => {
+  it("renders the renewal date label and a date value", () => {
     render(<SubscriptionCard {...defaultProps} />);
-    expect(screen.getByText("Next billing date")).toBeInTheDocument();
+    expect(screen.getByText("Renews on")).toBeInTheDocument();
+    // FormattedDate renders the date via Intl.DateTimeFormat once mounted;
+    // jsdom defaults to en-US, so "medium" style yields "Jan 15, 2027".
     expect(screen.getByText("Jan 15, 2027")).toBeInTheDocument();
   });
 

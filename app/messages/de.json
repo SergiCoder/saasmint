@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "Funktionen",
-    "pricing": "Preise",
+    "home": "Startseite",
     "blog": "Blog",
     "getStarted": "Loslegen",
     "dashboard": "Dashboard",
-    "billing": "Abrechnung",
+    "subscription": "Abonnement",
+    "pricing": "Preise",
     "settings": "Einstellungen",
     "org": "Organisation",
     "admin": "Verwaltung",
@@ -156,14 +156,39 @@
     "title": "Abrechnung",
     "currentPlan": "Aktueller Plan",
     "upgrade": "Upgraden",
-    "cancel": "Abo kündigen",
+    "cancel": "Abo wird zum Ende der Laufzeit gekündigt",
+    "cancelRenewal": "Verlängerung kündigen",
+    "cancelRenewalTitle": "Verlängerung kündigen?",
+    "cancelRenewalBody": "Ihr Abonnement bleibt bis zum {date} aktiv. Danach verlieren Sie den Zugriff auf kostenpflichtige Funktionen.",
+    "cancelRenewalKeep": "Abonnement behalten",
+    "resumeSubscription": "Abonnement fortsetzen",
     "changePlan": "Plan ändern",
     "applyPromo": "Promo-Code einlösen",
     "portal": "Abrechnung verwalten",
     "success": "Zahlung erfolgreich!",
-    "successDesc": "Ihr Abonnement wurde aktualisiert."
+    "successDesc": "Ihr Abonnement wurde aktualisiert.",
+    "renewsOn": "Verlängert sich am",
+    "endsOn": "Endet am",
+    "billedMonthly": "Monatlich abgerechnet",
+    "billedYearly": "Jährlich abgerechnet",
+    "seat": "Platz",
+    "seats": "Plätze",
+    "products": "Guthaben-Pakete",
+    "credits": "Credits",
+    "buy": "Kaufen",
+    "getStarted": "Loslegen",
+    "select": "Auswählen",
+    "monthly": "Monatlich",
+    "yearly": "Jährlich",
+    "savingsBadge": "Bis zu {pct}% sparen",
+    "personalPlans": "Persönliche Pläne",
+    "teamPlans": "Team-Pläne",
+    "personalPlansDesc": "Für Einzelpersonen.",
+    "teamPlansDesc": "Für Teams und Organisationen.",
+    "pricingTitle": "Preise",
+    "total": "gesamt"
   },
-  "settings": {
+  "profile": {
     "title": "Einstellungen",
     "profile": "Profil",
     "fullName": "Vollständiger Name",
@@ -228,37 +253,12 @@
     "toggleNav": "Navigation umschalten",
     "dismiss": "Schließen"
   },
-  "pricing": {
-    "pageTitle": "Preise",
-    "interval": "Monat",
-    "mostPopular": "Am beliebtesten",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "Bis zu 5 Benutzer",
-    "starterFeature2": "1 GB Speicher",
-    "starterFeature3": "Community-Support",
-    "starterFeature4": "Basis-Analytik",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "Bis zu 50 Benutzer",
-    "proFeature2": "25 GB Speicher",
-    "proFeature3": "Prioritäts-E-Mail-Support",
-    "proFeature4": "Erweiterte Analytik",
-    "proFeature5": "API-Zugang",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "Unbegrenzte Benutzer",
-    "enterpriseFeature2": "Unbegrenzter Speicher",
-    "enterpriseFeature3": "SSO & SAML",
-    "enterpriseFeature4": "Dedizierter Support",
-    "enterpriseFeature5": "Audit-Protokolle",
-    "enterpriseFeature6": "Individuelle Integrationen"
-  },
   "contact": {
     "title": "Kontakt",
     "description": "Haben Sie eine Frage oder brauchen Sie Hilfe? Wir freuen uns auf Ihre Nachricht.",
     "placeholder": "Ihre E-Mail-Adresse",
-    "submit": "Senden"
+    "submit": "Senden",
+    "messagePlaceholder": "Ihre Nachricht"
   },
   "about": {
     "title": "Über dieses Projekt",
@@ -294,5 +294,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "Dies ist eine Platzhalterseite für Feature 2."
+  },
+  "errorPage": {
+    "title": "Etwas ist schiefgelaufen",
+    "description": "Beim Laden dieser Seite ist ein unerwarteter Fehler aufgetreten. Bitte versuche es gleich noch einmal.",
+    "retry": "Erneut versuchen",
+    "home": "Zur Startseite",
+    "errorId": "Fehler-ID"
   }
 }

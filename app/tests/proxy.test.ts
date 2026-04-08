@@ -90,20 +90,22 @@ describe("proxy", () => {
       expect(location).toContain("/en/login");
     });
 
-    it("redirects unauthenticated user to login on /billing", async () => {
+    it("redirects unauthenticated user to login on /subscription", async () => {
       mockGetUser.mockResolvedValue({ data: { user: null } });
 
-      const request = createMockRequest("http://localhost:3000/en/billing");
+      const request = createMockRequest(
+        "http://localhost:3000/en/subscription",
+      );
       const response = await proxy(request);
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
     });
 
-    it("redirects unauthenticated user to login on /settings", async () => {
+    it("redirects unauthenticated user to login on /profile", async () => {
       mockGetUser.mockResolvedValue({ data: { user: null } });
 
-      const request = createMockRequest("http://localhost:3000/en/settings");
+      const request = createMockRequest("http://localhost:3000/en/profile");
       const response = await proxy(request);
 
       expect(response.status).toBe(307);

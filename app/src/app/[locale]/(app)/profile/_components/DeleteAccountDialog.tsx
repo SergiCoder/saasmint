@@ -12,7 +12,7 @@ interface DeleteAccountDialogProps {
 }
 
 export function DeleteAccountDialog({ userEmail }: DeleteAccountDialogProps) {
-  const t = useTranslations("settings");
+  const t = useTranslations("profile");
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);

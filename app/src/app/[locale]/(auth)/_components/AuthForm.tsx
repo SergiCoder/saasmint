@@ -15,6 +15,7 @@ interface AuthFormProps {
   forgotPasswordHref?: string;
   footerLink: { href: string; textKey: string; linkKey: string };
   serverAlerts?: React.ReactNode;
+  hiddenFields?: Record<string, string>;
 }
 
 export function AuthForm({
@@ -25,6 +26,7 @@ export function AuthForm({
   forgotPasswordHref,
   footerLink,
   serverAlerts,
+  hiddenFields,
 }: AuthFormProps) {
   const t = useTranslations(translationNamespace);
   const [state, formAction, pending] = useActionState(action, null);
@@ -39,6 +41,10 @@ export function AuthForm({
         serverAlerts
       )}
       <form action={formAction} className="space-y-4">
+        {hiddenFields &&
+          Object.entries(hiddenFields).map(([name, value]) => (
+            <input key={name} type="hidden" name={name} value={value} />
+          ))}
         {showNameField && (
           <FormField
             label={t("fullName")}

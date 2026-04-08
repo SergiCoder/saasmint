@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "Özellikler",
-    "pricing": "Fiyatlandırma",
+    "home": "Ana sayfa",
     "blog": "Blog",
     "getStarted": "Başlayın",
     "dashboard": "Kontrol paneli",
-    "billing": "Faturalandırma",
+    "subscription": "Abonelik",
+    "pricing": "Fiyatlar",
     "settings": "Ayarlar",
     "org": "Organizasyon",
     "admin": "Yönetim",
@@ -156,14 +156,39 @@
     "title": "Faturalandırma",
     "currentPlan": "Mevcut plan",
     "upgrade": "Yükselt",
-    "cancel": "Aboneliği iptal et",
+    "cancel": "Abonelik dönem sonunda iptal edilecek",
+    "cancelRenewal": "Yenilemeyi iptal et",
+    "cancelRenewalTitle": "Yenileme iptal edilsin mi?",
+    "cancelRenewalBody": "Aboneliğiniz {date} tarihine kadar etkin kalacak. Ardından ücretli özelliklere erişiminizi kaybedeceksiniz.",
+    "cancelRenewalKeep": "Aboneliği koru",
+    "resumeSubscription": "Aboneliği devam ettir",
     "changePlan": "Plan değiştir",
     "applyPromo": "Promosyon kodu uygula",
     "portal": "Faturalandırmayı yönet",
     "success": "Ödeme başarılı!",
-    "successDesc": "Aboneliğiniz güncellendi."
+    "successDesc": "Aboneliğiniz güncellendi.",
+    "renewsOn": "Yenilenme tarihi",
+    "endsOn": "Bitiş tarihi",
+    "billedMonthly": "Aylık faturalandırma",
+    "billedYearly": "Yıllık faturalandırma",
+    "seat": "koltuk",
+    "seats": "koltuk",
+    "products": "Kredi paketleri",
+    "credits": "kredi",
+    "buy": "Satın al",
+    "getStarted": "Başlayın",
+    "select": "Seç",
+    "monthly": "Aylık",
+    "yearly": "Yıllık",
+    "savingsBadge": "%{pct} kadar tasarruf",
+    "personalPlans": "Kişisel planlar",
+    "teamPlans": "Takım planları",
+    "personalPlansDesc": "Bireyler için.",
+    "teamPlansDesc": "Takımlar ve kuruluşlar için.",
+    "pricingTitle": "Fiyatlandırma",
+    "total": "toplam"
   },
-  "settings": {
+  "profile": {
     "title": "Ayarlar",
     "profile": "Profil",
     "fullName": "Ad soyad",
@@ -228,37 +253,12 @@
     "toggleNav": "Gezinmeyi aç/kapat",
     "dismiss": "Kapat"
   },
-  "pricing": {
-    "pageTitle": "Fiyatlandırma",
-    "interval": "ay",
-    "mostPopular": "En popüler",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "5 kullanıcıya kadar",
-    "starterFeature2": "1 GB depolama",
-    "starterFeature3": "Topluluk desteği",
-    "starterFeature4": "Temel analitik",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "50 kullanıcıya kadar",
-    "proFeature2": "25 GB depolama",
-    "proFeature3": "Öncelikli e-posta desteği",
-    "proFeature4": "Gelişmiş analitik",
-    "proFeature5": "API erişimi",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "Sınırsız kullanıcı",
-    "enterpriseFeature2": "Sınırsız depolama",
-    "enterpriseFeature3": "SSO ve SAML",
-    "enterpriseFeature4": "Özel destek",
-    "enterpriseFeature5": "Denetim günlükleri",
-    "enterpriseFeature6": "Özel entegrasyonlar"
-  },
   "contact": {
     "title": "Bize ulaşın",
     "description": "Bir sorunuz mu var veya yardıma mı ihtiyacınız var? Sizden haber almak isteriz.",
     "placeholder": "E-posta adresiniz",
-    "submit": "Gönder"
+    "submit": "Gönder",
+    "messagePlaceholder": "Mesajınız"
   },
   "about": {
     "title": "Bu proje hakkında",
@@ -294,5 +294,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "Bu, Feature 2 için bir yer tutucu sayfadır."
+  },
+  "errorPage": {
+    "title": "Bir şeyler ters gitti",
+    "description": "Bu sayfayı yüklerken beklenmedik bir hatayla karşılaştık. Lütfen birazdan tekrar deneyin.",
+    "retry": "Tekrar dene",
+    "home": "Ana sayfaya dön",
+    "errorId": "Hata kimliği"
   }
 }

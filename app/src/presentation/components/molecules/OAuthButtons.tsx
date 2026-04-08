@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { Provider } from "@supabase/supabase-js";
 import { createClient } from "@/infrastructure/supabase/client";
 import { Button } from "@/presentation/components/atoms/Button";
@@ -28,17 +28,31 @@ const providers = [
   },
 ] as const;
 
-export function OAuthButtons() {
+interface OAuthButtonsProps {
+  plan?: string;
+}
+
+export function OAuthButtons({ plan }: OAuthButtonsProps = {}) {
   const t = useTranslations("auth.oauth");
+  const locale = useLocale();
   const [loadingProvider, setLoadingProvider] = useState<Provider | null>(null);
 
   async function handleOAuth(provider: Provider) {
     setLoadingProvider(provider);
     const supabase = createClient();
+    const callbackUrl = new URL(
+      `${window.location.origin}/${locale}/auth/callback`,
+    );
+    if (plan) {
+      callbackUrl.searchParams.set(
+        "next",
+        `/subscription/checkout?plan=${encodeURIComponent(plan)}`,
+      );
+    }
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: callbackUrl.toString(),
       },
     });
     if (error) {

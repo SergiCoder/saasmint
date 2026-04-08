@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "功能",
-    "pricing": "定價",
+    "home": "首頁",
     "blog": "Blog",
     "getStarted": "開始使用",
     "dashboard": "儀表板",
-    "billing": "帳單",
+    "subscription": "訂閱",
+    "pricing": "定價",
     "settings": "設定",
     "org": "組織",
     "admin": "管理",
@@ -156,14 +156,39 @@
     "title": "帳單",
     "currentPlan": "目前方案",
     "upgrade": "升級",
-    "cancel": "取消訂閱",
+    "cancel": "訂閱將在當前週期結束時取消",
+    "cancelRenewal": "取消續訂",
+    "cancelRenewalTitle": "取消續訂？",
+    "cancelRenewalBody": "您的訂閱將在 {date} 之前保持有效。之後您將無法使用付費功能。",
+    "cancelRenewalKeep": "保留訂閱",
+    "resumeSubscription": "恢復訂閱",
     "changePlan": "變更方案",
     "applyPromo": "使用促銷代碼",
     "portal": "管理帳單",
     "success": "付款成功！",
-    "successDesc": "您的訂閱已更新。"
+    "successDesc": "您的訂閱已更新。",
+    "renewsOn": "續訂日期",
+    "endsOn": "結束日期",
+    "billedMonthly": "按月計費",
+    "billedYearly": "按年計費",
+    "seat": "席位",
+    "seats": "席位",
+    "products": "點數包",
+    "credits": "點數",
+    "buy": "購買",
+    "getStarted": "開始使用",
+    "select": "選擇",
+    "monthly": "每月",
+    "yearly": "每年",
+    "savingsBadge": "最多省{pct}%",
+    "personalPlans": "個人方案",
+    "teamPlans": "團隊方案",
+    "personalPlansDesc": "適合個人。",
+    "teamPlansDesc": "適合團隊與組織。",
+    "pricingTitle": "定價",
+    "total": "總計"
   },
-  "settings": {
+  "profile": {
     "title": "設定",
     "profile": "個人資料",
     "fullName": "全名",
@@ -228,37 +253,12 @@
     "toggleNav": "切換導覽",
     "dismiss": "關閉"
   },
-  "pricing": {
-    "pageTitle": "定價",
-    "interval": "月",
-    "mostPopular": "最受歡迎",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "最多 5 名使用者",
-    "starterFeature2": "1 GB 儲存空間",
-    "starterFeature3": "社群支援",
-    "starterFeature4": "基礎分析",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "最多 50 名使用者",
-    "proFeature2": "25 GB 儲存空間",
-    "proFeature3": "優先電子郵件支援",
-    "proFeature4": "進階分析",
-    "proFeature5": "API 存取",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "無限使用者",
-    "enterpriseFeature2": "無限儲存",
-    "enterpriseFeature3": "SSO與SAML",
-    "enterpriseFeature4": "專屬支援",
-    "enterpriseFeature5": "稽核日誌",
-    "enterpriseFeature6": "自訂整合"
-  },
   "contact": {
     "title": "聯絡我們",
     "description": "有問題或需要幫助？我們很樂意聽取您的意見。",
     "placeholder": "您的電子郵件地址",
-    "submit": "傳送"
+    "submit": "傳送",
+    "messagePlaceholder": "您的留言"
   },
   "about": {
     "title": "關於本專案",
@@ -294,5 +294,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "這是Feature 2的佔位頁面。"
+  },
+  "errorPage": {
+    "title": "出現了一些問題",
+    "description": "載入此頁面時發生未預期的錯誤。請稍後再試。",
+    "retry": "重試",
+    "home": "返回首頁",
+    "errorId": "錯誤 ID"
   }
 }

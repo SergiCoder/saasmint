@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "Funksjoner",
-    "pricing": "Priser",
+    "home": "Hjem",
     "blog": "Blog",
     "getStarted": "Kom i gang",
     "dashboard": "Dashboard",
-    "billing": "Fakturering",
+    "subscription": "Abonnement",
+    "pricing": "Priser",
     "settings": "Innstillinger",
     "org": "Organisasjon",
     "admin": "Administrasjon",
@@ -156,14 +156,39 @@
     "title": "Fakturering",
     "currentPlan": "Nåværende plan",
     "upgrade": "Oppgrader",
-    "cancel": "Avbryt abonnement",
+    "cancel": "Abonnementet avsluttes ved periodens slutt",
+    "cancelRenewal": "Avbryt fornyelse",
+    "cancelRenewalTitle": "Avbryte fornyelse?",
+    "cancelRenewalBody": "Abonnementet ditt forblir aktivt til {date}. Etter det mister du tilgangen til betalte funksjoner.",
+    "cancelRenewalKeep": "Behold abonnement",
+    "resumeSubscription": "Gjenoppta abonnement",
     "changePlan": "Endre plan",
     "applyPromo": "Bruk kampanjekode",
     "portal": "Administrer fakturering",
     "success": "Betaling vellykket!",
-    "successDesc": "Abonnementet ditt er oppdatert."
+    "successDesc": "Abonnementet ditt er oppdatert.",
+    "renewsOn": "Fornyes den",
+    "endsOn": "Avsluttes den",
+    "billedMonthly": "Fakturert månedlig",
+    "billedYearly": "Fakturert årlig",
+    "seat": "plass",
+    "seats": "plasser",
+    "products": "Kredittpakker",
+    "credits": "kreditter",
+    "buy": "Kjøp",
+    "getStarted": "Kom i gang",
+    "select": "Velg",
+    "monthly": "Månedlig",
+    "yearly": "Årlig",
+    "savingsBadge": "Spar opptil {pct}%",
+    "personalPlans": "Personlige planer",
+    "teamPlans": "Teamplaner",
+    "personalPlansDesc": "For enkeltpersoner.",
+    "teamPlansDesc": "For team og organisasjoner.",
+    "pricingTitle": "Priser",
+    "total": "totalt"
   },
-  "settings": {
+  "profile": {
     "title": "Innstillinger",
     "profile": "Profil",
     "fullName": "Fullt navn",
@@ -228,37 +253,12 @@
     "toggleNav": "Veksle navigasjon",
     "dismiss": "Lukk"
   },
-  "pricing": {
-    "pageTitle": "Priser",
-    "interval": "måned",
-    "mostPopular": "Mest populær",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "Opptil 5 brukere",
-    "starterFeature2": "1 GB lagring",
-    "starterFeature3": "Fellesskapsstøtte",
-    "starterFeature4": "Grunnleggende analyse",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "Opptil 50 brukere",
-    "proFeature2": "25 GB lagring",
-    "proFeature3": "Prioritert e-poststotte",
-    "proFeature4": "Avansert analyse",
-    "proFeature5": "API-tilgang",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "Ubegrensede brukere",
-    "enterpriseFeature2": "Ubegrenset lagring",
-    "enterpriseFeature3": "SSO og SAML",
-    "enterpriseFeature4": "Dedikert stotte",
-    "enterpriseFeature5": "Revisjonslogger",
-    "enterpriseFeature6": "Tilpassede integrasjoner"
-  },
   "contact": {
     "title": "Kontakt oss",
     "description": "Har du et spørsmål eller trenger hjelp? Vi hører gjerne fra deg.",
     "placeholder": "E-postadressen din",
-    "submit": "Send"
+    "submit": "Send",
+    "messagePlaceholder": "Din melding"
   },
   "about": {
     "title": "Om dette prosjektet",
@@ -294,5 +294,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "Dette er en plassholderside for Feature 2."
+  },
+  "errorPage": {
+    "title": "Noe gikk galt",
+    "description": "Vi støtte på en uventet feil da denne siden skulle lastes. Prøv igjen om et øyeblikk.",
+    "retry": "Prøv igjen",
+    "home": "Tilbake til start",
+    "errorId": "Feil-ID"
   }
 }

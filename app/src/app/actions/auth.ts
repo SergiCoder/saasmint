@@ -4,8 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/infrastructure/supabase/server";
 import { SignOut } from "@/application/use-cases/auth/SignOut";
 import { authGateway } from "@/infrastructure/registry";
-
-const APP_ORIGIN = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+import { APP_ORIGIN } from "@/app/[locale]/(app)/subscription/_data/trustedRedirect";
 
 function extractCredentials(
   formData: FormData,
@@ -31,6 +30,11 @@ export async function signIn(_prevState: unknown, formData: FormData) {
     return { error: error.message };
   }
 
+  const plan = formData.get("plan");
+  if (typeof plan === "string" && plan) {
+    redirect(`/subscription/checkout?plan=${encodeURIComponent(plan)}`);
+  }
+
   redirect("/dashboard");
 }
 
@@ -47,11 +51,20 @@ export async function signUp(_prevState: unknown, formData: FormData) {
     return { error: "Full name must be between 3 and 255 characters" };
   }
 
+  const plan = formData.get("plan");
+  const callbackUrl = new URL(`${APP_ORIGIN}/auth/callback`);
+  if (typeof plan === "string" && plan) {
+    callbackUrl.searchParams.set(
+      "next",
+      `/subscription/checkout?plan=${encodeURIComponent(plan)}`,
+    );
+  }
+
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     ...result,
     options: {
-      emailRedirectTo: `${APP_ORIGIN}/auth/callback`,
+      emailRedirectTo: callbackUrl.toString(),
       data: {
         full_name: fullName,
       },

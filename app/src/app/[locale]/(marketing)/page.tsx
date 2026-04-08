@@ -101,7 +101,7 @@ export default async function LandingPage() {
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-2.5">
             <Link
-              href="/signup"
+              href="/pricing"
               className="bg-primary-600 hover:bg-primary-700 focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-lg px-6 py-3 text-base font-medium text-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               {t("cta")}

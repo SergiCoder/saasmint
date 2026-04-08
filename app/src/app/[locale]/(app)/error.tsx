@@ -1,27 +1,31 @@
 "use client";
 
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
-import { Button } from "@/presentation/components/atoms/Button";
+import { ErrorView } from "@/presentation/components/organisms/ErrorView";
 
 interface ErrorPageProps {
   error: Error & { digest?: string };
   reset: () => void;
 }
 
-export default function AppError({ reset }: ErrorPageProps) {
-  const t = useTranslations("common");
+export default function AppError({ error, reset }: ErrorPageProps) {
+  const t = useTranslations("errorPage");
+
+  useEffect(() => {
+    console.error("[app] route error:", error);
+  }, [error]);
 
   return (
-    <div className="mx-auto max-w-md py-16">
-      <AlertBanner variant="error">
-        <p>{t("error")}</p>
-      </AlertBanner>
-      <div className="mt-4 text-center">
-        <Button variant="secondary" onClick={reset}>
-          {t("confirm")}
-        </Button>
-      </div>
-    </div>
+    <ErrorView
+      title={t("title")}
+      description={t("description")}
+      retryLabel={t("retry")}
+      homeLabel={t("home")}
+      homeHref="/dashboard"
+      errorIdLabel={t("errorId")}
+      errorId={error.digest}
+      onRetry={reset}
+    />
   );
 }

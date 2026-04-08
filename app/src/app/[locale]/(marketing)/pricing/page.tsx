@@ -1,91 +1,178 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/lib/i18n/navigation";
-import { PricingTable } from "@/presentation/components/organisms/PricingTable";
+import { ListPlans } from "@/application/use-cases/billing/ListPlans";
+import { GetSubscription } from "@/application/use-cases/billing/GetSubscription";
+import { ListProducts } from "@/application/use-cases/billing/ListProducts";
+import {
+  planGateway,
+  productGateway,
+  subscriptionGateway,
+} from "@/infrastructure/registry";
+import { PricingSection } from "@/presentation/components/organisms/PricingSection";
+import { ProductsGrid } from "@/presentation/components/organisms/ProductsGrid";
+import { GetStartedButton } from "./_components/GetStartedButton";
+import { CheckoutButton } from "@/app/[locale]/(app)/subscription/_components/CheckoutButton";
+import { TeamCheckoutButton } from "@/app/[locale]/(app)/subscription/_components/TeamCheckoutButton";
+import { getOptionalUser } from "../_data/getOptionalUser";
+import {
+  buildPlanCardGroups,
+  splitPlanGroupsByContext,
+} from "@/app/[locale]/_lib/buildPlanCards";
+import type { Plan } from "@/domain/models/Plan";
+import type { Product } from "@/domain/models/Product";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("pricing");
-  return { title: t("pageTitle") };
+  const t = await getTranslations("billing");
+  return { title: t("pricingTitle") };
 }
 
-// TODO: Replace with ListPlans use-case once a public (unauthenticated) plan
-// endpoint is available. Currently planGateway requires an auth token.
-
 export default async function PricingPage() {
-  const [t, tNav] = await Promise.all([
-    getTranslations("pricing"),
-    getTranslations("nav"),
+  const plansPromise = new ListPlans(planGateway)
+    .execute()
+    .catch((err): Plan[] => {
+      console.error("Failed to fetch plans", err);
+      return [];
+    });
+
+  const [t, user, plans] = await Promise.all([
+    getTranslations("billing"),
+    getOptionalUser(),
+    plansPromise,
   ]);
 
-  const PLANS = [
-    {
-      name: t("starterName"),
-      price: t("starterPrice"),
-      interval: t("interval"),
-      features: [
-        t("starterFeature1"),
-        t("starterFeature2"),
-        t("starterFeature3"),
-        t("starterFeature4"),
-      ],
-      highlighted: false,
-    },
-    {
-      name: t("proName"),
-      price: t("proPrice"),
-      interval: t("interval"),
-      features: [
-        t("proFeature1"),
-        t("proFeature2"),
-        t("proFeature3"),
-        t("proFeature4"),
-        t("proFeature5"),
-      ],
-      highlighted: true,
-      highlightLabel: t("mostPopular"),
-    },
-    {
-      name: t("enterpriseName"),
-      price: t("enterprisePrice"),
-      interval: t("interval"),
-      features: [
-        t("enterpriseFeature1"),
-        t("enterpriseFeature2"),
-        t("enterpriseFeature3"),
-        t("enterpriseFeature4"),
-        t("enterpriseFeature5"),
-        t("enterpriseFeature6"),
-      ],
-      highlighted: false,
-    },
-  ];
+  let currentPlanId: string | undefined;
+  let products: Product[] = [];
+  if (user) {
+    try {
+      const [subscription, fetchedProducts] = await Promise.all([
+        new GetSubscription(subscriptionGateway).execute(),
+        new ListProducts(productGateway).execute(),
+      ]);
+      currentPlanId = subscription?.plan.id;
+      products = fetchedProducts;
+    } catch (err) {
+      console.error("Failed to fetch subscription/products", err);
+    }
+  }
 
-  const plans = PLANS.map((plan) => ({
-    ...plan,
-    cta: (
-      <Link
-        href="/signup"
-        className={`block w-full rounded-md px-4 py-2 text-center text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
-          plan.highlighted
-            ? "bg-primary-600 hover:bg-primary-700 focus-visible:ring-primary-500 text-white"
-            : "focus-visible:ring-primary-500 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-        }`}
-      >
-        {tNav("getStarted")}
-      </Link>
-    ),
-  }));
+  const groups = buildPlanCardGroups({
+    plans,
+    currentPlanId,
+    labels: {
+      upgrade: t("upgrade"),
+      seat: t("seat"),
+    },
+    renderCta: ({
+      plan,
+      isCurrent,
+      isUpgrade,
+      isTeam,
+      unitPrice,
+      ctaLabel,
+    }) => {
+      if (!plan.price) return null;
+      const highlighted = plan.tier === "pro";
+      if (!user) {
+        return (
+          <GetStartedButton
+            planPriceId={plan.price.id}
+            highlighted={highlighted}
+          >
+            {t("select")}
+          </GetStartedButton>
+        );
+      }
+      if (isCurrent) return null;
+      if (!isUpgrade) return null;
+      if (isTeam) {
+        return (
+          <TeamCheckoutButton
+            planPriceId={plan.price.id}
+            unitPrice={unitPrice}
+            interval={plan.interval}
+            highlighted={highlighted}
+            seatLabel={t("seat")}
+            seatsLabel={t("seats")}
+            totalLabel={t("total")}
+          >
+            {ctaLabel}
+          </TeamCheckoutButton>
+        );
+      }
+      return (
+        <CheckoutButton planPriceId={plan.price.id} highlighted={highlighted}>
+          {ctaLabel}
+        </CheckoutButton>
+      );
+    },
+  });
+
+  if (groups.length === 0) {
+    return null;
+  }
+
+  const {
+    personal: personalGroups,
+    team: teamGroups,
+    personalSavingsPct,
+    teamSavingsPct,
+  } = splitPlanGroupsByContext(groups);
+
+  const sectionLabels = {
+    monthly: t("monthly"),
+    yearly: t("yearly"),
+  };
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-24 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-          {t("pageTitle")}
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          {t("pricingTitle")}
         </h1>
       </div>
-      <div className="mt-16">
-        <PricingTable plans={plans} />
+
+      <div className="mt-12 space-y-16">
+        {personalGroups.length > 0 && (
+          <PricingSection
+            title={t("personalPlans")}
+            description={t("personalPlansDesc")}
+            groups={personalGroups}
+            labels={sectionLabels}
+            savingsBadge={
+              personalSavingsPct > 0
+                ? t("savingsBadge", { pct: personalSavingsPct })
+                : undefined
+            }
+          />
+        )}
+        {teamGroups.length > 0 && (
+          <PricingSection
+            title={t("teamPlans")}
+            description={t("teamPlansDesc")}
+            groups={teamGroups}
+            labels={sectionLabels}
+            savingsBadge={
+              teamSavingsPct > 0
+                ? t("savingsBadge", { pct: teamSavingsPct })
+                : undefined
+            }
+          />
+        )}
       </div>
-    </section>
+
+      <ProductsGrid
+        className="mt-16"
+        title={t("products")}
+        products={products}
+        creditsLabel={t("credits")}
+        renderCta={(product) =>
+          product.price && (
+            <CheckoutButton planPriceId={product.price.id}>
+              {t("buy")}
+            </CheckoutButton>
+          )
+        }
+      />
+    </div>
   );
 }

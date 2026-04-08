@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { Subscription } from "@/domain/models/Subscription";
 
 const mockApiFetch = vi.fn();
 
@@ -10,18 +9,6 @@ vi.mock("@/infrastructure/api/apiClient", () => ({
 const { DjangoApiSubscriptionGateway } =
   await import("@/infrastructure/api/DjangoApiSubscriptionGateway");
 
-const subscription: Subscription = {
-  id: "s1",
-  stripeId: "sub_123",
-  status: "active",
-  plan: { id: "p1", name: "Starter", context: "personal", interval: "month" },
-  quantity: 1,
-  currentPeriodStart: "2024-01-01T00:00:00Z",
-  currentPeriodEnd: "2024-02-01T00:00:00Z",
-  cancelAtPeriodEnd: false,
-  trialEnd: null,
-};
-
 beforeEach(() => {
   vi.clearAllMocks();
 });
@@ -30,88 +17,154 @@ describe("DjangoApiSubscriptionGateway", () => {
   const gateway = new DjangoApiSubscriptionGateway();
 
   describe("getSubscription", () => {
-    it("fetches the subscription with GET /billing/subscription/", async () => {
-      mockApiFetch.mockResolvedValue(subscription);
+    it("fetches and camelCases the subscription from GET /billing/subscription/", async () => {
+      mockApiFetch.mockResolvedValue({
+        id: "s1",
+        status: "active",
+        plan: {
+          id: "p1",
+          name: "Pro",
+          description: "Pro plan",
+          context: "personal",
+          tier: "pro",
+          interval: "month",
+          price: { id: "pp1", amount: 1900 },
+        },
+        quantity: 1,
+        discount_percent: null,
+        discount_end_at: null,
+        trial_ends_at: null,
+        current_period_start: "2024-01-01T00:00:00Z",
+        current_period_end: "2024-02-01T00:00:00Z",
+        canceled_at: null,
+        created_at: "2024-01-01T00:00:00Z",
+      });
 
-      const result = await gateway.getSubscription("o1");
+      const result = await gateway.getSubscription();
 
       expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscription/");
-      expect(result).toEqual(subscription);
+      expect(result).toEqual({
+        id: "s1",
+        status: "active",
+        plan: {
+          id: "p1",
+          name: "Pro",
+          description: "Pro plan",
+          context: "personal",
+          tier: "pro",
+          interval: "month",
+          price: { id: "pp1", amount: 1900 },
+        },
+        quantity: 1,
+        discountPercent: null,
+        discountEndAt: null,
+        trialEndsAt: null,
+        currentPeriodStart: "2024-01-01T00:00:00Z",
+        currentPeriodEnd: "2024-02-01T00:00:00Z",
+        canceledAt: null,
+        createdAt: "2024-01-01T00:00:00Z",
+      });
     });
 
     it("returns null when API responds with 404", async () => {
       mockApiFetch.mockRejectedValue(new Error("API 404: Not Found"));
 
-      const result = await gateway.getSubscription("o1");
+      const result = await gateway.getSubscription();
       expect(result).toBeNull();
     });
 
     it("re-throws non-404 errors", async () => {
       mockApiFetch.mockRejectedValue(new Error("API 500: Server Error"));
 
-      await expect(gateway.getSubscription("o1")).rejects.toThrow(
+      await expect(gateway.getSubscription()).rejects.toThrow(
         "API 500: Server Error",
       );
-    });
-
-    it("re-throws non-Error exceptions", async () => {
-      mockApiFetch.mockRejectedValue("unexpected");
-
-      await expect(gateway.getSubscription("o1")).rejects.toBe("unexpected");
     });
   });
 
   describe("createCheckoutSession", () => {
-    it("sends POST /billing/checkout/ with input body", async () => {
+    it("sends POST /billing/checkout-sessions/ with snake_case body", async () => {
       const response = { url: "https://checkout.stripe.com/session_abc" };
       mockApiFetch.mockResolvedValue(response);
 
-      const input = { planPriceId: "price_123", orgId: "o1" };
+      const input = {
+        planPriceId: "price_123",
+        successUrl: "http://localhost:3000/billing?status=success",
+        cancelUrl: "http://localhost:3000/billing",
+      };
       const result = await gateway.createCheckoutSession(input);
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/billing/checkout/", {
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/checkout-sessions/", {
         method: "POST",
-        body: JSON.stringify(input),
+        body: JSON.stringify({
+          plan_price_id: "price_123",
+          success_url: "http://localhost:3000/billing?status=success",
+          cancel_url: "http://localhost:3000/billing",
+        }),
       });
       expect(result).toEqual(response);
     });
 
-    it("propagates errors from apiFetch", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 400: Bad Request"));
+    it("includes quantity in snake_case body when provided", async () => {
+      mockApiFetch.mockResolvedValue({ url: "https://checkout.stripe.com/x" });
 
-      await expect(
-        gateway.createCheckoutSession({ planPriceId: "price_123" }),
-      ).rejects.toThrow("API 400: Bad Request");
+      await gateway.createCheckoutSession({
+        planPriceId: "price_team",
+        quantity: 5,
+        successUrl: "http://localhost:3000/billing?status=success",
+        cancelUrl: "http://localhost:3000/billing",
+      });
+
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        "/billing/checkout-sessions/",
+        expect.objectContaining({
+          method: "POST",
+          body: expect.stringContaining('"quantity":5'),
+        }),
+      );
     });
   });
 
   describe("createBillingPortalSession", () => {
-    it("sends POST /billing/portal/ with input body", async () => {
+    it("sends POST /billing/portal-sessions/ with snake_case body", async () => {
       const response = { url: "https://billing.stripe.com/portal_abc" };
       mockApiFetch.mockResolvedValue(response);
 
-      const input = { orgId: "o1" };
+      const input = { returnUrl: "http://localhost:3000/billing" };
       const result = await gateway.createBillingPortalSession(input);
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/billing/portal/", {
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/portal-sessions/", {
         method: "POST",
-        body: JSON.stringify(input),
+        body: JSON.stringify({
+          return_url: "http://localhost:3000/billing",
+        }),
       });
       expect(result).toEqual(response);
     });
+  });
 
-    it("works without orgId", async () => {
-      const response = { url: "https://billing.stripe.com/portal_def" };
-      mockApiFetch.mockResolvedValue(response);
+  describe("cancelSubscription", () => {
+    it("sends DELETE /billing/subscription/", async () => {
+      mockApiFetch.mockResolvedValue(undefined);
 
-      const input = {};
-      const result = await gateway.createBillingPortalSession(input);
+      await gateway.cancelSubscription();
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/billing/portal/", {
-        method: "POST",
-        body: JSON.stringify(input),
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscription/", {
+        method: "DELETE",
       });
-      expect(result).toEqual(response);
+    });
+  });
+
+  describe("resumeSubscription", () => {
+    it("sends PATCH /billing/subscription/ with cancel_at_period_end=false", async () => {
+      mockApiFetch.mockResolvedValue(undefined);
+
+      await gateway.resumeSubscription();
+
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscription/", {
+        method: "PATCH",
+        body: JSON.stringify({ cancel_at_period_end: false }),
+      });
     });
   });
 });

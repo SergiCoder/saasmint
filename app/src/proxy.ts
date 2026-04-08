@@ -8,8 +8,8 @@ const intlMiddleware = createMiddleware(routing);
 
 const PROTECTED_PREFIXES = [
   "/dashboard",
-  "/billing",
-  "/settings",
+  "/subscription",
+  "/profile",
   "/org",
   "/admin",
 ];
@@ -28,10 +28,11 @@ export async function proxy(request: NextRequest) {
     : pathname;
   if (code && (pathnameWithoutLocale === "" || pathnameWithoutLocale === "/")) {
     const locale = pathname.split("/")[1] ?? routing.defaultLocale;
-    const callbackUrl = new URL(
-      `/${locale}/auth/callback?code=${code}`,
-      request.url,
-    );
+    // Use searchParams.set to safely encode the code and prevent an attacker
+    // from smuggling additional query parameters (e.g. ?code=abc%26next%3D...)
+    // into the callback route by interpolating the decoded value directly.
+    const callbackUrl = new URL(`/${locale}/auth/callback`, request.url);
+    callbackUrl.searchParams.set("code", code);
     return NextResponse.redirect(callbackUrl);
   }
 
@@ -41,9 +42,18 @@ export async function proxy(request: NextRequest) {
 
   if (isProtected) {
     const response = NextResponse.next();
+    // Both env vars are validated at startup via the Next.js config; the
+    // non-null assertions reflect that contract for the type checker.
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error(
+        "NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set",
+      );
+    }
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      supabaseUrl,
+      supabaseAnonKey,
       {
         cookies: {
           getAll: () => request.cookies.getAll(),

@@ -45,7 +45,7 @@ export function UserMenu({ user, menuItems, signOutSlot }: UserMenuProps) {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="rounded-full transition-opacity hover:opacity-80"
+        className="cursor-pointer rounded-full transition-opacity hover:opacity-80"
         aria-expanded={open}
         aria-haspopup="menu"
       >

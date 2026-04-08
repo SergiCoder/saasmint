@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "Funktioner",
-    "pricing": "Priser",
+    "home": "Hem",
     "blog": "Blog",
     "getStarted": "Kom igång",
     "dashboard": "Dashboard",
-    "billing": "Fakturering",
+    "subscription": "Prenumeration",
+    "pricing": "Priser",
     "settings": "Inställningar",
     "org": "Organisation",
     "admin": "Administration",
@@ -156,14 +156,39 @@
     "title": "Fakturering",
     "currentPlan": "Nuvarande plan",
     "upgrade": "Uppgradera",
-    "cancel": "Avsluta prenumeration",
+    "cancel": "Prenumerationen avslutas vid periodens slut",
+    "cancelRenewal": "Avbryt förnyelse",
+    "cancelRenewalTitle": "Avbryta förnyelse?",
+    "cancelRenewalBody": "Din prenumeration fortsätter att vara aktiv till {date}. Därefter förlorar du åtkomsten till betalda funktioner.",
+    "cancelRenewalKeep": "Behåll prenumeration",
+    "resumeSubscription": "Återuppta prenumeration",
     "changePlan": "Byt plan",
     "applyPromo": "Ange kampanjkod",
     "portal": "Hantera fakturering",
     "success": "Betalning lyckades!",
-    "successDesc": "Din prenumeration har uppdaterats."
+    "successDesc": "Din prenumeration har uppdaterats.",
+    "renewsOn": "Förnyas den",
+    "endsOn": "Slutar den",
+    "billedMonthly": "Faktureras månadsvis",
+    "billedYearly": "Faktureras årligen",
+    "seat": "plats",
+    "seats": "platser",
+    "products": "Kreditpaket",
+    "credits": "krediter",
+    "buy": "Köp",
+    "getStarted": "Kom igång",
+    "select": "Välj",
+    "monthly": "Månadsvis",
+    "yearly": "Årligen",
+    "savingsBadge": "Spara upp till {pct}%",
+    "personalPlans": "Personliga planer",
+    "teamPlans": "Teamplaner",
+    "personalPlansDesc": "För individer.",
+    "teamPlansDesc": "För team och organisationer.",
+    "pricingTitle": "Priser",
+    "total": "totalt"
   },
-  "settings": {
+  "profile": {
     "title": "Inställningar",
     "profile": "Profil",
     "fullName": "Fullständigt namn",
@@ -228,37 +253,12 @@
     "toggleNav": "Växla navigering",
     "dismiss": "Stäng"
   },
-  "pricing": {
-    "pageTitle": "Priser",
-    "interval": "månad",
-    "mostPopular": "Mest populär",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "Upp till 5 användare",
-    "starterFeature2": "1 GB lagring",
-    "starterFeature3": "Community-support",
-    "starterFeature4": "Grundläggande analys",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "Upp till 50 användare",
-    "proFeature2": "25 GB lagring",
-    "proFeature3": "Prioriterad e-postsupport",
-    "proFeature4": "Avancerad analys",
-    "proFeature5": "API-åtkomst",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "Obegränsat antal användare",
-    "enterpriseFeature2": "Obegränsad lagring",
-    "enterpriseFeature3": "SSO & SAML",
-    "enterpriseFeature4": "Dedikerad support",
-    "enterpriseFeature5": "Granskningsloggar",
-    "enterpriseFeature6": "Anpassade integrationer"
-  },
   "contact": {
     "title": "Kontakta oss",
     "description": "Har du en fråga eller behöver hjälp? Vi vill gärna höra från dig.",
     "placeholder": "Din e-postadress",
-    "submit": "Skicka"
+    "submit": "Skicka",
+    "messagePlaceholder": "Ditt meddelande"
   },
   "about": {
     "title": "Om det här projektet",
@@ -294,5 +294,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "Detta är en platshållarsida för Feature 2."
+  },
+  "errorPage": {
+    "title": "Något gick fel",
+    "description": "Vi stötte på ett oväntat fel när sidan skulle laddas. Försök igen om en stund.",
+    "retry": "Försök igen",
+    "home": "Tillbaka till start",
+    "errorId": "Fel-ID"
   }
 }

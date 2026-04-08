@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "Funktioner",
-    "pricing": "Priser",
+    "home": "Hjem",
     "blog": "Blog",
     "getStarted": "Kom i gang",
     "dashboard": "Dashboard",
-    "billing": "Fakturering",
+    "subscription": "Abonnement",
+    "pricing": "Priser",
     "settings": "Indstillinger",
     "org": "Organisation",
     "admin": "Administration",
@@ -156,14 +156,39 @@
     "title": "Fakturering",
     "currentPlan": "Nuværende plan",
     "upgrade": "Opgrader",
-    "cancel": "Annuller abonnement",
+    "cancel": "Abonnementet annulleres ved periodens udløb",
+    "cancelRenewal": "Annuller fornyelse",
+    "cancelRenewalTitle": "Annuller fornyelse?",
+    "cancelRenewalBody": "Dit abonnement forbliver aktivt indtil {date}. Derefter mister du adgangen til betalte funktioner.",
+    "cancelRenewalKeep": "Behold abonnement",
+    "resumeSubscription": "Genoptag abonnement",
     "changePlan": "Skift plan",
     "applyPromo": "Brug kampagnekode",
     "portal": "Administrer fakturering",
     "success": "Betaling gennemført!",
-    "successDesc": "Dit abonnement er blevet opdateret."
+    "successDesc": "Dit abonnement er blevet opdateret.",
+    "renewsOn": "Fornyes den",
+    "endsOn": "Slutter den",
+    "billedMonthly": "Faktureret månedligt",
+    "billedYearly": "Faktureret årligt",
+    "seat": "plads",
+    "seats": "pladser",
+    "products": "Kreditpakker",
+    "credits": "kreditter",
+    "buy": "Køb",
+    "getStarted": "Kom i gang",
+    "select": "Vælg",
+    "monthly": "Månedlig",
+    "yearly": "Årlig",
+    "savingsBadge": "Spar op til {pct}%",
+    "personalPlans": "Personlige planer",
+    "teamPlans": "Teamplaner",
+    "personalPlansDesc": "Til enkeltpersoner.",
+    "teamPlansDesc": "Til teams og organisationer.",
+    "pricingTitle": "Priser",
+    "total": "i alt"
   },
-  "settings": {
+  "profile": {
     "title": "Indstillinger",
     "profile": "Profil",
     "fullName": "Fulde navn",
@@ -228,37 +253,12 @@
     "toggleNav": "Skift navigation",
     "dismiss": "Luk"
   },
-  "pricing": {
-    "pageTitle": "Priser",
-    "interval": "måned",
-    "mostPopular": "Mest populær",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "Op til 5 brugere",
-    "starterFeature2": "1 GB lagerplads",
-    "starterFeature3": "Community-support",
-    "starterFeature4": "Grundlæggende analyse",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "Op til 50 brugere",
-    "proFeature2": "25 GB lagerplads",
-    "proFeature3": "Prioriteret e-mailsupport",
-    "proFeature4": "Avanceret analyse",
-    "proFeature5": "API-adgang",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "Ubegrænsede brugere",
-    "enterpriseFeature2": "Ubegrænset lagerplads",
-    "enterpriseFeature3": "SSO & SAML",
-    "enterpriseFeature4": "Dedikeret support",
-    "enterpriseFeature5": "Revisionslogge",
-    "enterpriseFeature6": "Tilpassede integrationer"
-  },
   "contact": {
     "title": "Kontakt os",
     "description": "Har du et spørgsmål eller brug for hjælp? Vi hører gerne fra dig.",
     "placeholder": "Din e-mailadresse",
-    "submit": "Send"
+    "submit": "Send",
+    "messagePlaceholder": "Din besked"
   },
   "about": {
     "title": "Om dette projekt",
@@ -294,5 +294,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "Dette er en pladsholderside for Feature 2."
+  },
+  "errorPage": {
+    "title": "Noget gik galt",
+    "description": "Vi stødte på en uventet fejl, da denne side skulle indlæses. Prøv igen om et øjeblik.",
+    "retry": "Prøv igen",
+    "home": "Tilbage til start",
+    "errorId": "Fejl-ID"
   }
 }

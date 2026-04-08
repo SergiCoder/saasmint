@@ -22,6 +22,11 @@ export {
 } from "./OrgMemberList";
 export { PricingTable, type PricingTableProps } from "./PricingTable";
 export {
+  PricingSection,
+  type PricingSectionProps,
+  type PricingSectionLabels,
+} from "./PricingSection";
+export {
   SubscriptionCard,
   type SubscriptionCardProps,
 } from "./SubscriptionCard";
@@ -34,3 +39,5 @@ export {
 export { FeaturesGrid, type FeaturesGridProps } from "./FeaturesGrid";
 export { LogoCloud, type LogoCloudProps } from "./LogoCloud";
 export { StatsSection, type StatsSectionProps } from "./StatsSection";
+export { ErrorView, type ErrorViewProps } from "./ErrorView";
+export { ProductsGrid, type ProductsGridProps } from "./ProductsGrid";

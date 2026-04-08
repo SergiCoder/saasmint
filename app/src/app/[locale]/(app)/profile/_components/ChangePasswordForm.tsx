@@ -8,7 +8,7 @@ import { Button } from "@/presentation/components/atoms/Button";
 import { updatePassword } from "@/app/actions/auth";
 
 export function ChangePasswordForm() {
-  const t = useTranslations("settings");
+  const t = useTranslations("profile");
   const [state, formAction, pending] = useActionState(updatePassword, null);
   const [dirty, setDirty] = useState(false);
 

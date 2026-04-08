@@ -40,7 +40,7 @@ describe("NavLink", () => {
     });
 
     it("is not active when pathname does not match", () => {
-      mockUsePathname.mockReturnValue("/billing");
+      mockUsePathname.mockReturnValue("/subscription");
       render(<NavLink href="/dashboard">Dashboard</NavLink>);
       const link = screen.getByRole("link", { name: "Dashboard" });
       expect(link).not.toHaveAttribute("aria-current");

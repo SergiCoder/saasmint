@@ -4,7 +4,7 @@ import type { ISubscriptionGateway } from "@/application/ports/ISubscriptionGate
 export class GetSubscription {
   constructor(private readonly subscriptions: ISubscriptionGateway) {}
 
-  async execute(orgId: string): Promise<Subscription | null> {
-    return this.subscriptions.getSubscription(orgId);
+  async execute(): Promise<Subscription | null> {
+    return this.subscriptions.getSubscription();
   }
 }

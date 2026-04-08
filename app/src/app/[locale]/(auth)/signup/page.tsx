@@ -10,19 +10,26 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("pageTitle") };
 }
 
-export default async function SignupPage() {
+interface SignupPageProps {
+  searchParams: Promise<{ plan?: string }>;
+}
+
+export default async function SignupPage({ searchParams }: SignupPageProps) {
   const t = await getTranslations("auth.register");
+  const { plan } = await searchParams;
+  const loginHref = plan ? `/login?plan=${encodeURIComponent(plan)}` : "/login";
 
   return (
     <AuthLayout appName="SaaSmint" title={t("title")}>
-      <OAuthButtons />
+      <OAuthButtons plan={plan} />
       <AuthForm
         action={signUp}
         translationNamespace="auth.register"
         passwordAutoComplete="new-password"
         showNameField
+        hiddenFields={plan ? { plan } : undefined}
         footerLink={{
-          href: "/login",
+          href: loginHref,
           textKey: "hasAccount",
           linkKey: "login",
         }}

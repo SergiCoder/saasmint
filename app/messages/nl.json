@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "Functies",
-    "pricing": "Prijzen",
+    "home": "Home",
     "blog": "Blog",
     "getStarted": "Aan de slag",
     "dashboard": "Dashboard",
-    "billing": "Facturering",
+    "subscription": "Abonnement",
+    "pricing": "Prijzen",
     "settings": "Instellingen",
     "org": "Organisatie",
     "admin": "Beheer",
@@ -156,14 +156,39 @@
     "title": "Facturering",
     "currentPlan": "Huidig abonnement",
     "upgrade": "Upgraden",
-    "cancel": "Abonnement opzeggen",
+    "cancel": "Abonnement wordt opgezegd aan het einde van de periode",
+    "cancelRenewal": "Verlenging annuleren",
+    "cancelRenewalTitle": "Verlenging annuleren?",
+    "cancelRenewalBody": "Je abonnement blijft actief tot {date}. Daarna verlies je toegang tot betaalde functies.",
+    "cancelRenewalKeep": "Abonnement behouden",
+    "resumeSubscription": "Abonnement hervatten",
     "changePlan": "Abonnement wijzigen",
     "applyPromo": "Promotiecode toepassen",
     "portal": "Facturering beheren",
     "success": "Betaling geslaagd!",
-    "successDesc": "Uw abonnement is bijgewerkt."
+    "successDesc": "Uw abonnement is bijgewerkt.",
+    "renewsOn": "Verlengt op",
+    "endsOn": "Eindigt op",
+    "billedMonthly": "Maandelijks gefactureerd",
+    "billedYearly": "Jaarlijks gefactureerd",
+    "seat": "stoel",
+    "seats": "stoelen",
+    "products": "Creditpakketten",
+    "credits": "credits",
+    "buy": "Kopen",
+    "getStarted": "Aan de slag",
+    "select": "Selecteer",
+    "monthly": "Maandelijks",
+    "yearly": "Jaarlijks",
+    "savingsBadge": "Bespaar tot {pct}%",
+    "personalPlans": "Persoonlijke abonnementen",
+    "teamPlans": "Teamabonnementen",
+    "personalPlansDesc": "Voor individuen.",
+    "teamPlansDesc": "Voor teams en organisaties.",
+    "pricingTitle": "Prijzen",
+    "total": "totaal"
   },
-  "settings": {
+  "profile": {
     "title": "Instellingen",
     "profile": "Profiel",
     "fullName": "Volledige naam",
@@ -228,37 +253,12 @@
     "toggleNav": "Navigatie wisselen",
     "dismiss": "Sluiten"
   },
-  "pricing": {
-    "pageTitle": "Prijzen",
-    "interval": "maand",
-    "mostPopular": "Meest populair",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "Tot 5 gebruikers",
-    "starterFeature2": "1 GB opslag",
-    "starterFeature3": "Community-ondersteuning",
-    "starterFeature4": "Basisanalyse",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "Tot 50 gebruikers",
-    "proFeature2": "25 GB opslag",
-    "proFeature3": "Prioriteits-e-mailondersteuning",
-    "proFeature4": "Geavanceerde analyse",
-    "proFeature5": "API-toegang",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "Onbeperkt aantal gebruikers",
-    "enterpriseFeature2": "Onbeperkte opslag",
-    "enterpriseFeature3": "SSO & SAML",
-    "enterpriseFeature4": "Toegewezen ondersteuning",
-    "enterpriseFeature5": "Auditlogs",
-    "enterpriseFeature6": "Aangepaste integraties"
-  },
   "contact": {
     "title": "Contact",
     "description": "Heeft u een vraag of hulp nodig? We horen graag van u.",
     "placeholder": "Uw e-mailadres",
-    "submit": "Verzenden"
+    "submit": "Verzenden",
+    "messagePlaceholder": "Uw bericht"
   },
   "about": {
     "title": "Over dit project",
@@ -294,5 +294,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "Dit is een tijdelijke pagina voor Feature 2."
+  },
+  "errorPage": {
+    "title": "Er is iets misgegaan",
+    "description": "Er is een onverwachte fout opgetreden bij het laden van deze pagina. Probeer het zo meteen opnieuw.",
+    "retry": "Opnieuw proberen",
+    "home": "Terug naar start",
+    "errorId": "Fout-ID"
   }
 }

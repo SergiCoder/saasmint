@@ -22,8 +22,10 @@ Core types in `src/domain/models/`:
 - `User` — authenticated user (Supabase UID, account type, locale/currency preferences)
 - `Org` — organisation record (id, name, slug, logoUrl)
 - `OrgMember` — org membership (userId, role: `owner | admin | member`, isBilling flag)
-- `Plan` — billing plan (context: `personal | team`, interval: `month | year`, prices)
-- `PlanPrice` — individual price point (stripePriceId, currency, amount)
+- `Plan` — billing plan (context: `personal | team`, tier: `free | basic | pro`, interval: `month | year`, single `price`)
+- `PlanPrice` — individual plan price point (id, amount in cents)
+- `Product` — one-time purchase product (id, name, type: `one_time`, credits, `price`)
+- `ProductPrice` — individual product price point (id, amount in cents)
 - `Subscription` — active Stripe subscription (status, plan snapshot, period dates, trial)
 
 Domain errors in `src/domain/errors/`:
@@ -51,9 +53,9 @@ Each gateway implements a port interface from `src/application/ports/` (e.g. `IO
 
 Strict atomic design in `src/presentation/components/`:
 
-- `atoms/` — Button, Input, Badge, Avatar, Label, Spinner, Logo, SectionLabel, LocaleDropdown, Divider, GitHubIcon, GoogleIcon, MicrosoftIcon
-- `molecules/` — FormField, MetricCard, NavLink, PlanCard, AlertBanner, FeatureCard, StatItem, TrustBar, OrgCard, OAuthButtons
-- `organisms/` — NavBar, Footer, PricingTable, SubscriptionCard, OrgMemberList, InvoiceTable, CtaSection, DashboardMock, FeaturesGrid, LogoCloud, StatsSection
+- `atoms/` — Button, Input, Badge, Avatar, AvatarUpload, Label, Spinner, Logo, SectionLabel, LocaleDropdown, FormattedDate, Divider, GitHubIcon, GoogleIcon, MicrosoftIcon
+- `molecules/` — FormField, MetricCard, NavLink, PlanCard, AlertBanner, FeatureCard, StatItem, TrustBar, OrgCard, OAuthButtons, UserMenu, PronounsPicker
+- `organisms/` — NavBar, Footer, PricingTable, PricingSection, SubscriptionCard, OrgMemberList, InvoiceTable, CtaSection, DashboardMock, ErrorView, ProductsGrid, FeaturesGrid, LogoCloud, StatsSection
 - `templates/` — MarketingLayout, AuthLayout, AppLayout, PolicyPage
 
 ## Presentation Conventions
@@ -75,9 +77,9 @@ Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, 
 
 - `(marketing)/` — public pages (landing, pricing, blog, about, contact, privacy, terms, cookies) using `MarketingLayout`
 - `(auth)/` — login/signup/forgot-password/reset-password pages using `AuthLayout`
-- `(app)/` — authenticated pages (dashboard, billing, settings, org) using `AppLayout`
+- `(app)/` — authenticated pages (dashboard, subscription, profile, org) using `AppLayout`
 
-Route-specific client components live in co-located `_components/` directories (e.g. `(app)/billing/_components/CheckoutButton.tsx`).
+Route-specific client components live in co-located `_components/` directories (e.g. `(app)/subscription/_components/CheckoutButton.tsx`).
 
 ## Key Rules
 

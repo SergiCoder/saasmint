@@ -5,17 +5,17 @@ import { GetUserProfile } from "@/application/use-cases/user/GetUserProfile";
 import { referenceGateway, userGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../_data/getCurrentUser";
 import { ChangePasswordForm } from "./_components/ChangePasswordForm";
-import { DeleteAccountDialog } from "./_components/DeleteAccountDialog";
-import { SettingsForm } from "./_components/SettingsForm";
+import { DangerZone } from "./_components/DangerZone";
+import { ProfileForm } from "./_components/ProfileForm";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("settings");
+  const t = await getTranslations("profile");
   return { title: t("title") };
 }
 
-export default async function SettingsPage() {
+export default async function ProfilePage() {
   const [t, currentUser] = await Promise.all([
-    getTranslations("settings"),
+    getTranslations("profile"),
     getCurrentUser(),
   ]);
   const [user, phonePrefixes] = await Promise.all([
@@ -27,10 +27,7 @@ export default async function SettingsPage() {
     <div className="mx-auto max-w-2xl space-y-8">
       <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
       <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          {t("profile")}
-        </h2>
-        <SettingsForm user={user} phonePrefixes={phonePrefixes} />
+        <ProfileForm user={user} phonePrefixes={phonePrefixes} />
       </section>
       <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
@@ -38,15 +35,7 @@ export default async function SettingsPage() {
         </h2>
         <ChangePasswordForm />
       </section>
-      <section className="rounded-lg border border-red-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-2 text-lg font-semibold text-red-600">
-          {t("danger")}
-        </h2>
-        <p className="text-sm text-gray-600">{t("deleteConfirm")}</p>
-        <div className="mt-4">
-          <DeleteAccountDialog userEmail={user.email} />
-        </div>
-      </section>
+      <DangerZone userEmail={user.email} />
     </div>
   );
 }

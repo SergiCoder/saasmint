@@ -26,7 +26,7 @@ const defaultProps = {
   appName: "TestApp",
   links: [
     { href: "/dashboard", label: "Dashboard" },
-    { href: "/billing", label: "Billing" },
+    { href: "/subscription", label: "Subscription" },
   ],
   toggleNavLabel: "Toggle navigation",
 };
@@ -40,10 +40,10 @@ describe("NavBar", () => {
   it("renders navigation links", () => {
     render(<NavBar {...defaultProps} />);
     const dashboardLinks = screen.getAllByText("Dashboard");
-    const billingLinks = screen.getAllByText("Billing");
+    const subscriptionLinks = screen.getAllByText("Subscription");
     // Links appear in both desktop and (potentially) mobile nav
     expect(dashboardLinks.length).toBeGreaterThanOrEqual(1);
-    expect(billingLinks.length).toBeGreaterThanOrEqual(1);
+    expect(subscriptionLinks.length).toBeGreaterThanOrEqual(1);
   });
 
   describe("user avatar", () => {
@@ -117,8 +117,8 @@ describe("NavBar", () => {
       ...defaultProps,
       user: { fullName: "Jane Doe", avatarUrl: null },
       userMenuItems: [
-        { href: "/settings", label: "Profile" },
-        { href: "/billing", label: "Billing" },
+        { href: "/profile", label: "Profile" },
+        { href: "/subscription", label: "Subscription" },
       ],
       userMenuSignOut: <button>Sign Out</button>,
     };
@@ -144,7 +144,9 @@ describe("NavBar", () => {
 
       expect(screen.getByText("Jane Doe")).toBeInTheDocument();
       expect(screen.getAllByText("Profile").length).toBeGreaterThanOrEqual(1);
-      expect(screen.getAllByText("Billing").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("Subscription").length).toBeGreaterThanOrEqual(
+        1,
+      );
     });
   });
 

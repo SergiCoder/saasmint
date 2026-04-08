@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "功能",
-    "pricing": "定价",
+    "home": "首页",
     "blog": "Blog",
     "getStarted": "开始使用",
     "dashboard": "仪表盘",
-    "billing": "账单",
+    "subscription": "订阅",
+    "pricing": "定价",
     "settings": "设置",
     "org": "组织",
     "admin": "管理",
@@ -156,14 +156,39 @@
     "title": "账单",
     "currentPlan": "当前方案",
     "upgrade": "升级",
-    "cancel": "取消订阅",
+    "cancel": "订阅将在当前周期结束时取消",
+    "cancelRenewal": "取消续订",
+    "cancelRenewalTitle": "取消续订？",
+    "cancelRenewalBody": "您的订阅将在 {date} 之前保持有效。之后您将无法使用付费功能。",
+    "cancelRenewalKeep": "保留订阅",
+    "resumeSubscription": "恢复订阅",
     "changePlan": "更改方案",
     "applyPromo": "使用促销代码",
     "portal": "管理账单",
     "success": "支付成功！",
-    "successDesc": "您的订阅已更新。"
+    "successDesc": "您的订阅已更新。",
+    "renewsOn": "续订日期",
+    "endsOn": "结束日期",
+    "billedMonthly": "按月计费",
+    "billedYearly": "按年计费",
+    "seat": "席位",
+    "seats": "席位",
+    "products": "积分包",
+    "credits": "积分",
+    "buy": "购买",
+    "getStarted": "开始使用",
+    "select": "选择",
+    "monthly": "按月",
+    "yearly": "按年",
+    "savingsBadge": "最多节省{pct}%",
+    "personalPlans": "个人套餐",
+    "teamPlans": "团队套餐",
+    "personalPlansDesc": "适合个人用户。",
+    "teamPlansDesc": "适合团队和组织。",
+    "pricingTitle": "定价",
+    "total": "合计"
   },
-  "settings": {
+  "profile": {
     "title": "设置",
     "profile": "个人资料",
     "fullName": "全名",
@@ -228,37 +253,12 @@
     "toggleNav": "切换导航",
     "dismiss": "关闭"
   },
-  "pricing": {
-    "pageTitle": "定价",
-    "interval": "月",
-    "mostPopular": "最受欢迎",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "最多 5 名用户",
-    "starterFeature2": "1 GB 存储空间",
-    "starterFeature3": "社区支持",
-    "starterFeature4": "基础分析",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "最多 50 名用户",
-    "proFeature2": "25 GB 存储空间",
-    "proFeature3": "优先邮件支持",
-    "proFeature4": "高级分析",
-    "proFeature5": "API 访问",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "无限用户",
-    "enterpriseFeature2": "无限存储",
-    "enterpriseFeature3": "SSO和SAML",
-    "enterpriseFeature4": "专属支持",
-    "enterpriseFeature5": "审计日志",
-    "enterpriseFeature6": "自定义集成"
-  },
   "contact": {
     "title": "联系我们",
     "description": "有问题或需要帮助？我们很乐意听取您的反馈。",
     "placeholder": "您的电子邮件地址",
-    "submit": "发送"
+    "submit": "发送",
+    "messagePlaceholder": "您的留言"
   },
   "about": {
     "title": "关于本项目",
@@ -294,5 +294,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "这是Feature 2的占位页面。"
+  },
+  "errorPage": {
+    "title": "出现了一些问题",
+    "description": "加载此页面时发生意外错误。请稍后再试。",
+    "retry": "重试",
+    "home": "返回首页",
+    "errorId": "错误 ID"
   }
 }

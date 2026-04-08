@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "Возможности",
-    "pricing": "Цены",
+    "home": "Главная",
     "blog": "Blog",
     "getStarted": "Начать",
     "dashboard": "Панель управления",
-    "billing": "Оплата",
+    "subscription": "Подписка",
+    "pricing": "Цены",
     "settings": "Настройки",
     "org": "Организация",
     "admin": "Администрирование",
@@ -156,14 +156,39 @@
     "title": "Оплата",
     "currentPlan": "Текущий план",
     "upgrade": "Улучшить",
-    "cancel": "Отменить подписку",
+    "cancel": "Подписка будет отменена в конце периода",
+    "cancelRenewal": "Отменить продление",
+    "cancelRenewalTitle": "Отменить продление?",
+    "cancelRenewalBody": "Ваша подписка останется активной до {date}. После этого вы потеряете доступ к платным функциям.",
+    "cancelRenewalKeep": "Сохранить подписку",
+    "resumeSubscription": "Возобновить подписку",
     "changePlan": "Сменить план",
     "applyPromo": "Применить промокод",
     "portal": "Управление оплатой",
     "success": "Оплата прошла успешно!",
-    "successDesc": "Ваша подписка обновлена."
+    "successDesc": "Ваша подписка обновлена.",
+    "renewsOn": "Продлевается",
+    "endsOn": "Заканчивается",
+    "billedMonthly": "Ежемесячная оплата",
+    "billedYearly": "Годовая оплата",
+    "seat": "место",
+    "seats": "мест",
+    "products": "Пакеты кредитов",
+    "credits": "кредиты",
+    "buy": "Купить",
+    "getStarted": "Начать",
+    "select": "Выбрать",
+    "monthly": "Ежемесячно",
+    "yearly": "Ежегодно",
+    "savingsBadge": "Экономия до {pct}%",
+    "personalPlans": "Личные тарифы",
+    "teamPlans": "Командные тарифы",
+    "personalPlansDesc": "Для частных лиц.",
+    "teamPlansDesc": "Для команд и организаций.",
+    "pricingTitle": "Цены",
+    "total": "итого"
   },
-  "settings": {
+  "profile": {
     "title": "Настройки",
     "profile": "Профиль",
     "fullName": "Полное имя",
@@ -228,37 +253,12 @@
     "toggleNav": "Переключить навигацию",
     "dismiss": "Закрыть"
   },
-  "pricing": {
-    "pageTitle": "Тарифы",
-    "interval": "месяц",
-    "mostPopular": "Самый популярный",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "До 5 пользователей",
-    "starterFeature2": "1 GB хранилища",
-    "starterFeature3": "Поддержка сообщества",
-    "starterFeature4": "Базовая аналитика",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "До 50 пользователей",
-    "proFeature2": "25 GB хранилища",
-    "proFeature3": "Приоритетная поддержка по e-mail",
-    "proFeature4": "Расширенная аналитика",
-    "proFeature5": "Доступ к API",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "Неограниченное число пользователей",
-    "enterpriseFeature2": "Неограниченное хранилище",
-    "enterpriseFeature3": "SSO и SAML",
-    "enterpriseFeature4": "Выделенная поддержка",
-    "enterpriseFeature5": "Журналы аудита",
-    "enterpriseFeature6": "Индивидуальные интеграции"
-  },
   "contact": {
     "title": "Связаться с нами",
     "description": "Есть вопрос или нужна помощь? Мы будем рады вас выслушать.",
     "placeholder": "Ваш адрес электронной почты",
-    "submit": "Отправить"
+    "submit": "Отправить",
+    "messagePlaceholder": "Ваше сообщение"
   },
   "about": {
     "title": "Об этом проекте",
@@ -294,5 +294,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "Это страница-заглушка для Feature 2."
+  },
+  "errorPage": {
+    "title": "Что-то пошло не так",
+    "description": "При загрузке этой страницы произошла непредвиденная ошибка. Пожалуйста, попробуйте снова через мгновение.",
+    "retry": "Повторить",
+    "home": "На главную",
+    "errorId": "ID ошибки"
   }
 }

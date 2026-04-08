@@ -66,7 +66,7 @@ beforeEach(async () => {
 
 describe("user server actions", () => {
   describe("updateProfile", () => {
-    it("updates profile and revalidates /settings", async () => {
+    it("updates profile and revalidates /profile", async () => {
       mockUpdateUserProfileExecute.mockResolvedValue(undefined);
 
       const formData = new FormData();
@@ -88,7 +88,7 @@ describe("user server actions", () => {
         pronouns: null,
         bio: null,
       });
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/settings");
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/profile");
       expect(result).toEqual({ success: true });
     });
 
@@ -206,7 +206,7 @@ describe("user server actions", () => {
   });
 
   describe("updateAvatarUrl", () => {
-    it("updates avatar URL and revalidates /settings", async () => {
+    it("updates avatar URL and revalidates /profile", async () => {
       mockUpdateUserProfileExecute.mockResolvedValue(undefined);
 
       await updateAvatarUrl("https://example.com/avatar.webp");

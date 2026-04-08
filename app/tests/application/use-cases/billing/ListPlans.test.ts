@@ -7,18 +7,20 @@ const plans: Plan[] = [
   {
     id: "p1",
     name: "Starter",
+    description: "For individuals getting started.",
     context: "personal",
+    tier: "basic",
     interval: "month",
-    isActive: true,
-    prices: [],
+    price: null,
   },
   {
     id: "p2",
     name: "Team",
+    description: "For small teams.",
     context: "team",
+    tier: "pro",
     interval: "year",
-    isActive: true,
-    prices: [],
+    price: null,
   },
 ];
 

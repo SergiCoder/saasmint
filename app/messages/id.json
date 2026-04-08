@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "Fitur",
-    "pricing": "Harga",
+    "home": "Beranda",
     "blog": "Blog",
     "getStarted": "Mulai",
     "dashboard": "Dasbor",
-    "billing": "Penagihan",
+    "subscription": "Langganan",
+    "pricing": "Harga",
     "settings": "Pengaturan",
     "org": "Organisasi",
     "admin": "Administrasi",
@@ -156,14 +156,39 @@
     "title": "Tagihan",
     "currentPlan": "Paket saat ini",
     "upgrade": "Tingkatkan",
-    "cancel": "Batalkan langganan",
+    "cancel": "Langganan akan dibatalkan pada akhir periode",
+    "cancelRenewal": "Batalkan perpanjangan",
+    "cancelRenewalTitle": "Batalkan perpanjangan?",
+    "cancelRenewalBody": "Langganan Anda akan tetap aktif hingga {date}. Setelah itu, Anda akan kehilangan akses ke fitur berbayar.",
+    "cancelRenewalKeep": "Pertahankan langganan",
+    "resumeSubscription": "Lanjutkan langganan",
     "changePlan": "Ubah paket",
     "applyPromo": "Terapkan kode promo",
     "portal": "Kelola tagihan",
     "success": "Pembayaran berhasil!",
-    "successDesc": "Langganan Anda telah diperbarui."
+    "successDesc": "Langganan Anda telah diperbarui.",
+    "renewsOn": "Diperpanjang pada",
+    "endsOn": "Berakhir pada",
+    "billedMonthly": "Ditagih bulanan",
+    "billedYearly": "Ditagih tahunan",
+    "seat": "kursi",
+    "seats": "kursi",
+    "products": "Paket kredit",
+    "credits": "kredit",
+    "buy": "Beli",
+    "getStarted": "Mulai",
+    "select": "Pilih",
+    "monthly": "Bulanan",
+    "yearly": "Tahunan",
+    "savingsBadge": "Hemat hingga {pct}%",
+    "personalPlans": "Paket personal",
+    "teamPlans": "Paket tim",
+    "personalPlansDesc": "Untuk individu.",
+    "teamPlansDesc": "Untuk tim dan organisasi.",
+    "pricingTitle": "Harga",
+    "total": "total"
   },
-  "settings": {
+  "profile": {
     "title": "Pengaturan",
     "profile": "Profil",
     "fullName": "Nama lengkap",
@@ -228,37 +253,12 @@
     "toggleNav": "Alihkan navigasi",
     "dismiss": "Tutup"
   },
-  "pricing": {
-    "pageTitle": "Harga",
-    "interval": "bulan",
-    "mostPopular": "Paling populer",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "Hingga 5 pengguna",
-    "starterFeature2": "1 GB penyimpanan",
-    "starterFeature3": "Dukungan komunitas",
-    "starterFeature4": "Analitik dasar",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "Hingga 50 pengguna",
-    "proFeature2": "25 GB penyimpanan",
-    "proFeature3": "Dukungan email prioritas",
-    "proFeature4": "Analitik lanjutan",
-    "proFeature5": "Akses API",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "Pengguna tak terbatas",
-    "enterpriseFeature2": "Penyimpanan tak terbatas",
-    "enterpriseFeature3": "SSO & SAML",
-    "enterpriseFeature4": "Dukungan khusus",
-    "enterpriseFeature5": "Log audit",
-    "enterpriseFeature6": "Integrasi kustom"
-  },
   "contact": {
     "title": "Hubungi kami",
     "description": "Punya pertanyaan atau butuh bantuan? Kami senang mendengar dari Anda.",
     "placeholder": "Alamat email Anda",
-    "submit": "Kirim"
+    "submit": "Kirim",
+    "messagePlaceholder": "Pesan Anda"
   },
   "about": {
     "title": "Tentang proyek ini",
@@ -294,5 +294,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "Ini adalah halaman placeholder untuk Feature 2."
+  },
+  "errorPage": {
+    "title": "Terjadi kesalahan",
+    "description": "Kami mengalami kesalahan tak terduga saat memuat halaman ini. Silakan coba lagi sebentar.",
+    "retry": "Coba lagi",
+    "home": "Kembali ke beranda",
+    "errorId": "ID kesalahan"
   }
 }

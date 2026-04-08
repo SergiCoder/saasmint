@@ -13,6 +13,7 @@ const {
   authGateway,
   userGateway,
   planGateway,
+  productGateway,
   subscriptionGateway,
   orgGateway,
   orgMemberGateway,
@@ -24,6 +25,8 @@ const { DjangoApiUserGateway } =
   await import("@/infrastructure/api/DjangoApiUserGateway");
 const { DjangoApiPlanGateway } =
   await import("@/infrastructure/api/DjangoApiPlanGateway");
+const { DjangoApiProductGateway } =
+  await import("@/infrastructure/api/DjangoApiProductGateway");
 const { DjangoApiSubscriptionGateway } =
   await import("@/infrastructure/api/DjangoApiSubscriptionGateway");
 const { DjangoApiOrgGateway } =
@@ -42,6 +45,10 @@ describe("registry", () => {
 
   it("exports planGateway as DjangoApiPlanGateway", () => {
     expect(planGateway).toBeInstanceOf(DjangoApiPlanGateway);
+  });
+
+  it("exports productGateway as DjangoApiProductGateway", () => {
+    expect(productGateway).toBeInstanceOf(DjangoApiProductGateway);
   });
 
   it("exports subscriptionGateway as DjangoApiSubscriptionGateway", () => {

@@ -10,12 +10,14 @@ export type SubscriptionStatus =
 
 export interface Subscription {
   id: string;
-  stripeId: string;
   status: SubscriptionStatus;
-  plan: Pick<Plan, "id" | "name" | "context" | "interval">;
+  plan: Plan;
   quantity: number;
+  discountPercent: number | null;
+  discountEndAt: string | null;
+  trialEndsAt: string | null;
   currentPeriodStart: string;
   currentPeriodEnd: string;
-  cancelAtPeriodEnd: boolean;
-  trialEnd: string | null;
+  canceledAt: string | null;
+  createdAt: string;
 }

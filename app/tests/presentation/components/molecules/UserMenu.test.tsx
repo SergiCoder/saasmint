@@ -24,9 +24,9 @@ vi.mock("@/lib/i18n/navigation", () => ({
 const defaultProps = {
   user: { fullName: "Jane Doe", avatarUrl: null },
   menuItems: [
-    { href: "/settings", label: "Profile" },
-    { href: "/settings", label: "Settings" },
-    { href: "/billing", label: "Billing" },
+    { href: "/profile", label: "Profile" },
+    { href: "/profile", label: "Settings" },
+    { href: "/subscription", label: "Subscription" },
   ],
   signOutSlot: <button>Sign out</button>,
 };
@@ -52,7 +52,7 @@ describe("UserMenu", () => {
     expect(screen.getByText("Jane Doe")).toBeInTheDocument();
     expect(screen.getByText("Profile")).toBeInTheDocument();
     expect(screen.getByText("Settings")).toBeInTheDocument();
-    expect(screen.getByText("Billing")).toBeInTheDocument();
+    expect(screen.getByText("Subscription")).toBeInTheDocument();
     expect(screen.getByText("Sign out")).toBeInTheDocument();
   });
 
@@ -102,10 +102,13 @@ describe("UserMenu", () => {
     await user.click(screen.getByRole("button", { expanded: false }));
 
     const profileLink = screen.getByText("Profile");
-    expect(profileLink.closest("a")).toHaveAttribute("href", "/settings");
+    expect(profileLink.closest("a")).toHaveAttribute("href", "/profile");
 
-    const billingLink = screen.getByText("Billing");
-    expect(billingLink.closest("a")).toHaveAttribute("href", "/billing");
+    const subscriptionLink = screen.getByText("Subscription");
+    expect(subscriptionLink.closest("a")).toHaveAttribute(
+      "href",
+      "/subscription",
+    );
   });
 
   it("renders signOutSlot content", async () => {

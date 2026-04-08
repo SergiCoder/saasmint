@@ -11,6 +11,8 @@ function makeGateway(
     createBillingPortalSession: vi
       .fn()
       .mockResolvedValue({ url: "https://billing.stripe.com/portal_123" }),
+    cancelSubscription: vi.fn(),
+    resumeSubscription: vi.fn(),
     ...overrides,
   };
 }
@@ -18,15 +20,9 @@ function makeGateway(
 describe("OpenBillingPortal", () => {
   it("returns billing portal URL", async () => {
     const gateway = makeGateway();
-    const result = await new OpenBillingPortal(gateway).execute({});
+    const input = { returnUrl: "http://localhost:3000/billing" };
+    const result = await new OpenBillingPortal(gateway).execute(input);
     expect(result.url).toBe("https://billing.stripe.com/portal_123");
-    expect(gateway.createBillingPortalSession).toHaveBeenCalledWith({});
-  });
-
-  it("passes orgId when provided", async () => {
-    const gateway = makeGateway();
-    const input = { orgId: "o1" };
-    await new OpenBillingPortal(gateway).execute(input);
     expect(gateway.createBillingPortalSession).toHaveBeenCalledWith(input);
   });
 });

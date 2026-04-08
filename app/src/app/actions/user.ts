@@ -54,7 +54,7 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
     return { error: "Failed to update profile" };
   }
 
-  revalidatePath("/settings");
+  revalidatePath("/profile");
   return { success: true };
 }
 

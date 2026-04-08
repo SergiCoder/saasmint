@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "Features",
-    "pricing": "Pricing",
+    "home": "Home",
     "blog": "Blog",
     "getStarted": "Get started",
     "dashboard": "Dashboard",
-    "billing": "Billing",
+    "subscription": "Subscription",
+    "pricing": "Pricing",
     "settings": "Settings",
     "org": "Organization",
     "admin": "Admin",
@@ -156,16 +156,40 @@
     "title": "Billing",
     "currentPlan": "Current Plan",
     "upgrade": "Upgrade",
-    "cancel": "Cancel subscription",
+    "cancel": "Subscription will cancel at end of period",
+    "cancelRenewal": "Cancel renewal",
+    "cancelRenewalTitle": "Cancel renewal?",
+    "cancelRenewalBody": "Your subscription will remain active until {date}. After that, you'll lose access to paid features.",
+    "cancelRenewalKeep": "Keep subscription",
+    "resumeSubscription": "Resume subscription",
     "changePlan": "Change plan",
     "applyPromo": "Apply promo code",
     "portal": "Manage billing",
     "success": "Payment successful!",
-    "successDesc": "Your subscription has been updated."
+    "successDesc": "Your subscription has been updated.",
+    "renewsOn": "Renews on",
+    "endsOn": "Ends on",
+    "billedMonthly": "Billed monthly",
+    "billedYearly": "Billed yearly",
+    "seat": "seat",
+    "seats": "seats",
+    "products": "Credit packs",
+    "credits": "credits",
+    "buy": "Buy",
+    "getStarted": "Get started",
+    "select": "Select",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "savingsBadge": "Save up to {pct}%",
+    "personalPlans": "Personal plans",
+    "teamPlans": "Team plans",
+    "personalPlansDesc": "For individuals.",
+    "teamPlansDesc": "For teams and organizations.",
+    "pricingTitle": "Pricing",
+    "total": "Total"
   },
-  "settings": {
-    "title": "Settings",
-    "profile": "Profile",
+  "profile": {
+    "title": "Profile",
     "fullName": "Full name",
     "email": "Email",
     "preferredLocale": "Language",
@@ -228,37 +252,12 @@
     "toggleNav": "Toggle navigation",
     "dismiss": "Dismiss"
   },
-  "pricing": {
-    "pageTitle": "Pricing",
-    "interval": "month",
-    "mostPopular": "Most popular",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "Up to 5 users",
-    "starterFeature2": "1 GB storage",
-    "starterFeature3": "Community support",
-    "starterFeature4": "Basic analytics",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "Up to 50 users",
-    "proFeature2": "25 GB storage",
-    "proFeature3": "Priority email support",
-    "proFeature4": "Advanced analytics",
-    "proFeature5": "API access",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "Unlimited users",
-    "enterpriseFeature2": "Unlimited storage",
-    "enterpriseFeature3": "SSO & SAML",
-    "enterpriseFeature4": "Dedicated support",
-    "enterpriseFeature5": "Audit logs",
-    "enterpriseFeature6": "Custom integrations"
-  },
   "contact": {
     "title": "Contact us",
     "description": "Have a question or need help? We'd love to hear from you.",
     "placeholder": "Your email address",
-    "submit": "Send"
+    "submit": "Send",
+    "messagePlaceholder": "Your message"
   },
   "about": {
     "title": "About this project",
@@ -294,5 +293,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "This is a placeholder page for Feature 2."
+  },
+  "errorPage": {
+    "title": "Something went wrong",
+    "description": "We hit an unexpected error while loading this page. Please try again in a moment.",
+    "retry": "Try again",
+    "home": "Back to home",
+    "errorId": "Error ID"
   }
 }

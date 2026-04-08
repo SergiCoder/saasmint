@@ -64,13 +64,13 @@ const SUPPORTED_CURRENCIES = [
 
 const TIMEZONES = Intl.supportedValuesOf("timeZone");
 
-interface SettingsFormProps {
+interface ProfileFormProps {
   user: User;
   phonePrefixes: PhonePrefix[];
 }
 
-export function SettingsForm({ user, phonePrefixes }: SettingsFormProps) {
-  const t = useTranslations("settings");
+export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
+  const t = useTranslations("profile");
   const [state, formAction, pending] = useActionState(updateProfile, null);
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl);
   const [avatarUploading, setAvatarUploading] = useState(false);

@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "기능",
-    "pricing": "요금제",
+    "home": "홈",
     "blog": "Blog",
     "getStarted": "시작하기",
     "dashboard": "대시보드",
-    "billing": "청구",
+    "subscription": "구독",
+    "pricing": "요금",
     "settings": "설정",
     "org": "조직",
     "admin": "관리",
@@ -156,14 +156,39 @@
     "title": "결제",
     "currentPlan": "현재 플랜",
     "upgrade": "업그레이드",
-    "cancel": "구독 취소",
+    "cancel": "구독은 기간 종료 시 취소됩니다",
+    "cancelRenewal": "갱신 취소",
+    "cancelRenewalTitle": "갱신을 취소하시겠습니까?",
+    "cancelRenewalBody": "구독은 {date}까지 유지됩니다. 이후에는 유료 기능에 접근할 수 없습니다.",
+    "cancelRenewalKeep": "구독 유지",
+    "resumeSubscription": "구독 재개",
     "changePlan": "플랜 변경",
     "applyPromo": "프로모 코드 적용",
     "portal": "결제 관리",
     "success": "결제 완료!",
-    "successDesc": "구독이 업데이트되었습니다."
+    "successDesc": "구독이 업데이트되었습니다.",
+    "renewsOn": "갱신일",
+    "endsOn": "종료일",
+    "billedMonthly": "월간 청구",
+    "billedYearly": "연간 청구",
+    "seat": "좌석",
+    "seats": "좌석",
+    "products": "크레딧 팩",
+    "credits": "크레딧",
+    "buy": "구매",
+    "getStarted": "시작하기",
+    "select": "선택",
+    "monthly": "월간",
+    "yearly": "연간",
+    "savingsBadge": "최대 {pct}% 절약",
+    "personalPlans": "개인 요금제",
+    "teamPlans": "팀 요금제",
+    "personalPlansDesc": "개인을 위한.",
+    "teamPlansDesc": "팀과 조직을 위한.",
+    "pricingTitle": "요금",
+    "total": "합계"
   },
-  "settings": {
+  "profile": {
     "title": "설정",
     "profile": "프로필",
     "fullName": "이름",
@@ -228,37 +253,12 @@
     "toggleNav": "내비게이션 전환",
     "dismiss": "닫기"
   },
-  "pricing": {
-    "pageTitle": "요금제",
-    "interval": "월",
-    "mostPopular": "가장 인기",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "최대 5명",
-    "starterFeature2": "1 GB 스토리지",
-    "starterFeature3": "커뮤니티 지원",
-    "starterFeature4": "기본 분석",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "최대 50명",
-    "proFeature2": "25 GB 스토리지",
-    "proFeature3": "우선 이메일 지원",
-    "proFeature4": "고급 분석",
-    "proFeature5": "API 액세스",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "무제한 사용자",
-    "enterpriseFeature2": "무제한 스토리지",
-    "enterpriseFeature3": "SSO & SAML",
-    "enterpriseFeature4": "전담 지원",
-    "enterpriseFeature5": "감사 로그",
-    "enterpriseFeature6": "커스텀 연동"
-  },
   "contact": {
     "title": "문의하기",
     "description": "질문이 있거나 도움이 필요하신가요? 연락을 기다립니다.",
     "placeholder": "이메일 주소",
-    "submit": "보내기"
+    "submit": "보내기",
+    "messagePlaceholder": "메시지"
   },
   "about": {
     "title": "이 프로젝트 소개",
@@ -294,5 +294,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "Feature 2의 자리 표시자 페이지입니다."
+  },
+  "errorPage": {
+    "title": "문제가 발생했습니다",
+    "description": "페이지를 불러오는 중에 예기치 않은 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+    "retry": "다시 시도",
+    "home": "홈으로 돌아가기",
+    "errorId": "오류 ID"
   }
 }

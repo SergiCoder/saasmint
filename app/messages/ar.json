@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "الميزات",
-    "pricing": "الأسعار",
+    "home": "الرئيسية",
     "blog": "Blog",
     "getStarted": "ابدأ الآن",
     "dashboard": "لوحة التحكم",
-    "billing": "الفواتير",
+    "subscription": "الاشتراك",
+    "pricing": "الأسعار",
     "settings": "الإعدادات",
     "org": "المؤسسة",
     "admin": "الإدارة",
@@ -156,14 +156,39 @@
     "title": "الفوترة",
     "currentPlan": "الخطة الحالية",
     "upgrade": "ترقية",
-    "cancel": "إلغاء الاشتراك",
+    "cancel": "سيتم إلغاء الاشتراك في نهاية الفترة",
+    "cancelRenewal": "إلغاء التجديد",
+    "cancelRenewalTitle": "إلغاء التجديد؟",
+    "cancelRenewalBody": "سيظل اشتراكك نشطًا حتى {date}. بعد ذلك، ستفقد الوصول إلى الميزات المدفوعة.",
+    "cancelRenewalKeep": "الاحتفاظ بالاشتراك",
+    "resumeSubscription": "استئناف الاشتراك",
     "changePlan": "تغيير الخطة",
     "applyPromo": "تطبيق رمز ترويجي",
     "portal": "إدارة الفوترة",
     "success": "تم الدفع بنجاح!",
-    "successDesc": "تم تحديث اشتراكك."
+    "successDesc": "تم تحديث اشتراكك.",
+    "renewsOn": "يُجدد في",
+    "endsOn": "ينتهي في",
+    "billedMonthly": "فوترة شهرية",
+    "billedYearly": "فوترة سنوية",
+    "seat": "مقعد",
+    "seats": "مقاعد",
+    "products": "حزم الرصيد",
+    "credits": "أرصدة",
+    "buy": "شراء",
+    "getStarted": "ابدأ الآن",
+    "select": "اختر",
+    "monthly": "شهري",
+    "yearly": "سنوي",
+    "savingsBadge": "وفّر حتى {pct}%",
+    "personalPlans": "الخطط الشخصية",
+    "teamPlans": "خطط الفريق",
+    "personalPlansDesc": "للأفراد.",
+    "teamPlansDesc": "للفِرق والمنظمات.",
+    "pricingTitle": "الأسعار",
+    "total": "الإجمالي"
   },
-  "settings": {
+  "profile": {
     "title": "الإعدادات",
     "profile": "الملف الشخصي",
     "fullName": "الاسم الكامل",
@@ -228,37 +253,12 @@
     "toggleNav": "تبديل التنقل",
     "dismiss": "إغلاق"
   },
-  "pricing": {
-    "pageTitle": "الأسعار",
-    "interval": "شهر",
-    "mostPopular": "الأكثر شعبية",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "حتى 5 مستخدمين",
-    "starterFeature2": "1 GB تخزين",
-    "starterFeature3": "دعم المجتمع",
-    "starterFeature4": "تحليلات أساسية",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "حتى 50 مستخدماً",
-    "proFeature2": "25 GB تخزين",
-    "proFeature3": "دعم بريد إلكتروني ذو أولوية",
-    "proFeature4": "تحليلات متقدمة",
-    "proFeature5": "وصول API",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "مستخدمون غير محدودين",
-    "enterpriseFeature2": "تخزين غير محدود",
-    "enterpriseFeature3": "SSO و SAML",
-    "enterpriseFeature4": "دعم مخصص",
-    "enterpriseFeature5": "سجلات التدقيق",
-    "enterpriseFeature6": "تكاملات مخصصة"
-  },
   "contact": {
     "title": "اتصل بنا",
     "description": "هل لديك سؤال أو تحتاج مساعدة؟ يسعدنا سماعك.",
     "placeholder": "عنوان بريدك الإلكتروني",
-    "submit": "إرسال"
+    "submit": "إرسال",
+    "messagePlaceholder": "رسالتك"
   },
   "about": {
     "title": "حول هذا المشروع",
@@ -294,5 +294,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "هذه صفحة مؤقتة لـ Feature 2."
+  },
+  "errorPage": {
+    "title": "حدث خطأ ما",
+    "description": "واجهنا خطأً غير متوقع أثناء تحميل هذه الصفحة. يرجى المحاولة مرة أخرى بعد قليل.",
+    "retry": "إعادة المحاولة",
+    "home": "العودة إلى الرئيسية",
+    "errorId": "معرّف الخطأ"
   }
 }

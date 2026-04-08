@@ -20,6 +20,7 @@ vi.mock("next-intl", () => ({
     };
     return map[key] ?? key;
   },
+  useLocale: () => "en",
 }));
 
 import { OAuthButtons } from "@/presentation/components/molecules/OAuthButtons";
@@ -59,7 +60,7 @@ describe("OAuthButtons", () => {
       expect(mockSignInWithOAuth).toHaveBeenCalledWith({
         provider: "github",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/en/auth/callback`,
         },
       });
     });

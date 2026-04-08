@@ -22,10 +22,10 @@ export default async function MarketingLayoutRoute({
   ]);
 
   const navLinks = [
-    { href: "/#features", label: t("features") },
+    { href: "/", label: t("home") },
     { href: "/pricing", label: t("pricing") },
-    { href: "/contact", label: t("contactUs") },
     { href: "/blog", label: t("blog") },
+    { href: "/contact", label: t("contactUs") },
   ];
 
   const footerSections = [
@@ -56,7 +56,7 @@ export default async function MarketingLayoutRoute({
       >
         {t("signIn")}
       </Link>
-      <Link href="/signup" className={primaryLinkClass}>
+      <Link href="/pricing" className={primaryLinkClass}>
         {t("getStarted")}
       </Link>
     </>
@@ -65,8 +65,8 @@ export default async function MarketingLayoutRoute({
   const userMenuItems = user
     ? [
         { href: "/dashboard", label: t("dashboard") },
-        { href: "/settings", label: t("profile") },
-        { href: "/billing", label: t("billing") },
+        { href: "/profile", label: t("profile") },
+        { href: "/subscription", label: t("subscription") },
       ]
     : undefined;
 

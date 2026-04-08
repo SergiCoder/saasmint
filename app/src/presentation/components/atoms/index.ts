@@ -2,6 +2,7 @@ export { Avatar, type AvatarProps } from "./Avatar";
 export { AvatarUpload, type AvatarUploadProps } from "./AvatarUpload";
 export { Badge, type BadgeProps } from "./Badge";
 export { Divider, type DividerProps } from "./Divider";
+export { FormattedDate, type FormattedDateProps } from "./FormattedDate";
 export { GitHubIcon, type GitHubIconProps } from "./GitHubIcon";
 export { GoogleIcon, type GoogleIconProps } from "./GoogleIcon";
 export { SectionLabel, type SectionLabelProps } from "./SectionLabel";

@@ -55,7 +55,7 @@ export function LocaleDropdown() {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+        className="inline-flex cursor-pointer items-center gap-1 rounded-md px-2 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
         aria-expanded={open}
         aria-haspopup="listbox"
       >
@@ -88,7 +88,7 @@ export function LocaleDropdown() {
                 role="option"
                 aria-selected={code === locale}
                 onClick={() => switchLocale(code as Locale)}
-                className={`w-full px-3 py-1.5 text-left text-sm transition-colors hover:bg-gray-100 ${
+                className={`w-full cursor-pointer px-3 py-1.5 text-left text-sm transition-colors hover:bg-gray-100 ${
                   code === locale
                     ? "text-primary-600 font-medium"
                     : "text-gray-700"

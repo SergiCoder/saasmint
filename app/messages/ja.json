@@ -1,11 +1,11 @@
 {
   "nav": {
-    "features": "機能",
-    "pricing": "料金",
+    "home": "ホーム",
     "blog": "Blog",
     "getStarted": "始める",
     "dashboard": "ダッシュボード",
-    "billing": "請求",
+    "subscription": "サブスクリプション",
+    "pricing": "料金",
     "settings": "設定",
     "org": "組織",
     "admin": "管理",
@@ -156,14 +156,39 @@
     "title": "請求",
     "currentPlan": "現在のプラン",
     "upgrade": "アップグレード",
-    "cancel": "サブスクリプションを解約",
+    "cancel": "サブスクリプションは期間終了時に解約されます",
+    "cancelRenewal": "更新をキャンセル",
+    "cancelRenewalTitle": "更新をキャンセルしますか？",
+    "cancelRenewalBody": "サブスクリプションは{date}まで有効です。その後、有料機能へのアクセスは失われます。",
+    "cancelRenewalKeep": "サブスクリプションを継続",
+    "resumeSubscription": "サブスクリプションを再開",
     "changePlan": "プランを変更",
     "applyPromo": "プロモコードを適用",
     "portal": "請求を管理",
     "success": "お支払い完了！",
-    "successDesc": "サブスクリプションが更新されました。"
+    "successDesc": "サブスクリプションが更新されました。",
+    "renewsOn": "更新日",
+    "endsOn": "終了日",
+    "billedMonthly": "月額請求",
+    "billedYearly": "年額請求",
+    "seat": "シート",
+    "seats": "シート",
+    "products": "クレジットパック",
+    "credits": "クレジット",
+    "buy": "購入",
+    "getStarted": "始める",
+    "select": "選択",
+    "monthly": "月額",
+    "yearly": "年額",
+    "savingsBadge": "最大{pct}%お得",
+    "personalPlans": "個人プラン",
+    "teamPlans": "チームプラン",
+    "personalPlansDesc": "個人向け。",
+    "teamPlansDesc": "チームと組織向け。",
+    "pricingTitle": "料金",
+    "total": "合計"
   },
-  "settings": {
+  "profile": {
     "title": "設定",
     "profile": "プロフィール",
     "fullName": "氏名",
@@ -228,37 +253,12 @@
     "toggleNav": "ナビゲーション切替",
     "dismiss": "閉じる"
   },
-  "pricing": {
-    "pageTitle": "料金プラン",
-    "interval": "月",
-    "mostPopular": "一番人気",
-    "starterName": "Starter",
-    "starterPrice": "$0",
-    "starterFeature1": "最大5ユーザー",
-    "starterFeature2": "1 GBストレージ",
-    "starterFeature3": "コミュニティサポート",
-    "starterFeature4": "基本分析",
-    "proName": "Pro",
-    "proPrice": "$29",
-    "proFeature1": "最大50ユーザー",
-    "proFeature2": "25 GBストレージ",
-    "proFeature3": "優先メールサポート",
-    "proFeature4": "高度な分析",
-    "proFeature5": "APIアクセス",
-    "enterpriseName": "Enterprise",
-    "enterprisePrice": "$99",
-    "enterpriseFeature1": "無制限ユーザー",
-    "enterpriseFeature2": "無制限ストレージ",
-    "enterpriseFeature3": "SSO & SAML",
-    "enterpriseFeature4": "専任サポート",
-    "enterpriseFeature5": "監査ログ",
-    "enterpriseFeature6": "カスタム連携"
-  },
   "contact": {
     "title": "お問い合わせ",
     "description": "ご質問やお困りのことがありますか？お気軽にご連絡ください。",
     "placeholder": "メールアドレス",
-    "submit": "送信"
+    "submit": "送信",
+    "messagePlaceholder": "メッセージ"
   },
   "about": {
     "title": "このプロジェクトについて",
@@ -294,5 +294,12 @@
   "feature2": {
     "title": "Feature 2",
     "description": "Feature 2のプレースホルダーページです。"
+  },
+  "errorPage": {
+    "title": "問題が発生しました",
+    "description": "ページの読み込み中に予期しないエラーが発生しました。しばらくしてからもう一度お試しください。",
+    "retry": "再試行",
+    "home": "ホームに戻る",
+    "errorId": "エラー ID"
   }
 }

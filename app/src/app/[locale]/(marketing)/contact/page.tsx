@@ -19,7 +19,11 @@ export default async function ContactPage() {
         {t("description")}
       </p>
       <div className="mt-8">
-        <ContactForm placeholder={t("placeholder")} submitLabel={t("submit")} />
+        <ContactForm
+          placeholder={t("placeholder")}
+          messagePlaceholder={t("messagePlaceholder")}
+          submitLabel={t("submit")}
+        />
       </div>
     </section>
   );

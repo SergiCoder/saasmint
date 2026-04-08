@@ -70,7 +70,7 @@ export function AvatarUpload({
           type="button"
           disabled={loading}
           onClick={() => inputRef.current?.click()}
-          className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-50"
+          className="cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-50"
         >
           {uploadLabel}
         </button>
@@ -79,7 +79,7 @@ export function AvatarUpload({
             type="button"
             disabled={loading}
             onClick={handleRemove}
-            className="rounded-md px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-red-600 disabled:pointer-events-none disabled:opacity-50"
+            className="cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-red-600 disabled:pointer-events-none disabled:opacity-50"
           >
             {removeLabel}
           </button>

@@ -26,25 +26,30 @@ interface Props {
     error?: string;
     registered?: string;
     deleted?: string;
+    plan?: string;
   }>;
 }
 
 export default async function LoginPage({ searchParams }: Props) {
   const t = await getTranslations("auth.login");
-  const { error, registered, deleted } = await searchParams;
+  const { error, registered, deleted, plan } = await searchParams;
 
   const errorKey = error ? ERROR_KEYS[error] : undefined;
+  const signupHref = plan
+    ? `/signup?plan=${encodeURIComponent(plan)}`
+    : "/signup";
 
   return (
     <AuthLayout appName="SaaSmint" title={t("title")}>
-      <OAuthButtons />
+      <OAuthButtons plan={plan} />
       <AuthForm
         action={signIn}
         translationNamespace="auth.login"
         passwordAutoComplete="current-password"
         forgotPasswordHref="/forgot-password"
+        hiddenFields={plan ? { plan } : undefined}
         footerLink={{
-          href: "/signup",
+          href: signupHref,
           textKey: "noAccount",
           linkKey: "register",
         }}

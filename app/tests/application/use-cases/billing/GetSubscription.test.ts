@@ -5,14 +5,24 @@ import type { Subscription } from "@/domain/models/Subscription";
 
 const subscription: Subscription = {
   id: "s1",
-  stripeId: "sub_123",
   status: "active",
-  plan: { id: "p1", name: "Starter", context: "personal", interval: "month" },
+  plan: {
+    id: "p1",
+    name: "Pro",
+    description: "Pro plan",
+    context: "personal",
+    tier: "pro",
+    interval: "month",
+    price: { id: "pp1", amount: 1900 },
+  },
   quantity: 1,
+  discountPercent: null,
+  discountEndAt: null,
+  trialEndsAt: null,
   currentPeriodStart: "2024-01-01T00:00:00Z",
   currentPeriodEnd: "2024-02-01T00:00:00Z",
-  cancelAtPeriodEnd: false,
-  trialEnd: null,
+  canceledAt: null,
+  createdAt: "2024-01-01T00:00:00Z",
 };
 
 function makeGateway(
@@ -22,6 +32,8 @@ function makeGateway(
     getSubscription: vi.fn().mockResolvedValue(subscription),
     createCheckoutSession: vi.fn(),
     createBillingPortalSession: vi.fn(),
+    cancelSubscription: vi.fn(),
+    resumeSubscription: vi.fn(),
     ...overrides,
   };
 }
@@ -29,16 +41,16 @@ function makeGateway(
 describe("GetSubscription", () => {
   it("returns the subscription", async () => {
     const gateway = makeGateway();
-    const result = await new GetSubscription(gateway).execute("o1");
+    const result = await new GetSubscription(gateway).execute();
     expect(result).toEqual(subscription);
-    expect(gateway.getSubscription).toHaveBeenCalledWith("o1");
+    expect(gateway.getSubscription).toHaveBeenCalledOnce();
   });
 
   it("returns null when no subscription exists", async () => {
     const gateway = makeGateway({
       getSubscription: vi.fn().mockResolvedValue(null),
     });
-    const result = await new GetSubscription(gateway).execute("o1");
+    const result = await new GetSubscription(gateway).execute();
     expect(result).toBeNull();
   });
 });

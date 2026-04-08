@@ -4,7 +4,7 @@ import type { Plan } from "@/domain/models/Plan";
 const mockApiFetch = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
-  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  publicApiFetch: (...args: unknown[]) => mockApiFetch(...args),
 }));
 
 const { DjangoApiPlanGateway } =
@@ -14,27 +14,26 @@ const plans: Plan[] = [
   {
     id: "p1",
     name: "Starter",
+    description: "For individuals getting started.",
     context: "personal",
+    tier: "basic",
     interval: "month",
-    isActive: true,
-    prices: [
-      { id: "pp1", stripePriceId: "price_123", currency: "USD", amount: 999 },
-    ],
+    price: {
+      id: "pp1",
+      amount: 999,
+    },
   },
   {
     id: "p2",
     name: "Team",
+    description: "For small teams.",
     context: "team",
+    tier: "pro",
     interval: "year",
-    isActive: true,
-    prices: [
-      {
-        id: "pp2",
-        stripePriceId: "price_456",
-        currency: "USD",
-        amount: 9999,
-      },
-    ],
+    price: {
+      id: "pp2",
+      amount: 9999,
+    },
   },
 ];
 
