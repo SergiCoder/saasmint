@@ -11,14 +11,12 @@ const { DjangoApiUserGateway } =
 
 const snakeUser = {
   id: "u1",
-  supabase_uid: "sb-u1",
   email: "alice@example.com",
   full_name: "Alice",
   avatar_url: null,
   account_type: "personal",
   preferred_locale: "en",
   preferred_currency: "USD",
-  phone_prefix: null,
   phone: null,
   timezone: null,
   job_title: null,
@@ -30,7 +28,6 @@ const snakeUser = {
 
 const camelUser = {
   id: "u1",
-  supabaseUid: "sb-u1",
   email: "alice@example.com",
   fullName: "Alice",
   avatarUrl: null,
@@ -45,6 +42,17 @@ const camelUser = {
   bio: null,
   isVerified: true,
   createdAt: "2024-01-01T00:00:00Z",
+};
+
+const snakeUserWithPhone = {
+  ...snakeUser,
+  phone: { prefix: "+34", number: "612345678" },
+};
+
+const camelUserWithPhone = {
+  ...camelUser,
+  phonePrefix: "+34",
+  phone: "612345678",
 };
 
 beforeEach(() => {
@@ -62,6 +70,23 @@ describe("DjangoApiUserGateway", () => {
 
       expect(mockApiFetch).toHaveBeenCalledWith("/account/");
       expect(result).toEqual(camelUser);
+    });
+
+    it("flattens nested phone object into phonePrefix and phone", async () => {
+      mockApiFetch.mockResolvedValue(snakeUserWithPhone);
+
+      const result = await gateway.getProfile("u1");
+
+      expect(result).toEqual(camelUserWithPhone);
+    });
+
+    it("sets phonePrefix and phone to null when phone is null", async () => {
+      mockApiFetch.mockResolvedValue(snakeUser);
+
+      const result = await gateway.getProfile("u1");
+
+      expect(result.phonePrefix).toBeNull();
+      expect(result.phone).toBeNull();
     });
 
     it("propagates errors from apiFetch", async () => {
@@ -85,6 +110,42 @@ describe("DjangoApiUserGateway", () => {
         body: JSON.stringify({ full_name: "Alice Smith" }),
       });
       expect(result).toEqual(camelUser);
+    });
+
+    it("nests phone prefix and number into phone object", async () => {
+      mockApiFetch.mockResolvedValue(snakeUserWithPhone);
+
+      await gateway.updateProfile("u1", {
+        fullName: "Alice",
+        phonePrefix: "+34",
+        phone: "612345678",
+      });
+
+      expect(mockApiFetch).toHaveBeenCalledWith("/account/", {
+        method: "PATCH",
+        body: JSON.stringify({
+          full_name: "Alice",
+          phone: { prefix: "+34", number: "612345678" },
+        }),
+      });
+    });
+
+    it("sends phone as null when prefix and number are empty", async () => {
+      mockApiFetch.mockResolvedValue(snakeUser);
+
+      await gateway.updateProfile("u1", {
+        fullName: "Alice",
+        phonePrefix: null,
+        phone: null,
+      });
+
+      expect(mockApiFetch).toHaveBeenCalledWith("/account/", {
+        method: "PATCH",
+        body: JSON.stringify({
+          full_name: "Alice",
+          phone: null,
+        }),
+      });
     });
 
     it("propagates errors from apiFetch", async () => {

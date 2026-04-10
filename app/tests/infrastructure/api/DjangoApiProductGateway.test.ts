@@ -19,6 +19,8 @@ const products: Product[] = [
     price: {
       id: "pp1",
       amount: 999,
+      displayAmount: 9.99,
+      currency: "usd",
     },
   },
 ];
@@ -45,6 +47,16 @@ describe("DjangoApiProductGateway", () => {
 
       const result = await gateway.listProducts();
       expect(result).toEqual([]);
+    });
+
+    it("appends ?currency= query string when currency is provided", async () => {
+      mockApiFetch.mockResolvedValue(products);
+
+      await gateway.listProducts("eur");
+
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        "/billing/products/?currency=eur",
+      );
     });
 
     it("propagates errors from apiFetch", async () => {

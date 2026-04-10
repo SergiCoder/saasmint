@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const mockGetUser = vi.fn();
 const mockIntlMiddleware = vi.fn();
 
 vi.mock("next-intl/middleware", () => ({
@@ -16,28 +15,32 @@ vi.mock("@/lib/i18n/routing", () => ({
   },
 }));
 
-vi.mock("@supabase/ssr", () => ({
-  createServerClient: () => ({
-    auth: { getUser: mockGetUser },
-  }),
-}));
-
-// Stub env vars required by createServerClient
-vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://test.supabase.co");
-vi.stubEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "test-anon-key");
+const fetchSpy = vi.fn();
+vi.stubGlobal("fetch", fetchSpy);
 
 const { proxy } = await import("@/proxy");
+
+// Helper to create a JWT-like token with a given exp
+function makeToken(exp: number): string {
+  const header = btoa(JSON.stringify({ alg: "HS256" }));
+  const payload = btoa(JSON.stringify({ sub: "u1", exp }));
+  return `${header}.${payload}.signature`;
+}
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 function createMockRequest(
   url: string,
   cookies: { name: string; value: string }[] = [],
 ): NextRequest {
-  const parsedUrl = new URL(url, "http://localhost:3000");
+  const parsedUrl = new URL(url, APP_URL);
   return {
     nextUrl: parsedUrl,
     url: parsedUrl.toString(),
     cookies: {
       getAll: () => cookies,
+      get: (name: string) => cookies.find((c) => c.name === name),
     },
   } as unknown as NextRequest;
 }
@@ -48,41 +51,9 @@ beforeEach(() => {
 });
 
 describe("proxy", () => {
-  describe("auth code redirect", () => {
-    it("redirects root with ?code= to auth callback", async () => {
-      const request = createMockRequest("http://localhost:3000/en?code=abc123");
-      const response = await proxy(request);
-
-      expect(response.status).toBe(307);
-      const location = response.headers.get("location");
-      expect(location).toContain("/en/auth/callback?code=abc123");
-    });
-
-    it("redirects locale root with ?code= to auth callback", async () => {
-      const request = createMockRequest("http://localhost:3000/es?code=xyz");
-      const response = await proxy(request);
-
-      expect(response.status).toBe(307);
-      const location = response.headers.get("location");
-      expect(location).toContain("/es/auth/callback?code=xyz");
-    });
-
-    it("does not redirect non-root paths with ?code=", async () => {
-      const request = createMockRequest(
-        "http://localhost:3000/en/pricing?code=abc",
-      );
-      const response = await proxy(request);
-
-      const location = response.headers.get("location");
-      expect(location).toBeNull();
-    });
-  });
-
   describe("protected routes", () => {
-    it("redirects unauthenticated user to login on /dashboard", async () => {
-      mockGetUser.mockResolvedValue({ data: { user: null } });
-
-      const request = createMockRequest("http://localhost:3000/en/dashboard");
+    it("redirects to login when no access_token cookie on /dashboard", async () => {
+      const request = createMockRequest(`${APP_URL}/en/dashboard`);
       const response = await proxy(request);
 
       expect(response.status).toBe(307);
@@ -90,97 +61,138 @@ describe("proxy", () => {
       expect(location).toContain("/en/login");
     });
 
-    it("redirects unauthenticated user to login on /subscription", async () => {
-      mockGetUser.mockResolvedValue({ data: { user: null } });
-
-      const request = createMockRequest(
-        "http://localhost:3000/en/subscription",
-      );
+    it("redirects to login when no access_token cookie on /subscription", async () => {
+      const request = createMockRequest(`${APP_URL}/en/subscription`);
       const response = await proxy(request);
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
     });
 
-    it("redirects unauthenticated user to login on /profile", async () => {
-      mockGetUser.mockResolvedValue({ data: { user: null } });
-
-      const request = createMockRequest("http://localhost:3000/en/profile");
+    it("redirects to login when no access_token cookie on /profile", async () => {
+      const request = createMockRequest(`${APP_URL}/en/profile`);
       const response = await proxy(request);
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
     });
 
-    it("redirects unauthenticated user to login on /org", async () => {
-      mockGetUser.mockResolvedValue({ data: { user: null } });
-
-      const request = createMockRequest("http://localhost:3000/en/org");
+    it("redirects to login when no access_token cookie on /org", async () => {
+      const request = createMockRequest(`${APP_URL}/en/org`);
       const response = await proxy(request);
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
     });
 
-    it("redirects unauthenticated user to login on /admin", async () => {
-      mockGetUser.mockResolvedValue({ data: { user: null } });
-
-      const request = createMockRequest("http://localhost:3000/en/admin");
+    it("redirects to login when no access_token cookie on /admin", async () => {
+      const request = createMockRequest(`${APP_URL}/en/admin`);
       const response = await proxy(request);
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
     });
 
-    it("allows authenticated user through protected route", async () => {
-      mockGetUser.mockResolvedValue({
-        data: { user: { id: "u1" } },
-      });
-
-      const request = createMockRequest("http://localhost:3000/en/dashboard");
+    it("allows through when access_token is valid", async () => {
+      const futureExp = Math.floor(Date.now() / 1000) + 600; // 10 min from now
+      const request = createMockRequest(`${APP_URL}/en/dashboard`, [
+        { name: "access_token", value: makeToken(futureExp) },
+      ]);
       const response = await proxy(request);
 
-      // Should not redirect to login
       const location = response.headers.get("location");
       expect(location).toBeNull();
     });
 
     it("preserves locale when redirecting to login", async () => {
-      mockGetUser.mockResolvedValue({ data: { user: null } });
-
-      const request = createMockRequest("http://localhost:3000/es/dashboard");
+      const request = createMockRequest(`${APP_URL}/es/dashboard`);
       const response = await proxy(request);
 
       expect(response.headers.get("location")).toContain("/es/login");
+    });
+
+    it("redirects to login when access_token is expired and no refresh_token", async () => {
+      const pastExp = Math.floor(Date.now() / 1000) - 60;
+      const request = createMockRequest(`${APP_URL}/en/dashboard`, [
+        { name: "access_token", value: makeToken(pastExp) },
+      ]);
+      const response = await proxy(request);
+
+      expect(response.status).toBe(307);
+      expect(response.headers.get("location")).toContain("/en/login");
+    });
+
+    it("attempts token refresh when access_token is expired", async () => {
+      const pastExp = Math.floor(Date.now() / 1000) - 60;
+      const futureExp = Math.floor(Date.now() / 1000) + 900;
+
+      fetchSpy.mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            access_token: makeToken(futureExp),
+            refresh_token: "new-refresh-tok",
+            expires_in: 900,
+          }),
+      });
+
+      const request = createMockRequest(`${APP_URL}/en/dashboard`, [
+        { name: "access_token", value: makeToken(pastExp) },
+        { name: "refresh_token", value: "old-refresh-tok" },
+      ]);
+      const response = await proxy(request);
+
+      expect(fetchSpy).toHaveBeenCalledWith(
+        `${API_URL}/api/v1/auth/refresh/`,
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify({ refresh_token: "old-refresh-tok" }),
+        }),
+      );
+      // Should not redirect to login
+      const location = response.headers.get("location");
+      expect(location).toBeNull();
+    });
+
+    it("redirects to login when token refresh fails", async () => {
+      const pastExp = Math.floor(Date.now() / 1000) - 60;
+
+      fetchSpy.mockResolvedValue({
+        ok: false,
+        status: 401,
+      });
+
+      const request = createMockRequest(`${APP_URL}/en/dashboard`, [
+        { name: "access_token", value: makeToken(pastExp) },
+        { name: "refresh_token", value: "expired-refresh-tok" },
+      ]);
+      const response = await proxy(request);
+
+      expect(response.status).toBe(307);
+      expect(response.headers.get("location")).toContain("/en/login");
     });
   });
 
   describe("public routes", () => {
     it("passes public routes through intl middleware", async () => {
-      const request = createMockRequest("http://localhost:3000/en/pricing");
+      const request = createMockRequest(`${APP_URL}/en/pricing`);
       await proxy(request);
 
-      // Should not call getUser for public routes
-      expect(mockGetUser).not.toHaveBeenCalled();
+      expect(fetchSpy).not.toHaveBeenCalled();
     });
 
     it("does not require auth for marketing pages", async () => {
-      const request = createMockRequest("http://localhost:3000/en/about");
+      const request = createMockRequest(`${APP_URL}/en/about`);
       const response = await proxy(request);
 
       const location = response.headers.get("location");
       expect(location).toBeNull();
-      expect(mockGetUser).not.toHaveBeenCalled();
     });
   });
 
   describe("locale handling in protected paths", () => {
     it("handles pt-BR locale prefix correctly", async () => {
-      mockGetUser.mockResolvedValue({ data: { user: null } });
-
-      const request = createMockRequest(
-        "http://localhost:3000/pt-BR/dashboard",
-      );
+      const request = createMockRequest(`${APP_URL}/pt-BR/dashboard`);
       const response = await proxy(request);
 
       expect(response.status).toBe(307);

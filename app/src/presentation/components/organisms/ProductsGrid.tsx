@@ -1,9 +1,11 @@
 import type { Product } from "@/domain/models/Product";
+import { formatCurrency } from "@/lib/formatCurrency";
 
 export interface ProductsGridProps {
   title: string;
   products: Product[];
   creditsLabel: string;
+  locale: string;
   renderCta: (product: Product) => React.ReactNode;
   className?: string;
 }
@@ -12,6 +14,7 @@ export function ProductsGrid({
   title,
   products,
   creditsLabel,
+  locale,
   renderCta,
   className = "",
 }: ProductsGridProps) {
@@ -33,7 +36,11 @@ export function ProductsGrid({
             {product.price && (
               <>
                 <p className="mt-2 text-2xl font-bold text-gray-900">
-                  ${(product.price.amount / 100).toFixed(0)}
+                  {formatCurrency(
+                    product.price.displayAmount,
+                    product.price.currency,
+                    locale,
+                  )}
                 </p>
                 <div className="mt-4">{renderCta(product)}</div>
               </>

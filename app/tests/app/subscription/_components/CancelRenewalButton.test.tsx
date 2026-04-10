@@ -142,9 +142,7 @@ describe("CancelRenewalButton", () => {
     const dialog = document.querySelector("dialog") as HTMLDialogElement;
     expect(dialog.hasAttribute("open")).toBe(true);
 
-    await user.click(
-      screen.getByRole("button", { name: "Keep subscription" }),
-    );
+    await user.click(screen.getByRole("button", { name: "Keep subscription" }));
     expect(dialog.hasAttribute("open")).toBe(false);
   });
 });

@@ -4,6 +4,7 @@ import {
   toCamelCase,
   keysToSnake,
   keysToCamel,
+  keysToCamelWithPrice,
 } from "@/infrastructure/api/caseTransform";
 
 describe("toSnakeCase", () => {
@@ -83,5 +84,36 @@ describe("keysToCamel", () => {
 
   it("handles empty objects", () => {
     expect(keysToCamel({})).toEqual({});
+  });
+});
+
+describe("keysToCamelWithPrice", () => {
+  it("converts top-level keys and nested price keys to camelCase", () => {
+    const input = {
+      id: "p1",
+      plan_name: "Pro",
+      price: { id: "pp1", display_amount: 1900 },
+    };
+    expect(keysToCamelWithPrice(input)).toEqual({
+      id: "p1",
+      planName: "Pro",
+      price: { id: "pp1", displayAmount: 1900 },
+    });
+  });
+
+  it("leaves top-level keys converted when price is absent", () => {
+    const input = { plan_name: "Free", some_field: "val" };
+    expect(keysToCamelWithPrice(input)).toEqual({
+      planName: "Free",
+      someField: "val",
+    });
+  });
+
+  it("skips price conversion when price is not an object", () => {
+    const input = { plan_name: "Free", price: null };
+    expect(keysToCamelWithPrice(input)).toEqual({
+      planName: "Free",
+      price: null,
+    });
   });
 });

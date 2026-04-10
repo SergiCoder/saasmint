@@ -102,7 +102,9 @@
       "submit": "Enviar link de redefinição",
       "successMessage": "Se existir uma conta com esse e-mail, você receberá um link para redefinição de senha em breve.",
       "rememberPassword": "Lembra da sua senha?",
-      "backToLogin": "Entrar"
+      "backToLogin": "Entrar",
+      "invalidLink": "Este link de redefinição é inválido ou expirou.",
+      "requestNewLink": "Solicitar um novo link de redefinição"
     },
     "oauth": {
       "continueWithGoogle": "Continuar com Google",
@@ -136,6 +138,14 @@
       "submit": "Redefinir senha",
       "successMessage": "Sua senha foi atualizada. Agora você pode entrar com sua nova senha.",
       "backToLogin": "Entrar"
+    },
+    "verifyEmail": {
+      "pageTitle": "Verificar e-mail",
+      "title": "Verificando seu e-mail",
+      "verifying": "Por favor, aguarde enquanto verificamos seu endereço de e-mail...",
+      "success": "Seu e-mail foi verificado. Redirecionando para seu painel...",
+      "error": "A verificação do e-mail falhou. O link pode ter expirado.",
+      "backToLogin": "Voltar para o login"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "Moeda",
     "phonePrefix": "Código do país",
     "phone": "Telefone",
+    "phoneNumberRequired": "Informe um número de telefone",
+    "phonePrefixRequired": "Selecione um código de país",
+    "phoneTooShort": "O número de telefone deve ter pelo menos 4 dígitos",
     "timezone": "Fuso horário",
     "jobTitle": "Cargo",
     "pronouns": "Pronomes",
@@ -209,6 +222,7 @@
     "avatarRemove": "Remover",
     "avatarError": "Falha ao atualizar o avatar",
     "save": "Salvar alterações",
+    "saved": "Alterações salvas",
     "danger": "Zona de perigo",
     "deleteAccount": "Excluir conta",
     "deleteConfirm": "Isso excluirá permanentemente sua conta e todos os dados.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "Ela/Dela",
     "pronounsTheyThem": "Elu/Delu",
     "changePassword": "Alterar senha",
+    "currentPassword": "Senha atual",
     "newPassword": "Nova senha",
     "confirmPassword": "Confirmar senha",
     "passwordChangeSubmit": "Atualizar senha",
@@ -239,6 +254,9 @@
     "name": "Nome",
     "email": "E-mail",
     "slug": "Slug",
+    "userId": "ID do usuário",
+    "addMember": "Adicionar membro",
+    "memberAdded": "Membro adicionado com sucesso",
     "roleMember": "Membro",
     "roleAdmin": "Administrador",
     "roleOwner": "Proprietário"

@@ -1,10 +1,17 @@
 import createMiddleware from "next-intl/middleware";
 import { routing } from "@/lib/i18n/routing";
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import {
+  ACCESS_TOKEN_NAME,
+  REFRESH_TOKEN_NAME,
+  accessTokenCookieOptions,
+  refreshTokenCookieOptions,
+} from "@/infrastructure/auth/cookies";
 
 const intlMiddleware = createMiddleware(routing);
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 const PROTECTED_PREFIXES = [
   "/dashboard",
@@ -14,83 +21,85 @@ const PROTECTED_PREFIXES = [
   "/admin",
 ];
 
-export async function proxy(request: NextRequest) {
-  const { pathname, searchParams } = request.nextUrl;
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1])) as {
+      exp?: number;
+    };
+    if (typeof payload.exp !== "number") return true;
+    // Consider expired 30s early to avoid race conditions
+    return payload.exp * 1000 < Date.now() + 30_000;
+  } catch {
+    return true;
+  }
+}
 
-  // Supabase email confirmation sends ?code= to the site root.
-  // Redirect to the auth callback route so the code gets exchanged.
-  const code = searchParams.get("code");
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
   const localePrefix = [...routing.locales]
-    .sort((a: string, b: string) => b.length - a.length) // match longer codes first (pt-BR before pt)
+    .sort((a: string, b: string) => b.length - a.length)
     .find((l: string) => pathname.startsWith(`/${l}/`) || pathname === `/${l}`);
   const pathnameWithoutLocale = localePrefix
-    ? pathname.slice(localePrefix.length + 1) // +1 for leading /
+    ? pathname.slice(localePrefix.length + 1)
     : pathname;
-  if (code && (pathnameWithoutLocale === "" || pathnameWithoutLocale === "/")) {
-    const locale = pathname.split("/")[1] ?? routing.defaultLocale;
-    // Use searchParams.set to safely encode the code and prevent an attacker
-    // from smuggling additional query parameters (e.g. ?code=abc%26next%3D...)
-    // into the callback route by interpolating the decoded value directly.
-    const callbackUrl = new URL(`/${locale}/auth/callback`, request.url);
-    callbackUrl.searchParams.set("code", code);
-    return NextResponse.redirect(callbackUrl);
-  }
 
   const isProtected = PROTECTED_PREFIXES.some((p) =>
     pathnameWithoutLocale.startsWith(p),
   );
 
   if (isProtected) {
-    const response = NextResponse.next();
-    // Both env vars are validated at startup via the Next.js config; the
-    // non-null assertions reflect that contract for the type checker.
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (!supabaseUrl || !supabaseAnonKey) {
-      throw new Error(
-        "NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set",
-      );
-    }
-    const supabase = createServerClient(
-      supabaseUrl,
-      supabaseAnonKey,
-      {
-        cookies: {
-          getAll: () => request.cookies.getAll(),
-          setAll: (
-            cookiesToSet: {
-              name: string;
-              value: string;
-              options?: Parameters<typeof response.cookies.set>[2];
-            }[],
-          ) =>
-            cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options),
-            ),
-        },
-      },
-    );
-    // getUser() validates the JWT server-side and refreshes expired tokens.
-    // getSession() only reads cookies without validation, so stale tokens
-    // would pass the middleware but get rejected by the Django API.
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    let accessToken = request.cookies.get(ACCESS_TOKEN_NAME)?.value;
+    const refreshToken = request.cookies.get(REFRESH_TOKEN_NAME)?.value;
 
-    if (!user) {
+    // Attempt token refresh if access token is missing or expired
+    if ((!accessToken || isTokenExpired(accessToken)) && refreshToken) {
+      try {
+        const res = await fetch(`${API_URL}/api/v1/auth/refresh/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        });
+
+        if (res.ok) {
+          const data = (await res.json()) as {
+            access_token: string;
+            refresh_token: string;
+          };
+          accessToken = data.access_token;
+
+          // Forward refreshed tokens to downstream server code (pages,
+          // server components) so they read the new token, not the stale one.
+          request.cookies.set(ACCESS_TOKEN_NAME, data.access_token);
+          request.cookies.set(REFRESH_TOKEN_NAME, data.refresh_token);
+
+          const intlResponse = intlMiddleware(request);
+          intlResponse.cookies.set(
+            ACCESS_TOKEN_NAME,
+            data.access_token,
+            accessTokenCookieOptions,
+          );
+          intlResponse.cookies.set(
+            REFRESH_TOKEN_NAME,
+            data.refresh_token,
+            refreshTokenCookieOptions,
+          );
+          return intlResponse;
+        }
+      } catch {
+        // Refresh failed — fall through to redirect
+      }
+    }
+
+    if (!accessToken || isTokenExpired(accessToken)) {
       const locale = pathname.split("/")[1] ?? routing.defaultLocale;
       return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
     }
-    const intlResponse = intlMiddleware(request);
-    response.cookies.getAll().forEach(({ name, value }) => {
-      intlResponse.cookies.set(name, value);
-    });
-    return intlResponse;
   }
 
   return intlMiddleware(request);
 }
 
 export const config = {
-  matcher: ["/", "/((?!_next/static|_next/image|favicon.ico|api).*)"],
+  matcher: ["/", "/((?!_next/static|_next/image|favicon.ico|icon.svg|api).*)"],
 };

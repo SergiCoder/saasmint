@@ -19,13 +19,13 @@ Strict hexagonal architecture enforced by layer isolation:
 
 Core types in `src/domain/models/`:
 
-- `User` — authenticated user (Supabase UID, account type, locale/currency preferences)
+- `User` — authenticated user (id, account type, locale/currency preferences)
 - `Org` — organisation record (id, name, slug, logoUrl)
-- `OrgMember` — org membership (userId, role: `owner | admin | member`, isBilling flag)
+- `OrgMember` — org membership (nested `user: OrgMemberUser`, role: `owner | admin | member`, isBilling flag)
 - `Plan` — billing plan (context: `personal | team`, tier: `free | basic | pro`, interval: `month | year`, single `price`)
-- `PlanPrice` — individual plan price point (id, amount in cents)
+- `PlanPrice` — individual plan price point (id, amount, displayAmount, currency)
 - `Product` — one-time purchase product (id, name, type: `one_time`, credits, `price`)
-- `ProductPrice` — individual product price point (id, amount in cents)
+- `ProductPrice` — individual product price point (id, amount, displayAmount, currency)
 - `Subscription` — active Stripe subscription (status, plan snapshot, period dates, trial)
 
 Domain errors in `src/domain/errors/`:
@@ -41,13 +41,24 @@ All error classes carry a `code: string` field for programmatic handling.
 Gateway implementations in `src/infrastructure/`, organised by provider:
 
 - `api/` — `DjangoApi*Gateway` classes that call `SaaSmint Core` via `apiFetch`
-- `supabase/` — `SupabaseAuthGateway` plus `client.ts` / `server.ts` Supabase client factories
+- `auth/` — `cookies.ts` for JWT cookie management (set, clear, read access/refresh tokens)
 
-Avatar uploads use Supabase Storage. A **public** bucket named `avatars` must exist in the Supabase project. Files are stored as `{supabase_uid}/avatar.webp`.
+Avatar uploads go through the Django API (`POST /account/avatar/`). Client-side image compression (`src/lib/compressImage.ts`) runs before upload.
 
 Each gateway implements a port interface from `src/application/ports/` (e.g. `IOrgGateway`, `IAuthGateway`).
 
 `src/infrastructure/registry.ts` exports singleton instances of every gateway — import gateways from the registry, not by instantiating classes directly.
+
+## Authentication
+
+Django issues JWTs directly — no third-party auth provider.
+
+- **Tokens**: Access token (15 min) + refresh token (7 days) stored in HTTP-only secure cookies
+- **Login/Signup**: Server actions call Django `POST /auth/login/` and `POST /auth/register/`
+- **OAuth**: Redirect to Django `GET /auth/oauth/{provider}/`, Django handles code exchange, redirects back with tokens
+- **Middleware** (`src/proxy.ts`): Decodes JWT from cookie (base64 only), checks expiry, refreshes via `POST /auth/refresh/` if needed
+- **API calls**: `apiClient.ts` reads `access_token` cookie, sends as `Authorization: Bearer` header
+- **Email verification**: Django sends verification email, user clicks link → `verify-email` page calls `POST /auth/verify-email/`
 
 ## Component Design
 
@@ -69,14 +80,14 @@ Strict atomic design in `src/presentation/components/`:
 
 ## Server Actions
 
-Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, `billing.ts`, `org.ts`, `user.ts`). Each action instantiates a use-case with a gateway from the registry — never call gateways directly from actions.
+Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, `avatar.ts`, `billing.ts`, `org.ts`, `user.ts`). Each action instantiates a use-case with a gateway from the registry — never call gateways directly from actions.
 
 ## Route Groups
 
 `src/app/[locale]/` uses three route groups with distinct layouts:
 
 - `(marketing)/` — public pages (landing, pricing, blog, about, contact, privacy, terms, cookies) using `MarketingLayout`
-- `(auth)/` — login/signup/forgot-password/reset-password pages using `AuthLayout`
+- `(auth)/` — login/signup/forgot-password/reset-password/verify-email pages using `AuthLayout`
 - `(app)/` — authenticated pages (dashboard, subscription, profile, org) using `AppLayout`
 
 Route-specific client components live in co-located `_components/` directories (e.g. `(app)/subscription/_components/CheckoutButton.tsx`).
@@ -86,7 +97,7 @@ Route-specific client components live in co-located `_components/` directories (
 - App Router only (`src/app/`) — no `pages/` directory
 - Server Components by default — `"use client"` only when needed
 - No raw `fetch` in components — always go through use-cases
-- Auth: Supabase JWT in `Authorization: Bearer <token>` header
+- Auth: Django JWT in `Authorization: Bearer <token>` header (read from HTTP-only cookie)
 - Payments: Stripe-hosted Checkout redirect only — no embedded forms
 - All user-facing strings through next-intl — never hardcoded
 - Brand color: teal `#0D9488` (`primary-600`)
@@ -110,5 +121,3 @@ pnpm test:coverage    # run tests with v8 coverage report
 ```
 
 Tests live in `tests/` mirroring the `src/` structure (e.g. `src/domain/errors/DomainError.ts` → `tests/domain/errors/DomainError.test.ts`). The test runner is Vitest; configuration is in `vitest.config.ts`.
-
-Backend: `SaaSmint Core` must run on `NEXT_PUBLIC_API_URL` (default: `http://localhost:8001`)

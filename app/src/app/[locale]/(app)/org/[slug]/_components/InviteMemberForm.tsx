@@ -5,24 +5,24 @@ import { useTranslations } from "next-intl";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Button } from "@/presentation/components/atoms/Button";
-import { inviteMember } from "@/app/actions/org";
+import { addMember } from "@/app/actions/org";
 
-interface InviteMemberFormProps {
+interface AddMemberFormProps {
   orgId: string;
 }
 
-export function InviteMemberForm({ orgId }: InviteMemberFormProps) {
+export function AddMemberForm({ orgId }: AddMemberFormProps) {
   const t = useTranslations("org");
-  const [state, formAction, pending] = useActionState(inviteMember, null);
+  const [state, formAction, pending] = useActionState(addMember, null);
 
   return (
     <form action={formAction} className="space-y-4">
       {state?.error && <AlertBanner variant="error">{state.error}</AlertBanner>}
       {state?.success && (
-        <AlertBanner variant="success">{t("invite")}</AlertBanner>
+        <AlertBanner variant="success">{t("memberAdded")}</AlertBanner>
       )}
       <input type="hidden" name="orgId" value={orgId} />
-      <FormField label={t("email")} name="email" type="email" required />
+      <FormField label={t("userId")} name="userId" required />
       <div className="space-y-1">
         <label
           htmlFor="role"
@@ -42,7 +42,7 @@ export function InviteMemberForm({ orgId }: InviteMemberFormProps) {
         </select>
       </div>
       <Button type="submit" loading={pending}>
-        {t("invite")}
+        {t("addMember")}
       </Button>
     </form>
   );

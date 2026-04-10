@@ -20,10 +20,10 @@ vi.mock("@/application/use-cases/org/CreateOrg", () => ({
   },
 }));
 
-const mockInviteOrgMemberExecute = vi.fn();
+const mockAddOrgMemberExecute = vi.fn();
 vi.mock("@/application/use-cases/org-member/InviteOrgMember", () => ({
-  InviteOrgMember: function InviteOrgMember() {
-    return { execute: mockInviteOrgMemberExecute };
+  AddOrgMember: function AddOrgMember() {
+    return { execute: mockAddOrgMemberExecute };
   },
 }));
 
@@ -40,14 +40,14 @@ vi.mock("@/infrastructure/registry", () => ({
 }));
 
 let createOrg: typeof import("@/app/actions/org").createOrg;
-let inviteMember: typeof import("@/app/actions/org").inviteMember;
+let addMember: typeof import("@/app/actions/org").addMember;
 let removeMember: typeof import("@/app/actions/org").removeMember;
 
 beforeEach(async () => {
   vi.clearAllMocks();
   const mod = await import("@/app/actions/org");
   createOrg = mod.createOrg;
-  inviteMember = mod.inviteMember;
+  addMember = mod.addMember;
   removeMember = mod.removeMember;
 });
 
@@ -94,19 +94,19 @@ describe("org server actions", () => {
     });
   });
 
-  describe("inviteMember", () => {
-    it("revalidates path and returns success on invite", async () => {
-      mockInviteOrgMemberExecute.mockResolvedValue(undefined);
+  describe("addMember", () => {
+    it("revalidates path and returns success on add", async () => {
+      mockAddOrgMemberExecute.mockResolvedValue(undefined);
 
       const formData = new FormData();
       formData.set("orgId", "org_1");
-      formData.set("email", "new@example.com");
+      formData.set("userId", "user_123");
       formData.set("role", "member");
 
-      const result = await inviteMember(undefined, formData);
-      expect(mockInviteOrgMemberExecute).toHaveBeenCalledWith(
+      const result = await addMember(undefined, formData);
+      expect(mockAddOrgMemberExecute).toHaveBeenCalledWith(
         "org_1",
-        "new@example.com",
+        "user_123",
         "member",
       );
       expect(mockRevalidatePath).toHaveBeenCalledWith("/org");
@@ -114,36 +114,34 @@ describe("org server actions", () => {
     });
 
     it("returns error on failure", async () => {
-      mockInviteOrgMemberExecute.mockRejectedValue(
-        new Error("Already a member"),
-      );
+      mockAddOrgMemberExecute.mockRejectedValue(new Error("Already a member"));
 
       const formData = new FormData();
       formData.set("orgId", "org_1");
-      formData.set("email", "existing@example.com");
+      formData.set("userId", "user_123");
       formData.set("role", "admin");
 
-      const result = await inviteMember(undefined, formData);
-      expect(result).toEqual({ error: "Failed to invite member" });
+      const result = await addMember(undefined, formData);
+      expect(result).toEqual({ error: "Failed to add member" });
     });
 
     it("returns error for invalid role", async () => {
       const formData = new FormData();
       formData.set("orgId", "org_1");
-      formData.set("email", "new@example.com");
+      formData.set("userId", "user_123");
       formData.set("role", "superadmin");
 
-      const result = await inviteMember(undefined, formData);
+      const result = await addMember(undefined, formData);
       expect(result).toEqual({ error: "Invalid input" });
-      expect(mockInviteOrgMemberExecute).not.toHaveBeenCalled();
+      expect(mockAddOrgMemberExecute).not.toHaveBeenCalled();
     });
 
     it("returns error when required fields are missing", async () => {
       const formData = new FormData();
 
-      const result = await inviteMember(undefined, formData);
+      const result = await addMember(undefined, formData);
       expect(result).toEqual({ error: "Invalid input" });
-      expect(mockInviteOrgMemberExecute).not.toHaveBeenCalled();
+      expect(mockAddOrgMemberExecute).not.toHaveBeenCalled();
     });
   });
 

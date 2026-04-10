@@ -8,13 +8,13 @@ const products: Product[] = [
     id: "p1",
     name: "Starter Pack",
     credits: 100,
-    price: { id: "price_1", amount: 1000 },
+    price: { id: "price_1", amount: 1000, displayAmount: 10, currency: "usd" },
   } as Product,
   {
     id: "p2",
     name: "Pro Pack",
     credits: 500,
-    price: { id: "price_2", amount: 5000 },
+    price: { id: "price_2", amount: 5000, displayAmount: 50, currency: "usd" },
   } as Product,
 ];
 
@@ -25,6 +25,7 @@ describe("ProductsGrid", () => {
         title="Credit packs"
         products={products}
         creditsLabel="credits"
+        locale="en-US"
         renderCta={(p) => <button>Buy {p.name}</button>}
       />,
     );
@@ -37,6 +38,7 @@ describe("ProductsGrid", () => {
         title="Credit packs"
         products={products}
         creditsLabel="credits"
+        locale="en-US"
         renderCta={(p) => <button>Buy {p.name}</button>}
       />,
     );
@@ -55,6 +57,7 @@ describe("ProductsGrid", () => {
         title="Credit packs"
         products={products}
         creditsLabel="credits"
+        locale="en-US"
         renderCta={(p) => <button>Buy {p.name}</button>}
       />,
     );
@@ -72,6 +75,7 @@ describe("ProductsGrid", () => {
         title="Credit packs"
         products={[]}
         creditsLabel="credits"
+        locale="en-US"
         renderCta={() => <button>Buy</button>}
       />,
     );
@@ -92,11 +96,14 @@ describe("ProductsGrid", () => {
         title="Credit packs"
         products={free}
         creditsLabel="credits"
+        locale="en-US"
         renderCta={() => <button>Buy</button>}
       />,
     );
     expect(screen.getByText("Free Sample")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Buy" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Buy" }),
+    ).not.toBeInTheDocument();
   });
 
   it("forwards a custom className to the wrapper", () => {
@@ -105,6 +112,7 @@ describe("ProductsGrid", () => {
         title="Credit packs"
         products={products}
         creditsLabel="credits"
+        locale="en-US"
         renderCta={() => <button>Buy</button>}
         className="custom-class"
       />,

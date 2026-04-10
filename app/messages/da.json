@@ -102,7 +102,9 @@
       "submit": "Send nulstillingslink",
       "successMessage": "Hvis der findes en konto med den e-mail, vil du snart modtage et link til nulstilling af adgangskode.",
       "rememberPassword": "Husker du din adgangskode?",
-      "backToLogin": "Log ind"
+      "backToLogin": "Log ind",
+      "invalidLink": "Dette nulstillingslink er ugyldigt eller udløbet.",
+      "requestNewLink": "Anmod om et nyt nulstillingslink"
     },
     "oauth": {
       "continueWithGoogle": "Fortsæt med Google",
@@ -136,6 +138,14 @@
       "submit": "Nulstil adgangskode",
       "successMessage": "Din adgangskode er blevet opdateret. Du kan nu logge ind med din nye adgangskode.",
       "backToLogin": "Log ind"
+    },
+    "verifyEmail": {
+      "pageTitle": "Bekræft e-mail",
+      "title": "Bekræfter din e-mail",
+      "verifying": "Vent venligst mens vi bekræfter din e-mailadresse...",
+      "success": "Din e-mail er blevet bekræftet. Omdirigerer til dit dashboard...",
+      "error": "E-mailbekræftelse mislykkedes. Linket er muligvis udløbet.",
+      "backToLogin": "Tilbage til login"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "Valuta",
     "phonePrefix": "Landekode",
     "phone": "Telefon",
+    "phoneNumberRequired": "Indtast et telefonnummer",
+    "phonePrefixRequired": "Vælg en landekode",
+    "phoneTooShort": "Telefonnummeret skal være mindst 4 cifre",
     "timezone": "Tidszone",
     "jobTitle": "Jobtitel",
     "pronouns": "Pronominer",
@@ -209,6 +222,7 @@
     "avatarRemove": "Fjern",
     "avatarError": "Kunne ikke opdatere avatar",
     "save": "Gem ændringer",
+    "saved": "Ændringer gemt",
     "danger": "Farezone",
     "deleteAccount": "Slet konto",
     "deleteConfirm": "Dette sletter permanent din konto og alle data.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "Hun/Hende",
     "pronounsTheyThem": "De/Dem",
     "changePassword": "Skift adgangskode",
+    "currentPassword": "Nuværende adgangskode",
     "newPassword": "Ny adgangskode",
     "confirmPassword": "Bekræft adgangskode",
     "passwordChangeSubmit": "Opdater adgangskode",
@@ -239,6 +254,9 @@
     "name": "Navn",
     "email": "E-mail",
     "slug": "Slug",
+    "userId": "Bruger-ID",
+    "addMember": "Tilføj medlem",
+    "memberAdded": "Medlem tilføjet",
     "roleMember": "Medlem",
     "roleAdmin": "Administrator",
     "roleOwner": "Ejer"

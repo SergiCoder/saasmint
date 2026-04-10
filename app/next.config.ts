@@ -3,14 +3,28 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./src/lib/i18n/request.ts");
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-const supabaseHostname = supabaseUrl ? new URL(supabaseUrl).hostname : "";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+const apiHostname = apiUrl ? new URL(apiUrl).hostname : "";
+
+const apiProtocol: "http" | "https" = apiUrl ? (() => {
+  const proto = new URL(apiUrl).protocol.replace(":", "");
+  if (proto !== "http" && proto !== "https") {
+    throw new Error(`Unsupported API protocol: ${proto}`);
+  }
+  return proto;
+})() : "https";
+
+const isDev = process.env.NODE_ENV === "development";
 
 const config: NextConfig = {
   images: {
-    remotePatterns: supabaseHostname
-      ? [{ protocol: "https", hostname: supabaseHostname }]
-      : [],
+    remotePatterns: [
+      ...(apiHostname
+        ? [{ protocol: apiProtocol, hostname: apiHostname }]
+        : []),
+      ...(isDev ? [{ hostname: "localhost" }] : []),
+    ],
+    ...(isDev && { dangerouslyAllowLocalIP: true }),
   },
 };
 

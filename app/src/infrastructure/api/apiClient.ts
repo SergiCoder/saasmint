@@ -1,31 +1,29 @@
 import { cache } from "react";
 import { AuthError } from "@/domain/errors/AuthError";
-import { createClient } from "@/infrastructure/supabase/server";
+import { getAccessToken } from "@/infrastructure/auth/cookies";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 // Wrapped with React.cache so that multiple apiFetch() calls within a single
-// server render share one Supabase auth round-trip instead of validating the
-// JWT once per request.
+// server render share one cookie read instead of repeating it per request.
 export const getAuthToken = cache(_getAuthToken);
 
 async function _getAuthToken(): Promise<string> {
-  const supabase = await createClient();
-  // Validate and refresh the JWT before reading the access token.
-  // getSession() alone reads stale cookies without server-side validation.
-  // Run getUser() and getSession() in parallel since both hit the Supabase
-  // auth endpoint and neither depends on the other's result.
-  const [
-    {
-      data: { user },
-    },
-    {
-      data: { session },
-    },
-  ] = await Promise.all([supabase.auth.getUser(), supabase.auth.getSession()]);
-  if (!user) throw new AuthError("No active session", "NO_SESSION");
-  if (!session) throw new AuthError("No active session", "NO_SESSION");
-  return session.access_token;
+  const token = await getAccessToken();
+  if (!token) throw new AuthError("No active session", "NO_SESSION");
+  return token;
+}
+
+function isNetworkError(err: unknown): boolean {
+  if (!(err instanceof TypeError)) return false;
+  const cause = (err as TypeError & { cause?: { code?: string } }).cause;
+  if (cause && typeof cause.code === "string") {
+    return ["ECONNREFUSED", "ENOTFOUND", "ETIMEDOUT", "ECONNRESET"].includes(
+      cause.code,
+    );
+  }
+  // Node 18+ fetch: "fetch failed" with a cause; older runtimes: "Failed to fetch" / "NetworkError"
+  return /\bfetch failed\b|Failed to fetch|NetworkError/i.test(err.message);
 }
 
 async function request<T>(
@@ -46,10 +44,18 @@ async function request<T>(
     });
   }
 
-  const res = await fetch(`${API_URL}/api/v1${path}`, {
-    ...options,
-    headers: Object.fromEntries(headers.entries()),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}/api/v1${path}`, {
+      ...options,
+      headers: Object.fromEntries(headers.entries()),
+    });
+  } catch (err) {
+    if (isNetworkError(err)) {
+      throw new Error("Unable to reach the server. Please try again later.");
+    }
+    throw err;
+  }
 
   if (!res.ok) {
     const text = await res.text();

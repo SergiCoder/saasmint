@@ -102,7 +102,9 @@
       "submit": "發送重設連結",
       "successMessage": "如果該電子郵件存在對應帳戶，您將很快收到密碼重設連結。",
       "rememberPassword": "記得密碼？",
-      "backToLogin": "登入"
+      "backToLogin": "登入",
+      "invalidLink": "此重設連結無效或已過期。",
+      "requestNewLink": "請求新的重設連結"
     },
     "oauth": {
       "continueWithGoogle": "使用 Google 繼續",
@@ -136,6 +138,14 @@
       "submit": "重設密碼",
       "successMessage": "您的密碼已更新。您現在可以使用新密碼登入。",
       "backToLogin": "登入"
+    },
+    "verifyEmail": {
+      "pageTitle": "驗證電子郵件",
+      "title": "正在驗證您的電子郵件",
+      "verifying": "請稍候，我們正在驗證您的電子郵件地址...",
+      "success": "您的電子郵件已驗證。正在跳轉到控制面板...",
+      "error": "電子郵件驗證失敗。連結可能已過期。",
+      "backToLogin": "返回登入"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "貨幣",
     "phonePrefix": "國碼",
     "phone": "電話號碼",
+    "phoneNumberRequired": "請輸入電話號碼",
+    "phonePrefixRequired": "請選擇國碼",
+    "phoneTooShort": "電話號碼至少需要4位數字",
     "timezone": "時區",
     "jobTitle": "職稱",
     "pronouns": "代名詞",
@@ -209,6 +222,7 @@
     "avatarRemove": "移除",
     "avatarError": "頭像更新失敗",
     "save": "儲存變更",
+    "saved": "變更已儲存",
     "danger": "危險區域",
     "deleteAccount": "刪除帳戶",
     "deleteConfirm": "這將永久刪除您的帳戶和所有資料。",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "她/Her",
     "pronounsTheyThem": "They/Them",
     "changePassword": "變更密碼",
+    "currentPassword": "目前密碼",
     "newPassword": "新密碼",
     "confirmPassword": "確認密碼",
     "passwordChangeSubmit": "更新密碼",
@@ -239,6 +254,9 @@
     "name": "名稱",
     "email": "電子郵件",
     "slug": "Slug",
+    "userId": "使用者 ID",
+    "addMember": "新增成員",
+    "memberAdded": "成員新增成功",
     "roleMember": "成員",
     "roleAdmin": "管理員",
     "roleOwner": "擁有者"

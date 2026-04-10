@@ -1,15 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const mockSignInWithOAuth = vi.fn();
-vi.mock("@/infrastructure/supabase/client", () => ({
-  createClient: () => ({
-    auth: {
-      signInWithOAuth: (...args: unknown[]) => mockSignInWithOAuth(...args),
-    },
-  }),
-}));
-
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => {
     const map: Record<string, string> = {
@@ -25,9 +16,22 @@ vi.mock("next-intl", () => ({
 
 import { OAuthButtons } from "@/presentation/components/molecules/OAuthButtons";
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
+
 describe("OAuthButtons", () => {
+  let locationAssignSpy: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    locationAssignSpy = vi.fn();
+    Object.defineProperty(window, "location", {
+      value: {
+        href: `${APP_URL}/en/login`,
+        origin: APP_URL,
+        assign: locationAssignSpy,
+      },
+      writable: true,
+    });
   });
 
   it("renders three provider buttons", () => {
@@ -48,58 +52,46 @@ describe("OAuthButtons", () => {
     expect(screen.getByText("or")).toBeInTheDocument();
   });
 
-  it("calls signInWithOAuth with the correct provider on click", async () => {
-    mockSignInWithOAuth.mockResolvedValue({ error: null });
-
+  it("redirects to Django OAuth endpoint on click", async () => {
     render(<OAuthButtons />);
     fireEvent.click(
       screen.getByRole("button", { name: /Continue with GitHub/i }),
     );
 
     await waitFor(() => {
-      expect(mockSignInWithOAuth).toHaveBeenCalledWith({
-        provider: "github",
-        options: {
-          redirectTo: `${window.location.origin}/en/auth/callback`,
-        },
-      });
+      expect(locationAssignSpy).toHaveBeenCalledWith(
+        expect.stringContaining("/api/v1/auth/oauth/github/"),
+      );
     });
   });
 
-  it("calls signInWithOAuth with google provider", async () => {
-    mockSignInWithOAuth.mockResolvedValue({ error: null });
-
+  it("redirects to Google OAuth endpoint", async () => {
     render(<OAuthButtons />);
     fireEvent.click(
       screen.getByRole("button", { name: /Continue with Google/i }),
     );
 
     await waitFor(() => {
-      expect(mockSignInWithOAuth).toHaveBeenCalledWith(
-        expect.objectContaining({ provider: "google" }),
+      expect(locationAssignSpy).toHaveBeenCalledWith(
+        expect.stringContaining("/api/v1/auth/oauth/google/"),
       );
     });
   });
 
-  it("calls signInWithOAuth with azure provider for Microsoft", async () => {
-    mockSignInWithOAuth.mockResolvedValue({ error: null });
-
+  it("redirects to Microsoft OAuth endpoint", async () => {
     render(<OAuthButtons />);
     fireEvent.click(
       screen.getByRole("button", { name: /Continue with Microsoft/i }),
     );
 
     await waitFor(() => {
-      expect(mockSignInWithOAuth).toHaveBeenCalledWith(
-        expect.objectContaining({ provider: "azure" }),
+      expect(locationAssignSpy).toHaveBeenCalledWith(
+        expect.stringContaining("/api/v1/auth/oauth/microsoft/"),
       );
     });
   });
 
   it("disables all buttons while a provider is loading", async () => {
-    // Never resolve so loading state persists
-    mockSignInWithOAuth.mockReturnValue(new Promise(() => {}));
-
     render(<OAuthButtons />);
     fireEvent.click(
       screen.getByRole("button", { name: /Continue with Google/i }),
@@ -109,24 +101,6 @@ describe("OAuthButtons", () => {
       const buttons = screen.getAllByRole("button");
       for (const button of buttons) {
         expect(button).toBeDisabled();
-      }
-    });
-  });
-
-  it("re-enables buttons when signInWithOAuth returns an error", async () => {
-    mockSignInWithOAuth.mockResolvedValue({
-      error: { message: "OAuth failed" },
-    });
-
-    render(<OAuthButtons />);
-    fireEvent.click(
-      screen.getByRole("button", { name: /Continue with Google/i }),
-    );
-
-    await waitFor(() => {
-      const buttons = screen.getAllByRole("button");
-      for (const button of buttons) {
-        expect(button).not.toBeDisabled();
       }
     });
   });

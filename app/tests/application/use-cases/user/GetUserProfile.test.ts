@@ -5,7 +5,7 @@ import type { User } from "@/domain/models/User";
 
 const user: User = {
   id: "u1",
-  supabaseUid: "sb-u1",
+
   email: "alice@example.com",
   fullName: "Alice",
   avatarUrl: null,
@@ -20,6 +20,10 @@ const user: User = {
   bio: null,
   isVerified: true,
   createdAt: "2024-01-01T00:00:00Z",
+  registrationMethod: "email",
+  linkedProviders: [],
+  updatedAt: "2024-01-01T00:00:00Z",
+  scheduledDeletionAt: null,
 };
 
 function makeGateway(overrides?: Partial<IUserGateway>): IUserGateway {

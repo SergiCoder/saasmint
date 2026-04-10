@@ -102,7 +102,9 @@
       "submit": "Sıfırlama bağlantısı gönder",
       "successMessage": "Bu e-posta ile ilişkili bir hesap varsa, kısa süre içinde bir şifre sıfırlama bağlantısı alacaksınız.",
       "rememberPassword": "Şifrenizi hatırlıyor musunuz?",
-      "backToLogin": "Giriş yap"
+      "backToLogin": "Giriş yap",
+      "invalidLink": "Bu sıfırlama bağlantısı geçersiz veya süresi dolmuş.",
+      "requestNewLink": "Yeni bir sıfırlama bağlantısı iste"
     },
     "oauth": {
       "continueWithGoogle": "Google ile devam et",
@@ -136,6 +138,14 @@
       "submit": "Şifreyi sıfırla",
       "successMessage": "Şifreniz güncellendi. Artık yeni şifrenizle giriş yapabilirsiniz.",
       "backToLogin": "Giriş yap"
+    },
+    "verifyEmail": {
+      "pageTitle": "E-posta doğrula",
+      "title": "E-postanız doğrulanıyor",
+      "verifying": "E-posta adresinizi doğrularken lütfen bekleyin...",
+      "success": "E-postanız doğrulandı. Kontrol panelinize yönlendiriliyorsunuz...",
+      "error": "E-posta doğrulaması başarısız oldu. Bağlantının süresi dolmuş olabilir.",
+      "backToLogin": "Girişe dön"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "Para birimi",
     "phonePrefix": "Ülke kodu",
     "phone": "Telefon",
+    "phoneNumberRequired": "Lütfen bir telefon numarası girin",
+    "phonePrefixRequired": "Lütfen bir ülke kodu seçin",
+    "phoneTooShort": "Telefon numarası en az 4 haneli olmalıdır",
     "timezone": "Saat dilimi",
     "jobTitle": "Unvan",
     "pronouns": "Zamirler",
@@ -209,6 +222,7 @@
     "avatarRemove": "Kaldır",
     "avatarError": "Avatar güncellenemedi",
     "save": "Değişiklikleri kaydet",
+    "saved": "Değişiklikler kaydedildi",
     "danger": "Tehlikeli bölge",
     "deleteAccount": "Hesabı sil",
     "deleteConfirm": "Bu işlem hesabınızı ve tüm verilerinizi kalıcı olarak silecektir.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "O (kadın)",
     "pronounsTheyThem": "O (nötr)",
     "changePassword": "Şifre değiştir",
+    "currentPassword": "Mevcut şifre",
     "newPassword": "Yeni şifre",
     "confirmPassword": "Şifreyi onaylayın",
     "passwordChangeSubmit": "Şifreyi güncelle",
@@ -239,6 +254,9 @@
     "name": "Ad",
     "email": "E-posta",
     "slug": "Slug",
+    "userId": "Kullanıcı ID",
+    "addMember": "Üye ekle",
+    "memberAdded": "Üye başarıyla eklendi",
     "roleMember": "Üye",
     "roleAdmin": "Yönetici",
     "roleOwner": "Sahip"

@@ -102,7 +102,9 @@
       "submit": "Invia link di reimpostazione",
       "successMessage": "Se esiste un account con quella email, riceverai a breve un link per reimpostare la password.",
       "rememberPassword": "Ricordi la tua password?",
-      "backToLogin": "Accedi"
+      "backToLogin": "Accedi",
+      "invalidLink": "Questo link di reimpostazione non è valido o è scaduto.",
+      "requestNewLink": "Richiedi un nuovo link di reimpostazione"
     },
     "oauth": {
       "continueWithGoogle": "Continua con Google",
@@ -136,6 +138,14 @@
       "submit": "Reimposta password",
       "successMessage": "La tua password è stata aggiornata. Ora puoi accedere con la tua nuova password.",
       "backToLogin": "Accedi"
+    },
+    "verifyEmail": {
+      "pageTitle": "Verifica email",
+      "title": "Verifica della tua email",
+      "verifying": "Attendere mentre verifichiamo il tuo indirizzo email...",
+      "success": "La tua email è stata verificata. Reindirizzamento alla dashboard...",
+      "error": "Verifica email fallita. Il link potrebbe essere scaduto.",
+      "backToLogin": "Torna all'accesso"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "Valuta",
     "phonePrefix": "Prefisso paese",
     "phone": "Telefono",
+    "phoneNumberRequired": "Inserisci un numero di telefono",
+    "phonePrefixRequired": "Seleziona un prefisso paese",
+    "phoneTooShort": "Il numero di telefono deve contenere almeno 4 cifre",
     "timezone": "Fuso orario",
     "jobTitle": "Qualifica",
     "pronouns": "Pronomi",
@@ -209,6 +222,7 @@
     "avatarRemove": "Rimuovi",
     "avatarError": "Impossibile aggiornare l'avatar",
     "save": "Salva modifiche",
+    "saved": "Modifiche salvate",
     "danger": "Zona pericolosa",
     "deleteAccount": "Elimina account",
     "deleteConfirm": "Questo eliminerà permanentemente il tuo account e tutti i dati.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "Lei",
     "pronounsTheyThem": "Their",
     "changePassword": "Cambia password",
+    "currentPassword": "Password attuale",
     "newPassword": "Nuova password",
     "confirmPassword": "Conferma password",
     "passwordChangeSubmit": "Aggiorna password",
@@ -239,6 +254,9 @@
     "name": "Nome",
     "email": "Email",
     "slug": "Slug",
+    "userId": "ID utente",
+    "addMember": "Aggiungi membro",
+    "memberAdded": "Membro aggiunto con successo",
     "roleMember": "Membro",
     "roleAdmin": "Amministratore",
     "roleOwner": "Proprietario"

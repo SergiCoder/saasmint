@@ -4,19 +4,37 @@ import { revalidatePath } from "next/cache";
 import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
 import { DeleteAccount } from "@/application/use-cases/auth/DeleteAccount";
 import { UpdateUserProfile } from "@/application/use-cases/user/UpdateUserProfile";
+import { AuthError } from "@/domain/errors/AuthError";
 import { authGateway, userGateway } from "@/infrastructure/registry";
 
-export async function updateAvatarUrl(avatarUrl: string | null) {
-  const user = await new GetCurrentUser(authGateway).execute();
-  await new UpdateUserProfile(userGateway).execute(user.id, { avatarUrl });
+export async function updateAvatarUrl(
+  avatarUrl: string | null,
+): Promise<{ error?: string }> {
+  try {
+    const user = await new GetCurrentUser(authGateway).execute();
+    await new UpdateUserProfile(userGateway).execute(user.id, { avatarUrl });
+  } catch (err) {
+    if (err instanceof AuthError) {
+      return { error: "Session expired. Please log in again." };
+    }
+    return { error: "Failed to update avatar" };
+  }
   revalidatePath("/", "layout");
+  return {};
 }
 
 export async function updateProfile(_prevState: unknown, formData: FormData) {
-  const user = await new GetCurrentUser(authGateway).execute();
+  let user;
+  try {
+    user = await new GetCurrentUser(authGateway).execute();
+  } catch (err) {
+    if (err instanceof AuthError) {
+      return { error: "Session expired. Please log in again." };
+    }
+    return { error: "Failed to load profile" };
+  }
 
   const fullName = formData.get("fullName");
-  const avatarUrl = formData.get("avatarUrl");
   const preferredLocale = formData.get("preferredLocale");
   const preferredCurrency = formData.get("preferredCurrency");
   const phonePrefix = formData.get("phonePrefix");
@@ -34,23 +52,39 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
     return { error: "Full name must be between 3 and 255 characters" };
   }
 
+  const hasPrefix = typeof phonePrefix === "string" && phonePrefix !== "";
+  const hasPhone = typeof phone === "string" && phone !== "";
+
+  if (hasPrefix !== hasPhone) {
+    return {
+      fieldErrors: {
+        phone: hasPrefix ? "phoneNumberRequired" : "phonePrefixRequired",
+      },
+    };
+  }
+
+  if (hasPhone && (phone as string).length < 4) {
+    return {
+      fieldErrors: { phone: "phoneTooShort" },
+    };
+  }
+
   try {
     await new UpdateUserProfile(userGateway).execute(user.id, {
       fullName,
-      avatarUrl: typeof avatarUrl === "string" && avatarUrl ? avatarUrl : null,
       ...(typeof preferredLocale === "string" &&
         preferredLocale && { preferredLocale }),
       ...(typeof preferredCurrency === "string" &&
         preferredCurrency && { preferredCurrency }),
-      phonePrefix:
-        typeof phonePrefix === "string" && phonePrefix ? phonePrefix : null,
-      phone: typeof phone === "string" && phone ? phone : null,
+      phonePrefix: hasPrefix ? (phonePrefix as string) : null,
+      phone: hasPhone ? (phone as string) : null,
       timezone: typeof timezone === "string" && timezone ? timezone : null,
       jobTitle: typeof jobTitle === "string" && jobTitle ? jobTitle : null,
       pronouns: typeof pronouns === "string" && pronouns ? pronouns : null,
       bio: typeof bio === "string" && bio ? bio : null,
     });
-  } catch {
+  } catch (err) {
+    console.error("[updateProfile]", err);
     return { error: "Failed to update profile" };
   }
 
@@ -61,11 +95,12 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
 export async function deleteAccount(): Promise<{
   error?: string;
   success?: boolean;
+  scheduledDeletionAt?: string | null;
 }> {
   try {
-    await new DeleteAccount(authGateway).execute();
+    const result = await new DeleteAccount(authGateway).execute();
+    return { success: true, scheduledDeletionAt: result.scheduledDeletionAt };
   } catch {
     return { error: "Failed to delete account" };
   }
-  return { success: true };
 }

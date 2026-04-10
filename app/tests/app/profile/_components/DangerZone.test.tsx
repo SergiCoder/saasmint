@@ -2,14 +2,11 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 
-vi.mock(
-  "@/app/[locale]/(app)/profile/_components/DeleteAccountDialog",
-  () => ({
-    DeleteAccountDialog: ({ userEmail }: { userEmail: string }) => (
-      <div data-testid="delete-dialog">{userEmail}</div>
-    ),
-  }),
-);
+vi.mock("@/app/[locale]/(app)/profile/_components/DeleteAccountDialog", () => ({
+  DeleteAccountDialog: ({ userEmail }: { userEmail: string }) => (
+    <div data-testid="delete-dialog">{userEmail}</div>
+  ),
+}));
 
 import { DangerZone } from "@/app/[locale]/(app)/profile/_components/DangerZone";
 

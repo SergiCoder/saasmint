@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "NODE_EXTRA_CA_CERTS=../saasmint-core/infra/certs/rootCA.pem next dev --turbo --experimental-https --experimental-https-key ../saasmint-core/infra/certs/localhost-key.pem --experimental-https-cert ../saasmint-core/infra/certs/localhost.pem --experimental-https-ca ../saasmint-core/infra/certs/rootCA.pem",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -16,14 +16,12 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "^9.1.0",
-    "@supabase/ssr": "^0.10.0",
-    "@supabase/supabase-js": "^2.102.1",
     "@tailwindcss/forms": "^0.5.11",
     "gray-matter": "^4.0.3",
-    "next": "16.2.2",
-    "next-intl": "^4.9.0",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "next": "16.2.3",
+    "next-intl": "^4.9.1",
+    "react": "19.2.5",
+    "react-dom": "19.2.5"
   },
   "//": "pnpm.overrides pins vite above CVE range 8.0.0-8.0.4; drop once vitest bumps its peer range",
   "pnpm": {
@@ -36,20 +34,20 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^25.5.2",
+    "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "@vitest/coverage-v8": "^4.1.3",
+    "@vitest/coverage-v8": "^4.1.4",
     "autoprefixer": "^10.4.27",
     "eslint": "^9.39.4",
-    "eslint-config-next": "16.2.2",
+    "eslint-config-next": "16.2.3",
     "jsdom": "^29.0.2",
     "postcss": "^8.5.9",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.2",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4.2.2",
     "typescript": "^6.0.2",
-    "vitest": "^4.1.3"
+    "vitest": "^4.1.4"
   }
 }

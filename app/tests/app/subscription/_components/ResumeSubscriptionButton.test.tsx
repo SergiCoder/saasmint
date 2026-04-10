@@ -10,9 +10,7 @@ import { ResumeSubscriptionButton } from "@/app/[locale]/(app)/subscription/_com
 describe("ResumeSubscriptionButton", () => {
   it("renders a button labelled with the children", () => {
     render(<ResumeSubscriptionButton>Resume</ResumeSubscriptionButton>);
-    expect(
-      screen.getByRole("button", { name: "Resume" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Resume" })).toBeInTheDocument();
   });
 
   it("uses the primary variant", () => {

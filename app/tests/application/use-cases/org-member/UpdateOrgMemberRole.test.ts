@@ -7,7 +7,7 @@ function makeGateway(
 ): IOrgMemberGateway {
   return {
     listMembers: vi.fn(),
-    inviteMember: vi.fn(),
+    addMember: vi.fn(),
     removeMember: vi.fn(),
     updateMemberRole: vi.fn().mockResolvedValue(undefined),
     ...overrides,

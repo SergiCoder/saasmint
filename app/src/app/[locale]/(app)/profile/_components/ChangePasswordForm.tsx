@@ -5,11 +5,11 @@ import { useTranslations } from "next-intl";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Button } from "@/presentation/components/atoms/Button";
-import { updatePassword } from "@/app/actions/auth";
+import { changePassword } from "@/app/actions/auth";
 
 export function ChangePasswordForm() {
   const t = useTranslations("profile");
-  const [state, formAction, pending] = useActionState(updatePassword, null);
+  const [state, formAction, pending] = useActionState(changePassword, null);
   const [dirty, setDirty] = useState(false);
 
   return (
@@ -24,6 +24,13 @@ export function ChangePasswordForm() {
           {t("passwordChangeSuccess")}
         </AlertBanner>
       )}
+      <FormField
+        label={t("currentPassword")}
+        name="currentPassword"
+        type="password"
+        required
+        autoComplete="current-password"
+      />
       <FormField
         label={t("newPassword")}
         name="password"

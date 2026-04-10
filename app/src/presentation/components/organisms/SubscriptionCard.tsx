@@ -8,6 +8,8 @@ const statusVariant = {
   canceled: "error",
   unpaid: "error",
   incomplete: "warning",
+  incomplete_expired: "error",
+  paused: "warning",
 } as const;
 
 export interface SubscriptionCardProps {

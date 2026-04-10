@@ -102,7 +102,9 @@
       "submit": "Wyślij link resetujący",
       "successMessage": "Jeśli istnieje konto z tym adresem e-mail, wkrótce otrzymasz link do zresetowania hasła.",
       "rememberPassword": "Pamiętasz hasło?",
-      "backToLogin": "Zaloguj się"
+      "backToLogin": "Zaloguj się",
+      "invalidLink": "Ten link do resetowania jest nieprawidłowy lub wygasł.",
+      "requestNewLink": "Poproś o nowy link do resetowania"
     },
     "oauth": {
       "continueWithGoogle": "Kontynuuj z Google",
@@ -136,6 +138,14 @@
       "submit": "Zresetuj hasło",
       "successMessage": "Twoje hasło zostało zaktualizowane. Możesz teraz zalogować się nowym hasłem.",
       "backToLogin": "Zaloguj się"
+    },
+    "verifyEmail": {
+      "pageTitle": "Zweryfikuj e-mail",
+      "title": "Weryfikacja Twojego e-maila",
+      "verifying": "Proszę czekać, trwa weryfikacja Twojego adresu e-mail...",
+      "success": "Twój e-mail został zweryfikowany. Przekierowywanie do panelu...",
+      "error": "Weryfikacja e-maila nie powiodła się. Link mógł wygasnąć.",
+      "backToLogin": "Powrót do logowania"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "Waluta",
     "phonePrefix": "Numer kierunkowy",
     "phone": "Telefon",
+    "phoneNumberRequired": "Podaj numer telefonu",
+    "phonePrefixRequired": "Wybierz numer kierunkowy",
+    "phoneTooShort": "Numer telefonu musi mieć co najmniej 4 cyfry",
     "timezone": "Strefa czasowa",
     "jobTitle": "Stanowisko",
     "pronouns": "Zaimki",
@@ -209,6 +222,7 @@
     "avatarRemove": "Usuń",
     "avatarError": "Nie udało się zaktualizować avatara",
     "save": "Zapisz zmiany",
+    "saved": "Zmiany zapisane",
     "danger": "Strefa zagrożenia",
     "deleteAccount": "Usuń konto",
     "deleteConfirm": "To trwale usunie Twoje konto i wszystkie dane.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "Ona/Jej",
     "pronounsTheyThem": "Ono/Ich",
     "changePassword": "Zmień hasło",
+    "currentPassword": "Obecne hasło",
     "newPassword": "Nowe hasło",
     "confirmPassword": "Potwierdź hasło",
     "passwordChangeSubmit": "Zaktualizuj hasło",
@@ -239,6 +254,9 @@
     "name": "Nazwa",
     "email": "E-mail",
     "slug": "Slug",
+    "userId": "ID użytkownika",
+    "addMember": "Dodaj członka",
+    "memberAdded": "Członek został dodany",
     "roleMember": "Członek",
     "roleAdmin": "Administrator",
     "roleOwner": "Właściciel"

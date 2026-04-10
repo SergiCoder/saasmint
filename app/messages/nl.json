@@ -102,7 +102,9 @@
       "submit": "Resetlink versturen",
       "successMessage": "Als er een account bestaat met dat e-mailadres, ontvang je binnenkort een link om je wachtwoord te resetten.",
       "rememberPassword": "Weet je je wachtwoord nog?",
-      "backToLogin": "Inloggen"
+      "backToLogin": "Inloggen",
+      "invalidLink": "Deze herstelkoppeling is ongeldig of verlopen.",
+      "requestNewLink": "Vraag een nieuwe herstelkoppeling aan"
     },
     "oauth": {
       "continueWithGoogle": "Doorgaan met Google",
@@ -136,6 +138,14 @@
       "submit": "Wachtwoord resetten",
       "successMessage": "Je wachtwoord is bijgewerkt. Je kunt nu inloggen met je nieuwe wachtwoord.",
       "backToLogin": "Inloggen"
+    },
+    "verifyEmail": {
+      "pageTitle": "E-mail verifiëren",
+      "title": "Uw e-mail wordt geverifieerd",
+      "verifying": "Even geduld terwijl we uw e-mailadres verifiëren...",
+      "success": "Uw e-mail is geverifieerd. U wordt doorgestuurd naar uw dashboard...",
+      "error": "E-mailverificatie mislukt. De link is mogelijk verlopen.",
+      "backToLogin": "Terug naar inloggen"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "Valuta",
     "phonePrefix": "Landcode",
     "phone": "Telefoon",
+    "phoneNumberRequired": "Voer een telefoonnummer in",
+    "phonePrefixRequired": "Selecteer een landcode",
+    "phoneTooShort": "Het telefoonnummer moet minstens 4 cijfers bevatten",
     "timezone": "Tijdzone",
     "jobTitle": "Functietitel",
     "pronouns": "Voornaamwoorden",
@@ -209,6 +222,7 @@
     "avatarRemove": "Verwijderen",
     "avatarError": "Avatar bijwerken mislukt",
     "save": "Wijzigingen opslaan",
+    "saved": "Wijzigingen opgeslagen",
     "danger": "Gevarenzone",
     "deleteAccount": "Account verwijderen",
     "deleteConfirm": "Dit verwijdert uw account en alle gegevens permanent.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "Zij/Haar",
     "pronounsTheyThem": "Hen/Hun",
     "changePassword": "Wachtwoord wijzigen",
+    "currentPassword": "Huidig wachtwoord",
     "newPassword": "Nieuw wachtwoord",
     "confirmPassword": "Wachtwoord bevestigen",
     "passwordChangeSubmit": "Wachtwoord bijwerken",
@@ -239,6 +254,9 @@
     "name": "Naam",
     "email": "E-mail",
     "slug": "Slug",
+    "userId": "Gebruikers-ID",
+    "addMember": "Lid toevoegen",
+    "memberAdded": "Lid succesvol toegevoegd",
     "roleMember": "Lid",
     "roleAdmin": "Beheerder",
     "roleOwner": "Eigenaar"

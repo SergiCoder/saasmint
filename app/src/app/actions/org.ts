@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { CreateOrg } from "@/application/use-cases/org/CreateOrg";
-import { InviteOrgMember } from "@/application/use-cases/org-member/InviteOrgMember";
+import { AddOrgMember } from "@/application/use-cases/org-member/InviteOrgMember";
 import { RemoveOrgMember } from "@/application/use-cases/org-member/RemoveOrgMember";
 import { orgGateway, orgMemberGateway } from "@/infrastructure/registry";
 
@@ -27,14 +27,14 @@ export async function createOrg(_prevState: unknown, formData: FormData) {
 const validRoles = ["owner", "admin", "member"] as const;
 type OrgRole = (typeof validRoles)[number];
 
-export async function inviteMember(_prevState: unknown, formData: FormData) {
+export async function addMember(_prevState: unknown, formData: FormData) {
   const orgId = formData.get("orgId");
-  const email = formData.get("email");
+  const userId = formData.get("userId");
   const role = formData.get("role");
 
   if (
     typeof orgId !== "string" ||
-    typeof email !== "string" ||
+    typeof userId !== "string" ||
     typeof role !== "string" ||
     !(validRoles as readonly string[]).includes(role)
   ) {
@@ -42,13 +42,13 @@ export async function inviteMember(_prevState: unknown, formData: FormData) {
   }
 
   try {
-    await new InviteOrgMember(orgMemberGateway).execute(
+    await new AddOrgMember(orgMemberGateway).execute(
       orgId,
-      email,
-      role as (typeof validRoles)[number],
+      userId,
+      role as OrgRole,
     );
   } catch {
-    return { error: "Failed to invite member" };
+    return { error: "Failed to add member" };
   }
 
   revalidatePath(`/org`);

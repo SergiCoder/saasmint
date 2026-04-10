@@ -27,7 +27,7 @@ export const canManageBilling = cache(async function canManageBilling(
     // Team subscriptions belong to the user's first (currently only) org.
     const org = orgs[0];
     const members = await new ListOrgMembers(orgMemberGateway).execute(org.id);
-    const me = members.find((m) => m.userId === user.id);
+    const me = members.find((m) => m.user.id === user.id);
     return me?.isBilling === true;
   } catch (err) {
     console.error("Failed to resolve billing permissions", err);

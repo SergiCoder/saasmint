@@ -92,9 +92,7 @@ async function assertCanManageBilling(): Promise<void> {
   }
 }
 
-export type BillingActionResult =
-  | { ok: true }
-  | { ok: false; error: string };
+export type BillingActionResult = { ok: true } | { ok: false; error: string };
 
 function toErrorMessage(err: unknown): string {
   if (err instanceof BillingError) return err.message;

@@ -1,23 +1,32 @@
 import type { IOrgMemberGateway } from "@/application/ports/IOrgMemberGateway";
 import type { OrgMember } from "@/domain/models/OrgMember";
 import { apiFetch } from "./apiClient";
+import { keysToCamel } from "./caseTransform";
+
+function mapMember(raw: Record<string, unknown>): OrgMember {
+  const member = keysToCamel<OrgMember>(raw);
+  if (raw.user && typeof raw.user === "object") {
+    member.user = keysToCamel(raw.user as Record<string, unknown>);
+  }
+  return member;
+}
 
 export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
   async listMembers(orgId: string): Promise<OrgMember[]> {
-    const data = await apiFetch<{ results: OrgMember[] }>(
+    const data = await apiFetch<Record<string, unknown>[]>(
       `/orgs/${orgId}/members/`,
     );
-    return data.results;
+    return data.map(mapMember);
   }
 
-  async inviteMember(
+  async addMember(
     orgId: string,
-    email: string,
+    userId: string,
     role: OrgMember["role"],
   ): Promise<void> {
     await apiFetch<OrgMember>(`/orgs/${orgId}/members/`, {
       method: "POST",
-      body: JSON.stringify({ email, role }),
+      body: JSON.stringify({ user_id: userId, role }),
     });
   }
 

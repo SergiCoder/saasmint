@@ -17,13 +17,15 @@ function makeGateway(
   };
 }
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
+
 describe("StartCheckout", () => {
   it("returns checkout URL", async () => {
     const gateway = makeGateway();
     const input = {
       planPriceId: "price_abc",
-      successUrl: "http://localhost:3000/billing?status=success",
-      cancelUrl: "http://localhost:3000/billing",
+      successUrl: `${APP_URL}/billing?status=success`,
+      cancelUrl: `${APP_URL}/billing`,
     };
     const result = await new StartCheckout(gateway).execute(input);
     expect(result.url).toBe("https://checkout.stripe.com/session_123");

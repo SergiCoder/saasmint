@@ -102,7 +102,9 @@
       "submit": "재설정 링크 보내기",
       "successMessage": "해당 이메일로 등록된 계정이 있다면, 곧 비밀번호 재설정 링크를 받으실 수 있습니다.",
       "rememberPassword": "비밀번호가 기억나시나요?",
-      "backToLogin": "로그인"
+      "backToLogin": "로그인",
+      "invalidLink": "이 재설정 링크가 유효하지 않거나 만료되었습니다.",
+      "requestNewLink": "새 재설정 링크 요청"
     },
     "oauth": {
       "continueWithGoogle": "Google로 계속",
@@ -136,6 +138,14 @@
       "submit": "비밀번호 재설정",
       "successMessage": "비밀번호가 업데이트되었습니다. 새 비밀번호로 로그인할 수 있습니다.",
       "backToLogin": "로그인"
+    },
+    "verifyEmail": {
+      "pageTitle": "이메일 인증",
+      "title": "이메일 인증 중",
+      "verifying": "이메일 주소를 인증하는 중입니다. 잠시만 기다려 주세요...",
+      "success": "이메일이 인증되었습니다. 대시보드로 이동합니다...",
+      "error": "이메일 인증에 실패했습니다. 링크가 만료되었을 수 있습니다.",
+      "backToLogin": "로그인으로 돌아가기"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "통화",
     "phonePrefix": "국가 코드",
     "phone": "전화번호",
+    "phoneNumberRequired": "전화번호를 입력해 주세요",
+    "phonePrefixRequired": "국가 코드를 선택해 주세요",
+    "phoneTooShort": "전화번호는 최소 4자리여야 합니다",
     "timezone": "시간대",
     "jobTitle": "직함",
     "pronouns": "대명사",
@@ -209,6 +222,7 @@
     "avatarRemove": "삭제",
     "avatarError": "아바타 업데이트에 실패했습니다",
     "save": "변경 사항 저장",
+    "saved": "변경 사항이 저장되었습니다",
     "danger": "위험 구역",
     "deleteAccount": "계정 삭제",
     "deleteConfirm": "계정과 모든 데이터가 영구적으로 삭제됩니다.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "그녀/Her",
     "pronounsTheyThem": "They/Them",
     "changePassword": "비밀번호 변경",
+    "currentPassword": "현재 비밀번호",
     "newPassword": "새 비밀번호",
     "confirmPassword": "비밀번호 확인",
     "passwordChangeSubmit": "비밀번호 업데이트",
@@ -239,6 +254,9 @@
     "name": "이름",
     "email": "이메일",
     "slug": "Slug",
+    "userId": "사용자 ID",
+    "addMember": "멤버 추가",
+    "memberAdded": "멤버가 추가되었습니다",
     "roleMember": "멤버",
     "roleAdmin": "관리자",
     "roleOwner": "소유자"

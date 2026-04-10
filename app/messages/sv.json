@@ -102,7 +102,9 @@
       "submit": "Skicka återställningslänk",
       "successMessage": "Om det finns ett konto med den e-postadressen kommer du snart att få en länk för lösenordsåterställning.",
       "rememberPassword": "Kommer du ihåg ditt lösenord?",
-      "backToLogin": "Logga in"
+      "backToLogin": "Logga in",
+      "invalidLink": "Denna återställningslänk är ogiltig eller har löpt ut.",
+      "requestNewLink": "Begär en ny återställningslänk"
     },
     "oauth": {
       "continueWithGoogle": "Fortsätt med Google",
@@ -136,6 +138,14 @@
       "submit": "Återställ lösenord",
       "successMessage": "Ditt lösenord har uppdaterats. Du kan nu logga in med ditt nya lösenord.",
       "backToLogin": "Logga in"
+    },
+    "verifyEmail": {
+      "pageTitle": "Verifiera e-post",
+      "title": "Verifierar din e-post",
+      "verifying": "Vänta medan vi verifierar din e-postadress...",
+      "success": "Din e-post har verifierats. Omdirigerar till din instrumentpanel...",
+      "error": "E-postverifiering misslyckades. Länken kan ha löpt ut.",
+      "backToLogin": "Tillbaka till inloggning"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "Valuta",
     "phonePrefix": "Landskod",
     "phone": "Telefon",
+    "phoneNumberRequired": "Ange ett telefonnummer",
+    "phonePrefixRequired": "Välj en landskod",
+    "phoneTooShort": "Telefonnumret måste vara minst 4 siffror",
     "timezone": "Tidszon",
     "jobTitle": "Jobbtitel",
     "pronouns": "Pronomen",
@@ -209,6 +222,7 @@
     "avatarRemove": "Ta bort",
     "avatarError": "Kunde inte uppdatera avatar",
     "save": "Spara ändringar",
+    "saved": "Ändringar sparade",
     "danger": "Farozon",
     "deleteAccount": "Radera konto",
     "deleteConfirm": "Detta raderar ditt konto och all data permanent.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "Hon/Henne",
     "pronounsTheyThem": "Hen",
     "changePassword": "Ändra lösenord",
+    "currentPassword": "Nuvarande lösenord",
     "newPassword": "Nytt lösenord",
     "confirmPassword": "Bekräfta lösenord",
     "passwordChangeSubmit": "Uppdatera lösenord",
@@ -239,6 +254,9 @@
     "name": "Namn",
     "email": "E-post",
     "slug": "Slug",
+    "userId": "Användar-ID",
+    "addMember": "Lägg till medlem",
+    "memberAdded": "Medlem har lagts till",
     "roleMember": "Medlem",
     "roleAdmin": "Administratör",
     "roleOwner": "Ägare"

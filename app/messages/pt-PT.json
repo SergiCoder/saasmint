@@ -102,7 +102,9 @@
       "submit": "Enviar link de redefinição",
       "successMessage": "Se existir uma conta com esse e-mail, receberá em breve um link para redefinição da palavra-passe.",
       "rememberPassword": "Lembra-se da sua palavra-passe?",
-      "backToLogin": "Iniciar sessão"
+      "backToLogin": "Iniciar sessão",
+      "invalidLink": "Este link de redefinição é inválido ou expirou.",
+      "requestNewLink": "Solicitar um novo link de redefinição"
     },
     "oauth": {
       "continueWithGoogle": "Continuar com Google",
@@ -136,6 +138,14 @@
       "submit": "Redefinir palavra-passe",
       "successMessage": "A sua palavra-passe foi atualizada. Pode agora iniciar sessão com a nova palavra-passe.",
       "backToLogin": "Iniciar sessão"
+    },
+    "verifyEmail": {
+      "pageTitle": "Verificar e-mail",
+      "title": "A verificar o seu e-mail",
+      "verifying": "Por favor aguarde enquanto verificamos o seu endereço de e-mail...",
+      "success": "O seu e-mail foi verificado. A redirecionar para o seu painel...",
+      "error": "A verificação do e-mail falhou. O link pode ter expirado.",
+      "backToLogin": "Voltar para o início de sessão"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "Moeda",
     "phonePrefix": "Código do país",
     "phone": "Telefone",
+    "phoneNumberRequired": "Introduza um número de telefone",
+    "phonePrefixRequired": "Selecione um código de país",
+    "phoneTooShort": "O número de telefone deve ter pelo menos 4 dígitos",
     "timezone": "Fuso horário",
     "jobTitle": "Cargo",
     "pronouns": "Pronomes",
@@ -209,6 +222,7 @@
     "avatarRemove": "Remover",
     "avatarError": "Falha ao atualizar o avatar",
     "save": "Guardar alterações",
+    "saved": "Alterações guardadas",
     "danger": "Zona de perigo",
     "deleteAccount": "Eliminar conta",
     "deleteConfirm": "Isto eliminará permanentemente a sua conta e todos os dados.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "Ela/Dela",
     "pronounsTheyThem": "Elu/Delu",
     "changePassword": "Alterar palavra-passe",
+    "currentPassword": "Palavra-passe atual",
     "newPassword": "Nova palavra-passe",
     "confirmPassword": "Confirmar palavra-passe",
     "passwordChangeSubmit": "Atualizar palavra-passe",
@@ -239,6 +254,9 @@
     "name": "Nome",
     "email": "E-mail",
     "slug": "Slug",
+    "userId": "ID do utilizador",
+    "addMember": "Adicionar membro",
+    "memberAdded": "Membro adicionado com sucesso",
     "roleMember": "Membro",
     "roleAdmin": "Administrador",
     "roleOwner": "Proprietário"

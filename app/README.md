@@ -5,7 +5,7 @@ Next.js 16 SaaS frontend template paired with [SaaSmint Core](https://github.com
 ## Stack
 
 - **Framework** — Next.js 16 (App Router, React 19, Turbopack)
-- **Auth** — Supabase (JWT)
+- **Auth** — Django JWT (no third-party auth provider)
 - **Payments** — Stripe (hosted Checkout)
 - **i18n** — next-intl
 - **Styling** — Tailwind CSS 4
@@ -35,14 +35,12 @@ pnpm test             # run all tests once
 pnpm test:coverage    # run tests with v8 coverage report
 ```
 
-The backend ([SaaSmint Core](https://github.com/SergiCoder/SaaSmint-Core)) must be running on `http://localhost:8001`.
+The backend ([SaaSmint Core](https://github.com/SergiCoder/SaaSmint-Core)) must be running on `https://localhost:8443`.
 
 ## Environment variables
 
 Copy `.env.example` to `.env.local` and fill in:
 
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 - `NEXT_PUBLIC_API_URL`
 - `NEXT_PUBLIC_APP_URL`

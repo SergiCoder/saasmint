@@ -102,7 +102,9 @@
       "submit": "Send tilbakestillingslenke",
       "successMessage": "Hvis det finnes en konto med den e-postadressen, vil du snart motta en lenke for tilbakestilling av passord.",
       "rememberPassword": "Husker du passordet ditt?",
-      "backToLogin": "Logg inn"
+      "backToLogin": "Logg inn",
+      "invalidLink": "Denne tilbakestillingslenken er ugyldig eller utløpt.",
+      "requestNewLink": "Be om en ny tilbakestillingslenke"
     },
     "oauth": {
       "continueWithGoogle": "Fortsett med Google",
@@ -136,6 +138,14 @@
       "submit": "Tilbakestill passord",
       "successMessage": "Passordet ditt er oppdatert. Du kan nå logge inn med det nye passordet.",
       "backToLogin": "Logg inn"
+    },
+    "verifyEmail": {
+      "pageTitle": "Bekreft e-post",
+      "title": "Bekrefter e-posten din",
+      "verifying": "Vennligst vent mens vi bekrefter e-postadressen din...",
+      "success": "E-posten din er bekreftet. Omdirigerer til dashbordet ditt...",
+      "error": "E-postbekreftelse mislyktes. Lenken kan ha utløpt.",
+      "backToLogin": "Tilbake til innlogging"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "Valuta",
     "phonePrefix": "Landskode",
     "phone": "Telefon",
+    "phoneNumberRequired": "Skriv inn et telefonnummer",
+    "phonePrefixRequired": "Velg en landskode",
+    "phoneTooShort": "Telefonnummeret må ha minst 4 sifre",
     "timezone": "Tidssone",
     "jobTitle": "Stillingstittel",
     "pronouns": "Pronomen",
@@ -209,6 +222,7 @@
     "avatarRemove": "Fjern",
     "avatarError": "Kunne ikke oppdatere avatar",
     "save": "Lagre endringer",
+    "saved": "Endringer lagret",
     "danger": "Faresone",
     "deleteAccount": "Slett konto",
     "deleteConfirm": "Dette vil permanent slette kontoen din og alle data.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "Hun/Henne",
     "pronounsTheyThem": "Hen",
     "changePassword": "Endre passord",
+    "currentPassword": "Nåværende passord",
     "newPassword": "Nytt passord",
     "confirmPassword": "Bekreft passord",
     "passwordChangeSubmit": "Oppdater passord",
@@ -239,6 +254,9 @@
     "name": "Navn",
     "email": "E-post",
     "slug": "Slug",
+    "userId": "Bruker-ID",
+    "addMember": "Legg til medlem",
+    "memberAdded": "Medlem lagt til",
     "roleMember": "Medlem",
     "roleAdmin": "Administrator",
     "roleOwner": "Eier"

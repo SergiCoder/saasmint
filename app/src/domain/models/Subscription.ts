@@ -6,15 +6,15 @@ export type SubscriptionStatus =
   | "past_due"
   | "canceled"
   | "unpaid"
-  | "incomplete";
+  | "incomplete"
+  | "incomplete_expired"
+  | "paused";
 
 export interface Subscription {
   id: string;
   status: SubscriptionStatus;
   plan: Plan;
   quantity: number;
-  discountPercent: number | null;
-  discountEndAt: string | null;
   trialEndsAt: string | null;
   currentPeriodStart: string;
   currentPeriodEnd: string;

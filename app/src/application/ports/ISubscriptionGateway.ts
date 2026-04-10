@@ -12,7 +12,7 @@ export interface BillingPortalInput {
 }
 
 export interface ISubscriptionGateway {
-  getSubscription(): Promise<Subscription | null>;
+  getSubscription(currency?: string): Promise<Subscription | null>;
   createCheckoutSession(input: CheckoutSessionInput): Promise<{ url: string }>;
   createBillingPortalSession(
     input: BillingPortalInput,

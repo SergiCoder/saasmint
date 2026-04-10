@@ -102,7 +102,9 @@
       "submit": "Envoyer le lien de réinitialisation",
       "successMessage": "Si un compte existe avec cette adresse e-mail, vous recevrez bientôt un lien de réinitialisation de mot de passe.",
       "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
-      "backToLogin": "Se connecter"
+      "backToLogin": "Se connecter",
+      "invalidLink": "Ce lien de réinitialisation est invalide ou a expiré.",
+      "requestNewLink": "Demander un nouveau lien de réinitialisation"
     },
     "oauth": {
       "continueWithGoogle": "Continuer avec Google",
@@ -136,6 +138,14 @@
       "submit": "Réinitialiser le mot de passe",
       "successMessage": "Votre mot de passe a été mis à jour. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
       "backToLogin": "Se connecter"
+    },
+    "verifyEmail": {
+      "pageTitle": "Vérifier l'e-mail",
+      "title": "Vérification de votre e-mail",
+      "verifying": "Veuillez patienter pendant que nous vérifions votre adresse e-mail...",
+      "success": "Votre e-mail a été vérifié. Redirection vers votre tableau de bord...",
+      "error": "La vérification de l'e-mail a échoué. Le lien a peut-être expiré.",
+      "backToLogin": "Retour à la connexion"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "Devise",
     "phonePrefix": "Indicatif pays",
     "phone": "Téléphone",
+    "phoneNumberRequired": "Veuillez saisir un numéro de téléphone",
+    "phonePrefixRequired": "Veuillez sélectionner un indicatif pays",
+    "phoneTooShort": "Le numéro de téléphone doit comporter au moins 4 chiffres",
     "timezone": "Fuseau horaire",
     "jobTitle": "Poste",
     "pronouns": "Pronoms",
@@ -209,6 +222,7 @@
     "avatarRemove": "Supprimer",
     "avatarError": "Échec de la mise à jour de l'avatar",
     "save": "Enregistrer les modifications",
+    "saved": "Modifications enregistrées",
     "danger": "Zone de danger",
     "deleteAccount": "Supprimer le compte",
     "deleteConfirm": "Cela supprimera définitivement votre compte et toutes vos données.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "Elle",
     "pronounsTheyThem": "Iel",
     "changePassword": "Changer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
     "newPassword": "Nouveau mot de passe",
     "confirmPassword": "Confirmer le mot de passe",
     "passwordChangeSubmit": "Mettre à jour le mot de passe",
@@ -239,6 +254,9 @@
     "name": "Nom",
     "email": "E-mail",
     "slug": "Slug",
+    "userId": "ID utilisateur",
+    "addMember": "Ajouter un membre",
+    "memberAdded": "Membre ajouté avec succès",
     "roleMember": "Membre",
     "roleAdmin": "Administrateur",
     "roleOwner": "Propriétaire"

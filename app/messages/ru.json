@@ -102,7 +102,9 @@
       "submit": "Отправить ссылку для сброса",
       "successMessage": "Если учётная запись с таким email существует, вы скоро получите ссылку для сброса пароля.",
       "rememberPassword": "Помните пароль?",
-      "backToLogin": "Войти"
+      "backToLogin": "Войти",
+      "invalidLink": "Эта ссылка для сброса недействительна или истекла.",
+      "requestNewLink": "Запросить новую ссылку для сброса"
     },
     "oauth": {
       "continueWithGoogle": "Продолжить с Google",
@@ -136,6 +138,14 @@
       "submit": "Сбросить пароль",
       "successMessage": "Ваш пароль обновлён. Теперь вы можете войти с новым паролем.",
       "backToLogin": "Войти"
+    },
+    "verifyEmail": {
+      "pageTitle": "Подтверждение email",
+      "title": "Подтверждение вашего email",
+      "verifying": "Пожалуйста, подождите, пока мы подтверждаем ваш адрес электронной почты...",
+      "success": "Ваш email подтверждён. Перенаправление на панель управления...",
+      "error": "Не удалось подтвердить email. Возможно, срок действия ссылки истёк.",
+      "backToLogin": "Вернуться к входу"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "Валюта",
     "phonePrefix": "Код страны",
     "phone": "Телефон",
+    "phoneNumberRequired": "Введите номер телефона",
+    "phonePrefixRequired": "Выберите код страны",
+    "phoneTooShort": "Номер телефона должен содержать не менее 4 цифр",
     "timezone": "Часовой пояс",
     "jobTitle": "Должность",
     "pronouns": "Местоимения",
@@ -209,6 +222,7 @@
     "avatarRemove": "Удалить",
     "avatarError": "Не удалось обновить аватар",
     "save": "Сохранить изменения",
+    "saved": "Изменения сохранены",
     "danger": "Опасная зона",
     "deleteAccount": "Удалить аккаунт",
     "deleteConfirm": "Это навсегда удалит ваш аккаунт и все данные.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "Она/Её",
     "pronounsTheyThem": "Они/Их",
     "changePassword": "Изменить пароль",
+    "currentPassword": "Текущий пароль",
     "newPassword": "Новый пароль",
     "confirmPassword": "Подтвердите пароль",
     "passwordChangeSubmit": "Обновить пароль",
@@ -239,6 +254,9 @@
     "name": "Имя",
     "email": "Эл. почта",
     "slug": "Slug",
+    "userId": "ID пользователя",
+    "addMember": "Добавить участника",
+    "memberAdded": "Участник успешно добавлен",
     "roleMember": "Участник",
     "roleAdmin": "Администратор",
     "roleOwner": "Владелец"

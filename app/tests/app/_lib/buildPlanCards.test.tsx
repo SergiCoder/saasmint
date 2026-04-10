@@ -15,7 +15,12 @@ function makePlan(overrides: Partial<Plan> & { id: string }): Plan {
     context: overrides.context ?? "personal",
     tier: overrides.tier ?? "basic",
     interval: overrides.interval ?? "month",
-    price: overrides.price ?? { id: `${overrides.id}-price`, amount: 1900 },
+    price: overrides.price ?? {
+      id: `${overrides.id}-price`,
+      amount: 1900,
+      displayAmount: 19,
+      currency: "usd",
+    },
   };
 }
 
@@ -26,17 +31,23 @@ describe("buildPlanCardGroups", () => {
         id: "pb-m",
         tier: "basic",
         interval: "month",
-        price: { id: "pm", amount: 1900 },
+        price: { id: "pm", amount: 1900, displayAmount: 19, currency: "usd" },
       }),
       makePlan({
         id: "pb-y",
         tier: "basic",
         interval: "year",
-        price: { id: "py", amount: 19000 },
+        price: {
+          id: "py",
+          amount: 19000,
+          displayAmount: 190,
+          currency: "usd",
+        },
       }),
     ];
     const groups = buildPlanCardGroups({
       plans,
+      locale: "en-US",
       labels,
       renderCta: () => null,
     });
@@ -51,21 +62,27 @@ describe("buildPlanCardGroups", () => {
         id: "m",
         tier: "pro",
         interval: "month",
-        price: { id: "pm", amount: 1000 },
+        price: { id: "pm", amount: 1000, displayAmount: 10, currency: "usd" },
       }),
       makePlan({
         id: "y",
         tier: "pro",
         interval: "year",
-        price: { id: "py", amount: 10000 },
+        price: {
+          id: "py",
+          amount: 10000,
+          displayAmount: 100,
+          currency: "usd",
+        },
       }),
     ];
     const groups = buildPlanCardGroups({
       plans,
+      locale: "en-US",
       labels,
       renderCta: () => null,
     });
-    // 10000 vs 12000 → 16.67% rounded to 17
+    // 100 vs 120 → 16.67% rounded to 17
     expect(groups[0].yearlySavingsPct).toBe(17);
   });
 
@@ -74,16 +91,22 @@ describe("buildPlanCardGroups", () => {
       makePlan({
         id: "m",
         interval: "month",
-        price: { id: "pm", amount: 1000 },
+        price: { id: "pm", amount: 1000, displayAmount: 10, currency: "usd" },
       }),
       makePlan({
         id: "y",
         interval: "year",
-        price: { id: "py", amount: 12000 },
+        price: {
+          id: "py",
+          amount: 12000,
+          displayAmount: 120,
+          currency: "usd",
+        },
       }),
     ];
     const groups = buildPlanCardGroups({
       plans,
+      locale: "en-US",
       labels,
       renderCta: () => null,
     });
@@ -98,6 +121,7 @@ describe("buildPlanCardGroups", () => {
     ];
     const groups = buildPlanCardGroups({
       plans,
+      locale: "en-US",
       labels,
       renderCta: () => null,
     });
@@ -111,6 +135,7 @@ describe("buildPlanCardGroups", () => {
     ];
     const groups = buildPlanCardGroups({
       plans,
+      locale: "en-US",
       labels,
       renderCta: () => null,
     });
@@ -124,6 +149,7 @@ describe("buildPlanCardGroups", () => {
     ];
     const groups = buildPlanCardGroups({
       plans,
+      locale: "en-US",
       labels,
       renderCta: () => null,
     });
@@ -137,6 +163,7 @@ describe("buildPlanCardGroups", () => {
     ];
     const groups = buildPlanCardGroups({
       plans,
+      locale: "en-US",
       labels,
       renderCta: () => null,
     });
@@ -152,13 +179,13 @@ describe("buildPlanCardGroups", () => {
         id: "basic-m",
         tier: "basic",
         interval: "month",
-        price: { id: "bm", amount: 1000 },
+        price: { id: "bm", amount: 1000, displayAmount: 10, currency: "usd" },
       }),
       makePlan({
         id: "pro-m",
         tier: "pro",
         interval: "month",
-        price: { id: "pm", amount: 5000 },
+        price: { id: "pm", amount: 5000, displayAmount: 50, currency: "usd" },
       }),
     ];
     const ctaCalls: Array<{
@@ -170,6 +197,7 @@ describe("buildPlanCardGroups", () => {
     buildPlanCardGroups({
       plans,
       currentPlanId: "basic-m",
+      locale: "en-US",
       labels,
       renderCta: ({ plan, isCurrent, isUpgrade, ctaLabel }) => {
         ctaCalls.push({
@@ -196,20 +224,21 @@ describe("buildPlanCardGroups", () => {
         context: "personal",
         tier: "pro",
         interval: "month",
-        price: { id: "pp", amount: 5000 },
+        price: { id: "pp", amount: 5000, displayAmount: 50, currency: "usd" },
       }),
       makePlan({
         id: "team-basic",
         context: "team",
         tier: "basic",
         interval: "month",
-        price: { id: "tb", amount: 1000 },
+        price: { id: "tb", amount: 1000, displayAmount: 10, currency: "usd" },
       }),
     ];
     const ctaCalls: Array<{ id: string; isUpgrade: boolean }> = [];
     buildPlanCardGroups({
       plans,
       currentPlanId: "personal-pro",
+      locale: "en-US",
       labels,
       renderCta: ({ plan, isUpgrade }) => {
         ctaCalls.push({ id: plan.id, isUpgrade });
@@ -227,20 +256,21 @@ describe("buildPlanCardGroups", () => {
         context: "team",
         tier: "basic",
         interval: "month",
-        price: { id: "tb", amount: 1000 },
+        price: { id: "tb", amount: 1000, displayAmount: 10, currency: "usd" },
       }),
       makePlan({
         id: "personal-pro",
         context: "personal",
         tier: "pro",
         interval: "month",
-        price: { id: "pp", amount: 5000 },
+        price: { id: "pp", amount: 5000, displayAmount: 50, currency: "usd" },
       }),
     ];
     const ctaCalls: Array<{ id: string; isUpgrade: boolean }> = [];
     buildPlanCardGroups({
       plans,
       currentPlanId: "team-basic",
+      locale: "en-US",
       labels,
       renderCta: ({ plan, isUpgrade }) => {
         ctaCalls.push({ id: plan.id, isUpgrade });

@@ -21,6 +21,8 @@ const plans: Plan[] = [
     price: {
       id: "pp1",
       amount: 999,
+      displayAmount: 9.99,
+      currency: "usd",
     },
   },
   {
@@ -33,6 +35,8 @@ const plans: Plan[] = [
     price: {
       id: "pp2",
       amount: 9999,
+      displayAmount: 99.99,
+      currency: "usd",
     },
   },
 ];
@@ -59,6 +63,14 @@ describe("DjangoApiPlanGateway", () => {
 
       const result = await gateway.listPlans();
       expect(result).toEqual([]);
+    });
+
+    it("appends ?currency= query string when currency is provided", async () => {
+      mockApiFetch.mockResolvedValue(plans);
+
+      await gateway.listPlans("eur");
+
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/plans/?currency=eur");
     });
 
     it("propagates errors from apiFetch", async () => {

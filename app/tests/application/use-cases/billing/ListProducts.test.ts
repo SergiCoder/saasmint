@@ -12,6 +12,8 @@ const products: Product[] = [
     price: {
       id: "pp1",
       amount: 999,
+      displayAmount: 9.99,
+      currency: "usd",
     },
   },
 ];

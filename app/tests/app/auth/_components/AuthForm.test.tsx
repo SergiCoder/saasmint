@@ -12,7 +12,11 @@ describe("AuthForm", () => {
         action={noopAction}
         translationNamespace="login"
         passwordAutoComplete="current-password"
-        footerLink={{ href: "/signup", textKey: "noAccount", linkKey: "signUp" }}
+        footerLink={{
+          href: "/signup",
+          textKey: "noAccount",
+          linkKey: "signUp",
+        }}
       />,
     );
 
@@ -29,7 +33,11 @@ describe("AuthForm", () => {
         translationNamespace="signup"
         passwordAutoComplete="new-password"
         showNameField
-        footerLink={{ href: "/login", textKey: "haveAccount", linkKey: "signIn" }}
+        footerLink={{
+          href: "/login",
+          textKey: "haveAccount",
+          linkKey: "signIn",
+        }}
       />,
     );
 
@@ -43,7 +51,11 @@ describe("AuthForm", () => {
         translationNamespace="login"
         passwordAutoComplete="current-password"
         forgotPasswordHref="/forgot-password"
-        footerLink={{ href: "/signup", textKey: "noAccount", linkKey: "signUp" }}
+        footerLink={{
+          href: "/signup",
+          textKey: "noAccount",
+          linkKey: "signUp",
+        }}
       />,
     );
 
@@ -57,7 +69,11 @@ describe("AuthForm", () => {
         action={noopAction}
         translationNamespace="login"
         passwordAutoComplete="current-password"
-        footerLink={{ href: "/signup", textKey: "noAccount", linkKey: "signUp" }}
+        footerLink={{
+          href: "/signup",
+          textKey: "noAccount",
+          linkKey: "signUp",
+        }}
       />,
     );
 
@@ -72,7 +88,11 @@ describe("AuthForm", () => {
         action={noopAction}
         translationNamespace="login"
         passwordAutoComplete="current-password"
-        footerLink={{ href: "/signup", textKey: "noAccount", linkKey: "signUp" }}
+        footerLink={{
+          href: "/signup",
+          textKey: "noAccount",
+          linkKey: "signUp",
+        }}
       />,
     );
 
@@ -87,7 +107,11 @@ describe("AuthForm", () => {
         translationNamespace="signup"
         passwordAutoComplete="new-password"
         hiddenFields={{ plan: "team", interval: "month" }}
-        footerLink={{ href: "/login", textKey: "haveAccount", linkKey: "signIn" }}
+        footerLink={{
+          href: "/login",
+          textKey: "haveAccount",
+          linkKey: "signIn",
+        }}
       />,
     );
 
@@ -106,7 +130,11 @@ describe("AuthForm", () => {
         translationNamespace="login"
         passwordAutoComplete="current-password"
         serverAlerts={<div data-testid="server-alert">server hint</div>}
-        footerLink={{ href: "/signup", textKey: "noAccount", linkKey: "signUp" }}
+        footerLink={{
+          href: "/signup",
+          textKey: "noAccount",
+          linkKey: "signUp",
+        }}
       />,
     );
 

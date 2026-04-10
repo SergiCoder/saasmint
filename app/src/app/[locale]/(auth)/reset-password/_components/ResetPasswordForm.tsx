@@ -14,9 +14,10 @@ interface ResetPasswordFormProps {
   ) => Promise<
     { error: string; success?: never } | { success: boolean; error?: never }
   >;
+  token?: string;
 }
 
-export function ResetPasswordForm({ action }: ResetPasswordFormProps) {
+export function ResetPasswordForm({ action, token }: ResetPasswordFormProps) {
   const t = useTranslations("auth.resetPassword");
   const [state, formAction, pending] = useActionState(action, null);
 
@@ -44,6 +45,7 @@ export function ResetPasswordForm({ action }: ResetPasswordFormProps) {
         </AlertBanner>
       )}
       <form action={formAction} className="space-y-4">
+        <input type="hidden" name="token" value={token ?? ""} />
         <FormField
           label={t("newPassword")}
           name="password"

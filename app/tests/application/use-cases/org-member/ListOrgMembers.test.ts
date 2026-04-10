@@ -6,18 +6,26 @@ import type { OrgMember } from "@/domain/models/OrgMember";
 const members: OrgMember[] = [
   {
     id: "m1",
-    userId: "u1",
-    email: "alice@example.com",
-    fullName: "Alice",
+    user: {
+      id: "u1",
+      email: "alice@example.com",
+      fullName: "Alice",
+      avatarUrl: null,
+    },
+    org: "o1",
     role: "owner",
     isBilling: true,
     joinedAt: "2024-01-01T00:00:00Z",
   },
   {
     id: "m2",
-    userId: "u2",
-    email: "bob@example.com",
-    fullName: "Bob",
+    user: {
+      id: "u2",
+      email: "bob@example.com",
+      fullName: "Bob",
+      avatarUrl: null,
+    },
+    org: "o1",
     role: "member",
     isBilling: false,
     joinedAt: "2024-02-01T00:00:00Z",
@@ -29,7 +37,7 @@ function makeGateway(
 ): IOrgMemberGateway {
   return {
     listMembers: vi.fn().mockResolvedValue(members),
-    inviteMember: vi.fn(),
+    addMember: vi.fn(),
     removeMember: vi.fn(),
     updateMemberRole: vi.fn(),
     ...overrides,

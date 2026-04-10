@@ -9,7 +9,9 @@ import { TeamCheckoutButton } from "@/app/[locale]/(app)/subscription/_component
 
 const defaultProps = {
   planPriceId: "price_team_1",
-  unitPrice: 1000, // cents -> $10
+  displayAmount: 10,
+  currency: "usd",
+  locale: "en-US",
   interval: "month",
   seatLabel: "seat",
   seatsLabel: "seats",
@@ -78,7 +80,6 @@ describe("TeamCheckoutButton", () => {
   });
 
   it("uses the singular seat label when the seat count is 1", () => {
-    // minSeats can be overridden to 1 to exercise the singular branch.
     const { container } = render(
       <TeamCheckoutButton {...defaultProps} minSeats={1} />,
     );

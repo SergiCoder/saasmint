@@ -65,6 +65,8 @@ vi.mock("@/infrastructure/registry", () => ({
   authGateway: {},
 }));
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
+
 let startCheckout: typeof import("@/app/actions/billing").startCheckout;
 let openBillingPortal: typeof import("@/app/actions/billing").openBillingPortal;
 let cancelSubscription: typeof import("@/app/actions/billing").cancelSubscription;
@@ -92,8 +94,8 @@ describe("billing server actions", () => {
       await expect(startCheckout(formData)).rejects.toThrow("NEXT_REDIRECT");
       expect(mockStartCheckoutExecute).toHaveBeenCalledWith({
         planPriceId: "price_abc",
-        successUrl: "http://localhost:3000/subscription?status=success",
-        cancelUrl: "http://localhost:3000/subscription",
+        successUrl: `${APP_URL}/subscription?status=success`,
+        cancelUrl: `${APP_URL}/subscription`,
       });
       expect(mockRedirect).toHaveBeenCalledWith(
         "https://checkout.stripe.com/session_123",
@@ -154,7 +156,6 @@ describe("billing server actions", () => {
       expect(errSpy).toHaveBeenCalled();
       errSpy.mockRestore();
     });
-
   });
 
   describe("openBillingPortal", () => {
@@ -177,7 +178,7 @@ describe("billing server actions", () => {
 
       await expect(openBillingPortal()).rejects.toThrow("NEXT_REDIRECT");
       expect(mockOpenBillingPortalExecute).toHaveBeenCalledWith({
-        returnUrl: "http://localhost:3000/subscription",
+        returnUrl: `${APP_URL}/subscription`,
       });
       expect(mockRedirect).toHaveBeenCalledWith(
         "https://billing.stripe.com/portal_123",
@@ -205,7 +206,6 @@ describe("billing server actions", () => {
       expect(errSpy).toHaveBeenCalled();
       errSpy.mockRestore();
     });
-
   });
 
   describe("cancelSubscription", () => {

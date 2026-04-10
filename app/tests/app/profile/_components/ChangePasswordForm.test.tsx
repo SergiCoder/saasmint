@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 
 vi.mock("@/app/actions/auth", () => ({
-  updatePassword: vi.fn(),
+  changePassword: vi.fn(),
 }));
 
 import { ChangePasswordForm } from "@/app/[locale]/(app)/profile/_components/ChangePasswordForm";
@@ -23,7 +23,9 @@ describe("ChangePasswordForm", () => {
     render(<ChangePasswordForm />);
 
     const password = screen.getByLabelText(/newPassword/) as HTMLInputElement;
-    const confirm = screen.getByLabelText(/confirmPassword/) as HTMLInputElement;
+    const confirm = screen.getByLabelText(
+      /confirmPassword/,
+    ) as HTMLInputElement;
 
     expect(password).toBeRequired();
     expect(confirm).toBeRequired();

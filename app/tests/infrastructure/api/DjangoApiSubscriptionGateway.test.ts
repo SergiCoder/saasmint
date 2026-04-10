@@ -13,6 +13,8 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
+
 describe("DjangoApiSubscriptionGateway", () => {
   const gateway = new DjangoApiSubscriptionGateway();
 
@@ -80,6 +82,36 @@ describe("DjangoApiSubscriptionGateway", () => {
         "API 500: Server Error",
       );
     });
+
+    it("appends ?currency= query string when currency is provided", async () => {
+      mockApiFetch.mockResolvedValue({
+        id: "s1",
+        status: "active",
+        plan: {
+          id: "p1",
+          name: "Pro",
+          description: "Pro plan",
+          context: "personal",
+          tier: "pro",
+          interval: "month",
+          price: { id: "pp1", amount: 1900 },
+        },
+        quantity: 1,
+        discount_percent: null,
+        discount_end_at: null,
+        trial_ends_at: null,
+        current_period_start: "2024-01-01T00:00:00Z",
+        current_period_end: "2024-02-01T00:00:00Z",
+        canceled_at: null,
+        created_at: "2024-01-01T00:00:00Z",
+      });
+
+      await gateway.getSubscription("eur");
+
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        "/billing/subscription/?currency=eur",
+      );
+    });
   });
 
   describe("createCheckoutSession", () => {
@@ -89,8 +121,8 @@ describe("DjangoApiSubscriptionGateway", () => {
 
       const input = {
         planPriceId: "price_123",
-        successUrl: "http://localhost:3000/billing?status=success",
-        cancelUrl: "http://localhost:3000/billing",
+        successUrl: `${APP_URL}/billing?status=success`,
+        cancelUrl: `${APP_URL}/billing`,
       };
       const result = await gateway.createCheckoutSession(input);
 
@@ -98,8 +130,8 @@ describe("DjangoApiSubscriptionGateway", () => {
         method: "POST",
         body: JSON.stringify({
           plan_price_id: "price_123",
-          success_url: "http://localhost:3000/billing?status=success",
-          cancel_url: "http://localhost:3000/billing",
+          success_url: `${APP_URL}/billing?status=success`,
+          cancel_url: `${APP_URL}/billing`,
         }),
       });
       expect(result).toEqual(response);
@@ -111,8 +143,8 @@ describe("DjangoApiSubscriptionGateway", () => {
       await gateway.createCheckoutSession({
         planPriceId: "price_team",
         quantity: 5,
-        successUrl: "http://localhost:3000/billing?status=success",
-        cancelUrl: "http://localhost:3000/billing",
+        successUrl: `${APP_URL}/billing?status=success`,
+        cancelUrl: `${APP_URL}/billing`,
       });
 
       expect(mockApiFetch).toHaveBeenCalledWith(
@@ -130,13 +162,13 @@ describe("DjangoApiSubscriptionGateway", () => {
       const response = { url: "https://billing.stripe.com/portal_abc" };
       mockApiFetch.mockResolvedValue(response);
 
-      const input = { returnUrl: "http://localhost:3000/billing" };
+      const input = { returnUrl: `${APP_URL}/billing` };
       const result = await gateway.createBillingPortalSession(input);
 
       expect(mockApiFetch).toHaveBeenCalledWith("/billing/portal-sessions/", {
         method: "POST",
         body: JSON.stringify({
-          return_url: "http://localhost:3000/billing",
+          return_url: `${APP_URL}/billing`,
         }),
       });
       expect(result).toEqual(response);

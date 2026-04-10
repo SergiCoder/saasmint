@@ -111,7 +111,17 @@
       "confirmPassword": "Confirm password",
       "submit": "Reset password",
       "successMessage": "Your password has been updated. You can now sign in with your new password.",
-      "backToLogin": "Sign in"
+      "backToLogin": "Sign in",
+      "invalidLink": "This reset link is invalid or has expired.",
+      "requestNewLink": "Request a new reset link"
+    },
+    "verifyEmail": {
+      "pageTitle": "Verify email",
+      "title": "Verifying your email",
+      "verifying": "Please wait while we verify your email address...",
+      "success": "Your email has been verified. Redirecting to your dashboard...",
+      "error": "Email verification failed. The link may have expired.",
+      "backToLogin": "Back to sign in"
     },
     "oauth": {
       "continueWithGoogle": "Continue with Google",
@@ -196,6 +206,9 @@
     "preferredCurrency": "Currency",
     "phonePrefix": "Country code",
     "phone": "Phone number",
+    "phoneNumberRequired": "Please enter a phone number",
+    "phonePrefixRequired": "Please select a country code",
+    "phoneTooShort": "Phone number must be at least 4 digits",
     "timezone": "Timezone",
     "jobTitle": "Job title",
     "pronouns": "Pronouns",
@@ -208,6 +221,7 @@
     "avatarRemove": "Remove",
     "avatarError": "Failed to update avatar",
     "save": "Save changes",
+    "saved": "Changes saved",
     "danger": "Danger zone",
     "deleteAccount": "Delete account",
     "deleteConfirm": "This will permanently delete your account and all data.",
@@ -223,6 +237,7 @@
     "pronounsSheHer": "She/Her",
     "pronounsTheyThem": "They/Them",
     "changePassword": "Change password",
+    "currentPassword": "Current password",
     "newPassword": "New password",
     "confirmPassword": "Confirm password",
     "passwordChangeSubmit": "Update password",
@@ -238,6 +253,9 @@
     "name": "Name",
     "email": "Email",
     "slug": "Slug",
+    "userId": "User ID",
+    "addMember": "Add member",
+    "memberAdded": "Member added successfully",
     "roleMember": "Member",
     "roleAdmin": "Admin",
     "roleOwner": "Owner"

@@ -2,27 +2,29 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import type { Provider } from "@supabase/supabase-js";
-import { createClient } from "@/infrastructure/supabase/client";
 import { Button } from "@/presentation/components/atoms/Button";
 import { Divider } from "@/presentation/components/atoms/Divider";
 import { GoogleIcon } from "@/presentation/components/atoms/GoogleIcon";
 import { GitHubIcon } from "@/presentation/components/atoms/GitHubIcon";
 import { MicrosoftIcon } from "@/presentation/components/atoms/MicrosoftIcon";
 
+type OAuthProvider = "google" | "github" | "microsoft";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+
 const providers = [
   {
-    id: "google" as Provider,
+    id: "google" as OAuthProvider,
     icon: GoogleIcon,
     labelKey: "continueWithGoogle",
   },
   {
-    id: "github" as Provider,
+    id: "github" as OAuthProvider,
     icon: GitHubIcon,
     labelKey: "continueWithGitHub",
   },
   {
-    id: "azure" as Provider,
+    id: "microsoft" as OAuthProvider,
     icon: MicrosoftIcon,
     labelKey: "continueWithMicrosoft",
   },
@@ -35,11 +37,12 @@ interface OAuthButtonsProps {
 export function OAuthButtons({ plan }: OAuthButtonsProps = {}) {
   const t = useTranslations("auth.oauth");
   const locale = useLocale();
-  const [loadingProvider, setLoadingProvider] = useState<Provider | null>(null);
+  const [loadingProvider, setLoadingProvider] = useState<OAuthProvider | null>(
+    null,
+  );
 
-  async function handleOAuth(provider: Provider) {
+  function handleOAuth(provider: OAuthProvider) {
     setLoadingProvider(provider);
-    const supabase = createClient();
     const callbackUrl = new URL(
       `${window.location.origin}/${locale}/auth/callback`,
     );
@@ -49,15 +52,11 @@ export function OAuthButtons({ plan }: OAuthButtonsProps = {}) {
         `/subscription/checkout?plan=${encodeURIComponent(plan)}`,
       );
     }
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: callbackUrl.toString(),
-      },
-    });
-    if (error) {
-      setLoadingProvider(null);
-    }
+
+    const oauthUrl = new URL(`${API_URL}/api/v1/auth/oauth/${provider}/`);
+    oauthUrl.searchParams.set("redirect_uri", callbackUrl.toString());
+
+    window.location.assign(oauthUrl.toString());
   }
 
   return (
@@ -67,7 +66,7 @@ export function OAuthButtons({ plan }: OAuthButtonsProps = {}) {
           <Button
             key={id}
             variant="secondary"
-            className="w-full"
+            className="w-full cursor-pointer"
             loading={loadingProvider === id}
             disabled={loadingProvider !== null}
             onClick={() => handleOAuth(id)}

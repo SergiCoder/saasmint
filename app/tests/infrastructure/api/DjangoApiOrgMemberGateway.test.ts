@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { OrgMember } from "@/domain/models/OrgMember";
 
 const mockApiFetch = vi.fn();
 
@@ -7,17 +6,26 @@ vi.mock("@/infrastructure/api/apiClient", () => ({
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
 }));
 
+vi.mock("@/infrastructure/api/caseTransform", async () => {
+  const actual = await vi.importActual("@/infrastructure/api/caseTransform");
+  return actual;
+});
+
 const { DjangoApiOrgMemberGateway } =
   await import("@/infrastructure/api/DjangoApiOrgMemberGateway");
 
-const member: OrgMember = {
+const rawMember = {
   id: "m1",
-  userId: "u1",
-  email: "alice@example.com",
-  fullName: "Alice",
+  org: "org-1",
+  user: {
+    id: "u1",
+    email: "alice@example.com",
+    full_name: "Alice",
+    avatar_url: null,
+  },
   role: "admin",
-  isBilling: false,
-  joinedAt: "2024-01-01T00:00:00Z",
+  is_billing: false,
+  joined_at: "2024-01-01T00:00:00Z",
 };
 
 beforeEach(() => {
@@ -28,18 +36,21 @@ describe("DjangoApiOrgMemberGateway", () => {
   const gateway = new DjangoApiOrgMemberGateway();
 
   describe("listMembers", () => {
-    it("fetches GET /orgs/:orgId/members/ and unwraps results", async () => {
-      const members = [member, { ...member, id: "m2", userId: "u2" }];
-      mockApiFetch.mockResolvedValue({ results: members });
+    it("fetches GET /orgs/:orgId/members/ and maps results", async () => {
+      mockApiFetch.mockResolvedValue([rawMember]);
 
       const result = await gateway.listMembers("o1");
 
       expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/members/");
-      expect(result).toEqual(members);
+      expect(result).toHaveLength(1);
+      expect(result[0].user.id).toBe("u1");
+      expect(result[0].user.email).toBe("alice@example.com");
+      expect(result[0].user.fullName).toBe("Alice");
+      expect(result[0].role).toBe("admin");
     });
 
     it("returns an empty array when no members exist", async () => {
-      mockApiFetch.mockResolvedValue({ results: [] });
+      mockApiFetch.mockResolvedValue([]);
 
       const result = await gateway.listMembers("o1");
       expect(result).toEqual([]);
@@ -54,15 +65,15 @@ describe("DjangoApiOrgMemberGateway", () => {
     });
   });
 
-  describe("inviteMember", () => {
-    it("sends POST /orgs/:orgId/members/ with email and role", async () => {
-      mockApiFetch.mockResolvedValue(member);
+  describe("addMember", () => {
+    it("sends POST /orgs/:orgId/members/ with user_id and role", async () => {
+      mockApiFetch.mockResolvedValue(rawMember);
 
-      await gateway.inviteMember("o1", "bob@example.com", "member");
+      await gateway.addMember("o1", "user-uuid", "member");
 
       expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/members/", {
         method: "POST",
-        body: JSON.stringify({ email: "bob@example.com", role: "member" }),
+        body: JSON.stringify({ user_id: "user-uuid", role: "member" }),
       });
     });
 
@@ -70,7 +81,7 @@ describe("DjangoApiOrgMemberGateway", () => {
       mockApiFetch.mockRejectedValue(new Error("API 409: Already a member"));
 
       await expect(
-        gateway.inviteMember("o1", "bob@example.com", "member"),
+        gateway.addMember("o1", "user-uuid", "member"),
       ).rejects.toThrow("API 409: Already a member");
     });
   });
@@ -97,7 +108,7 @@ describe("DjangoApiOrgMemberGateway", () => {
 
   describe("updateMemberRole", () => {
     it("sends PATCH /orgs/:orgId/members/:userId/ with role", async () => {
-      mockApiFetch.mockResolvedValue({ ...member, role: "owner" });
+      mockApiFetch.mockResolvedValue({ ...rawMember, role: "owner" });
 
       await gateway.updateMemberRole("o1", "u1", "owner");
 

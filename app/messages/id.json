@@ -102,7 +102,9 @@
       "submit": "Kirim tautan atur ulang",
       "successMessage": "Jika ada akun dengan email tersebut, Anda akan segera menerima tautan pengaturan ulang kata sandi.",
       "rememberPassword": "Ingat kata sandi Anda?",
-      "backToLogin": "Masuk"
+      "backToLogin": "Masuk",
+      "invalidLink": "Tautan reset ini tidak valid atau sudah kedaluwarsa.",
+      "requestNewLink": "Minta tautan reset baru"
     },
     "oauth": {
       "continueWithGoogle": "Lanjutkan dengan Google",
@@ -136,6 +138,14 @@
       "submit": "Atur ulang kata sandi",
       "successMessage": "Kata sandi Anda telah diperbarui. Anda sekarang dapat masuk dengan kata sandi baru Anda.",
       "backToLogin": "Masuk"
+    },
+    "verifyEmail": {
+      "pageTitle": "Verifikasi email",
+      "title": "Memverifikasi email Anda",
+      "verifying": "Mohon tunggu sementara kami memverifikasi alamat email Anda...",
+      "success": "Email Anda telah diverifikasi. Mengalihkan ke dasbor Anda...",
+      "error": "Verifikasi email gagal. Tautan mungkin telah kedaluwarsa.",
+      "backToLogin": "Kembali ke masuk"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "Mata uang",
     "phonePrefix": "Kode negara",
     "phone": "Telepon",
+    "phoneNumberRequired": "Masukkan nomor telepon",
+    "phonePrefixRequired": "Pilih kode negara",
+    "phoneTooShort": "Nomor telepon harus minimal 4 digit",
     "timezone": "Zona waktu",
     "jobTitle": "Jabatan",
     "pronouns": "Kata ganti",
@@ -209,6 +222,7 @@
     "avatarRemove": "Hapus",
     "avatarError": "Gagal memperbarui avatar",
     "save": "Simpan perubahan",
+    "saved": "Perubahan disimpan",
     "danger": "Zona bahaya",
     "deleteAccount": "Hapus akun",
     "deleteConfirm": "Ini akan menghapus akun dan semua data Anda secara permanen.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "Dia (perempuan)",
     "pronounsTheyThem": "Mereka",
     "changePassword": "Ubah kata sandi",
+    "currentPassword": "Kata sandi saat ini",
     "newPassword": "Kata sandi baru",
     "confirmPassword": "Konfirmasi kata sandi",
     "passwordChangeSubmit": "Perbarui kata sandi",
@@ -239,6 +254,9 @@
     "name": "Nama",
     "email": "Email",
     "slug": "Slug",
+    "userId": "ID Pengguna",
+    "addMember": "Tambah anggota",
+    "memberAdded": "Anggota berhasil ditambahkan",
     "roleMember": "Anggota",
     "roleAdmin": "Administrator",
     "roleOwner": "Pemilik"

@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const LOGOS = [
   "Next.js",
   "Stripe",
-  "Supabase",
+  "Django",
   "Tailwind CSS",
   "TypeScript",
   "Vitest",

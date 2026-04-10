@@ -4,7 +4,7 @@ import type { Product } from "@/domain/models/Product";
 export class ListProducts {
   constructor(private readonly products: IProductGateway) {}
 
-  async execute(): Promise<Product[]> {
-    return this.products.listProducts();
+  async execute(currency?: string): Promise<Product[]> {
+    return this.products.listProducts(currency);
   }
 }

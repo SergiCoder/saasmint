@@ -2,9 +2,9 @@ import type { OrgMember } from "@/domain/models/OrgMember";
 
 export interface IOrgMemberGateway {
   listMembers(orgId: string): Promise<OrgMember[]>;
-  inviteMember(
+  addMember(
     orgId: string,
-    email: string,
+    userId: string,
     role: OrgMember["role"],
   ): Promise<void>;
   removeMember(orgId: string, userId: string): Promise<void>;

@@ -7,7 +7,7 @@ import { getCurrentUser } from "../../_data/getCurrentUser";
 import { OrgMemberList } from "@/presentation/components/organisms/OrgMemberList";
 import { Button } from "@/presentation/components/atoms/Button";
 import { removeMember } from "@/app/actions/org";
-import { InviteMemberForm } from "./_components/InviteMemberForm";
+import { AddMemberForm } from "./_components/InviteMemberForm";
 
 interface OrgDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -28,9 +28,10 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
   const members = await new ListOrgMembers(orgMemberGateway).execute(org.id);
 
   const memberRows = members.map((m) => ({
-    id: m.userId,
-    fullName: m.userId,
-    email: "",
+    id: m.user.id,
+    fullName: m.user.fullName,
+    email: m.user.email,
+    avatarUrl: m.user.avatarUrl,
     role: m.role,
     roleLabel: t(
       `role${m.role.charAt(0).toUpperCase() + m.role.slice(1)}` as
@@ -41,7 +42,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
     actions: (
       <form action={removeMember}>
         <input type="hidden" name="orgId" value={org.id} />
-        <input type="hidden" name="userId" value={m.userId} />
+        <input type="hidden" name="userId" value={m.user.id} />
         <Button type="submit" variant="danger" size="sm">
           {t("remove")}
         </Button>
@@ -72,9 +73,9 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
 
       <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          {t("invite")}
+          {t("addMember")}
         </h2>
-        <InviteMemberForm orgId={org.id} />
+        <AddMemberForm orgId={org.id} />
       </section>
     </div>
   );

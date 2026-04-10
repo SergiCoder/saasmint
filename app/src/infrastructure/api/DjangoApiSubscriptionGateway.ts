@@ -5,15 +5,26 @@ import type {
 } from "@/application/ports/ISubscriptionGateway";
 import type { Subscription } from "@/domain/models/Subscription";
 import { apiFetch } from "./apiClient";
-import { keysToSnake, keysToCamel } from "./caseTransform";
+import {
+  keysToSnake,
+  keysToCamel,
+  keysToCamelWithPrice,
+} from "./caseTransform";
 
 export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
-  async getSubscription(): Promise<Subscription | null> {
+  async getSubscription(currency?: string): Promise<Subscription | null> {
     try {
+      const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
       const raw = await apiFetch<Record<string, unknown>>(
-        "/billing/subscription/",
+        `/billing/subscription/${query}`,
       );
-      return keysToCamel<Subscription>(raw);
+      const sub = keysToCamel<Subscription>(raw);
+      if (raw.plan && typeof raw.plan === "object") {
+        sub.plan = keysToCamelWithPrice<Subscription["plan"]>(
+          raw.plan as Record<string, unknown>,
+        );
+      }
+      return sub;
     } catch (err) {
       if (err instanceof Error && err.message.startsWith("API 404"))
         return null;

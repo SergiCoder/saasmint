@@ -1,7 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 
-vi.mock("@/infrastructure/supabase/server", () => ({
-  createClient: vi.fn(),
+vi.mock("@/infrastructure/auth/cookies", () => ({
+  getAccessToken: vi.fn(),
+  getRefreshToken: vi.fn(),
+  clearAuthCookies: vi.fn(),
 }));
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
@@ -19,8 +21,8 @@ const {
   orgMemberGateway,
 } = await import("@/infrastructure/registry");
 
-const { SupabaseAuthGateway } =
-  await import("@/infrastructure/supabase/SupabaseAuthGateway");
+const { DjangoApiAuthGateway } =
+  await import("@/infrastructure/api/DjangoApiAuthGateway");
 const { DjangoApiUserGateway } =
   await import("@/infrastructure/api/DjangoApiUserGateway");
 const { DjangoApiPlanGateway } =
@@ -35,8 +37,8 @@ const { DjangoApiOrgMemberGateway } =
   await import("@/infrastructure/api/DjangoApiOrgMemberGateway");
 
 describe("registry", () => {
-  it("exports authGateway as SupabaseAuthGateway", () => {
-    expect(authGateway).toBeInstanceOf(SupabaseAuthGateway);
+  it("exports authGateway as DjangoApiAuthGateway", () => {
+    expect(authGateway).toBeInstanceOf(DjangoApiAuthGateway);
   });
 
   it("exports userGateway as DjangoApiUserGateway", () => {

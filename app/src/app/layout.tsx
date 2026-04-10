@@ -8,9 +8,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const RTL_LOCALES = new Set(["ar"]);
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
-  ),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
   title: { default: "SaaSmint", template: "%s | SaaSmint" },
   description: "The platform teams actually ship with.",
   openGraph: {

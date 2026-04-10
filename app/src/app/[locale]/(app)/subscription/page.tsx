@@ -31,26 +31,26 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function BillingPage() {
-  const plansPromise = new ListPlans(planGateway)
-    .execute()
-    .catch((err): Plan[] => {
-      console.error("Failed to fetch plans", err);
-      return [];
-    });
-  const productsPromise = new ListProducts(productGateway)
-    .execute()
-    .catch((err): Product[] => {
-      console.error("Failed to fetch products", err);
-      return [];
-    });
-
-  const [t, locale, user, subscription, plans, products] = await Promise.all([
+  const [t, locale, user] = await Promise.all([
     getTranslations("billing"),
     getLocale(),
     getCurrentUser(),
-    new GetSubscription(subscriptionGateway).execute(),
-    plansPromise,
-    productsPromise,
+  ]);
+
+  const currency = user.preferredCurrency;
+
+  const [subscription, plans, products] = await Promise.all([
+    new GetSubscription(subscriptionGateway).execute(currency),
+    new ListPlans(planGateway).execute(currency).catch((err): Plan[] => {
+      console.error("Failed to fetch plans", err);
+      return [];
+    }),
+    new ListProducts(productGateway)
+      .execute(currency)
+      .catch((err): Product[] => {
+        console.error("Failed to fetch products", err);
+        return [];
+      }),
   ]);
 
   const canManage = subscription
@@ -77,6 +77,7 @@ export default async function BillingPage() {
   const groups = buildPlanCardGroups({
     plans,
     currentPlanId: currentPlan?.id,
+    locale,
     labels: {
       upgrade: t("upgrade"),
       seat: t("seat"),
@@ -86,7 +87,8 @@ export default async function BillingPage() {
       isCurrent,
       isUpgrade,
       isTeam,
-      unitPrice,
+      displayAmount,
+      currency,
       ctaLabel,
     }) => {
       if (isCurrent) {
@@ -103,7 +105,9 @@ export default async function BillingPage() {
         return (
           <TeamCheckoutButton
             planPriceId={plan.price.id}
-            unitPrice={unitPrice}
+            displayAmount={displayAmount}
+            currency={currency}
+            locale={locale}
             interval={plan.interval}
             highlighted={highlighted}
             seatLabel={t("seat")}
@@ -251,6 +255,7 @@ export default async function BillingPage() {
         title={t("products")}
         products={products}
         creditsLabel={t("credits")}
+        locale={locale}
         renderCta={(product) =>
           product.price && (
             <CheckoutButton planPriceId={product.price.id}>

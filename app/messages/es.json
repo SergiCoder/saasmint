@@ -102,7 +102,9 @@
       "submit": "Enviar enlace de restablecimiento",
       "successMessage": "Si existe una cuenta con ese correo electrónico, recibirás un enlace para restablecer tu contraseña en breve.",
       "rememberPassword": "¿Recuerdas tu contraseña?",
-      "backToLogin": "Iniciar sesión"
+      "backToLogin": "Iniciar sesión",
+      "invalidLink": "Este enlace de restablecimiento no es válido o ha expirado.",
+      "requestNewLink": "Solicitar un nuevo enlace de restablecimiento"
     },
     "oauth": {
       "continueWithGoogle": "Continuar con Google",
@@ -136,6 +138,14 @@
       "submit": "Restablecer contraseña",
       "successMessage": "Tu contraseña ha sido actualizada. Ahora puedes iniciar sesión con tu nueva contraseña.",
       "backToLogin": "Iniciar sesión"
+    },
+    "verifyEmail": {
+      "pageTitle": "Verificar correo",
+      "title": "Verificando tu correo electrónico",
+      "verifying": "Por favor espera mientras verificamos tu dirección de correo electrónico...",
+      "success": "Tu correo electrónico ha sido verificado. Redirigiendo a tu panel de control...",
+      "error": "La verificación del correo electrónico falló. El enlace puede haber expirado.",
+      "backToLogin": "Volver a iniciar sesión"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "Moneda",
     "phonePrefix": "Código de país",
     "phone": "Teléfono",
+    "phoneNumberRequired": "Introduce un número de teléfono",
+    "phonePrefixRequired": "Selecciona un código de país",
+    "phoneTooShort": "El número de teléfono debe tener al menos 4 dígitos",
     "timezone": "Zona horaria",
     "jobTitle": "Puesto",
     "pronouns": "Pronombres",
@@ -209,6 +222,7 @@
     "avatarRemove": "Eliminar",
     "avatarError": "Error al actualizar el avatar",
     "save": "Guardar cambios",
+    "saved": "Cambios guardados",
     "danger": "Zona de peligro",
     "deleteAccount": "Eliminar cuenta",
     "deleteConfirm": "Esto eliminará permanentemente tu cuenta y todos los datos.",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "Ella",
     "pronounsTheyThem": "Elle",
     "changePassword": "Cambiar contraseña",
+    "currentPassword": "Contraseña actual",
     "newPassword": "Nueva contraseña",
     "confirmPassword": "Confirmar contraseña",
     "passwordChangeSubmit": "Actualizar contraseña",
@@ -239,6 +254,9 @@
     "name": "Nombre",
     "email": "Correo electrónico",
     "slug": "Slug",
+    "userId": "ID de usuario",
+    "addMember": "Añadir miembro",
+    "memberAdded": "Miembro añadido correctamente",
     "roleMember": "Miembro",
     "roleAdmin": "Administrador",
     "roleOwner": "Propietario"

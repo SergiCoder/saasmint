@@ -1,4 +1,5 @@
 import type { Plan, PlanTier } from "@/domain/models/Plan";
+import { formatCurrency } from "@/lib/formatCurrency";
 
 export interface PlanCardLabels {
   upgrade: string;
@@ -42,6 +43,7 @@ export interface PlanCardGroup {
 export interface BuildPlanCardGroupsOptions {
   plans: Plan[];
   currentPlanId?: string;
+  locale: string;
   labels: PlanCardLabels;
   /**
    * Renders the call-to-action for a single plan variant. Returning `null`
@@ -52,7 +54,8 @@ export interface BuildPlanCardGroupsOptions {
     isCurrent: boolean;
     isUpgrade: boolean;
     isTeam: boolean;
-    unitPrice: number;
+    displayAmount: number;
+    currency: string;
     ctaLabel: string;
   }) => React.ReactNode;
 }
@@ -98,19 +101,16 @@ function tierDisplayName(tier: PlanTier): string {
   return tier.charAt(0).toUpperCase() + tier.slice(1);
 }
 
-function formatPrice(amountCents: number): string {
-  return `$${(amountCents / 100).toFixed(0)}`;
-}
-
-/** Monthly-equivalent price in cents, used to compare across intervals. */
+/** Monthly-equivalent display amount, used to compare across intervals. */
 function monthlyEquivalent(plan: Plan): number {
-  const amount = plan.price?.amount ?? 0;
+  const amount = plan.price?.displayAmount ?? 0;
   return plan.interval === "year" ? amount / 12 : amount;
 }
 
 export function buildPlanCardGroups({
   plans,
   currentPlanId,
+  locale,
   labels,
   renderCta,
 }: BuildPlanCardGroupsOptions): PlanCardGroup[] {
@@ -134,7 +134,8 @@ export function buildPlanCardGroups({
   }
 
   const buildVariant = (plan: Plan): PlanVariantView => {
-    const unitPrice = plan.price?.amount ?? 0;
+    const displayAmount = plan.price?.displayAmount ?? 0;
+    const currency = plan.price?.currency ?? "usd";
     const isTeam = plan.context === "team";
     const isCurrent = Boolean(currentPlanId) && plan.id === currentPlanId;
     const monthlyEq = monthlyEquivalent(plan);
@@ -156,16 +157,18 @@ export function buildPlanCardGroups({
       : plan.interval;
 
     let priceSubLabel: string | undefined;
-    if (plan.interval === "year" && unitPrice > 0) {
-      const monthlyEqDollars = unitPrice / 12 / 100;
-      const formatted = `$${monthlyEqDollars.toFixed(monthlyEqDollars % 1 === 0 ? 0 : 2)}`;
+    if (plan.interval === "year" && displayAmount > 0) {
+      const monthlyEqDisplay = displayAmount / 12;
+      const formatted = formatCurrency(monthlyEqDisplay, currency, locale);
       priceSubLabel = isTeam
         ? `${formatted}/${labels.seat}/month billed yearly`
         : `${formatted}/month billed yearly`;
     }
 
     return {
-      price: plan.price ? formatPrice(unitPrice) : "$0",
+      price: plan.price
+        ? formatCurrency(displayAmount, currency, locale)
+        : formatCurrency(0, currency, locale),
       intervalLabel,
       priceSubLabel,
       cta:
@@ -174,7 +177,8 @@ export function buildPlanCardGroups({
           isCurrent,
           isUpgrade,
           isTeam,
-          unitPrice,
+          displayAmount,
+          currency,
           ctaLabel,
         }) ?? null,
     };
@@ -192,12 +196,12 @@ export function buildPlanCardGroups({
     if (
       monthlyPlan?.price &&
       yearlyPlan?.price &&
-      monthlyPlan.price.amount > 0 &&
-      yearlyPlan.price.amount < monthlyPlan.price.amount * 12
+      monthlyPlan.price.displayAmount > 0 &&
+      yearlyPlan.price.displayAmount < monthlyPlan.price.displayAmount * 12
     ) {
-      const fullYear = monthlyPlan.price.amount * 12;
+      const fullYear = monthlyPlan.price.displayAmount * 12;
       yearlySavingsPct = Math.round(
-        (1 - yearlyPlan.price.amount / fullYear) * 100,
+        (1 - yearlyPlan.price.displayAmount / fullYear) * 100,
       );
     }
 

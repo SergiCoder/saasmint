@@ -1,20 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
-const mockExchangeCodeForSession = vi.fn();
-vi.mock("@/infrastructure/supabase/server", () => ({
-  createClient: vi.fn().mockResolvedValue({
-    auth: {
-      exchangeCodeForSession: (...args: unknown[]) =>
-        mockExchangeCodeForSession(...args),
-    },
-  }),
-}));
-
 import { GET } from "@/app/[locale]/auth/callback/route";
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
+
 function makeRequest(params: Record<string, string>) {
-  const url = new URL("http://localhost:3000/en/auth/callback");
+  const url = new URL(`${APP_URL}/en/auth/callback`);
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(k, v);
   }
@@ -26,22 +18,34 @@ describe("auth callback route", () => {
     vi.clearAllMocks();
   });
 
-  it("redirects to /dashboard on successful code exchange", async () => {
-    mockExchangeCodeForSession.mockResolvedValue({ error: null });
+  it("sets auth cookies and redirects to /dashboard on success", async () => {
+    const response = await GET(
+      makeRequest({
+        access_token: "tok_abc",
+        refresh_token: "ref_abc",
+        expires_in: "900",
+      }),
+    );
 
-    const response = await GET(makeRequest({ code: "valid-code" }));
-    expect(mockExchangeCodeForSession).toHaveBeenCalledWith("valid-code");
+    const accessCookie = response.cookies.get("access_token");
+    const refreshCookie = response.cookies.get("refresh_token");
+
+    expect(accessCookie?.value).toBe("tok_abc");
+    expect(refreshCookie?.value).toBe("ref_abc");
     expect(response.status).toBe(307);
     expect(new URL(response.headers.get("location")!).pathname).toBe(
       "/dashboard",
     );
   });
 
-  it("redirects to custom next path on successful code exchange", async () => {
-    mockExchangeCodeForSession.mockResolvedValue({ error: null });
-
+  it("redirects to custom next path on success", async () => {
     const response = await GET(
-      makeRequest({ code: "valid-code", next: "/reset-password" }),
+      makeRequest({
+        access_token: "tok_abc",
+        refresh_token: "ref_abc",
+        expires_in: "900",
+        next: "/reset-password",
+      }),
     );
     expect(new URL(response.headers.get("location")!).pathname).toBe(
       "/reset-password",
@@ -53,21 +57,10 @@ describe("auth callback route", () => {
     const location = new URL(response.headers.get("location")!);
     expect(location.pathname).toBe("/login");
     expect(location.searchParams.get("error")).toBe("oauth_error");
-    expect(mockExchangeCodeForSession).not.toHaveBeenCalled();
+    expect(response.cookies.get("access_token")).toBeUndefined();
   });
 
-  it("redirects to /login with oauth_error when code exchange fails", async () => {
-    mockExchangeCodeForSession.mockResolvedValue({
-      error: { message: "Exchange failed" },
-    });
-
-    const response = await GET(makeRequest({ code: "bad-code" }));
-    const location = new URL(response.headers.get("location")!);
-    expect(location.pathname).toBe("/login");
-    expect(location.searchParams.get("error")).toBe("oauth_error");
-  });
-
-  it("redirects to /login with oauth_error when no code or error param", async () => {
+  it("redirects to /login with oauth_error when no tokens provided", async () => {
     const response = await GET(makeRequest({}));
     const location = new URL(response.headers.get("location")!);
     expect(location.pathname).toBe("/login");
@@ -75,10 +68,13 @@ describe("auth callback route", () => {
   });
 
   it("blocks protocol-relative open redirect (//evil.com)", async () => {
-    mockExchangeCodeForSession.mockResolvedValue({ error: null });
-
     const response = await GET(
-      makeRequest({ code: "valid-code", next: "//evil.com" }),
+      makeRequest({
+        access_token: "tok_abc",
+        refresh_token: "ref_abc",
+        expires_in: "900",
+        next: "//evil.com",
+      }),
     );
     expect(new URL(response.headers.get("location")!).pathname).toBe(
       "/dashboard",
@@ -86,10 +82,13 @@ describe("auth callback route", () => {
   });
 
   it("blocks absolute URL open redirect", async () => {
-    mockExchangeCodeForSession.mockResolvedValue({ error: null });
-
     const response = await GET(
-      makeRequest({ code: "valid-code", next: "https://evil.com" }),
+      makeRequest({
+        access_token: "tok_abc",
+        refresh_token: "ref_abc",
+        expires_in: "900",
+        next: "https://evil.com",
+      }),
     );
     expect(new URL(response.headers.get("location")!).pathname).toBe(
       "/dashboard",

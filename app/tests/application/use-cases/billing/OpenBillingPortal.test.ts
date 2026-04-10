@@ -17,10 +17,12 @@ function makeGateway(
   };
 }
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
+
 describe("OpenBillingPortal", () => {
   it("returns billing portal URL", async () => {
     const gateway = makeGateway();
-    const input = { returnUrl: "http://localhost:3000/billing" };
+    const input = { returnUrl: `${APP_URL}/billing` };
     const result = await new OpenBillingPortal(gateway).execute(input);
     expect(result.url).toBe("https://billing.stripe.com/portal_123");
     expect(gateway.createBillingPortalSession).toHaveBeenCalledWith(input);

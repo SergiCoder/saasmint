@@ -102,7 +102,9 @@
       "submit": "リセットリンクを送信",
       "successMessage": "そのメールアドレスにアカウントが存在する場合、パスワードリセットリンクがまもなく届きます。",
       "rememberPassword": "パスワードを覚えていますか？",
-      "backToLogin": "ログイン"
+      "backToLogin": "ログイン",
+      "invalidLink": "このリセットリンクは無効または期限切れです。",
+      "requestNewLink": "新しいリセットリンクをリクエスト"
     },
     "oauth": {
       "continueWithGoogle": "Googleで続行",
@@ -136,6 +138,14 @@
       "submit": "パスワードをリセット",
       "successMessage": "パスワードが更新されました。新しいパスワードでログインできます。",
       "backToLogin": "ログイン"
+    },
+    "verifyEmail": {
+      "pageTitle": "メール確認",
+      "title": "メールアドレスを確認中",
+      "verifying": "メールアドレスを確認しています。しばらくお待ちください...",
+      "success": "メールアドレスが確認されました。ダッシュボードにリダイレクトしています...",
+      "error": "メール確認に失敗しました。リンクの有効期限が切れている可能性があります。",
+      "backToLogin": "ログインに戻る"
     }
   },
   "dashboard": {
@@ -197,6 +207,9 @@
     "preferredCurrency": "通貨",
     "phonePrefix": "国番号",
     "phone": "電話番号",
+    "phoneNumberRequired": "電話番号を入力してください",
+    "phonePrefixRequired": "国番号を選択してください",
+    "phoneTooShort": "電話番号は4桁以上で入力してください",
     "timezone": "タイムゾーン",
     "jobTitle": "役職",
     "pronouns": "代名詞",
@@ -209,6 +222,7 @@
     "avatarRemove": "削除",
     "avatarError": "アバターの更新に失敗しました",
     "save": "変更を保存",
+    "saved": "変更を保存しました",
     "danger": "危険な操作",
     "deleteAccount": "アカウントを削除",
     "deleteConfirm": "アカウントとすべてのデータが完全に削除されます。",
@@ -224,6 +238,7 @@
     "pronounsSheHer": "彼女/Her",
     "pronounsTheyThem": "They/Them",
     "changePassword": "パスワード変更",
+    "currentPassword": "現在のパスワード",
     "newPassword": "新しいパスワード",
     "confirmPassword": "パスワードの確認",
     "passwordChangeSubmit": "パスワードを更新",
@@ -239,6 +254,9 @@
     "name": "名前",
     "email": "メール",
     "slug": "Slug",
+    "userId": "ユーザーID",
+    "addMember": "メンバーを追加",
+    "memberAdded": "メンバーを追加しました",
     "roleMember": "メンバー",
     "roleAdmin": "管理者",
     "roleOwner": "オーナー"
