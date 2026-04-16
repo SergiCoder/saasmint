@@ -1,7 +1,7 @@
 {
   "nav": {
     "home": "首页",
-    "blog": "Blog",
+    "blog": "博客",
     "getStarted": "开始使用",
     "dashboard": "仪表盘",
     "subscription": "订阅",
@@ -13,8 +13,8 @@
     "signOut": "退出",
     "contactUs": "联系我们",
     "profile": "个人资料",
-    "feature1": "Feature 1",
-    "feature2": "Feature 2"
+    "feature1": "功能 1",
+    "feature2": "功能 2"
   },
   "footer": {
     "privacy": "隐私",
@@ -196,7 +196,12 @@
     "personalPlansDesc": "适合个人用户。",
     "teamPlansDesc": "适合团队和组织。",
     "pricingTitle": "定价",
-    "total": "合计"
+    "total": "合计",
+    "orgName": "Organization name",
+    "teamCheckout": "Team checkout",
+    "checkoutError": "Failed to start checkout. Please try again.",
+    "managedBy": "由 {name} 管理",
+    "teamPlanReadonly": "您的团队订阅由组织所有者管理。"
   },
   "profile": {
     "title": "设置",
@@ -234,6 +239,8 @@
     "deleteDialogSubmit": "永久删除账户",
     "deleteDialogMismatch": "电子邮件与您的账户邮箱不匹配。",
     "deleteDialogError": "删除账户失败，请重试。",
+    "deleteBlockedOwner": "您拥有一个组织。请联系我们的支持团队以删除您的账户。",
+    "deleteBlockedMember": "您属于一个团队。请先联系您的团队所有者将您移除。",
     "pronounsHeHim": "他/Him",
     "pronounsSheHer": "她/Her",
     "pronounsTheyThem": "They/Them",
@@ -246,20 +253,49 @@
   },
   "org": {
     "title": "组织",
-    "create": "创建组织",
     "members": "成员",
-    "invite": "邀请成员",
     "role": "角色",
     "remove": "移除",
+    "promoteToAdmin": "提升为管理员",
+    "demoteToMember": "降级为成员",
+    "removeMemberConfirmTitle": "移除成员",
+    "removeMemberConfirmBody": "此操作将永久移除该成员并删除其账户。此操作无法撤销。",
     "name": "名称",
     "email": "邮箱",
     "slug": "Slug",
-    "userId": "用户 ID",
-    "addMember": "添加成员",
-    "memberAdded": "成员添加成功",
     "roleMember": "成员",
     "roleAdmin": "管理员",
-    "roleOwner": "所有者"
+    "roleOwner": "所有者",
+    "inviteByEmail": "Invite by email",
+    "inviteMember": "Send invitation",
+    "invitationSent": "Invitation sent successfully",
+    "pendingInvitations": "Pending invitations",
+    "cancelInvitation": "Cancel",
+    "invitedBy": "Invited by",
+    "expiresAt": "Expires",
+    "noInvitations": "No pending invitations",
+    "leaveOrg": "Leave organization",
+    "leaveOrgConfirmTitle": "Leave organization?",
+    "leaveOrgConfirmBody": "You will lose access to this organization. Your subscription will revert to a free personal plan.",
+    "transferOwnership": "Transfer ownership",
+    "transferOwnershipConfirmTitle": "Transfer ownership?",
+    "transferOwnershipConfirmBody": "This will make {name} the new owner. You will become an admin.",
+    "selectNewOwner": "Select new owner",
+    "deleteOrg": "Delete organization",
+    "deleteOrgConfirmTitle": "Delete organization?",
+    "deleteOrgConfirmBody": "This will permanently delete the organization, cancel the team subscription, and revert all members to free personal plans. This action cannot be undone.",
+    "spotsUsed": "{used} / {total} 个名额",
+    "dangerZone": "Danger zone",
+    "deleteOrgBlockedSubscription": "You have an active team subscription. Please cancel it first or contact our support team to delete the organization.",
+    "noOrgMessage": "You don't have an organization yet. Subscribe to a team plan to create one.",
+    "goToSubscription": "View team plans",
+    "addSeat": "添加席位",
+    "removeSeat": "移除席位",
+    "updateSeats": "更新席位",
+    "seatsUpdated": "席位更新成功",
+    "removeSeatConfirmTitle": "移除席位",
+    "removeSeatConfirmBody": "不会进行退款。您的下次续费将反映减少后的席位数量。",
+    "removeSeatConfirmAction": "移除"
   },
   "common": {
     "loading": "加载中...",
@@ -306,12 +342,12 @@
     "intro": "我们使用 Cookie 来改善您的体验。本政策说明了我们如何以及为何在网站上使用 Cookie。"
   },
   "feature1": {
-    "title": "Feature 1",
-    "description": "这是Feature 1的占位页面。"
+    "title": "功能 1",
+    "description": "这是功能 1的占位页面。"
   },
   "feature2": {
-    "title": "Feature 2",
-    "description": "这是Feature 2的占位页面。"
+    "title": "功能 2",
+    "description": "这是功能 2的占位页面。"
   },
   "errorPage": {
     "title": "出现了一些问题",
@@ -319,5 +355,44 @@
     "retry": "重试",
     "home": "返回首页",
     "errorId": "错误 ID"
+  },
+  "invitation": {
+    "title": "您收到了邀请",
+    "description": "您已被邀请加入 {orgName}。接受以加入，或拒绝以忽略。",
+    "fullName": "全名",
+    "password": "密码",
+    "accept": "接受邀请",
+    "decline": "拒绝邀请"
+  },
+  "plans": {
+    "personal": {
+      "1": {
+        "name": "免费",
+        "description": "适合入门个人用户。包含基础分析和社区支持。"
+      },
+      "2": {
+        "name": "Basic",
+        "description": "适合高级用户。高级分析、优先邮件支持和 API 访问。"
+      },
+      "3": {
+        "name": "Pro",
+        "description": "包含 Basic 的所有功能，加上自定义集成、审计日志和专属支持。"
+      }
+    },
+    "team": {
+      "2": {
+        "name": "Basic",
+        "description": "适合小型团队。按席位定价、共享仪表盘和团队分析。"
+      },
+      "3": {
+        "name": "Pro",
+        "description": "适合成长中的组织。按席位定价、SSO、审计日志和专属支持。"
+      }
+    }
+  },
+  "products": {
+    "50": "50 积分",
+    "200": "200 积分",
+    "500": "500 积分"
   }
 }

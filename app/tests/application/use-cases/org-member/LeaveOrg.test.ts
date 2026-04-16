@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { AddOrgMember } from "@/application/use-cases/org-member/InviteOrgMember";
+import { LeaveOrg } from "@/application/use-cases/org-member/LeaveOrg";
 import type { IOrgMemberGateway } from "@/application/ports/IOrgMemberGateway";
 
 function makeGateway(
@@ -7,17 +7,18 @@ function makeGateway(
 ): IOrgMemberGateway {
   return {
     listMembers: vi.fn(),
-    addMember: vi.fn().mockResolvedValue(undefined),
     removeMember: vi.fn(),
     updateMemberRole: vi.fn(),
+    leaveOrg: vi.fn().mockResolvedValue(undefined),
+    transferOwnership: vi.fn(),
     ...overrides,
   };
 }
 
-describe("AddOrgMember", () => {
-  it("calls addMember with correct args", async () => {
+describe("LeaveOrg", () => {
+  it("calls leaveOrg with correct orgId", async () => {
     const gateway = makeGateway();
-    await new AddOrgMember(gateway).execute("o1", "user-uuid", "admin");
-    expect(gateway.addMember).toHaveBeenCalledWith("o1", "user-uuid", "admin");
+    await new LeaveOrg(gateway).execute("o1");
+    expect(gateway.leaveOrg).toHaveBeenCalledWith("o1");
   });
 });

@@ -48,53 +48,54 @@ export async function proxy(request: NextRequest) {
     pathnameWithoutLocale.startsWith(p),
   );
 
-  if (isProtected) {
-    let accessToken = request.cookies.get(ACCESS_TOKEN_NAME)?.value;
-    const refreshToken = request.cookies.get(REFRESH_TOKEN_NAME)?.value;
+  let accessToken = request.cookies.get(ACCESS_TOKEN_NAME)?.value;
+  const refreshToken = request.cookies.get(REFRESH_TOKEN_NAME)?.value;
 
-    // Attempt token refresh if access token is missing or expired
-    if ((!accessToken || isTokenExpired(accessToken)) && refreshToken) {
-      try {
-        const res = await fetch(`${API_URL}/api/v1/auth/refresh/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ refresh_token: refreshToken }),
-        });
+  // Attempt token refresh whenever the access token is expired and a refresh
+  // token exists, regardless of whether the route is protected.  Public pages
+  // like /pricing read the user profile to personalise currency / locale, so
+  // they also need a valid token.
+  if ((!accessToken || isTokenExpired(accessToken)) && refreshToken) {
+    try {
+      const res = await fetch(`${API_URL}/api/v1/auth/refresh/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
 
-        if (res.ok) {
-          const data = (await res.json()) as {
-            access_token: string;
-            refresh_token: string;
-          };
-          accessToken = data.access_token;
+      if (res.ok) {
+        const data = (await res.json()) as {
+          access_token: string;
+          refresh_token: string;
+        };
+        accessToken = data.access_token;
 
-          // Forward refreshed tokens to downstream server code (pages,
-          // server components) so they read the new token, not the stale one.
-          request.cookies.set(ACCESS_TOKEN_NAME, data.access_token);
-          request.cookies.set(REFRESH_TOKEN_NAME, data.refresh_token);
+        // Forward refreshed tokens to downstream server code (pages,
+        // server components) so they read the new token, not the stale one.
+        request.cookies.set(ACCESS_TOKEN_NAME, data.access_token);
+        request.cookies.set(REFRESH_TOKEN_NAME, data.refresh_token);
 
-          const intlResponse = intlMiddleware(request);
-          intlResponse.cookies.set(
-            ACCESS_TOKEN_NAME,
-            data.access_token,
-            accessTokenCookieOptions,
-          );
-          intlResponse.cookies.set(
-            REFRESH_TOKEN_NAME,
-            data.refresh_token,
-            refreshTokenCookieOptions,
-          );
-          return intlResponse;
-        }
-      } catch {
-        // Refresh failed — fall through to redirect
+        const intlResponse = intlMiddleware(request);
+        intlResponse.cookies.set(
+          ACCESS_TOKEN_NAME,
+          data.access_token,
+          accessTokenCookieOptions,
+        );
+        intlResponse.cookies.set(
+          REFRESH_TOKEN_NAME,
+          data.refresh_token,
+          refreshTokenCookieOptions,
+        );
+        return intlResponse;
       }
+    } catch {
+      // Refresh failed — fall through
     }
+  }
 
-    if (!accessToken || isTokenExpired(accessToken)) {
-      const locale = pathname.split("/")[1] ?? routing.defaultLocale;
-      return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
-    }
+  if (isProtected && (!accessToken || isTokenExpired(accessToken))) {
+    const locale = pathname.split("/")[1] ?? routing.defaultLocale;
+    return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
   }
 
   return intlMiddleware(request);

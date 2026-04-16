@@ -1,4 +1,9 @@
 export { AlertBanner, type AlertBannerProps } from "./AlertBanner";
+export {
+  ConfirmDialog,
+  type ConfirmDialogProps,
+  type ConfirmDialogHandle,
+} from "./ConfirmDialog";
 export { FormField, type FormFieldProps } from "./FormField";
 export { MetricCard, type MetricCardProps } from "./MetricCard";
 export { NavLink, type NavLinkProps } from "./NavLink";

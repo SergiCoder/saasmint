@@ -19,17 +19,6 @@ const defaultProps = {
 
 beforeEach(() => {
   mockCancelSubscription.mockReset();
-  // jsdom does not implement HTMLDialogElement; polyfill the methods we use.
-  if (!HTMLDialogElement.prototype.showModal) {
-    HTMLDialogElement.prototype.showModal = function () {
-      this.setAttribute("open", "");
-    };
-  }
-  if (!HTMLDialogElement.prototype.close) {
-    HTMLDialogElement.prototype.close = function () {
-      this.removeAttribute("open");
-    };
-  }
 });
 
 describe("CancelRenewalButton", () => {
@@ -77,13 +66,12 @@ describe("CancelRenewalButton", () => {
     render(<CancelRenewalButton {...defaultProps} />);
 
     await user.click(screen.getByRole("button", { name: "Cancel renewal" }));
-    const dialog = document.querySelector("dialog") as HTMLDialogElement;
-    expect(dialog.hasAttribute("open")).toBe(true);
+    expect(screen.getByText("Are you sure?")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Yes, cancel" }));
 
     await waitFor(() => {
-      expect(dialog.hasAttribute("open")).toBe(false);
+      expect(screen.queryByText("Are you sure?")).not.toBeInTheDocument();
     });
   });
 
@@ -117,8 +105,7 @@ describe("CancelRenewalButton", () => {
     await waitFor(() => {
       expect(screen.getByText("nope")).toBeInTheDocument();
     });
-    const dialog = document.querySelector("dialog") as HTMLDialogElement;
-    expect(dialog.hasAttribute("open")).toBe(true);
+    expect(screen.getByText("Are you sure?")).toBeInTheDocument();
   });
 
   it("displays a fallback error when the action throws a non-Error", async () => {
@@ -139,10 +126,9 @@ describe("CancelRenewalButton", () => {
     render(<CancelRenewalButton {...defaultProps} />);
 
     await user.click(screen.getByRole("button", { name: "Cancel renewal" }));
-    const dialog = document.querySelector("dialog") as HTMLDialogElement;
-    expect(dialog.hasAttribute("open")).toBe(true);
+    expect(screen.getByText("Are you sure?")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Keep subscription" }));
-    expect(dialog.hasAttribute("open")).toBe(false);
+    expect(screen.queryByText("Are you sure?")).not.toBeInTheDocument();
   });
 });

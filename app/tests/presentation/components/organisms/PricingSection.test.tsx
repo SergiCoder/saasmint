@@ -11,7 +11,7 @@ const groups: PlanCardGroup[] = [
     description: "Basic plan",
     highlighted: false,
     context: "personal",
-    tier: "basic",
+    tier: 2,
     monthly: {
       price: "$19",
       intervalLabel: "month",

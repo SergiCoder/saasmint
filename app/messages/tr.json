@@ -13,8 +13,8 @@
     "signOut": "Çıkış yap",
     "contactUs": "Bize ulaşın",
     "profile": "Profil",
-    "feature1": "Feature 1",
-    "feature2": "Feature 2"
+    "feature1": "Özellik 1",
+    "feature2": "Özellik 2"
   },
   "footer": {
     "privacy": "Gizlilik",
@@ -196,7 +196,12 @@
     "personalPlansDesc": "Bireyler için.",
     "teamPlansDesc": "Takımlar ve kuruluşlar için.",
     "pricingTitle": "Fiyatlandırma",
-    "total": "toplam"
+    "total": "toplam",
+    "orgName": "Organization name",
+    "teamCheckout": "Team checkout",
+    "checkoutError": "Failed to start checkout. Please try again.",
+    "managedBy": "{name} tarafından yönetiliyor",
+    "teamPlanReadonly": "Ekip aboneliğiniz kuruluş sahibi tarafından yönetilmektedir."
   },
   "profile": {
     "title": "Ayarlar",
@@ -234,6 +239,8 @@
     "deleteDialogSubmit": "Hesabı kalıcı olarak sil",
     "deleteDialogMismatch": "E-posta adresi hesabınızla eşleşmiyor.",
     "deleteDialogError": "Hesap silinemedi. Lütfen tekrar deneyin.",
+    "deleteBlockedOwner": "Bir organizasyona sahipsiniz. Hesabınızı silmek için lütfen destek ekibimizle iletişime geçin.",
+    "deleteBlockedMember": "Bir takıma aitsiniz. Önce çıkarılmak için lütfen takım sahibinizle iletişime geçin.",
     "pronounsHeHim": "O (erkek)",
     "pronounsSheHer": "O (kadın)",
     "pronounsTheyThem": "O (nötr)",
@@ -246,20 +253,49 @@
   },
   "org": {
     "title": "Organizasyon",
-    "create": "Organizasyon oluştur",
     "members": "Üyeler",
-    "invite": "Üye davet et",
     "role": "Rol",
     "remove": "Kaldır",
+    "promoteToAdmin": "Yöneticiye yükselt",
+    "demoteToMember": "Üyeye düşür",
+    "removeMemberConfirmTitle": "Üyeyi kaldır",
+    "removeMemberConfirmBody": "Bu işlem üyeyi kalıcı olarak kaldıracak ve hesabını silecektir. Bu işlem geri alınamaz.",
     "name": "Ad",
     "email": "E-posta",
     "slug": "Slug",
-    "userId": "Kullanıcı ID",
-    "addMember": "Üye ekle",
-    "memberAdded": "Üye başarıyla eklendi",
     "roleMember": "Üye",
     "roleAdmin": "Yönetici",
-    "roleOwner": "Sahip"
+    "roleOwner": "Sahip",
+    "inviteByEmail": "Invite by email",
+    "inviteMember": "Send invitation",
+    "invitationSent": "Invitation sent successfully",
+    "pendingInvitations": "Pending invitations",
+    "cancelInvitation": "Cancel",
+    "invitedBy": "Invited by",
+    "expiresAt": "Expires",
+    "noInvitations": "No pending invitations",
+    "leaveOrg": "Leave organization",
+    "leaveOrgConfirmTitle": "Leave organization?",
+    "leaveOrgConfirmBody": "You will lose access to this organization. Your subscription will revert to a free personal plan.",
+    "transferOwnership": "Transfer ownership",
+    "transferOwnershipConfirmTitle": "Transfer ownership?",
+    "transferOwnershipConfirmBody": "This will make {name} the new owner. You will become an admin.",
+    "selectNewOwner": "Select new owner",
+    "deleteOrg": "Delete organization",
+    "deleteOrgConfirmTitle": "Delete organization?",
+    "deleteOrgConfirmBody": "This will permanently delete the organization, cancel the team subscription, and revert all members to free personal plans. This action cannot be undone.",
+    "spotsUsed": "{used} / {total} yer",
+    "dangerZone": "Danger zone",
+    "deleteOrgBlockedSubscription": "You have an active team subscription. Please cancel it first or contact our support team to delete the organization.",
+    "noOrgMessage": "You don't have an organization yet. Subscribe to a team plan to create one.",
+    "goToSubscription": "View team plans",
+    "addSeat": "Koltuk ekle",
+    "removeSeat": "Koltuk kaldır",
+    "updateSeats": "Koltukları güncelle",
+    "seatsUpdated": "Koltuklar başarıyla güncellendi",
+    "removeSeatConfirmTitle": "Koltuk kaldır",
+    "removeSeatConfirmBody": "Herhangi bir iade yapılmayacaktır. Bir sonraki yenilemeniz azaltılmış koltuk sayısını yansıtacaktır.",
+    "removeSeatConfirmAction": "Kaldır"
   },
   "common": {
     "loading": "Yükleniyor...",
@@ -306,12 +342,12 @@
     "intro": "Deneyiminizi iyileştirmek için çerezler kullanıyoruz. Bu politika, web sitemizde çerezleri nasıl ve neden kullandığımızı açıklar."
   },
   "feature1": {
-    "title": "Feature 1",
-    "description": "Bu, Feature 1 için bir yer tutucu sayfadır."
+    "title": "Özellik 1",
+    "description": "Bu, Özellik 1 için bir yer tutucu sayfadır."
   },
   "feature2": {
-    "title": "Feature 2",
-    "description": "Bu, Feature 2 için bir yer tutucu sayfadır."
+    "title": "Özellik 2",
+    "description": "Bu, Özellik 2 için bir yer tutucu sayfadır."
   },
   "errorPage": {
     "title": "Bir şeyler ters gitti",
@@ -319,5 +355,44 @@
     "retry": "Tekrar dene",
     "home": "Ana sayfaya dön",
     "errorId": "Hata kimliği"
+  },
+  "invitation": {
+    "title": "Davet edildiniz",
+    "description": "{orgName} organizasyonuna katılmaya davet edildiniz. Katılmak için kabul edin veya yoksaymak için reddedin.",
+    "fullName": "Ad soyad",
+    "password": "Şifre",
+    "accept": "Daveti kabul et",
+    "decline": "Daveti reddet"
+  },
+  "plans": {
+    "personal": {
+      "1": {
+        "name": "Ücretsiz",
+        "description": "Yeni başlayanlar için. Temel analitik ve topluluk desteği içerir."
+      },
+      "2": {
+        "name": "Basic",
+        "description": "İleri düzey kullanıcılar için. Gelişmiş analitik, öncelikli e-posta desteği ve API erişimi."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "Basic'teki her şeye ek olarak özel entegrasyonlar, denetim günlükleri ve özel destek."
+      }
+    },
+    "team": {
+      "2": {
+        "name": "Basic",
+        "description": "Küçük takımlar için. Kişi başı fiyatlandırma, paylaşılan panolar ve takım analitiği."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "Büyüyen kuruluşlar için. Kişi başı fiyatlandırma, SSO, denetim günlükleri ve özel destek."
+      }
+    }
+  },
+  "products": {
+    "50": "50 kredi",
+    "200": "200 kredi",
+    "500": "500 kredi"
   }
 }

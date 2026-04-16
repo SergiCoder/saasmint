@@ -1,0 +1,37 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "pnpm dev",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["dev"],
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "${workspaceFolder}/.next/**"]
+    },
+    {
+      "name": "pnpm dev (debug)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "next",
+      "runtimeArgs": [
+        "dev",
+        "--turbo",
+        "--experimental-https",
+        "--experimental-https-key",
+        "../saasmint-core/infra/certs/localhost-key.pem",
+        "--experimental-https-cert",
+        "../saasmint-core/infra/certs/localhost.pem",
+        "--experimental-https-ca",
+        "../saasmint-core/infra/certs/rootCA.pem"
+      ],
+      "env": {
+        "NODE_EXTRA_CA_CERTS": "../saasmint-core/infra/certs/rootCA.pem",
+        "NODE_OPTIONS": "--inspect --no-warnings"
+      },
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "${workspaceFolder}/.next/**"]
+    }
+  ]
+}

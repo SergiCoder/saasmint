@@ -25,29 +25,6 @@ beforeEach(() => {
 describe("DjangoApiOrgGateway", () => {
   const gateway = new DjangoApiOrgGateway();
 
-  describe("createOrg", () => {
-    it("sends POST /orgs/ with input body", async () => {
-      mockApiFetch.mockResolvedValue(org);
-
-      const input = { name: "Acme Inc", slug: "acme-inc" };
-      const result = await gateway.createOrg(input);
-
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/", {
-        method: "POST",
-        body: JSON.stringify(input),
-      });
-      expect(result).toEqual(org);
-    });
-
-    it("propagates errors from apiFetch", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 400: Bad Request"));
-
-      await expect(
-        gateway.createOrg({ name: "Test", slug: "test" }),
-      ).rejects.toThrow("API 400: Bad Request");
-    });
-  });
-
   describe("getOrg", () => {
     it("fetches with GET /orgs/:orgId/", async () => {
       mockApiFetch.mockResolvedValue(org);
@@ -56,14 +33,6 @@ describe("DjangoApiOrgGateway", () => {
 
       expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/");
       expect(result).toEqual(org);
-    });
-
-    it("includes orgId in the URL path", async () => {
-      mockApiFetch.mockResolvedValue(org);
-
-      await gateway.getOrg("org-xyz-123");
-
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/org-xyz-123/");
     });
 
     it("propagates errors from apiFetch", async () => {
@@ -120,6 +89,26 @@ describe("DjangoApiOrgGateway", () => {
 
       await expect(gateway.listUserOrgs("u1")).rejects.toThrow(
         "API 500: Server Error",
+      );
+    });
+  });
+
+  describe("deleteOrg", () => {
+    it("sends DELETE /orgs/:orgId/", async () => {
+      mockApiFetch.mockResolvedValue(undefined);
+
+      await gateway.deleteOrg("o1");
+
+      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/", {
+        method: "DELETE",
+      });
+    });
+
+    it("propagates errors from apiFetch", async () => {
+      mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
+
+      await expect(gateway.deleteOrg("o1")).rejects.toThrow(
+        "API 403: Forbidden",
       );
     });
   });

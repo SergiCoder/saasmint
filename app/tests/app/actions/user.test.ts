@@ -295,9 +295,7 @@ describe("user server actions", () => {
     });
 
     it("returns generic error on non-auth failure", async () => {
-      mockUpdateUserProfileExecute.mockRejectedValue(
-        new Error("Server error"),
-      );
+      mockUpdateUserProfileExecute.mockRejectedValue(new Error("Server error"));
 
       const result = await updateAvatarUrl("https://example.com/avatar.webp");
       expect(result).toEqual({ error: "Failed to update avatar" });

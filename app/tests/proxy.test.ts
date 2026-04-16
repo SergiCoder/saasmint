@@ -188,6 +188,53 @@ describe("proxy", () => {
       const location = response.headers.get("location");
       expect(location).toBeNull();
     });
+
+    it("refreshes expired token on public route when refresh_token exists", async () => {
+      const pastExp = Math.floor(Date.now() / 1000) - 60;
+      const futureExp = Math.floor(Date.now() / 1000) + 900;
+
+      fetchSpy.mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            access_token: makeToken(futureExp),
+            refresh_token: "new-refresh-tok",
+          }),
+      });
+
+      const request = createMockRequest(`${APP_URL}/en/pricing`, [
+        { name: "access_token", value: makeToken(pastExp) },
+        { name: "refresh_token", value: "old-refresh-tok" },
+      ]);
+      const response = await proxy(request);
+
+      expect(fetchSpy).toHaveBeenCalledWith(
+        `${API_URL}/api/v1/auth/refresh/`,
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify({ refresh_token: "old-refresh-tok" }),
+        }),
+      );
+      // Should not redirect — public routes don't require auth
+      const location = response.headers.get("location");
+      expect(location).toBeNull();
+    });
+
+    it("continues without auth on public route when refresh fails", async () => {
+      const pastExp = Math.floor(Date.now() / 1000) - 60;
+
+      fetchSpy.mockResolvedValue({ ok: false, status: 401 });
+
+      const request = createMockRequest(`${APP_URL}/en/pricing`, [
+        { name: "access_token", value: makeToken(pastExp) },
+        { name: "refresh_token", value: "expired-refresh-tok" },
+      ]);
+      const response = await proxy(request);
+
+      // Public routes should NOT redirect to login even if refresh fails
+      const location = response.headers.get("location");
+      expect(location).toBeNull();
+    });
   });
 
   describe("locale handling in protected paths", () => {

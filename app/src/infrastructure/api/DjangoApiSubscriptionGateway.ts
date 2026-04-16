@@ -22,6 +22,7 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
       if (raw.plan && typeof raw.plan === "object") {
         sub.plan = keysToCamelWithPrice<Subscription["plan"]>(
           raw.plan as Record<string, unknown>,
+          currency,
         );
       }
       return sub;
@@ -58,6 +59,13 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
     await apiFetch<void>("/billing/subscription/", {
       method: "PATCH",
       body: JSON.stringify({ cancel_at_period_end: false }),
+    });
+  }
+
+  async updateSeats(quantity: number): Promise<void> {
+    await apiFetch<void>("/billing/subscription/", {
+      method: "PATCH",
+      body: JSON.stringify({ quantity }),
     });
   }
 }

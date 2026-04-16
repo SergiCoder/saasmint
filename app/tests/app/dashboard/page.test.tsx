@@ -30,8 +30,24 @@ vi.mock("@/application/use-cases/org/ListUserOrgs", () => ({
   },
 }));
 
+const mockListOrgMembersExecute = vi.fn(() => Promise.resolve([]));
+vi.mock("@/application/use-cases/org-member/ListOrgMembers", () => ({
+  ListOrgMembers: function ListOrgMembers() {
+    return { execute: mockListOrgMembersExecute };
+  },
+}));
+
+const mockGetSubscriptionExecute = vi.fn(() => Promise.resolve(null));
+vi.mock("@/application/use-cases/billing/GetSubscription", () => ({
+  GetSubscription: function GetSubscription() {
+    return { execute: mockGetSubscriptionExecute };
+  },
+}));
+
 vi.mock("@/infrastructure/registry", () => ({
   orgGateway: {},
+  orgMemberGateway: {},
+  subscriptionGateway: {},
 }));
 
 vi.mock("@/presentation/components/molecules/OrgCard", async () => {

@@ -196,7 +196,12 @@
     "personalPlansDesc": "For individuals.",
     "teamPlansDesc": "For teams and organizations.",
     "pricingTitle": "Pricing",
-    "total": "Total"
+    "total": "Total",
+    "orgName": "Organization name",
+    "teamCheckout": "Team checkout",
+    "checkoutError": "Failed to start checkout. Please try again.",
+    "managedBy": "Managed by {name}",
+    "teamPlanReadonly": "Your team subscription is managed by the organization owner."
   },
   "profile": {
     "title": "Profile",
@@ -233,6 +238,8 @@
     "deleteDialogSubmit": "Permanently delete account",
     "deleteDialogMismatch": "Email does not match your account email.",
     "deleteDialogError": "Failed to delete account. Please try again.",
+    "deleteBlockedOwner": "You own an organization. Please contact our support team to delete your account.",
+    "deleteBlockedMember": "You belong to a team. Please contact your team owner to be removed first.",
     "pronounsHeHim": "He/Him",
     "pronounsSheHer": "She/Her",
     "pronounsTheyThem": "They/Them",
@@ -245,20 +252,88 @@
   },
   "org": {
     "title": "Organization",
-    "create": "Create organization",
     "members": "Members",
-    "invite": "Invite member",
     "role": "Role",
     "remove": "Remove",
+    "promoteToAdmin": "Promote to admin",
+    "demoteToMember": "Demote to member",
+    "removeMemberConfirmTitle": "Remove member",
+    "removeMemberConfirmBody": "This will permanently remove the member and delete their account. This action cannot be undone.",
     "name": "Name",
     "email": "Email",
     "slug": "Slug",
-    "userId": "User ID",
-    "addMember": "Add member",
-    "memberAdded": "Member added successfully",
     "roleMember": "Member",
     "roleAdmin": "Admin",
-    "roleOwner": "Owner"
+    "roleOwner": "Owner",
+    "inviteByEmail": "Invite by email",
+    "inviteMember": "Send invitation",
+    "invitationSent": "Invitation sent successfully",
+    "pendingInvitations": "Pending invitations",
+    "cancelInvitation": "Cancel",
+    "invitedBy": "Invited by",
+    "expiresAt": "Expires",
+    "noInvitations": "No pending invitations",
+    "leaveOrg": "Leave organization",
+    "leaveOrgConfirmTitle": "Leave organization?",
+    "leaveOrgConfirmBody": "You will lose access to this organization. Your subscription will revert to a free personal plan.",
+    "transferOwnership": "Transfer ownership",
+    "transferOwnershipConfirmTitle": "Transfer ownership?",
+    "transferOwnershipConfirmBody": "This will make {name} the new owner. You will become an admin.",
+    "selectNewOwner": "Select new owner",
+    "deleteOrg": "Delete organization",
+    "deleteOrgConfirmTitle": "Delete organization?",
+    "deleteOrgConfirmBody": "This will permanently delete the organization, cancel the team subscription, and revert all members to free personal plans. This action cannot be undone.",
+    "spotsUsed": "{used} / {total} spots",
+    "dangerZone": "Danger zone",
+    "deleteOrgBlockedSubscription": "You have an active team subscription. Please cancel it first or contact our support team to delete the organization.",
+    "noOrgMessage": "You don't have an organization yet. Subscribe to a team plan to create one.",
+    "goToSubscription": "View team plans",
+    "addSeat": "Add seat",
+    "removeSeat": "Remove seat",
+    "updateSeats": "Update seats",
+    "seatsUpdated": "Seats updated successfully",
+    "removeSeatConfirmTitle": "Remove seat",
+    "removeSeatConfirmBody": "No refund will be issued. Your next renewal will reflect the reduced seat count.",
+    "removeSeatConfirmAction": "Remove"
+  },
+  "invitation": {
+    "title": "You've been invited",
+    "description": "You've been invited to join {orgName}. Accept to join or decline to ignore.",
+    "fullName": "Full name",
+    "password": "Password",
+    "accept": "Accept invitation",
+    "decline": "Decline invitation"
+  },
+  "plans": {
+    "personal": {
+      "1": {
+        "name": "Free",
+        "description": "For individuals getting started. Includes basic analytics and community support."
+      },
+      "2": {
+        "name": "Basic",
+        "description": "For power users. Advanced analytics, priority email support, and API access."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "Everything in Basic plus custom integrations, audit logs, and dedicated support."
+      }
+    },
+    "team": {
+      "2": {
+        "name": "Basic",
+        "description": "For small teams. Per-seat pricing, shared dashboards, and team analytics."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "For growing organizations. Per-seat pricing, SSO, audit logs, and dedicated support."
+      }
+    }
+  },
+  "products": {
+    "50": "50 Credits",
+    "200": "200 Credits",
+    "500": "500 Credits"
   },
   "common": {
     "loading": "Loading...",

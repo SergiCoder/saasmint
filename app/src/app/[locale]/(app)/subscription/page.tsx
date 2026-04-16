@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
-import { GetSubscription } from "@/application/use-cases/billing/GetSubscription";
 import { ListPlans } from "@/application/use-cases/billing/ListPlans";
 import { ListProducts } from "@/application/use-cases/billing/ListProducts";
+import { ListOrgMembers } from "@/application/use-cases/org-member/ListOrgMembers";
 import {
-  subscriptionGateway,
   planGateway,
   productGateway,
+  orgMemberGateway,
 } from "@/infrastructure/registry";
 import { getCurrentUser } from "../_data/getCurrentUser";
+import { getSubscription } from "../_data/getSubscription";
+import { getUserOrgs } from "../_data/getUserOrgs";
+import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { SubscriptionCard } from "@/presentation/components/organisms/SubscriptionCard";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
 import { ProductsGrid } from "@/presentation/components/organisms/ProductsGrid";
@@ -23,6 +26,7 @@ import {
   splitPlanGroupsByContext,
 } from "@/app/[locale]/_lib/buildPlanCards";
 import type { Plan } from "@/domain/models/Plan";
+import { PLAN_TIER_PRO } from "@/domain/models/Plan";
 import type { Product } from "@/domain/models/Product";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -30,17 +34,24 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
-export default async function BillingPage() {
-  const [t, locale, user] = await Promise.all([
+interface BillingPageProps {
+  searchParams: Promise<{ status?: string; error?: string }>;
+}
+
+export default async function BillingPage({ searchParams }: BillingPageProps) {
+  const [t, tPlans, tProducts, locale, user, params] = await Promise.all([
     getTranslations("billing"),
+    getTranslations("plans"),
+    getTranslations("products"),
     getLocale(),
     getCurrentUser(),
+    searchParams,
   ]);
 
   const currency = user.preferredCurrency;
 
-  const [subscription, plans, products] = await Promise.all([
-    new GetSubscription(subscriptionGateway).execute(currency),
+  const [subscription, plans, products, userOrgs] = await Promise.all([
+    getSubscription(currency),
     new ListPlans(planGateway).execute(currency).catch((err): Plan[] => {
       console.error("Failed to fetch plans", err);
       return [];
@@ -51,17 +62,36 @@ export default async function BillingPage() {
         console.error("Failed to fetch products", err);
         return [];
       }),
+    getUserOrgs(user.id),
   ]);
+
+  const hasOrg = userOrgs.length > 0;
 
   const canManage = subscription
     ? await canManageBilling(user, subscription)
     : false;
 
   const currentPlan = subscription?.plan;
-  const planName = currentPlan?.name;
+  const planName = currentPlan
+    ? tPlans(`${currentPlan.context}.${currentPlan.tier}.name` as never)
+    : undefined;
   const initialInterval: "month" | "year" =
     currentPlan?.interval === "year" ? "year" : "month";
   const isTeamSubscription = currentPlan?.context === "team";
+
+  // For team subscriptions, fetch org owner info
+  let teamOwnerName: string | null = null;
+  if (isTeamSubscription && hasOrg) {
+    try {
+      const members = await new ListOrgMembers(orgMemberGateway).execute(
+        userOrgs[0].id,
+      );
+      const owner = members.find((m) => m.role === "owner");
+      if (owner) teamOwnerName = owner.user.fullName;
+    } catch {
+      // Owner name is a nice-to-have; proceed without it
+    }
+  }
 
   // Detect placeholder period-end dates returned by the backend for users
   // without a real Stripe subscription (e.g. free tier). Anything more than
@@ -74,6 +104,18 @@ export default async function BillingPage() {
     !Number.isNaN(periodEndDate.getTime()) &&
     periodEndDate.getUTCFullYear() < 9000;
 
+  const planNames: Record<string, string> = {};
+  const planDescriptions: Record<string, string> = {};
+  for (const plan of plans) {
+    const key = `${plan.context}.${plan.tier}`;
+    if (!planNames[key]) {
+      planNames[key] = tPlans(`${plan.context}.${plan.tier}.name` as never);
+      planDescriptions[key] = tPlans(
+        `${plan.context}.${plan.tier}.description` as never,
+      );
+    }
+  }
+
   const groups = buildPlanCardGroups({
     plans,
     currentPlanId: currentPlan?.id,
@@ -82,6 +124,8 @@ export default async function BillingPage() {
       upgrade: t("upgrade"),
       seat: t("seat"),
     },
+    planNames,
+    planDescriptions,
     renderCta: ({
       plan,
       isCurrent,
@@ -100,19 +144,13 @@ export default async function BillingPage() {
       }
       if (!plan.price) return null;
       if (!isUpgrade) return null;
-      const highlighted = plan.tier === "pro";
+      const highlighted = plan.tier === PLAN_TIER_PRO;
       if (isTeam) {
+        if (hasOrg) return null;
         return (
           <TeamCheckoutButton
             planPriceId={plan.price.id}
-            displayAmount={displayAmount}
-            currency={currency}
-            locale={locale}
-            interval={plan.interval}
             highlighted={highlighted}
-            seatLabel={t("seat")}
-            seatsLabel={t("seats")}
-            totalLabel={t("total")}
           >
             {ctaLabel}
           </TeamCheckoutButton>
@@ -141,6 +179,10 @@ export default async function BillingPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-12 pb-12">
       <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+
+      {params.error && (
+        <AlertBanner variant="error">{params.error}</AlertBanner>
+      )}
 
       {subscription &&
         (() => {
@@ -206,17 +248,26 @@ export default async function BillingPage() {
               }
               cancelAtPeriodEnd={isCanceling}
               cancelLabel={isCanceling ? t("cancel") : undefined}
+              footer={
+                isTeamSubscription && !canManage && teamOwnerName
+                  ? t("managedBy", { name: teamOwnerName })
+                  : undefined
+              }
               actions={
-                <div className="flex w-full flex-wrap items-center gap-x-4 gap-y-2">
-                  <BillingPortalButton>{t("portal")}</BillingPortalButton>
-                  {manageAction}
-                </div>
+                canManage ? (
+                  <div className="flex w-full flex-wrap items-center gap-x-4 gap-y-2">
+                    <BillingPortalButton>{t("portal")}</BillingPortalButton>
+                    {manageAction}
+                  </div>
+                ) : undefined
               }
             />
           );
         })()}
 
-      {groups.length === 0 ? (
+      {isTeamSubscription && !canManage ? (
+        <p className="text-sm text-gray-500">{t("teamPlanReadonly")}</p>
+      ) : groups.length === 0 ? (
         <p className="text-sm text-gray-500">{t("changePlan")}</p>
       ) : (
         <>
@@ -254,6 +305,9 @@ export default async function BillingPage() {
       <ProductsGrid
         title={t("products")}
         products={products}
+        productNames={Object.fromEntries(
+          products.map((p) => [p.credits, tProducts(`${p.credits}` as never)]),
+        )}
         creditsLabel={t("credits")}
         locale={locale}
         renderCta={(product) =>

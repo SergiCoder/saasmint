@@ -13,8 +13,8 @@
     "signOut": "Se déconnecter",
     "contactUs": "Contactez-nous",
     "profile": "Profil",
-    "feature1": "Feature 1",
-    "feature2": "Feature 2"
+    "feature1": "Fonction 1",
+    "feature2": "Fonction 2"
   },
   "footer": {
     "privacy": "Confidentialité",
@@ -196,7 +196,12 @@
     "personalPlansDesc": "Pour les particuliers.",
     "teamPlansDesc": "Pour les équipes et organisations.",
     "pricingTitle": "Tarifs",
-    "total": "total"
+    "total": "total",
+    "orgName": "Organization name",
+    "teamCheckout": "Team checkout",
+    "checkoutError": "Failed to start checkout. Please try again.",
+    "managedBy": "Géré par {name}",
+    "teamPlanReadonly": "L'abonnement de votre équipe est géré par le propriétaire de l'organisation."
   },
   "profile": {
     "title": "Paramètres",
@@ -234,6 +239,8 @@
     "deleteDialogSubmit": "Supprimer définitivement le compte",
     "deleteDialogMismatch": "L'adresse e-mail ne correspond pas à celle de votre compte.",
     "deleteDialogError": "Échec de la suppression du compte. Veuillez réessayer.",
+    "deleteBlockedOwner": "Vous êtes propriétaire d'une organisation. Veuillez contacter notre équipe d'assistance pour supprimer votre compte.",
+    "deleteBlockedMember": "Vous appartenez à une équipe. Veuillez contacter le propriétaire de votre équipe pour être retiré(e) d'abord.",
     "pronounsHeHim": "Il/Lui",
     "pronounsSheHer": "Elle",
     "pronounsTheyThem": "Iel",
@@ -246,20 +253,49 @@
   },
   "org": {
     "title": "Organisation",
-    "create": "Créer une organisation",
     "members": "Membres",
-    "invite": "Inviter un membre",
     "role": "Rôle",
     "remove": "Supprimer",
+    "promoteToAdmin": "Promouvoir administrateur",
+    "demoteToMember": "Rétrograder en membre",
+    "removeMemberConfirmTitle": "Supprimer le membre",
+    "removeMemberConfirmBody": "Cela supprimera définitivement le membre et son compte. Cette action est irréversible.",
     "name": "Nom",
     "email": "E-mail",
     "slug": "Slug",
-    "userId": "ID utilisateur",
-    "addMember": "Ajouter un membre",
-    "memberAdded": "Membre ajouté avec succès",
     "roleMember": "Membre",
     "roleAdmin": "Administrateur",
-    "roleOwner": "Propriétaire"
+    "roleOwner": "Propriétaire",
+    "inviteByEmail": "Invite by email",
+    "inviteMember": "Send invitation",
+    "invitationSent": "Invitation sent successfully",
+    "pendingInvitations": "Pending invitations",
+    "cancelInvitation": "Cancel",
+    "invitedBy": "Invited by",
+    "expiresAt": "Expires",
+    "noInvitations": "No pending invitations",
+    "leaveOrg": "Leave organization",
+    "leaveOrgConfirmTitle": "Leave organization?",
+    "leaveOrgConfirmBody": "You will lose access to this organization. Your subscription will revert to a free personal plan.",
+    "transferOwnership": "Transfer ownership",
+    "transferOwnershipConfirmTitle": "Transfer ownership?",
+    "transferOwnershipConfirmBody": "This will make {name} the new owner. You will become an admin.",
+    "selectNewOwner": "Select new owner",
+    "deleteOrg": "Delete organization",
+    "deleteOrgConfirmTitle": "Delete organization?",
+    "deleteOrgConfirmBody": "This will permanently delete the organization, cancel the team subscription, and revert all members to free personal plans. This action cannot be undone.",
+    "spotsUsed": "{used} / {total} places",
+    "dangerZone": "Danger zone",
+    "deleteOrgBlockedSubscription": "You have an active team subscription. Please cancel it first or contact our support team to delete the organization.",
+    "noOrgMessage": "You don't have an organization yet. Subscribe to a team plan to create one.",
+    "goToSubscription": "View team plans",
+    "addSeat": "Ajouter un siège",
+    "removeSeat": "Supprimer un siège",
+    "updateSeats": "Mettre à jour les sièges",
+    "seatsUpdated": "Sièges mis à jour avec succès",
+    "removeSeatConfirmTitle": "Supprimer un siège",
+    "removeSeatConfirmBody": "Aucun remboursement ne sera effectué. Votre prochain renouvellement reflétera le nombre réduit de sièges.",
+    "removeSeatConfirmAction": "Supprimer"
   },
   "common": {
     "loading": "Chargement...",
@@ -306,12 +342,12 @@
     "intro": "Nous utilisons des cookies pour améliorer votre expérience. Cette politique explique comment et pourquoi nous utilisons des cookies sur notre site."
   },
   "feature1": {
-    "title": "Feature 1",
-    "description": "Ceci est une page provisoire pour Feature 1."
+    "title": "Fonction 1",
+    "description": "Ceci est une page provisoire pour la Fonction 1."
   },
   "feature2": {
-    "title": "Feature 2",
-    "description": "Ceci est une page provisoire pour Feature 2."
+    "title": "Fonction 2",
+    "description": "Ceci est une page provisoire pour la Fonction 2."
   },
   "errorPage": {
     "title": "Une erreur est survenue",
@@ -319,5 +355,29 @@
     "retry": "Réessayer",
     "home": "Retour à l'accueil",
     "errorId": "ID d'erreur"
+  },
+  "invitation": {
+    "title": "Vous avez été invité",
+    "description": "Vous avez été invité à rejoindre {orgName}. Acceptez pour rejoindre ou déclinez pour ignorer.",
+    "fullName": "Nom complet",
+    "password": "Mot de passe",
+    "accept": "Accepter l'invitation",
+    "decline": "Décliner l'invitation"
+  },
+  "plans": {
+    "personal": {
+      "1": { "name": "Gratuit", "description": "Pour les particuliers qui débutent. Inclut des analyses de base et le support communautaire." },
+      "2": { "name": "Basic", "description": "Pour les utilisateurs avancés. Analyses avancées, support par e-mail prioritaire et accès API." },
+      "3": { "name": "Pro", "description": "Tout ce qui est dans Basic plus les intégrations personnalisées, les journaux d'audit et le support dédié." }
+    },
+    "team": {
+      "2": { "name": "Basic", "description": "Pour les petites équipes. Tarification par siège, tableaux de bord partagés et analyses d'équipe." },
+      "3": { "name": "Pro", "description": "Pour les organisations en croissance. Tarification par siège, SSO, journaux d'audit et support dédié." }
+    }
+  },
+  "products": {
+    "50": "50 crédits",
+    "200": "200 crédits",
+    "500": "500 crédits"
   }
 }

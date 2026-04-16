@@ -4,6 +4,7 @@ import { formatCurrency } from "@/lib/formatCurrency";
 export interface ProductsGridProps {
   title: string;
   products: Product[];
+  productNames?: Record<number, string>;
   creditsLabel: string;
   locale: string;
   renderCta: (product: Product) => React.ReactNode;
@@ -13,6 +14,7 @@ export interface ProductsGridProps {
 export function ProductsGrid({
   title,
   products,
+  productNames,
   creditsLabel,
   locale,
   renderCta,
@@ -29,7 +31,9 @@ export function ProductsGrid({
             key={product.id}
             className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
           >
-            <h3 className="font-semibold text-gray-900">{product.name}</h3>
+            <h3 className="font-semibold text-gray-900">
+              {productNames?.[product.credits] ?? product.name}
+            </h3>
             <p className="mt-1 text-sm text-gray-500">
               {product.credits} {creditsLabel}
             </p>

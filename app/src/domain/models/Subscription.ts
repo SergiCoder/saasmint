@@ -10,6 +10,9 @@ export type SubscriptionStatus =
   | "incomplete_expired"
   | "paused";
 
+/** Maximum number of seats allowed on a team subscription. */
+export const MAX_SEATS = 100;
+
 export interface Subscription {
   id: string;
   status: SubscriptionStatus;

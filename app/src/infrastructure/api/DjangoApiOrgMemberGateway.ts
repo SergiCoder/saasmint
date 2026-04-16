@@ -13,21 +13,10 @@ function mapMember(raw: Record<string, unknown>): OrgMember {
 
 export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
   async listMembers(orgId: string): Promise<OrgMember[]> {
-    const data = await apiFetch<Record<string, unknown>[]>(
+    const data = await apiFetch<{ results: Record<string, unknown>[] }>(
       `/orgs/${orgId}/members/`,
     );
-    return data.map(mapMember);
-  }
-
-  async addMember(
-    orgId: string,
-    userId: string,
-    role: OrgMember["role"],
-  ): Promise<void> {
-    await apiFetch<OrgMember>(`/orgs/${orgId}/members/`, {
-      method: "POST",
-      body: JSON.stringify({ user_id: userId, role }),
-    });
+    return data.results.map(mapMember);
   }
 
   async removeMember(orgId: string, userId: string): Promise<void> {
@@ -44,6 +33,17 @@ export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
     await apiFetch<OrgMember>(`/orgs/${orgId}/members/${userId}/`, {
       method: "PATCH",
       body: JSON.stringify({ role }),
+    });
+  }
+
+  async leaveOrg(orgId: string): Promise<void> {
+    await apiFetch<void>(`/orgs/${orgId}/leave/`, { method: "POST" });
+  }
+
+  async transferOwnership(orgId: string, userId: string): Promise<void> {
+    await apiFetch<void>(`/orgs/${orgId}/transfer-ownership/`, {
+      method: "POST",
+      body: JSON.stringify({ user_id: userId }),
     });
   }
 }

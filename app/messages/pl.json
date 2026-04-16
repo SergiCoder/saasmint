@@ -13,8 +13,8 @@
     "signOut": "Wyloguj się",
     "contactUs": "Kontakt",
     "profile": "Profil",
-    "feature1": "Feature 1",
-    "feature2": "Feature 2"
+    "feature1": "Funkcja 1",
+    "feature2": "Funkcja 2"
   },
   "footer": {
     "privacy": "Prywatność",
@@ -196,7 +196,12 @@
     "personalPlansDesc": "Dla osób prywatnych.",
     "teamPlansDesc": "Dla zespołów i organizacji.",
     "pricingTitle": "Cennik",
-    "total": "razem"
+    "total": "razem",
+    "orgName": "Organization name",
+    "teamCheckout": "Team checkout",
+    "checkoutError": "Failed to start checkout. Please try again.",
+    "managedBy": "Zarządzane przez {name}",
+    "teamPlanReadonly": "Subskrypcja Twojego zespołu jest zarządzana przez właściciela organizacji."
   },
   "profile": {
     "title": "Ustawienia",
@@ -234,6 +239,8 @@
     "deleteDialogSubmit": "Trwale usuń konto",
     "deleteDialogMismatch": "Adres e-mail nie pasuje do konta.",
     "deleteDialogError": "Nie udało się usunąć konta. Spróbuj ponownie.",
+    "deleteBlockedOwner": "Jesteś właścicielem organizacji. Skontaktuj się z naszym zespołem wsparcia, aby usunąć swoje konto.",
+    "deleteBlockedMember": "Należysz do zespołu. Skontaktuj się z właścicielem zespołu, aby najpierw zostać usuniętym.",
     "pronounsHeHim": "On/Jego",
     "pronounsSheHer": "Ona/Jej",
     "pronounsTheyThem": "Ono/Ich",
@@ -246,20 +253,49 @@
   },
   "org": {
     "title": "Organizacja",
-    "create": "Utwórz organizację",
     "members": "Członkowie",
-    "invite": "Zaproś członka",
     "role": "Rola",
     "remove": "Usuń",
+    "promoteToAdmin": "Awansuj na administratora",
+    "demoteToMember": "Degraduj do członka",
+    "removeMemberConfirmTitle": "Usuń członka",
+    "removeMemberConfirmBody": "Spowoduje to trwałe usunięcie członka i skasowanie jego konta. Tej czynności nie można cofnąć.",
     "name": "Nazwa",
     "email": "E-mail",
     "slug": "Slug",
-    "userId": "ID użytkownika",
-    "addMember": "Dodaj członka",
-    "memberAdded": "Członek został dodany",
     "roleMember": "Członek",
     "roleAdmin": "Administrator",
-    "roleOwner": "Właściciel"
+    "roleOwner": "Właściciel",
+    "inviteByEmail": "Invite by email",
+    "inviteMember": "Send invitation",
+    "invitationSent": "Invitation sent successfully",
+    "pendingInvitations": "Pending invitations",
+    "cancelInvitation": "Cancel",
+    "invitedBy": "Invited by",
+    "expiresAt": "Expires",
+    "noInvitations": "No pending invitations",
+    "leaveOrg": "Leave organization",
+    "leaveOrgConfirmTitle": "Leave organization?",
+    "leaveOrgConfirmBody": "You will lose access to this organization. Your subscription will revert to a free personal plan.",
+    "transferOwnership": "Transfer ownership",
+    "transferOwnershipConfirmTitle": "Transfer ownership?",
+    "transferOwnershipConfirmBody": "This will make {name} the new owner. You will become an admin.",
+    "selectNewOwner": "Select new owner",
+    "deleteOrg": "Delete organization",
+    "deleteOrgConfirmTitle": "Delete organization?",
+    "deleteOrgConfirmBody": "This will permanently delete the organization, cancel the team subscription, and revert all members to free personal plans. This action cannot be undone.",
+    "spotsUsed": "{used} / {total} miejsc",
+    "dangerZone": "Danger zone",
+    "deleteOrgBlockedSubscription": "You have an active team subscription. Please cancel it first or contact our support team to delete the organization.",
+    "noOrgMessage": "You don't have an organization yet. Subscribe to a team plan to create one.",
+    "goToSubscription": "View team plans",
+    "addSeat": "Dodaj miejsce",
+    "removeSeat": "Usuń miejsce",
+    "updateSeats": "Zaktualizuj miejsca",
+    "seatsUpdated": "Miejsca zostały zaktualizowane",
+    "removeSeatConfirmTitle": "Usuń miejsce",
+    "removeSeatConfirmBody": "Zwrot nie zostanie przyznany. Następne odnowienie będzie odzwierciedlać zmniejszoną liczbę miejsc.",
+    "removeSeatConfirmAction": "Usuń"
   },
   "common": {
     "loading": "Ładowanie...",
@@ -306,12 +342,12 @@
     "intro": "Używamy plików cookie, aby poprawić Twoje doświadczenie. Ta polityka wyjaśnia, jak i dlaczego używamy plików cookie na naszej stronie."
   },
   "feature1": {
-    "title": "Feature 1",
-    "description": "To jest strona zastępcza dla Feature 1."
+    "title": "Funkcja 1",
+    "description": "To jest strona zastępcza dla Funkcji 1."
   },
   "feature2": {
-    "title": "Feature 2",
-    "description": "To jest strona zastępcza dla Feature 2."
+    "title": "Funkcja 2",
+    "description": "To jest strona zastępcza dla Funkcji 2."
   },
   "errorPage": {
     "title": "Coś poszło nie tak",
@@ -319,5 +355,44 @@
     "retry": "Spróbuj ponownie",
     "home": "Wróć do strony głównej",
     "errorId": "ID błędu"
+  },
+  "invitation": {
+    "title": "Otrzymałeś zaproszenie",
+    "description": "Otrzymałeś zaproszenie do dołączenia do {orgName}. Zaakceptuj, aby dołączyć, lub odrzuć, aby zignorować.",
+    "fullName": "Imię i nazwisko",
+    "password": "Hasło",
+    "accept": "Zaakceptuj zaproszenie",
+    "decline": "Odrzuć zaproszenie"
+  },
+  "plans": {
+    "personal": {
+      "1": {
+        "name": "Darmowy",
+        "description": "Dla osób rozpoczynających. Zawiera podstawowe analizy i wsparcie społeczności."
+      },
+      "2": {
+        "name": "Basic",
+        "description": "Dla zaawansowanych użytkowników. Zaawansowane analizy, priorytetowe wsparcie e-mail i dostęp do API."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "Wszystko z Basic plus niestandardowe integracje, logi audytu i dedykowane wsparcie."
+      }
+    },
+    "team": {
+      "2": {
+        "name": "Basic",
+        "description": "Dla małych zespołów. Cena za miejsce, wspólne dashboardy i analizy zespołowe."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "Dla rozwijających się organizacji. Cena za miejsce, SSO, logi audytu i dedykowane wsparcie."
+      }
+    }
+  },
+  "products": {
+    "50": "50 kredytów",
+    "200": "200 kredytów",
+    "500": "500 kredytów"
   }
 }

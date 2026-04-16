@@ -13,8 +13,8 @@
     "signOut": "Esci",
     "contactUs": "Contattaci",
     "profile": "Profilo",
-    "feature1": "Feature 1",
-    "feature2": "Feature 2"
+    "feature1": "Funzionalità 1",
+    "feature2": "Funzionalità 2"
   },
   "footer": {
     "privacy": "Privacy",
@@ -196,7 +196,12 @@
     "personalPlansDesc": "Per individui.",
     "teamPlansDesc": "Per team e organizzazioni.",
     "pricingTitle": "Prezzi",
-    "total": "totale"
+    "total": "totale",
+    "orgName": "Organization name",
+    "teamCheckout": "Team checkout",
+    "checkoutError": "Failed to start checkout. Please try again.",
+    "managedBy": "Gestito da {name}",
+    "teamPlanReadonly": "L'abbonamento del tuo team è gestito dal proprietario dell'organizzazione."
   },
   "profile": {
     "title": "Impostazioni",
@@ -234,6 +239,8 @@
     "deleteDialogSubmit": "Elimina account permanentemente",
     "deleteDialogMismatch": "L'email non corrisponde a quella del tuo account.",
     "deleteDialogError": "Impossibile eliminare l'account. Riprova.",
+    "deleteBlockedOwner": "Sei proprietario di un'organizzazione. Contatta il nostro team di supporto per eliminare il tuo account.",
+    "deleteBlockedMember": "Fai parte di un team. Contatta il proprietario del team per essere rimosso prima.",
     "pronounsHeHim": "Lui",
     "pronounsSheHer": "Lei",
     "pronounsTheyThem": "Their",
@@ -246,20 +253,49 @@
   },
   "org": {
     "title": "Organizzazione",
-    "create": "Crea organizzazione",
     "members": "Membri",
-    "invite": "Invita membro",
     "role": "Ruolo",
     "remove": "Rimuovi",
+    "promoteToAdmin": "Promuovi ad amministratore",
+    "demoteToMember": "Retrocedi a membro",
+    "removeMemberConfirmTitle": "Rimuovi membro",
+    "removeMemberConfirmBody": "Questo rimuoverà permanentemente il membro ed eliminerà il suo account. Questa azione non può essere annullata.",
     "name": "Nome",
     "email": "Email",
     "slug": "Slug",
-    "userId": "ID utente",
-    "addMember": "Aggiungi membro",
-    "memberAdded": "Membro aggiunto con successo",
     "roleMember": "Membro",
     "roleAdmin": "Amministratore",
-    "roleOwner": "Proprietario"
+    "roleOwner": "Proprietario",
+    "inviteByEmail": "Invite by email",
+    "inviteMember": "Send invitation",
+    "invitationSent": "Invitation sent successfully",
+    "pendingInvitations": "Pending invitations",
+    "cancelInvitation": "Cancel",
+    "invitedBy": "Invited by",
+    "expiresAt": "Expires",
+    "noInvitations": "No pending invitations",
+    "leaveOrg": "Leave organization",
+    "leaveOrgConfirmTitle": "Leave organization?",
+    "leaveOrgConfirmBody": "You will lose access to this organization. Your subscription will revert to a free personal plan.",
+    "transferOwnership": "Transfer ownership",
+    "transferOwnershipConfirmTitle": "Transfer ownership?",
+    "transferOwnershipConfirmBody": "This will make {name} the new owner. You will become an admin.",
+    "selectNewOwner": "Select new owner",
+    "deleteOrg": "Delete organization",
+    "deleteOrgConfirmTitle": "Delete organization?",
+    "deleteOrgConfirmBody": "This will permanently delete the organization, cancel the team subscription, and revert all members to free personal plans. This action cannot be undone.",
+    "spotsUsed": "{used} / {total} posti",
+    "dangerZone": "Danger zone",
+    "deleteOrgBlockedSubscription": "You have an active team subscription. Please cancel it first or contact our support team to delete the organization.",
+    "noOrgMessage": "You don't have an organization yet. Subscribe to a team plan to create one.",
+    "goToSubscription": "View team plans",
+    "addSeat": "Aggiungi posto",
+    "removeSeat": "Rimuovi posto",
+    "updateSeats": "Aggiorna posti",
+    "seatsUpdated": "Posti aggiornati con successo",
+    "removeSeatConfirmTitle": "Rimuovi posto",
+    "removeSeatConfirmBody": "Non verrà emesso alcun rimborso. Il prossimo rinnovo rifletterà il numero ridotto di posti.",
+    "removeSeatConfirmAction": "Rimuovi"
   },
   "common": {
     "loading": "Caricamento...",
@@ -306,12 +342,12 @@
     "intro": "Utilizziamo i cookie per migliorare la tua esperienza. Questa informativa spiega come e perché utilizziamo i cookie sul nostro sito."
   },
   "feature1": {
-    "title": "Feature 1",
-    "description": "Questa è una pagina segnaposto per Feature 1."
+    "title": "Funzionalità 1",
+    "description": "Questa è una pagina segnaposto per la Funzionalità 1."
   },
   "feature2": {
-    "title": "Feature 2",
-    "description": "Questa è una pagina segnaposto per Feature 2."
+    "title": "Funzionalità 2",
+    "description": "Questa è una pagina segnaposto per la Funzionalità 2."
   },
   "errorPage": {
     "title": "Qualcosa è andato storto",
@@ -319,5 +355,44 @@
     "retry": "Riprova",
     "home": "Torna alla home",
     "errorId": "ID errore"
+  },
+  "invitation": {
+    "title": "Sei stato invitato",
+    "description": "Sei stato invitato a unirti a {orgName}. Accetta per unirti o rifiuta per ignorare.",
+    "fullName": "Nome completo",
+    "password": "Password",
+    "accept": "Accetta invito",
+    "decline": "Rifiuta invito"
+  },
+  "plans": {
+    "personal": {
+      "1": {
+        "name": "Gratuito",
+        "description": "Per chi inizia. Include analisi di base e supporto della community."
+      },
+      "2": {
+        "name": "Basic",
+        "description": "Per utenti avanzati. Analisi avanzate, supporto e-mail prioritario e accesso API."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "Tutto ciò che è in Basic più integrazioni personalizzate, registri di audit e supporto dedicato."
+      }
+    },
+    "team": {
+      "2": {
+        "name": "Basic",
+        "description": "Per piccoli team. Prezzo per posto, dashboard condivise e analisi del team."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "Per organizzazioni in crescita. Prezzo per posto, SSO, registri di audit e supporto dedicato."
+      }
+    }
+  },
+  "products": {
+    "50": "50 crediti",
+    "200": "200 crediti",
+    "500": "500 crediti"
   }
 }

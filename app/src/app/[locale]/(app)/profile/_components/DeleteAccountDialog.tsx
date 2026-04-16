@@ -61,7 +61,7 @@ export function DeleteAccountDialog({ userEmail }: DeleteAccountDialogProps) {
       <dialog
         ref={dialogRef}
         onClose={handleClose}
-        className="fixed top-1/2 left-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg border border-gray-200 p-0 shadow-xl backdrop:bg-black/50"
+        className="mx-auto my-auto w-[calc(100%-2rem)] max-w-md rounded-lg border border-gray-200 p-0 shadow-xl backdrop:bg-black/50"
       >
         <div className="p-6">
           <h3 className="text-lg font-semibold text-gray-900">

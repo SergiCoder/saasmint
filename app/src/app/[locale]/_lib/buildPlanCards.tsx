@@ -1,4 +1,5 @@
 import type { Plan, PlanTier } from "@/domain/models/Plan";
+import { PLAN_TIER_PRO } from "@/domain/models/Plan";
 import { formatCurrency } from "@/lib/formatCurrency";
 
 export interface PlanCardLabels {
@@ -45,6 +46,10 @@ export interface BuildPlanCardGroupsOptions {
   currentPlanId?: string;
   locale: string;
   labels: PlanCardLabels;
+  /** Translated plan names keyed by "{context}.{tier}", e.g. "personal.1". */
+  planNames: Record<string, string>;
+  /** Translated plan descriptions keyed by "{context}.{tier}". */
+  planDescriptions: Record<string, string>;
   /**
    * Renders the call-to-action for a single plan variant. Returning `null`
    * means no CTA should be shown for that variant (e.g. it's the current plan).
@@ -59,8 +64,6 @@ export interface BuildPlanCardGroupsOptions {
     ctaLabel: string;
   }) => React.ReactNode;
 }
-
-const TIER_ORDER: PlanTier[] = ["free", "basic", "pro"];
 
 /**
  * Returns the maximum yearly savings percentage across the given groups, or
@@ -97,10 +100,6 @@ export function splitPlanGroupsByContext(
   };
 }
 
-function tierDisplayName(tier: PlanTier): string {
-  return tier.charAt(0).toUpperCase() + tier.slice(1);
-}
-
 /** Monthly-equivalent display amount, used to compare across intervals. */
 function monthlyEquivalent(plan: Plan): number {
   const amount = plan.price?.displayAmount ?? 0;
@@ -112,6 +111,8 @@ export function buildPlanCardGroups({
   currentPlanId,
   locale,
   labels,
+  planNames,
+  planDescriptions,
   renderCta,
 }: BuildPlanCardGroupsOptions): PlanCardGroup[] {
   const currentPlan = plans.find((p) => p.id === currentPlanId);
@@ -205,15 +206,13 @@ export function buildPlanCardGroups({
       );
     }
 
-    // Description: prefer the monthly variant's (yearly often has " Billed annually..." appended).
-    const description =
-      monthlyPlan?.description ?? yearlyPlan?.description ?? "";
+    const nameKey = `${group.context}.${group.tier}`;
 
     result.push({
       key: `${group.context}-${group.tier}`,
-      name: tierDisplayName(group.tier),
-      description,
-      highlighted: group.tier === "pro",
+      name: planNames[nameKey] ?? `Tier ${group.tier}`,
+      description: planDescriptions[nameKey] ?? "",
+      highlighted: group.tier === PLAN_TIER_PRO,
       context: group.context,
       tier: group.tier,
       monthly,
@@ -222,10 +221,8 @@ export function buildPlanCardGroups({
     });
   }
 
-  // Sort by tier order so Free → Basic → Pro.
-  result.sort(
-    (a, b) => TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier),
-  );
+  // Sort by tier order so Free (1) → Basic (2) → Pro (3).
+  result.sort((a, b) => a.tier - b.tier);
 
   return result;
 }

@@ -13,8 +13,8 @@
     "signOut": "Logg ut",
     "contactUs": "Kontakt oss",
     "profile": "Profil",
-    "feature1": "Feature 1",
-    "feature2": "Feature 2"
+    "feature1": "Funksjon 1",
+    "feature2": "Funksjon 2"
   },
   "footer": {
     "privacy": "Personvern",
@@ -196,7 +196,12 @@
     "personalPlansDesc": "For enkeltpersoner.",
     "teamPlansDesc": "For team og organisasjoner.",
     "pricingTitle": "Priser",
-    "total": "totalt"
+    "total": "totalt",
+    "orgName": "Organization name",
+    "teamCheckout": "Team checkout",
+    "checkoutError": "Failed to start checkout. Please try again.",
+    "managedBy": "Administrert av {name}",
+    "teamPlanReadonly": "Teamabonnementet ditt administreres av organisasjonseieren."
   },
   "profile": {
     "title": "Innstillinger",
@@ -234,6 +239,8 @@
     "deleteDialogSubmit": "Slett konto permanent",
     "deleteDialogMismatch": "E-postadressen samsvarer ikke med kontoen din.",
     "deleteDialogError": "Kunne ikke slette kontoen. Prøv igjen.",
+    "deleteBlockedOwner": "Du eier en organisasjon. Vennligst kontakt supportteamet vårt for å slette kontoen din.",
+    "deleteBlockedMember": "Du tilhører et team. Vennligst kontakt teameieren din for å bli fjernet først.",
     "pronounsHeHim": "Han/Ham",
     "pronounsSheHer": "Hun/Henne",
     "pronounsTheyThem": "Hen",
@@ -246,20 +253,49 @@
   },
   "org": {
     "title": "Organisasjon",
-    "create": "Opprett organisasjon",
     "members": "Medlemmer",
-    "invite": "Inviter medlem",
     "role": "Rolle",
     "remove": "Fjern",
+    "promoteToAdmin": "Forfrem til administrator",
+    "demoteToMember": "Degrader til medlem",
+    "removeMemberConfirmTitle": "Fjern medlem",
+    "removeMemberConfirmBody": "Dette vil permanent fjerne medlemmet og slette kontoen deres. Denne handlingen kan ikke angres.",
     "name": "Navn",
     "email": "E-post",
     "slug": "Slug",
-    "userId": "Bruker-ID",
-    "addMember": "Legg til medlem",
-    "memberAdded": "Medlem lagt til",
     "roleMember": "Medlem",
     "roleAdmin": "Administrator",
-    "roleOwner": "Eier"
+    "roleOwner": "Eier",
+    "inviteByEmail": "Invite by email",
+    "inviteMember": "Send invitation",
+    "invitationSent": "Invitation sent successfully",
+    "pendingInvitations": "Pending invitations",
+    "cancelInvitation": "Cancel",
+    "invitedBy": "Invited by",
+    "expiresAt": "Expires",
+    "noInvitations": "No pending invitations",
+    "leaveOrg": "Leave organization",
+    "leaveOrgConfirmTitle": "Leave organization?",
+    "leaveOrgConfirmBody": "You will lose access to this organization. Your subscription will revert to a free personal plan.",
+    "transferOwnership": "Transfer ownership",
+    "transferOwnershipConfirmTitle": "Transfer ownership?",
+    "transferOwnershipConfirmBody": "This will make {name} the new owner. You will become an admin.",
+    "selectNewOwner": "Select new owner",
+    "deleteOrg": "Delete organization",
+    "deleteOrgConfirmTitle": "Delete organization?",
+    "deleteOrgConfirmBody": "This will permanently delete the organization, cancel the team subscription, and revert all members to free personal plans. This action cannot be undone.",
+    "spotsUsed": "{used} / {total} plasser",
+    "dangerZone": "Danger zone",
+    "deleteOrgBlockedSubscription": "You have an active team subscription. Please cancel it first or contact our support team to delete the organization.",
+    "noOrgMessage": "You don't have an organization yet. Subscribe to a team plan to create one.",
+    "goToSubscription": "View team plans",
+    "addSeat": "Legg til plass",
+    "removeSeat": "Fjern plass",
+    "updateSeats": "Oppdater plasser",
+    "seatsUpdated": "Plasser oppdatert",
+    "removeSeatConfirmTitle": "Fjern plass",
+    "removeSeatConfirmBody": "Ingen refusjon vil bli utstedt. Din neste fornyelse vil gjenspeile det reduserte antallet plasser.",
+    "removeSeatConfirmAction": "Fjern"
   },
   "common": {
     "loading": "Laster...",
@@ -306,12 +342,12 @@
     "intro": "Vi bruker informasjonskapsler for å forbedre din opplevelse. Disse retningslinjene forklarer hvordan og hvorfor vi bruker informasjonskapsler på vår nettside."
   },
   "feature1": {
-    "title": "Feature 1",
-    "description": "Dette er en plassholderside for Feature 1."
+    "title": "Funksjon 1",
+    "description": "Dette er en plassholderside for Funksjon 1."
   },
   "feature2": {
-    "title": "Feature 2",
-    "description": "Dette er en plassholderside for Feature 2."
+    "title": "Funksjon 2",
+    "description": "Dette er en plassholderside for Funksjon 2."
   },
   "errorPage": {
     "title": "Noe gikk galt",
@@ -319,5 +355,44 @@
     "retry": "Prøv igjen",
     "home": "Tilbake til start",
     "errorId": "Feil-ID"
+  },
+  "invitation": {
+    "title": "Du har blitt invitert",
+    "description": "Du har blitt invitert til å bli med i {orgName}. Godta for å bli med eller avslå for å ignorere.",
+    "fullName": "Fullt navn",
+    "password": "Passord",
+    "accept": "Godta invitasjon",
+    "decline": "Avslå invitasjon"
+  },
+  "plans": {
+    "personal": {
+      "1": {
+        "name": "Gratis",
+        "description": "For enkeltpersoner som starter opp. Inkluderer grunnleggende analyse og fellesskapsstøtte."
+      },
+      "2": {
+        "name": "Basic",
+        "description": "For avanserte brukere. Avansert analyse, prioritert e-poststøtte og API-tilgang."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "Alt i Basic pluss tilpassede integrasjoner, revisjonslogger og dedikert støtte."
+      }
+    },
+    "team": {
+      "2": {
+        "name": "Basic",
+        "description": "For små team. Pris per plass, delte dashbord og teamanalyse."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "For voksende organisasjoner. Pris per plass, SSO, revisjonslogger og dedikert støtte."
+      }
+    }
+  },
+  "products": {
+    "50": "50 kreditter",
+    "200": "200 kreditter",
+    "500": "500 kreditter"
   }
 }

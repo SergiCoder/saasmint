@@ -29,17 +29,19 @@ export function OrgMemberList({
   className = "",
 }: OrgMemberListProps) {
   return (
-    <div className={`overflow-x-auto ${className}`}>
+    <div
+      className={`overflow-hidden rounded-lg border border-gray-200 ${className}`}
+    >
       <table className="min-w-full divide-y divide-gray-200">
         <thead>
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+            <th className="w-full py-3 pr-6 pl-6 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
               {columns.name}
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+            <th className="py-3 pr-6 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
               {columns.role}
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
+            <th className="py-3 pr-6 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
               {columns.actions}
             </th>
           </tr>
@@ -47,7 +49,7 @@ export function OrgMemberList({
         <tbody className="divide-y divide-gray-200 bg-white">
           {members.map((member) => (
             <tr key={member.id}>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="w-full py-4 pr-6 pl-6 whitespace-nowrap">
                 <div className="flex items-center gap-3">
                   <Avatar
                     src={member.avatarUrl}
@@ -62,12 +64,12 @@ export function OrgMemberList({
                   </div>
                 </div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="py-4 pr-6 whitespace-nowrap">
                 <Badge variant={roleVariant[member.role]}>
                   {member.roleLabel}
                 </Badge>
               </td>
-              <td className="px-6 py-4 text-right whitespace-nowrap">
+              <td className="py-4 pr-6 text-right whitespace-nowrap">
                 {member.actions}
               </td>
             </tr>

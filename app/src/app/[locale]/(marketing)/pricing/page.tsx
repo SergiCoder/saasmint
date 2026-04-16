@@ -3,10 +3,12 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { ListPlans } from "@/application/use-cases/billing/ListPlans";
 import { GetSubscription } from "@/application/use-cases/billing/GetSubscription";
 import { ListProducts } from "@/application/use-cases/billing/ListProducts";
+import { ListUserOrgs } from "@/application/use-cases/org/ListUserOrgs";
 import {
   planGateway,
   productGateway,
   subscriptionGateway,
+  orgGateway,
 } from "@/infrastructure/registry";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
 import { ProductsGrid } from "@/presentation/components/organisms/ProductsGrid";
@@ -19,6 +21,7 @@ import {
   splitPlanGroupsByContext,
 } from "@/app/[locale]/_lib/buildPlanCards";
 import type { Plan } from "@/domain/models/Plan";
+import { PLAN_TIER_PRO } from "@/domain/models/Plan";
 import type { Product } from "@/domain/models/Product";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -27,15 +30,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PricingPage() {
-  const [t, locale, user] = await Promise.all([
+  const [t, tPlans, tProducts, locale, user] = await Promise.all([
     getTranslations("billing"),
+    getTranslations("plans"),
+    getTranslations("products"),
     getLocale(),
     getOptionalUser(),
   ]);
 
   const currency = user?.preferredCurrency;
 
-  const [plans, subscription, products] = await Promise.all([
+  const [plans, subscription, products, userOrgs] = await Promise.all([
     new ListPlans(planGateway).execute(currency).catch((err): Plan[] => {
       console.error("Failed to fetch plans", err);
       return [];
@@ -50,9 +55,25 @@ export default async function PricingPage() {
           .execute(currency)
           .catch((): Product[] => [])
       : Promise.resolve([] as Product[]),
+    user
+      ? new ListUserOrgs(orgGateway).execute(user.id).catch(() => [])
+      : Promise.resolve([]),
   ]);
 
-  const currentPlanId = subscription?.plan.id;
+  const hasOrg = userOrgs.length > 0;
+  const currentPlanId = subscription?.plan?.id;
+
+  const planNames: Record<string, string> = {};
+  const planDescriptions: Record<string, string> = {};
+  for (const plan of plans) {
+    const key = `${plan.context}.${plan.tier}`;
+    if (!planNames[key]) {
+      planNames[key] = tPlans(`${plan.context}.${plan.tier}.name` as never);
+      planDescriptions[key] = tPlans(
+        `${plan.context}.${plan.tier}.description` as never,
+      );
+    }
+  }
 
   const groups = buildPlanCardGroups({
     plans,
@@ -62,6 +83,8 @@ export default async function PricingPage() {
       upgrade: t("upgrade"),
       seat: t("seat"),
     },
+    planNames,
+    planDescriptions,
     renderCta: ({
       plan,
       isCurrent,
@@ -72,12 +95,13 @@ export default async function PricingPage() {
       ctaLabel,
     }) => {
       if (!plan.price) return null;
-      const highlighted = plan.tier === "pro";
+      const highlighted = plan.tier === PLAN_TIER_PRO;
       if (!user) {
         return (
           <GetStartedButton
             planPriceId={plan.price.id}
             highlighted={highlighted}
+            context={isTeam ? "team" : undefined}
           >
             {t("select")}
           </GetStartedButton>
@@ -86,17 +110,11 @@ export default async function PricingPage() {
       if (isCurrent) return null;
       if (!isUpgrade) return null;
       if (isTeam) {
+        if (hasOrg) return null;
         return (
           <TeamCheckoutButton
             planPriceId={plan.price.id}
-            displayAmount={displayAmount}
-            currency={currency}
-            locale={locale}
-            interval={plan.interval}
             highlighted={highlighted}
-            seatLabel={t("seat")}
-            seatsLabel={t("seats")}
-            totalLabel={t("total")}
           >
             {ctaLabel}
           </TeamCheckoutButton>
@@ -167,6 +185,9 @@ export default async function PricingPage() {
         className="mt-16"
         title={t("products")}
         products={products}
+        productNames={Object.fromEntries(
+          products.map((p) => [p.credits, tProducts(`${p.credits}` as never)]),
+        )}
         creditsLabel={t("credits")}
         locale={locale}
         renderCta={(product) =>

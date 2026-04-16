@@ -23,6 +23,7 @@ export interface SubscriptionCardProps {
   periodEndLabel?: string;
   cancelAtPeriodEnd: boolean;
   cancelLabel?: string;
+  footer?: string;
   actions?: React.ReactNode;
   className?: string;
 }
@@ -38,6 +39,7 @@ export function SubscriptionCard({
   periodEndLabel,
   cancelAtPeriodEnd,
   cancelLabel,
+  footer,
   actions,
   className = "",
 }: SubscriptionCardProps) {
@@ -77,6 +79,8 @@ export function SubscriptionCard({
       {cancelAtPeriodEnd && cancelLabel && (
         <p className="mt-4 text-sm text-yellow-700">{cancelLabel}</p>
       )}
+
+      {footer && <p className="mt-4 text-sm text-gray-500">{footer}</p>}
 
       {actions && <div className="mt-6 flex gap-3">{actions}</div>}
     </div>

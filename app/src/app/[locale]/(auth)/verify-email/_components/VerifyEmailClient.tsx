@@ -27,6 +27,13 @@ export function VerifyEmailClient({ token }: VerifyEmailClientProps) {
         if (ignore) return;
         if (result?.error) {
           setError(result.error);
+        } else if (result?.pendingPlan) {
+          const checkoutPath = result.isTeamPlan
+            ? "/subscription/team-checkout"
+            : "/subscription/checkout";
+          router.push(
+            `${checkoutPath}?plan=${encodeURIComponent(result.pendingPlan)}`,
+          );
         } else {
           router.push("/dashboard");
         }

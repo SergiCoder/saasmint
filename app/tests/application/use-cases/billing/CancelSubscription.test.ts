@@ -11,6 +11,7 @@ function makeGateway(
     createBillingPortalSession: vi.fn(),
     cancelSubscription: vi.fn().mockResolvedValue(undefined),
     resumeSubscription: vi.fn(),
+    updateSeats: vi.fn(),
     ...overrides,
   };
 }

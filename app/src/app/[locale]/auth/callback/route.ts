@@ -8,7 +8,8 @@ import {
 } from "@/infrastructure/auth/cookies";
 
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = request.nextUrl;
+  const { searchParams } = request.nextUrl;
+  const origin = process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
   const accessToken = searchParams.get("access_token");
   const refreshToken = searchParams.get("refresh_token");
   const expiresIn = searchParams.get("expires_in");

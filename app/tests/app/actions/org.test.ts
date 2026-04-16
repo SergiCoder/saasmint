@@ -13,17 +13,17 @@ vi.mock("next/cache", () => ({
   revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 
-const mockCreateOrgExecute = vi.fn();
-vi.mock("@/application/use-cases/org/CreateOrg", () => ({
-  CreateOrg: function CreateOrg() {
-    return { execute: mockCreateOrgExecute };
+const mockCreateInvitationExecute = vi.fn();
+vi.mock("@/application/use-cases/invitation/CreateInvitation", () => ({
+  CreateInvitation: function CreateInvitation() {
+    return { execute: mockCreateInvitationExecute };
   },
 }));
 
-const mockAddOrgMemberExecute = vi.fn();
-vi.mock("@/application/use-cases/org-member/InviteOrgMember", () => ({
-  AddOrgMember: function AddOrgMember() {
-    return { execute: mockAddOrgMemberExecute };
+const mockCancelInvitationExecute = vi.fn();
+vi.mock("@/application/use-cases/invitation/CancelInvitation", () => ({
+  CancelInvitation: function CancelInvitation() {
+    return { execute: mockCancelInvitationExecute };
   },
 }));
 
@@ -34,114 +34,129 @@ vi.mock("@/application/use-cases/org-member/RemoveOrgMember", () => ({
   },
 }));
 
-vi.mock("@/infrastructure/registry", () => ({
-  orgGateway: {},
-  orgMemberGateway: {},
+const mockTransferOwnershipExecute = vi.fn();
+vi.mock("@/application/use-cases/org-member/TransferOwnership", () => ({
+  TransferOwnership: function TransferOwnership() {
+    return { execute: mockTransferOwnershipExecute };
+  },
 }));
 
-let createOrg: typeof import("@/app/actions/org").createOrg;
-let addMember: typeof import("@/app/actions/org").addMember;
+const mockDeleteOrgExecute = vi.fn();
+vi.mock("@/application/use-cases/org/DeleteOrg", () => ({
+  DeleteOrg: function DeleteOrg() {
+    return { execute: mockDeleteOrgExecute };
+  },
+}));
+
+const mockGetCurrentUserExecute = vi.fn();
+vi.mock("@/application/use-cases/auth/GetCurrentUser", () => ({
+  GetCurrentUser: function GetCurrentUser() {
+    return { execute: mockGetCurrentUserExecute };
+  },
+}));
+
+const mockListOrgMembersExecute = vi.fn();
+vi.mock("@/application/use-cases/org-member/ListOrgMembers", () => ({
+  ListOrgMembers: function ListOrgMembers() {
+    return { execute: mockListOrgMembersExecute };
+  },
+}));
+
+vi.mock("@/infrastructure/registry", () => ({
+  authGateway: {},
+  orgGateway: {},
+  orgMemberGateway: {},
+  invitationGateway: {},
+}));
+
+let inviteMember: typeof import("@/app/actions/org").inviteMember;
+let cancelInvitation: typeof import("@/app/actions/org").cancelInvitation;
 let removeMember: typeof import("@/app/actions/org").removeMember;
+let transferOwnership: typeof import("@/app/actions/org").transferOwnership;
+let deleteOrg: typeof import("@/app/actions/org").deleteOrg;
 
 beforeEach(async () => {
   vi.clearAllMocks();
   const mod = await import("@/app/actions/org");
-  createOrg = mod.createOrg;
-  addMember = mod.addMember;
+  inviteMember = mod.inviteMember;
+  cancelInvitation = mod.cancelInvitation;
   removeMember = mod.removeMember;
+  transferOwnership = mod.transferOwnership;
+  deleteOrg = mod.deleteOrg;
 });
 
 describe("org server actions", () => {
-  describe("createOrg", () => {
-    it("redirects to org page on success", async () => {
-      mockCreateOrgExecute.mockResolvedValue({
-        id: "org_1",
-        name: "Acme",
-        slug: "acme",
-        logoUrl: null,
-      });
-
-      const formData = new FormData();
-      formData.set("name", "Acme");
-      formData.set("slug", "acme");
-
-      await expect(createOrg(undefined, formData)).rejects.toThrow(
-        "NEXT_REDIRECT",
-      );
-      expect(mockCreateOrgExecute).toHaveBeenCalledWith({
-        name: "Acme",
-        slug: "acme",
-      });
-      expect(mockRedirect).toHaveBeenCalledWith("/org/acme");
-    });
-
-    it("returns error for missing fields", async () => {
-      const formData = new FormData();
-      const result = await createOrg(undefined, formData);
-      expect(result).toEqual({ error: "Name and slug are required" });
-      expect(mockCreateOrgExecute).not.toHaveBeenCalled();
-    });
-
-    it("returns error on failure", async () => {
-      mockCreateOrgExecute.mockRejectedValue(new Error("Slug taken"));
-
-      const formData = new FormData();
-      formData.set("name", "Acme");
-      formData.set("slug", "acme");
-
-      const result = await createOrg(undefined, formData);
-      expect(result).toEqual({ error: "Failed to create organization" });
-    });
-  });
-
-  describe("addMember", () => {
-    it("revalidates path and returns success on add", async () => {
-      mockAddOrgMemberExecute.mockResolvedValue(undefined);
+  describe("inviteMember", () => {
+    it("creates invitation and revalidates path", async () => {
+      mockCreateInvitationExecute.mockResolvedValue({});
 
       const formData = new FormData();
       formData.set("orgId", "org_1");
-      formData.set("userId", "user_123");
+      formData.set("email", "bob@example.com");
       formData.set("role", "member");
 
-      const result = await addMember(undefined, formData);
-      expect(mockAddOrgMemberExecute).toHaveBeenCalledWith(
-        "org_1",
-        "user_123",
-        "member",
-      );
+      const result = await inviteMember(undefined, formData);
+      expect(mockCreateInvitationExecute).toHaveBeenCalledWith("org_1", {
+        email: "bob@example.com",
+        role: "member",
+      });
       expect(mockRevalidatePath).toHaveBeenCalledWith("/org");
-      expect(result).toEqual({ success: true });
+      expect(result).toEqual({ ok: true });
     });
 
     it("returns error on failure", async () => {
-      mockAddOrgMemberExecute.mockRejectedValue(new Error("Already a member"));
+      mockCreateInvitationExecute.mockRejectedValue(new Error("Seat limit"));
 
       const formData = new FormData();
       formData.set("orgId", "org_1");
-      formData.set("userId", "user_123");
+      formData.set("email", "bob@example.com");
       formData.set("role", "admin");
 
-      const result = await addMember(undefined, formData);
-      expect(result).toEqual({ error: "Failed to add member" });
+      const result = await inviteMember(undefined, formData);
+      expect(result).toEqual({ ok: false, error: "Failed to send invitation" });
     });
 
     it("returns error for invalid role", async () => {
       const formData = new FormData();
       formData.set("orgId", "org_1");
-      formData.set("userId", "user_123");
-      formData.set("role", "superadmin");
+      formData.set("email", "bob@example.com");
+      formData.set("role", "owner");
 
-      const result = await addMember(undefined, formData);
-      expect(result).toEqual({ error: "Invalid input" });
-      expect(mockAddOrgMemberExecute).not.toHaveBeenCalled();
+      const result = await inviteMember(undefined, formData);
+      expect(result).toEqual({ ok: false, error: "Invalid input" });
+      expect(mockCreateInvitationExecute).not.toHaveBeenCalled();
     });
 
     it("returns error when required fields are missing", async () => {
       const formData = new FormData();
 
-      const result = await addMember(undefined, formData);
-      expect(result).toEqual({ error: "Invalid input" });
-      expect(mockAddOrgMemberExecute).not.toHaveBeenCalled();
+      const result = await inviteMember(undefined, formData);
+      expect(result).toEqual({ ok: false, error: "Invalid input" });
+    });
+  });
+
+  describe("cancelInvitation", () => {
+    it("cancels invitation and revalidates path", async () => {
+      mockCancelInvitationExecute.mockResolvedValue(undefined);
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("invitationId", "inv_1");
+
+      await cancelInvitation(formData);
+      expect(mockCancelInvitationExecute).toHaveBeenCalledWith(
+        "org_1",
+        "inv_1",
+      );
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/org");
+    });
+
+    it("returns early when orgId is missing", async () => {
+      const formData = new FormData();
+      formData.set("invitationId", "inv_1");
+
+      await cancelInvitation(formData);
+      expect(mockCancelInvitationExecute).not.toHaveBeenCalled();
     });
   });
 
@@ -165,18 +180,78 @@ describe("org server actions", () => {
       const formData = new FormData();
       formData.set("userId", "user_123");
 
-      const result = await removeMember(formData);
-      expect(result).toBeUndefined();
+      await removeMember(formData);
       expect(mockRemoveOrgMemberExecute).not.toHaveBeenCalled();
     });
+  });
 
-    it("returns early when userId is missing", async () => {
+  describe("transferOwnership", () => {
+    it("transfers ownership and revalidates path", async () => {
+      mockTransferOwnershipExecute.mockResolvedValue(undefined);
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("userId", "user_2");
+
+      const result = await transferOwnership(undefined, formData);
+      expect(mockTransferOwnershipExecute).toHaveBeenCalledWith(
+        "org_1",
+        "user_2",
+      );
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/org");
+      expect(result).toEqual({ ok: true });
+    });
+
+    it("returns error on failure", async () => {
+      mockTransferOwnershipExecute.mockRejectedValue(new Error("Not an admin"));
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("userId", "user_2");
+
+      const result = await transferOwnership(undefined, formData);
+      expect(result).toEqual({
+        ok: false,
+        error: "Failed to transfer ownership",
+      });
+    });
+  });
+
+  describe("deleteOrg", () => {
+    it("deletes org and redirects to dashboard when user is owner", async () => {
+      mockGetCurrentUserExecute.mockResolvedValue({ id: "user_owner" });
+      mockListOrgMembersExecute.mockResolvedValue([
+        { user: { id: "user_owner" }, role: "owner" },
+      ]);
+      mockDeleteOrgExecute.mockResolvedValue(undefined);
+
       const formData = new FormData();
       formData.set("orgId", "org_1");
 
-      const result = await removeMember(formData);
-      expect(result).toBeUndefined();
-      expect(mockRemoveOrgMemberExecute).not.toHaveBeenCalled();
+      await expect(deleteOrg(formData)).rejects.toThrow("NEXT_REDIRECT");
+      expect(mockDeleteOrgExecute).toHaveBeenCalledWith("org_1");
+      expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
+    });
+
+    it("returns early when user is not owner", async () => {
+      mockGetCurrentUserExecute.mockResolvedValue({ id: "user_member" });
+      mockListOrgMembersExecute.mockResolvedValue([
+        { user: { id: "user_owner" }, role: "owner" },
+        { user: { id: "user_member" }, role: "member" },
+      ]);
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+
+      await deleteOrg(formData);
+      expect(mockDeleteOrgExecute).not.toHaveBeenCalled();
+    });
+
+    it("returns early when orgId is missing", async () => {
+      const formData = new FormData();
+
+      await deleteOrg(formData);
+      expect(mockDeleteOrgExecute).not.toHaveBeenCalled();
     });
   });
 });

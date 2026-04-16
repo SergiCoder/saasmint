@@ -32,9 +32,10 @@ const providers = [
 
 interface OAuthButtonsProps {
   plan?: string;
+  context?: "personal" | "team";
 }
 
-export function OAuthButtons({ plan }: OAuthButtonsProps = {}) {
+export function OAuthButtons({ plan, context }: OAuthButtonsProps = {}) {
   const t = useTranslations("auth.oauth");
   const locale = useLocale();
   const [loadingProvider, setLoadingProvider] = useState<OAuthProvider | null>(
@@ -43,18 +44,25 @@ export function OAuthButtons({ plan }: OAuthButtonsProps = {}) {
 
   function handleOAuth(provider: OAuthProvider) {
     setLoadingProvider(provider);
+    const isTeam = context === "team";
     const callbackUrl = new URL(
       `${window.location.origin}/${locale}/auth/callback`,
     );
     if (plan) {
+      const checkoutPath = isTeam
+        ? "/subscription/team-checkout"
+        : "/subscription/checkout";
       callbackUrl.searchParams.set(
         "next",
-        `/subscription/checkout?plan=${encodeURIComponent(plan)}`,
+        `${checkoutPath}?plan=${encodeURIComponent(plan)}`,
       );
     }
 
     const oauthUrl = new URL(`${API_URL}/api/v1/auth/oauth/${provider}/`);
     oauthUrl.searchParams.set("redirect_uri", callbackUrl.toString());
+    if (isTeam) {
+      oauthUrl.searchParams.set("account_type", "org_owner");
+    }
 
     window.location.assign(oauthUrl.toString());
   }

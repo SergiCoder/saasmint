@@ -2,7 +2,10 @@
 
 import { useRef, useState, useTransition } from "react";
 import { cancelSubscription } from "@/app/actions/billing";
-import { Button } from "@/presentation/components/atoms/Button";
+import {
+  ConfirmDialog,
+  type ConfirmDialogHandle,
+} from "@/presentation/components/molecules/ConfirmDialog";
 
 interface CancelRenewalButtonProps {
   label: string;
@@ -20,22 +23,21 @@ export function CancelRenewalButton({
   confirmAction,
   confirmDismiss,
 }: CancelRenewalButtonProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const confirmRef = useRef<ConfirmDialogHandle>(null);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   const open = () => {
     setError(null);
-    dialogRef.current?.showModal();
+    confirmRef.current?.open();
   };
-  const close = () => dialogRef.current?.close();
 
   const confirm = () => {
     startTransition(async () => {
       try {
         const result = await cancelSubscription();
         if (result.ok) {
-          close();
+          confirmRef.current?.close();
         } else {
           setError(result.error);
         }
@@ -47,6 +49,7 @@ export function CancelRenewalButton({
 
   return (
     <>
+      {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
       <button
         type="button"
         onClick={open}
@@ -54,37 +57,17 @@ export function CancelRenewalButton({
       >
         {label}
       </button>
-      <dialog
-        ref={dialogRef}
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg border border-gray-200 p-0 shadow-xl backdrop:bg-black/40"
+      <ConfirmDialog
+        ref={confirmRef}
+        title={confirmTitle}
+        body={confirmBody}
+        confirmLabel={confirmAction}
+        cancelLabel={confirmDismiss}
+        variant="danger"
+        loading={isPending}
+        onConfirm={confirm}
         onClose={() => setError(null)}
-      >
-        <div className="w-[min(90vw,28rem)] space-y-4 p-6">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {confirmTitle}
-          </h2>
-          <p className="text-sm text-gray-600">{confirmBody}</p>
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          <div className="flex justify-end gap-2 pt-2">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={close}
-              disabled={isPending}
-            >
-              {confirmDismiss}
-            </Button>
-            <Button
-              type="button"
-              variant="danger"
-              onClick={confirm}
-              loading={isPending}
-            >
-              {confirmAction}
-            </Button>
-          </div>
-        </div>
-      </dialog>
+      />
     </>
   );
 }

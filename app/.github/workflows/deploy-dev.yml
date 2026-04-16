@@ -1,0 +1,36 @@
+name: Deploy to dev VPS
+
+on:
+  push:
+    tags:
+      - "dev-v*"
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          port: ${{ secrets.VPS_PORT }}
+          username: deploy
+          key: ${{ secrets.VPS_SSH_KEY }}
+          envs: DEPLOY_REF
+          script: |
+            set -euo pipefail
+            cd /opt/saasmint/saasmint-app
+            git fetch --tags
+            git checkout "$DEPLOY_REF"
+            set -a && source /opt/saasmint/.env.dev && set +a
+            docker compose -f docker-compose.vps.yml build
+            docker compose -f docker-compose.vps.yml up -d
+            sleep 5
+            curl -sf http://127.0.0.1:3000/ || { echo "Health check failed"; docker compose -f docker-compose.vps.yml logs app --tail=50; exit 1; }
+            echo "Deploy successful: $DEPLOY_REF"
+        env:
+          DEPLOY_REF: ${{ github.ref_name }}

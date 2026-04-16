@@ -91,7 +91,9 @@ describe("billing server actions", () => {
       const formData = new FormData();
       formData.set("planPriceId", "price_abc");
 
-      await expect(startCheckout(formData)).rejects.toThrow("NEXT_REDIRECT");
+      await expect(startCheckout(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
       expect(mockStartCheckoutExecute).toHaveBeenCalledWith({
         planPriceId: "price_abc",
         successUrl: `${APP_URL}/subscription?status=success`,
@@ -102,11 +104,11 @@ describe("billing server actions", () => {
       );
     });
 
-    it("returns early when planPriceId is missing", async () => {
+    it("returns error when planPriceId is missing", async () => {
       const formData = new FormData();
 
-      const result = await startCheckout(formData);
-      expect(result).toBeUndefined();
+      const result = await startCheckout(undefined, formData);
+      expect(result).toEqual({ ok: false, error: "Invalid input" });
       expect(mockStartCheckoutExecute).not.toHaveBeenCalled();
       expect(mockRedirect).not.toHaveBeenCalled();
     });
@@ -120,7 +122,9 @@ describe("billing server actions", () => {
       formData.set("planPriceId", "price_team");
       formData.set("quantity", "5");
 
-      await expect(startCheckout(formData)).rejects.toThrow("NEXT_REDIRECT");
+      await expect(startCheckout(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
       expect(mockStartCheckoutExecute).toHaveBeenCalledWith(
         expect.objectContaining({
           planPriceId: "price_team",
@@ -138,20 +142,25 @@ describe("billing server actions", () => {
       formData.set("planPriceId", "price_team");
       formData.set("quantity", "0");
 
-      await expect(startCheckout(formData)).rejects.toThrow("NEXT_REDIRECT");
+      await expect(startCheckout(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
       const callArgs = mockStartCheckoutExecute.mock.calls[0][0];
       expect(callArgs.quantity).toBeUndefined();
     });
 
-    it("swallows non-redirect errors and returns without redirecting", async () => {
+    it("returns error when checkout fails", async () => {
       mockStartCheckoutExecute.mockRejectedValue(new Error("network down"));
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const formData = new FormData();
       formData.set("planPriceId", "price_abc");
 
-      const result = await startCheckout(formData);
-      expect(result).toBeUndefined();
+      const result = await startCheckout(undefined, formData);
+      expect(result).toEqual({
+        ok: false,
+        error: "Failed to start checkout",
+      });
       expect(mockRedirect).not.toHaveBeenCalled();
       expect(errSpy).toHaveBeenCalled();
       errSpy.mockRestore();

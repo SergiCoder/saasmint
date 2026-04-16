@@ -27,27 +27,37 @@ interface Props {
     registered?: string;
     deleted?: string;
     plan?: string;
+    context?: string;
   }>;
 }
 
 export default async function LoginPage({ searchParams }: Props) {
   const t = await getTranslations("auth.login");
-  const { error, registered, deleted, plan } = await searchParams;
+  const { error, registered, deleted, plan, context } = await searchParams;
+  const isTeam = context === "team";
 
   const errorKey = error ? ERROR_KEYS[error] : undefined;
-  const signupHref = plan
-    ? `/signup?plan=${encodeURIComponent(plan)}`
-    : "/signup";
+  const signupParams = new URLSearchParams();
+  if (plan) signupParams.set("plan", plan);
+  if (isTeam) signupParams.set("context", "team");
+  const signupHref =
+    signupParams.size > 0 ? `/signup?${signupParams.toString()}` : "/signup";
+
+  const hiddenFields: Record<string, string> = {};
+  if (plan) hiddenFields.plan = plan;
+  if (isTeam) hiddenFields.context = "team";
 
   return (
     <AuthLayout appName="SaaSmint" title={t("title")}>
-      <OAuthButtons plan={plan} />
+      <OAuthButtons plan={plan} context={isTeam ? "team" : undefined} />
       <AuthForm
         action={signIn}
         translationNamespace="auth.login"
         passwordAutoComplete="current-password"
         forgotPasswordHref="/forgot-password"
-        hiddenFields={plan ? { plan } : undefined}
+        hiddenFields={
+          Object.keys(hiddenFields).length > 0 ? hiddenFields : undefined
+        }
         footerLink={{
           href: signupHref,
           textKey: "noAccount",

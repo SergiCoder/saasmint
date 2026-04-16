@@ -13,8 +13,8 @@
     "signOut": "Uitloggen",
     "contactUs": "Contact",
     "profile": "Profiel",
-    "feature1": "Feature 1",
-    "feature2": "Feature 2"
+    "feature1": "Functie 1",
+    "feature2": "Functie 2"
   },
   "footer": {
     "privacy": "Privacy",
@@ -196,7 +196,12 @@
     "personalPlansDesc": "Voor individuen.",
     "teamPlansDesc": "Voor teams en organisaties.",
     "pricingTitle": "Prijzen",
-    "total": "totaal"
+    "total": "totaal",
+    "orgName": "Organization name",
+    "teamCheckout": "Team checkout",
+    "checkoutError": "Failed to start checkout. Please try again.",
+    "managedBy": "Beheerd door {name}",
+    "teamPlanReadonly": "Het teamabonnement wordt beheerd door de eigenaar van de organisatie."
   },
   "profile": {
     "title": "Instellingen",
@@ -234,6 +239,8 @@
     "deleteDialogSubmit": "Account permanent verwijderen",
     "deleteDialogMismatch": "Het e-mailadres komt niet overeen met uw account.",
     "deleteDialogError": "Account verwijderen mislukt. Probeer het opnieuw.",
+    "deleteBlockedOwner": "Je bent eigenaar van een organisatie. Neem contact op met ons supportteam om je account te verwijderen.",
+    "deleteBlockedMember": "Je behoort tot een team. Neem contact op met je teameigenaar om eerst verwijderd te worden.",
     "pronounsHeHim": "Hij/Hem",
     "pronounsSheHer": "Zij/Haar",
     "pronounsTheyThem": "Hen/Hun",
@@ -246,20 +253,49 @@
   },
   "org": {
     "title": "Organisatie",
-    "create": "Organisatie aanmaken",
     "members": "Leden",
-    "invite": "Lid uitnodigen",
     "role": "Rol",
     "remove": "Verwijderen",
+    "promoteToAdmin": "Promoveren tot beheerder",
+    "demoteToMember": "Degraderen tot lid",
+    "removeMemberConfirmTitle": "Lid verwijderen",
+    "removeMemberConfirmBody": "Dit zal het lid permanent verwijderen en hun account wissen. Deze actie kan niet ongedaan worden gemaakt.",
     "name": "Naam",
     "email": "E-mail",
     "slug": "Slug",
-    "userId": "Gebruikers-ID",
-    "addMember": "Lid toevoegen",
-    "memberAdded": "Lid succesvol toegevoegd",
     "roleMember": "Lid",
     "roleAdmin": "Beheerder",
-    "roleOwner": "Eigenaar"
+    "roleOwner": "Eigenaar",
+    "inviteByEmail": "Invite by email",
+    "inviteMember": "Send invitation",
+    "invitationSent": "Invitation sent successfully",
+    "pendingInvitations": "Pending invitations",
+    "cancelInvitation": "Cancel",
+    "invitedBy": "Invited by",
+    "expiresAt": "Expires",
+    "noInvitations": "No pending invitations",
+    "leaveOrg": "Leave organization",
+    "leaveOrgConfirmTitle": "Leave organization?",
+    "leaveOrgConfirmBody": "You will lose access to this organization. Your subscription will revert to a free personal plan.",
+    "transferOwnership": "Transfer ownership",
+    "transferOwnershipConfirmTitle": "Transfer ownership?",
+    "transferOwnershipConfirmBody": "This will make {name} the new owner. You will become an admin.",
+    "selectNewOwner": "Select new owner",
+    "deleteOrg": "Delete organization",
+    "deleteOrgConfirmTitle": "Delete organization?",
+    "deleteOrgConfirmBody": "This will permanently delete the organization, cancel the team subscription, and revert all members to free personal plans. This action cannot be undone.",
+    "spotsUsed": "{used} / {total} plaatsen",
+    "dangerZone": "Danger zone",
+    "deleteOrgBlockedSubscription": "You have an active team subscription. Please cancel it first or contact our support team to delete the organization.",
+    "noOrgMessage": "You don't have an organization yet. Subscribe to a team plan to create one.",
+    "goToSubscription": "View team plans",
+    "addSeat": "Stoel toevoegen",
+    "removeSeat": "Stoel verwijderen",
+    "updateSeats": "Stoelen bijwerken",
+    "seatsUpdated": "Stoelen succesvol bijgewerkt",
+    "removeSeatConfirmTitle": "Stoel verwijderen",
+    "removeSeatConfirmBody": "Er wordt geen restitutie verleend. Uw volgende verlenging zal het verminderde aantal stoelen weerspiegelen.",
+    "removeSeatConfirmAction": "Verwijderen"
   },
   "common": {
     "loading": "Laden...",
@@ -306,12 +342,12 @@
     "intro": "We gebruiken cookies om uw ervaring te verbeteren. Dit beleid legt uit hoe en waarom we cookies op onze website gebruiken."
   },
   "feature1": {
-    "title": "Feature 1",
-    "description": "Dit is een tijdelijke pagina voor Feature 1."
+    "title": "Functie 1",
+    "description": "Dit is een tijdelijke pagina voor Functie 1."
   },
   "feature2": {
-    "title": "Feature 2",
-    "description": "Dit is een tijdelijke pagina voor Feature 2."
+    "title": "Functie 2",
+    "description": "Dit is een tijdelijke pagina voor Functie 2."
   },
   "errorPage": {
     "title": "Er is iets misgegaan",
@@ -319,5 +355,44 @@
     "retry": "Opnieuw proberen",
     "home": "Terug naar start",
     "errorId": "Fout-ID"
+  },
+  "invitation": {
+    "title": "Je bent uitgenodigd",
+    "description": "Je bent uitgenodigd om lid te worden van {orgName}. Accepteer om lid te worden of weiger om te negeren.",
+    "fullName": "Volledige naam",
+    "password": "Wachtwoord",
+    "accept": "Uitnodiging accepteren",
+    "decline": "Uitnodiging weigeren"
+  },
+  "plans": {
+    "personal": {
+      "1": {
+        "name": "Gratis",
+        "description": "Voor individuen die beginnen. Inclusief basisanalyses en community-ondersteuning."
+      },
+      "2": {
+        "name": "Basic",
+        "description": "Voor gevorderde gebruikers. Geavanceerde analyses, prioritaire e-mailondersteuning en API-toegang."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "Alles van Basic plus aangepaste integraties, audit-logs en toegewijde ondersteuning."
+      }
+    },
+    "team": {
+      "2": {
+        "name": "Basic",
+        "description": "Voor kleine teams. Prijs per stoel, gedeelde dashboards en teamanalyses."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "Voor groeiende organisaties. Prijs per stoel, SSO, audit-logs en toegewijde ondersteuning."
+      }
+    }
+  },
+  "products": {
+    "50": "50 credits",
+    "200": "200 credits",
+    "500": "500 credits"
   }
 }

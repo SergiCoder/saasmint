@@ -22,7 +22,8 @@ Core types in `src/domain/models/`:
 - `User` — authenticated user (id, account type, locale/currency preferences)
 - `Org` — organisation record (id, name, slug, logoUrl)
 - `OrgMember` — org membership (nested `user: OrgMemberUser`, role: `owner | admin | member`, isBilling flag)
-- `Plan` — billing plan (context: `personal | team`, tier: `free | basic | pro`, interval: `month | year`, single `price`)
+- `Invitation` — org invite (id, org, email, role: `admin | member`, status: `pending | accepted | expired | cancelled`, invitedBy, dates)
+- `Plan` — billing plan (context: `personal | team`, tier: `PlanTier` (1=free, 2=basic, 3=pro), interval: `month | year`, single `price`)
 - `PlanPrice` — individual plan price point (id, amount, displayAmount, currency)
 - `Product` — one-time purchase product (id, name, type: `one_time`, credits, `price`)
 - `ProductPrice` — individual product price point (id, amount, displayAmount, currency)
@@ -65,7 +66,7 @@ Django issues JWTs directly — no third-party auth provider.
 Strict atomic design in `src/presentation/components/`:
 
 - `atoms/` — Button, Input, Badge, Avatar, AvatarUpload, Label, Spinner, Logo, SectionLabel, LocaleDropdown, FormattedDate, Divider, GitHubIcon, GoogleIcon, MicrosoftIcon
-- `molecules/` — FormField, MetricCard, NavLink, PlanCard, AlertBanner, FeatureCard, StatItem, TrustBar, OrgCard, OAuthButtons, UserMenu, PronounsPicker
+- `molecules/` — FormField, MetricCard, NavLink, PlanCard, AlertBanner, ConfirmDialog, FeatureCard, StatItem, TrustBar, OrgCard, OAuthButtons, UserMenu, PronounsPicker
 - `organisms/` — NavBar, Footer, PricingTable, PricingSection, SubscriptionCard, OrgMemberList, InvoiceTable, CtaSection, DashboardMock, ErrorView, ProductsGrid, FeaturesGrid, LogoCloud, StatsSection
 - `templates/` — MarketingLayout, AuthLayout, AppLayout, PolicyPage
 
@@ -80,15 +81,16 @@ Strict atomic design in `src/presentation/components/`:
 
 ## Server Actions
 
-Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, `avatar.ts`, `billing.ts`, `org.ts`, `user.ts`). Each action instantiates a use-case with a gateway from the registry — never call gateways directly from actions.
+Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, `avatar.ts`, `billing.ts`, `invitation.ts`, `org.ts`, `user.ts`). Each action instantiates a use-case with a gateway from the registry — never call gateways directly from actions.
 
 ## Route Groups
 
-`src/app/[locale]/` uses three route groups with distinct layouts:
+`src/app/[locale]/` uses four route groups with distinct layouts:
 
 - `(marketing)/` — public pages (landing, pricing, blog, about, contact, privacy, terms, cookies) using `MarketingLayout`
 - `(auth)/` — login/signup/forgot-password/reset-password/verify-email pages using `AuthLayout`
 - `(app)/` — authenticated pages (dashboard, subscription, profile, org) using `AppLayout`
+- `(public)/` — unauthenticated public pages (invitation acceptance)
 
 Route-specific client components live in co-located `_components/` directories (e.g. `(app)/subscription/_components/CheckoutButton.tsx`).
 

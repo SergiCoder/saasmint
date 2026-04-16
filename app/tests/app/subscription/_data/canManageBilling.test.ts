@@ -1,12 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const mockListUserOrgs = vi.fn();
+const mockGetUserOrgs = vi.fn();
 const mockListOrgMembers = vi.fn();
 
-vi.mock("@/application/use-cases/org/ListUserOrgs", () => ({
-  ListUserOrgs: function ListUserOrgs() {
-    return { execute: mockListUserOrgs };
-  },
+vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
+  getUserOrgs: (...args: unknown[]) => mockGetUserOrgs(...args),
 }));
 
 vi.mock("@/application/use-cases/org-member/ListOrgMembers", () => ({
@@ -16,7 +14,6 @@ vi.mock("@/application/use-cases/org-member/ListOrgMembers", () => ({
 }));
 
 vi.mock("@/infrastructure/registry", () => ({
-  orgGateway: {},
   orgMemberGateway: {},
 }));
 
@@ -46,12 +43,12 @@ describe("canManageBilling", () => {
   it("returns true for personal subscriptions without touching gateways", async () => {
     const result = await canManageBilling(user, personalSub);
     expect(result).toBe(true);
-    expect(mockListUserOrgs).not.toHaveBeenCalled();
+    expect(mockGetUserOrgs).not.toHaveBeenCalled();
     expect(mockListOrgMembers).not.toHaveBeenCalled();
   });
 
   it("returns true when the user is the billing member of their org", async () => {
-    mockListUserOrgs.mockResolvedValueOnce([{ id: "org-1" }]);
+    mockGetUserOrgs.mockResolvedValueOnce([{ id: "org-1" }]);
     mockListOrgMembers.mockResolvedValueOnce([
       { user: { id: "user-1" }, isBilling: true },
       { user: { id: "user-2" }, isBilling: false },
@@ -60,12 +57,12 @@ describe("canManageBilling", () => {
     const result = await canManageBilling(user, teamSub);
 
     expect(result).toBe(true);
-    expect(mockListUserOrgs).toHaveBeenCalledWith("user-1");
+    expect(mockGetUserOrgs).toHaveBeenCalledWith("user-1");
     expect(mockListOrgMembers).toHaveBeenCalledWith("org-1");
   });
 
   it("returns false when the user is a member but not the billing one", async () => {
-    mockListUserOrgs.mockResolvedValueOnce([{ id: "org-1" }]);
+    mockGetUserOrgs.mockResolvedValueOnce([{ id: "org-1" }]);
     mockListOrgMembers.mockResolvedValueOnce([
       { user: { id: "user-1" }, isBilling: false },
     ]);
@@ -75,7 +72,7 @@ describe("canManageBilling", () => {
   });
 
   it("returns false when the user is not in the org member list", async () => {
-    mockListUserOrgs.mockResolvedValueOnce([{ id: "org-1" }]);
+    mockGetUserOrgs.mockResolvedValueOnce([{ id: "org-1" }]);
     mockListOrgMembers.mockResolvedValueOnce([
       { user: { id: "someone-else" }, isBilling: true },
     ]);
@@ -85,27 +82,25 @@ describe("canManageBilling", () => {
   });
 
   it("returns false when the user has no orgs", async () => {
-    mockListUserOrgs.mockResolvedValueOnce([]);
+    mockGetUserOrgs.mockResolvedValueOnce([]);
 
     const result = await canManageBilling(user, teamSub);
     expect(result).toBe(false);
     expect(mockListOrgMembers).not.toHaveBeenCalled();
   });
 
-  it("returns false and logs when the org gateway throws", async () => {
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    mockListUserOrgs.mockRejectedValueOnce(new Error("api down"));
+  it("returns false when getUserOrgs returns empty (e.g. gateway error)", async () => {
+    mockGetUserOrgs.mockResolvedValueOnce([]);
 
     const result = await canManageBilling(user, teamSub);
 
     expect(result).toBe(false);
-    expect(errorSpy).toHaveBeenCalled();
-    errorSpy.mockRestore();
+    expect(mockListOrgMembers).not.toHaveBeenCalled();
   });
 
   it("returns false and logs when the member gateway throws", async () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    mockListUserOrgs.mockResolvedValueOnce([{ id: "org-1" }]);
+    mockGetUserOrgs.mockResolvedValueOnce([{ id: "org-1" }]);
     mockListOrgMembers.mockRejectedValueOnce(new Error("members down"));
 
     const result = await canManageBilling(user, teamSub);

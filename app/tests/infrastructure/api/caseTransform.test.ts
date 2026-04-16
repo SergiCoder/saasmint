@@ -92,12 +92,45 @@ describe("keysToCamelWithPrice", () => {
     const input = {
       id: "p1",
       plan_name: "Pro",
-      price: { id: "pp1", display_amount: 1900 },
+      price: { id: "pp1", display_amount: 1900, currency: "eur" },
     };
     expect(keysToCamelWithPrice(input)).toEqual({
       id: "p1",
       planName: "Pro",
-      price: { id: "pp1", displayAmount: 1900 },
+      price: { id: "pp1", displayAmount: 1900, currency: "eur" },
+    });
+  });
+
+  it("derives displayAmount from amount when missing", () => {
+    const input = {
+      id: "p1",
+      price: { id: "pp1", amount: 1900 },
+    };
+    expect(keysToCamelWithPrice(input)).toEqual({
+      id: "p1",
+      price: { id: "pp1", amount: 1900, displayAmount: 19, currency: "usd" },
+    });
+  });
+
+  it("does not override existing displayAmount", () => {
+    const input = {
+      id: "p1",
+      price: { id: "pp1", amount: 1900, display_amount: 19.0, currency: "eur" },
+    };
+    expect(keysToCamelWithPrice(input)).toEqual({
+      id: "p1",
+      price: { id: "pp1", amount: 1900, displayAmount: 19.0, currency: "eur" },
+    });
+  });
+
+  it("uses fallbackCurrency when currency is missing", () => {
+    const input = {
+      id: "p1",
+      price: { id: "pp1", amount: 1700 },
+    };
+    expect(keysToCamelWithPrice(input, "eur")).toEqual({
+      id: "p1",
+      price: { id: "pp1", amount: 1700, displayAmount: 17, currency: "eur" },
     });
   });
 

@@ -13,8 +13,8 @@
     "signOut": "Cerrar sesión",
     "contactUs": "Contáctanos",
     "profile": "Perfil",
-    "feature1": "Feature 1",
-    "feature2": "Feature 2"
+    "feature1": "Función 1",
+    "feature2": "Función 2"
   },
   "footer": {
     "privacy": "Privacidad",
@@ -196,7 +196,12 @@
     "personalPlansDesc": "Para individuos.",
     "teamPlansDesc": "Para equipos y organizaciones.",
     "pricingTitle": "Precios",
-    "total": "total"
+    "total": "total",
+    "orgName": "Organization name",
+    "teamCheckout": "Team checkout",
+    "checkoutError": "Failed to start checkout. Please try again.",
+    "managedBy": "Gestionado por {name}",
+    "teamPlanReadonly": "La suscripción de tu equipo es gestionada por el propietario de la organización."
   },
   "profile": {
     "title": "Configuración",
@@ -234,6 +239,8 @@
     "deleteDialogSubmit": "Eliminar cuenta permanentemente",
     "deleteDialogMismatch": "El correo electrónico no coincide con el de tu cuenta.",
     "deleteDialogError": "No se pudo eliminar la cuenta. Por favor, inténtalo de nuevo.",
+    "deleteBlockedOwner": "Eres propietario de una organización. Por favor, contacta con nuestro equipo de soporte para eliminar tu cuenta.",
+    "deleteBlockedMember": "Perteneces a un equipo. Por favor, contacta con el propietario de tu equipo para que te eliminen primero.",
     "pronounsHeHim": "Él",
     "pronounsSheHer": "Ella",
     "pronounsTheyThem": "Elle",
@@ -246,20 +253,49 @@
   },
   "org": {
     "title": "Organización",
-    "create": "Crear organización",
     "members": "Miembros",
-    "invite": "Invitar miembro",
     "role": "Rol",
     "remove": "Eliminar",
+    "promoteToAdmin": "Promover a administrador",
+    "demoteToMember": "Degradar a miembro",
+    "removeMemberConfirmTitle": "Eliminar miembro",
+    "removeMemberConfirmBody": "Esto eliminará permanentemente al miembro y borrará su cuenta. Esta acción no se puede deshacer.",
     "name": "Nombre",
     "email": "Correo electrónico",
     "slug": "Slug",
-    "userId": "ID de usuario",
-    "addMember": "Añadir miembro",
-    "memberAdded": "Miembro añadido correctamente",
     "roleMember": "Miembro",
     "roleAdmin": "Administrador",
-    "roleOwner": "Propietario"
+    "roleOwner": "Propietario",
+    "inviteByEmail": "Invite by email",
+    "inviteMember": "Send invitation",
+    "invitationSent": "Invitation sent successfully",
+    "pendingInvitations": "Pending invitations",
+    "cancelInvitation": "Cancel",
+    "invitedBy": "Invited by",
+    "expiresAt": "Expires",
+    "noInvitations": "No pending invitations",
+    "leaveOrg": "Leave organization",
+    "leaveOrgConfirmTitle": "Leave organization?",
+    "leaveOrgConfirmBody": "You will lose access to this organization. Your subscription will revert to a free personal plan.",
+    "transferOwnership": "Transfer ownership",
+    "transferOwnershipConfirmTitle": "Transfer ownership?",
+    "transferOwnershipConfirmBody": "This will make {name} the new owner. You will become an admin.",
+    "selectNewOwner": "Select new owner",
+    "deleteOrg": "Delete organization",
+    "deleteOrgConfirmTitle": "Delete organization?",
+    "deleteOrgConfirmBody": "This will permanently delete the organization, cancel the team subscription, and revert all members to free personal plans. This action cannot be undone.",
+    "spotsUsed": "{used} / {total} plazas",
+    "dangerZone": "Danger zone",
+    "deleteOrgBlockedSubscription": "You have an active team subscription. Please cancel it first or contact our support team to delete the organization.",
+    "noOrgMessage": "You don't have an organization yet. Subscribe to a team plan to create one.",
+    "goToSubscription": "View team plans",
+    "addSeat": "Añadir puesto",
+    "removeSeat": "Eliminar puesto",
+    "updateSeats": "Actualizar puestos",
+    "seatsUpdated": "Puestos actualizados correctamente",
+    "removeSeatConfirmTitle": "Eliminar puesto",
+    "removeSeatConfirmBody": "No se emitirá ningún reembolso. Tu próxima renovación reflejará el número reducido de puestos.",
+    "removeSeatConfirmAction": "Eliminar"
   },
   "common": {
     "loading": "Cargando...",
@@ -306,12 +342,12 @@
     "intro": "Usamos cookies para mejorar tu experiencia. Esta política explica cómo y por qué usamos cookies en nuestro sitio web."
   },
   "feature1": {
-    "title": "Feature 1",
-    "description": "Esta es una página provisional para Feature 1."
+    "title": "Función 1",
+    "description": "Esta es una página provisional para la Función 1."
   },
   "feature2": {
-    "title": "Feature 2",
-    "description": "Esta es una página provisional para Feature 2."
+    "title": "Función 2",
+    "description": "Esta es una página provisional para la Función 2."
   },
   "errorPage": {
     "title": "Algo ha salido mal",
@@ -319,5 +355,29 @@
     "retry": "Reintentar",
     "home": "Volver al inicio",
     "errorId": "ID del error"
+  },
+  "invitation": {
+    "title": "Has sido invitado",
+    "description": "Has sido invitado a unirte a {orgName}. Acepta para unirte o rechaza para ignorar.",
+    "fullName": "Nombre completo",
+    "password": "Contraseña",
+    "accept": "Aceptar invitación",
+    "decline": "Rechazar invitación"
+  },
+  "plans": {
+    "personal": {
+      "1": { "name": "Gratis", "description": "Para personas que comienzan. Incluye analíticas básicas y soporte comunitario." },
+      "2": { "name": "Basic", "description": "Para usuarios avanzados. Analíticas avanzadas, soporte por correo prioritario y acceso a la API." },
+      "3": { "name": "Pro", "description": "Todo lo de Basic más integraciones personalizadas, registros de auditoría y soporte dedicado." }
+    },
+    "team": {
+      "2": { "name": "Basic", "description": "Para equipos pequeños. Precio por puesto, paneles compartidos y analíticas de equipo." },
+      "3": { "name": "Pro", "description": "Para organizaciones en crecimiento. Precio por puesto, SSO, registros de auditoría y soporte dedicado." }
+    }
+  },
+  "products": {
+    "50": "50 créditos",
+    "200": "200 créditos",
+    "500": "500 créditos"
   }
 }

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/lib/i18n/navigation";
 import type { Locale } from "@/lib/i18n/routing";
+import { updatePreferredLocale } from "@/app/actions/user";
 
 const LOCALE_LABELS: Record<Locale, string> = {
   en: "English",
@@ -48,6 +49,7 @@ export function LocaleDropdown() {
   function switchLocale(next: Locale) {
     setOpen(false);
     router.replace(pathname, { locale: next });
+    updatePreferredLocale(next);
   }
 
   return (

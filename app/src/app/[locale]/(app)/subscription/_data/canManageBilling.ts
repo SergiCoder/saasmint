@@ -1,9 +1,9 @@
 import { cache } from "react";
-import { ListUserOrgs } from "@/application/use-cases/org/ListUserOrgs";
 import { ListOrgMembers } from "@/application/use-cases/org-member/ListOrgMembers";
 import type { Subscription } from "@/domain/models/Subscription";
 import type { User } from "@/domain/models/User";
-import { orgGateway, orgMemberGateway } from "@/infrastructure/registry";
+import { orgMemberGateway } from "@/infrastructure/registry";
+import { getUserOrgs } from "../../_data/getUserOrgs";
 
 /**
  * Returns whether the given user is allowed to manage (cancel/resume) the
@@ -21,7 +21,7 @@ export const canManageBilling = cache(async function canManageBilling(
   if (subscription.plan.context === "personal") return true;
 
   try {
-    const orgs = await new ListUserOrgs(orgGateway).execute(user.id);
+    const orgs = await getUserOrgs(user.id);
     if (orgs.length === 0) return false;
 
     // Team subscriptions belong to the user's first (currently only) org.

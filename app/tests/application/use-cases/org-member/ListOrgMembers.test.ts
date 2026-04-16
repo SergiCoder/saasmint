@@ -37,9 +37,10 @@ function makeGateway(
 ): IOrgMemberGateway {
   return {
     listMembers: vi.fn().mockResolvedValue(members),
-    addMember: vi.fn(),
     removeMember: vi.fn(),
     updateMemberRole: vi.fn(),
+    leaveOrg: vi.fn(),
+    transferOwnership: vi.fn(),
     ...overrides,
   };
 }

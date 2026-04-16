@@ -92,6 +92,17 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
   return { success: true };
 }
 
+export async function updatePreferredLocale(locale: string): Promise<void> {
+  try {
+    const user = await new GetCurrentUser(authGateway).execute();
+    await new UpdateUserProfile(userGateway).execute(user.id, {
+      preferredLocale: locale,
+    });
+  } catch {
+    // Not authenticated or update failed — silently ignore
+  }
+}
+
 export async function deleteAccount(): Promise<{
   error?: string;
   success?: boolean;

@@ -13,7 +13,7 @@ function makePlan(overrides: Partial<Plan> & { id: string }): Plan {
     name: overrides.name ?? "Plan",
     description: overrides.description ?? "",
     context: overrides.context ?? "personal",
-    tier: overrides.tier ?? "basic",
+    tier: overrides.tier ?? 2,
     interval: overrides.interval ?? "month",
     price: overrides.price ?? {
       id: `${overrides.id}-price`,
@@ -29,13 +29,13 @@ describe("buildPlanCardGroups", () => {
     const plans: Plan[] = [
       makePlan({
         id: "pb-m",
-        tier: "basic",
+        tier: 2,
         interval: "month",
         price: { id: "pm", amount: 1900, displayAmount: 19, currency: "usd" },
       }),
       makePlan({
         id: "pb-y",
-        tier: "basic",
+        tier: 2,
         interval: "year",
         price: {
           id: "py",
@@ -49,6 +49,8 @@ describe("buildPlanCardGroups", () => {
       plans,
       locale: "en-US",
       labels,
+      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
+      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
       renderCta: () => null,
     });
     expect(groups).toHaveLength(1);
@@ -60,13 +62,13 @@ describe("buildPlanCardGroups", () => {
     const plans: Plan[] = [
       makePlan({
         id: "m",
-        tier: "pro",
+        tier: 3,
         interval: "month",
         price: { id: "pm", amount: 1000, displayAmount: 10, currency: "usd" },
       }),
       makePlan({
         id: "y",
-        tier: "pro",
+        tier: 3,
         interval: "year",
         price: {
           id: "py",
@@ -80,6 +82,8 @@ describe("buildPlanCardGroups", () => {
       plans,
       locale: "en-US",
       labels,
+      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
+      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
       renderCta: () => null,
     });
     // 100 vs 120 → 16.67% rounded to 17
@@ -108,6 +112,8 @@ describe("buildPlanCardGroups", () => {
       plans,
       locale: "en-US",
       labels,
+      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
+      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
       renderCta: () => null,
     });
     expect(groups[0].yearlySavingsPct).toBeUndefined();
@@ -115,28 +121,32 @@ describe("buildPlanCardGroups", () => {
 
   it("sorts groups by tier order: free, basic, pro", () => {
     const plans: Plan[] = [
-      makePlan({ id: "pro", tier: "pro" }),
-      makePlan({ id: "free", tier: "free", price: null }),
-      makePlan({ id: "basic", tier: "basic" }),
+      makePlan({ id: "pro", tier: 3 }),
+      makePlan({ id: "free", tier: 1, price: null }),
+      makePlan({ id: "basic", tier: 2 }),
     ];
     const groups = buildPlanCardGroups({
       plans,
       locale: "en-US",
       labels,
+      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
+      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
       renderCta: () => null,
     });
-    expect(groups.map((g) => g.tier)).toEqual(["free", "basic", "pro"]);
+    expect(groups.map((g) => g.tier)).toEqual([1, 2, 3]);
   });
 
   it("separates personal and team groups", () => {
     const plans: Plan[] = [
-      makePlan({ id: "p", context: "personal", tier: "basic" }),
-      makePlan({ id: "t", context: "team", tier: "basic" }),
+      makePlan({ id: "p", context: "personal", tier: 2 }),
+      makePlan({ id: "t", context: "team", tier: 2 }),
     ];
     const groups = buildPlanCardGroups({
       plans,
       locale: "en-US",
       labels,
+      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
+      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
       renderCta: () => null,
     });
     expect(groups).toHaveLength(2);
@@ -151,6 +161,8 @@ describe("buildPlanCardGroups", () => {
       plans,
       locale: "en-US",
       labels,
+      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
+      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
       renderCta: () => null,
     });
     expect(groups[0].monthly?.intervalLabel).toBe("seat/month");
@@ -158,17 +170,19 @@ describe("buildPlanCardGroups", () => {
 
   it("marks the pro tier as highlighted", () => {
     const plans: Plan[] = [
-      makePlan({ id: "p", tier: "pro" }),
-      makePlan({ id: "b", tier: "basic" }),
+      makePlan({ id: "p", tier: 3 }),
+      makePlan({ id: "b", tier: 2 }),
     ];
     const groups = buildPlanCardGroups({
       plans,
       locale: "en-US",
       labels,
+      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
+      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
       renderCta: () => null,
     });
-    const pro = groups.find((g) => g.tier === "pro");
-    const basic = groups.find((g) => g.tier === "basic");
+    const pro = groups.find((g) => g.tier === 3);
+    const basic = groups.find((g) => g.tier === 2);
     expect(pro?.highlighted).toBe(true);
     expect(basic?.highlighted).toBe(false);
   });
@@ -177,13 +191,13 @@ describe("buildPlanCardGroups", () => {
     const plans: Plan[] = [
       makePlan({
         id: "basic-m",
-        tier: "basic",
+        tier: 2,
         interval: "month",
         price: { id: "bm", amount: 1000, displayAmount: 10, currency: "usd" },
       }),
       makePlan({
         id: "pro-m",
-        tier: "pro",
+        tier: 3,
         interval: "month",
         price: { id: "pm", amount: 5000, displayAmount: 50, currency: "usd" },
       }),
@@ -199,6 +213,8 @@ describe("buildPlanCardGroups", () => {
       currentPlanId: "basic-m",
       locale: "en-US",
       labels,
+      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
+      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
       renderCta: ({ plan, isCurrent, isUpgrade, ctaLabel }) => {
         ctaCalls.push({
           id: plan.id,
@@ -222,14 +238,14 @@ describe("buildPlanCardGroups", () => {
       makePlan({
         id: "personal-pro",
         context: "personal",
-        tier: "pro",
+        tier: 3,
         interval: "month",
         price: { id: "pp", amount: 5000, displayAmount: 50, currency: "usd" },
       }),
       makePlan({
         id: "team-basic",
         context: "team",
-        tier: "basic",
+        tier: 2,
         interval: "month",
         price: { id: "tb", amount: 1000, displayAmount: 10, currency: "usd" },
       }),
@@ -240,6 +256,8 @@ describe("buildPlanCardGroups", () => {
       currentPlanId: "personal-pro",
       locale: "en-US",
       labels,
+      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
+      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
       renderCta: ({ plan, isUpgrade }) => {
         ctaCalls.push({ id: plan.id, isUpgrade });
         return null;
@@ -254,14 +272,14 @@ describe("buildPlanCardGroups", () => {
       makePlan({
         id: "team-basic",
         context: "team",
-        tier: "basic",
+        tier: 2,
         interval: "month",
         price: { id: "tb", amount: 1000, displayAmount: 10, currency: "usd" },
       }),
       makePlan({
         id: "personal-pro",
         context: "personal",
-        tier: "pro",
+        tier: 3,
         interval: "month",
         price: { id: "pp", amount: 5000, displayAmount: 50, currency: "usd" },
       }),
@@ -272,6 +290,8 @@ describe("buildPlanCardGroups", () => {
       currentPlanId: "team-basic",
       locale: "en-US",
       labels,
+      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
+      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
       renderCta: ({ plan, isUpgrade }) => {
         ctaCalls.push({ id: plan.id, isUpgrade });
         return null;

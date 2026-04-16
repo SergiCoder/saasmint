@@ -9,6 +9,6 @@ export class DjangoApiProductGateway implements IProductGateway {
     const raw = await apiFetch<Record<string, unknown>[]>(
       `/billing/products/${query}`,
     );
-    return raw.map(keysToCamelWithPrice<Product>);
+    return raw.map((r) => keysToCamelWithPrice<Product>(r, currency));
   }
 }

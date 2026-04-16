@@ -28,7 +28,7 @@ describe("DjangoApiSubscriptionGateway", () => {
           name: "Pro",
           description: "Pro plan",
           context: "personal",
-          tier: "pro",
+          tier: 3,
           interval: "month",
           price: { id: "pp1", amount: 1900 },
         },
@@ -53,9 +53,14 @@ describe("DjangoApiSubscriptionGateway", () => {
           name: "Pro",
           description: "Pro plan",
           context: "personal",
-          tier: "pro",
+          tier: 3,
           interval: "month",
-          price: { id: "pp1", amount: 1900 },
+          price: {
+            id: "pp1",
+            amount: 1900,
+            displayAmount: 19,
+            currency: "usd",
+          },
         },
         quantity: 1,
         discountPercent: null,
@@ -92,7 +97,7 @@ describe("DjangoApiSubscriptionGateway", () => {
           name: "Pro",
           description: "Pro plan",
           context: "personal",
-          tier: "pro",
+          tier: 3,
           interval: "month",
           price: { id: "pp1", amount: 1900 },
         },
@@ -196,6 +201,19 @@ describe("DjangoApiSubscriptionGateway", () => {
       expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscription/", {
         method: "PATCH",
         body: JSON.stringify({ cancel_at_period_end: false }),
+      });
+    });
+  });
+
+  describe("updateSeats", () => {
+    it("sends PATCH /billing/subscription/ with quantity", async () => {
+      mockApiFetch.mockResolvedValue(undefined);
+
+      await gateway.updateSeats(5);
+
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscription/", {
+        method: "PATCH",
+        body: JSON.stringify({ quantity: 5 }),
       });
     });
   });

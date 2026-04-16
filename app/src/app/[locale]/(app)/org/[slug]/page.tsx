@@ -1,13 +1,18 @@
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
-import { ListUserOrgs } from "@/application/use-cases/org/ListUserOrgs";
+import { getLocale, getTranslations } from "next-intl/server";
 import { ListOrgMembers } from "@/application/use-cases/org-member/ListOrgMembers";
-import { orgGateway, orgMemberGateway } from "@/infrastructure/registry";
+import { ListInvitations } from "@/application/use-cases/invitation/ListInvitations";
+import { orgMemberGateway, invitationGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../../_data/getCurrentUser";
+import { getSubscription } from "../../_data/getSubscription";
+import { getUserOrgs } from "../../_data/getUserOrgs";
 import { OrgMemberList } from "@/presentation/components/organisms/OrgMemberList";
-import { Button } from "@/presentation/components/atoms/Button";
-import { removeMember } from "@/app/actions/org";
-import { AddMemberForm } from "./_components/InviteMemberForm";
+import { InviteByEmailForm } from "./_components/InviteByEmailForm";
+import { MemberActions } from "./_components/MemberActions";
+import { InvitationList } from "./_components/InvitationList";
+import { TransferOwnershipForm } from "./_components/TransferOwnershipForm";
+import { OrgDangerZone } from "./_components/OrgDangerZone";
+import { SeatManager } from "./_components/SeatManager";
 
 interface OrgDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -16,51 +21,95 @@ interface OrgDetailPageProps {
 export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
   const { slug } = await params;
 
-  const [t, user] = await Promise.all([
+  const [t, tCommon, locale, user] = await Promise.all([
     getTranslations("org"),
+    getTranslations("common"),
+    getLocale(),
     getCurrentUser(),
   ]);
-  const orgs = await new ListUserOrgs(orgGateway).execute(user.id);
+  const orgs = await getUserOrgs(user.id);
   const org = orgs.find((o) => o.slug === slug);
 
   if (!org) notFound();
 
-  const members = await new ListOrgMembers(orgMemberGateway).execute(org.id);
+  const [members, invitations, subscription] = await Promise.all([
+    new ListOrgMembers(orgMemberGateway).execute(org.id),
+    new ListInvitations(invitationGateway).execute(org.id).catch(() => []),
+    getSubscription(),
+  ]);
 
-  const memberRows = members.map((m) => ({
-    id: m.user.id,
-    fullName: m.user.fullName,
-    email: m.user.email,
-    avatarUrl: m.user.avatarUrl,
-    role: m.role,
-    roleLabel: t(
-      `role${m.role.charAt(0).toUpperCase() + m.role.slice(1)}` as
-        | "roleMember"
-        | "roleAdmin"
-        | "roleOwner",
-    ),
-    actions: (
-      <form action={removeMember}>
-        <input type="hidden" name="orgId" value={org.id} />
-        <input type="hidden" name="userId" value={m.user.id} />
-        <Button type="submit" variant="danger" size="sm">
-          {t("remove")}
-        </Button>
-      </form>
-    ),
-  }));
+  const isTeamSubscription = subscription?.plan.context === "team";
+  const totalSpots = isTeamSubscription ? subscription.quantity : null;
+
+  const me = members.find((m) => m.user.id === user.id);
+  const isOwner = me?.role === "owner";
+  const isAdmin = me?.role === "admin";
+  const canManage = isOwner || isAdmin;
+
+  const memberRows = members.map((m) => {
+    const isSelf = m.user.id === user.id;
+    const isMemberOwner = m.role === "owner";
+
+    let actions: React.ReactNode = null;
+    if (canManage && !isMemberOwner && !isSelf) {
+      actions = (
+        <MemberActions
+          orgId={org.id}
+          userId={m.user.id}
+          currentRole={m.role as "admin" | "member"}
+          labels={{
+            promoteToAdmin: t("promoteToAdmin"),
+            demoteToMember: t("demoteToMember"),
+            remove: t("remove"),
+            removeConfirmTitle: t("removeMemberConfirmTitle"),
+            removeConfirmBody: t("removeMemberConfirmBody"),
+            removeConfirmAction: t("remove"),
+            cancel: tCommon("cancel"),
+          }}
+        />
+      );
+    }
+
+    return {
+      id: m.user.id,
+      fullName: m.user.fullName,
+      email: m.user.email,
+      avatarUrl: m.user.avatarUrl,
+      role: m.role,
+      roleLabel: t(
+        `role${m.role.charAt(0).toUpperCase() + m.role.slice(1)}` as
+          | "roleMember"
+          | "roleAdmin"
+          | "roleOwner",
+      ),
+      actions,
+    };
+  });
+
+  const transferCandidates = members
+    .filter((m) => m.role === "admin")
+    .map((m) => ({ id: m.user.id, fullName: m.user.fullName }));
 
   return (
     <div className="mx-auto max-w-4xl space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">{org.name}</h1>
-        <p className="text-sm text-gray-500">{org.slug}</p>
-      </div>
+      <h1 className="text-2xl font-bold text-gray-900">{org.name}</h1>
 
       <section>
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          {t("members")}
-        </h2>
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-lg font-semibold text-gray-900">
+              {t("members")}
+            </h2>
+            {totalSpots !== null && (
+              <span className="text-sm text-gray-500">
+                {t("spotsUsed", { used: members.length, total: totalSpots })}
+              </span>
+            )}
+          </div>
+          {isOwner && isTeamSubscription && totalSpots !== null && (
+            <SeatManager currentSeats={totalSpots} usedSeats={members.length} />
+          )}
+        </div>
         <OrgMemberList
           members={memberRows}
           columns={{
@@ -71,12 +120,59 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
         />
       </section>
 
-      <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          {t("addMember")}
-        </h2>
-        <AddMemberForm orgId={org.id} />
-      </section>
+      {canManage && invitations.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">
+            {t("pendingInvitations")}
+          </h2>
+          <InvitationList
+            invitations={invitations}
+            orgId={org.id}
+            locale={locale}
+            columns={{
+              email: t("email"),
+              role: t("role"),
+              invitedBy: t("invitedBy"),
+              expiresAt: t("expiresAt"),
+              actions: "",
+            }}
+            roleLabels={{
+              admin: t("roleAdmin"),
+              member: t("roleMember"),
+            }}
+            cancelLabel={t("cancelInvitation")}
+          />
+        </section>
+      )}
+
+      {canManage && (
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">
+            {t("inviteByEmail")}
+          </h2>
+          <InviteByEmailForm orgId={org.id} />
+        </section>
+      )}
+
+      {isOwner && transferCandidates.length > 0 && (
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">
+            {t("transferOwnership")}
+          </h2>
+          <TransferOwnershipForm
+            orgId={org.id}
+            candidates={transferCandidates}
+            label={t("transferOwnership")}
+            selectLabel={t("selectNewOwner")}
+            confirmTitle={t("transferOwnershipConfirmTitle")}
+            confirmBody={t("transferOwnershipConfirmBody", { name: "{name}" })}
+            confirmAction={tCommon("confirm")}
+            confirmDismiss={tCommon("cancel")}
+          />
+        </section>
+      )}
+
+      {isOwner && <OrgDangerZone />}
     </div>
   );
 }

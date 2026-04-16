@@ -36,8 +36,13 @@ describe("DjangoApiOrgMemberGateway", () => {
   const gateway = new DjangoApiOrgMemberGateway();
 
   describe("listMembers", () => {
-    it("fetches GET /orgs/:orgId/members/ and maps results", async () => {
-      mockApiFetch.mockResolvedValue([rawMember]);
+    it("fetches GET /orgs/:orgId/members/ and maps paginated results", async () => {
+      mockApiFetch.mockResolvedValue({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [rawMember],
+      });
 
       const result = await gateway.listMembers("o1");
 
@@ -50,7 +55,12 @@ describe("DjangoApiOrgMemberGateway", () => {
     });
 
     it("returns an empty array when no members exist", async () => {
-      mockApiFetch.mockResolvedValue([]);
+      mockApiFetch.mockResolvedValue({
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      });
 
       const result = await gateway.listMembers("o1");
       expect(result).toEqual([]);
@@ -62,27 +72,6 @@ describe("DjangoApiOrgMemberGateway", () => {
       await expect(gateway.listMembers("o1")).rejects.toThrow(
         "API 500: Server Error",
       );
-    });
-  });
-
-  describe("addMember", () => {
-    it("sends POST /orgs/:orgId/members/ with user_id and role", async () => {
-      mockApiFetch.mockResolvedValue(rawMember);
-
-      await gateway.addMember("o1", "user-uuid", "member");
-
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/members/", {
-        method: "POST",
-        body: JSON.stringify({ user_id: "user-uuid", role: "member" }),
-      });
-    });
-
-    it("propagates errors from apiFetch", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 409: Already a member"));
-
-      await expect(
-        gateway.addMember("o1", "user-uuid", "member"),
-      ).rejects.toThrow("API 409: Already a member");
     });
   });
 
@@ -124,6 +113,50 @@ describe("DjangoApiOrgMemberGateway", () => {
       await expect(
         gateway.updateMemberRole("o1", "u1", "admin"),
       ).rejects.toThrow("API 403: Forbidden");
+    });
+  });
+
+  describe("leaveOrg", () => {
+    it("sends POST /orgs/:orgId/leave/", async () => {
+      mockApiFetch.mockResolvedValue(undefined);
+
+      await gateway.leaveOrg("o1");
+
+      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/leave/", {
+        method: "POST",
+      });
+    });
+
+    it("propagates errors from apiFetch", async () => {
+      mockApiFetch.mockRejectedValue(new Error("API 400: Owner cannot leave"));
+
+      await expect(gateway.leaveOrg("o1")).rejects.toThrow(
+        "API 400: Owner cannot leave",
+      );
+    });
+  });
+
+  describe("transferOwnership", () => {
+    it("sends POST /orgs/:orgId/transfer-ownership/ with user_id", async () => {
+      mockApiFetch.mockResolvedValue(undefined);
+
+      await gateway.transferOwnership("o1", "u2");
+
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        "/orgs/o1/transfer-ownership/",
+        {
+          method: "POST",
+          body: JSON.stringify({ user_id: "u2" }),
+        },
+      );
+    });
+
+    it("propagates errors from apiFetch", async () => {
+      mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
+
+      await expect(gateway.transferOwnership("o1", "u2")).rejects.toThrow(
+        "API 403: Forbidden",
+      );
     });
   });
 });

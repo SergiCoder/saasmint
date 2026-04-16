@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { GetPhonePrefixes } from "@/application/use-cases/reference/GetPhonePrefixes";
 import { GetUserProfile } from "@/application/use-cases/user/GetUserProfile";
-import { referenceGateway, userGateway } from "@/infrastructure/registry";
+import { ListOrgMembers } from "@/application/use-cases/org-member/ListOrgMembers";
+import {
+  referenceGateway,
+  userGateway,
+  orgMemberGateway,
+} from "@/infrastructure/registry";
+import { getUserOrgs } from "../_data/getUserOrgs";
 import { getCurrentUser } from "../_data/getCurrentUser";
 import { ChangePasswordForm } from "./_components/ChangePasswordForm";
 import { DangerZone } from "./_components/DangerZone";
@@ -18,10 +24,25 @@ export default async function ProfilePage() {
     getTranslations("profile"),
     getCurrentUser(),
   ]);
-  const [user, phonePrefixes] = await Promise.all([
+  const [user, phonePrefixes, userOrgs] = await Promise.all([
     new GetUserProfile(userGateway).execute(currentUser.id),
     new GetPhonePrefixes(referenceGateway).execute(),
+    getUserOrgs(currentUser.id),
   ]);
+
+  let deleteRestriction: "owner" | "member" | undefined;
+  if (userOrgs.length > 0) {
+    try {
+      const members = await new ListOrgMembers(orgMemberGateway).execute(
+        userOrgs[0].id,
+      );
+      const me = members.find((m) => m.user.id === currentUser.id);
+      deleteRestriction = me?.role === "owner" ? "owner" : "member";
+    } catch {
+      // If we can't determine the role, block deletion conservatively
+      deleteRestriction = "member";
+    }
+  }
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">
@@ -35,7 +56,10 @@ export default async function ProfilePage() {
         </h2>
         <ChangePasswordForm />
       </section>
-      <DangerZone userEmail={user.email} />
+      <DangerZone
+        userEmail={user.email}
+        deleteRestriction={deleteRestriction}
+      />
     </div>
   );
 }

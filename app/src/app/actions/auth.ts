@@ -6,29 +6,16 @@ import { SignOut } from "@/application/use-cases/auth/SignOut";
 import { authGateway } from "@/infrastructure/registry";
 import {
   clearAuthCookies,
+  consumePendingPlan,
   setAuthCookies,
+  setPendingPlan,
 } from "@/infrastructure/auth/cookies";
+import { friendlyError } from "@/lib/friendlyError";
 
 interface TokenResponse {
   access_token: string;
   refresh_token: string;
   token_type?: string;
-}
-
-/** Extract a human-readable message from an API error thrown by apiClient. */
-function friendlyError(err: unknown, fallback: string): string {
-  if (!(err instanceof Error)) return fallback;
-  // apiClient throws `Error("API <status>: <body>")` — try to parse the JSON body
-  const match = err.message.match(/^API \d+: (.+)$/s);
-  if (match) {
-    try {
-      const body = JSON.parse(match[1]) as { detail?: string };
-      if (typeof body.detail === "string") return body.detail;
-    } catch {
-      // not JSON — fall through
-    }
-  }
-  return fallback;
 }
 
 function extractCredentials(
@@ -62,7 +49,12 @@ export async function signIn(_prevState: unknown, formData: FormData) {
 
   const plan = formData.get("plan");
   if (typeof plan === "string" && plan) {
-    redirect(`/subscription/checkout?plan=${encodeURIComponent(plan)}`);
+    const context = formData.get("context");
+    const checkoutPath =
+      context === "team"
+        ? "/subscription/team-checkout"
+        : "/subscription/checkout";
+    redirect(`${checkoutPath}?plan=${encodeURIComponent(plan)}`);
   }
 
   redirect("/dashboard");
@@ -81,8 +73,14 @@ export async function signUp(_prevState: unknown, formData: FormData) {
     return { error: "Full name must be between 3 and 255 characters" };
   }
 
+  const context = formData.get("context");
+  const isTeam = context === "team";
+  const registerEndpoint = isTeam
+    ? "/auth/register/org-owner/"
+    : "/auth/register/";
+
   try {
-    await publicApiFetch<TokenResponse>("/auth/register/", {
+    await publicApiFetch<TokenResponse>(registerEndpoint, {
       method: "POST",
       body: JSON.stringify({
         email: result.email,
@@ -96,8 +94,20 @@ export async function signUp(_prevState: unknown, formData: FormData) {
     };
   }
 
+  const plan = formData.get("plan");
+  if (typeof plan === "string" && plan) {
+    await setPendingPlan(plan, isTeam);
+  }
+
   // Registration returns tokens but user must verify email first.
-  redirect("/login?registered=true");
+  const loginParams = new URLSearchParams({ registered: "true" });
+  if (typeof plan === "string" && plan) {
+    loginParams.set("plan", plan);
+  }
+  if (isTeam) {
+    loginParams.set("context", "team");
+  }
+  redirect(`/login?${loginParams.toString()}`);
 }
 
 export async function resetPassword(_prevState: unknown, formData: FormData) {
@@ -195,7 +205,9 @@ export async function changePassword(_prevState: unknown, formData: FormData) {
   return { success: true };
 }
 
-export async function verifyEmail(token: string): Promise<{ error?: string }> {
+export async function verifyEmail(
+  token: string,
+): Promise<{ error?: string; pendingPlan?: string; isTeamPlan?: boolean }> {
   let data: TokenResponse;
   try {
     data = await publicApiFetch<TokenResponse>("/auth/verify-email/", {
@@ -209,7 +221,10 @@ export async function verifyEmail(token: string): Promise<{ error?: string }> {
   }
 
   await setAuthCookies(data.access_token, data.refresh_token);
-  return {};
+  const pending = await consumePendingPlan();
+  return pending
+    ? { pendingPlan: pending.plan, isTeamPlan: pending.isTeam }
+    : {};
 }
 
 export async function signOut() {

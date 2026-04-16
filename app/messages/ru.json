@@ -1,7 +1,7 @@
 {
   "nav": {
     "home": "Главная",
-    "blog": "Blog",
+    "blog": "Блог",
     "getStarted": "Начать",
     "dashboard": "Панель управления",
     "subscription": "Подписка",
@@ -13,8 +13,8 @@
     "signOut": "Выйти",
     "contactUs": "Связаться с нами",
     "profile": "Профиль",
-    "feature1": "Feature 1",
-    "feature2": "Feature 2"
+    "feature1": "Функция 1",
+    "feature2": "Функция 2"
   },
   "footer": {
     "privacy": "Конфиденциальность",
@@ -196,7 +196,12 @@
     "personalPlansDesc": "Для частных лиц.",
     "teamPlansDesc": "Для команд и организаций.",
     "pricingTitle": "Цены",
-    "total": "итого"
+    "total": "итого",
+    "orgName": "Organization name",
+    "teamCheckout": "Team checkout",
+    "checkoutError": "Failed to start checkout. Please try again.",
+    "managedBy": "Управляется {name}",
+    "teamPlanReadonly": "Подписка вашей команды управляется владельцем организации."
   },
   "profile": {
     "title": "Настройки",
@@ -234,6 +239,8 @@
     "deleteDialogSubmit": "Удалить аккаунт навсегда",
     "deleteDialogMismatch": "Электронная почта не совпадает с почтой вашего аккаунта.",
     "deleteDialogError": "Не удалось удалить аккаунт. Пожалуйста, попробуйте снова.",
+    "deleteBlockedOwner": "Вы являетесь владельцем организации. Пожалуйста, свяжитесь с нашей службой поддержки для удаления аккаунта.",
+    "deleteBlockedMember": "Вы состоите в команде. Пожалуйста, свяжитесь с владельцем команды, чтобы вас сначала удалили.",
     "pronounsHeHim": "Он/Его",
     "pronounsSheHer": "Она/Её",
     "pronounsTheyThem": "Они/Их",
@@ -246,20 +253,49 @@
   },
   "org": {
     "title": "Организация",
-    "create": "Создать организацию",
     "members": "Участники",
-    "invite": "Пригласить участника",
     "role": "Роль",
     "remove": "Удалить",
+    "promoteToAdmin": "Повысить до администратора",
+    "demoteToMember": "Понизить до участника",
+    "removeMemberConfirmTitle": "Удалить участника",
+    "removeMemberConfirmBody": "Участник будет окончательно удалён, а его аккаунт — безвозвратно стёрт. Это действие нельзя отменить.",
     "name": "Имя",
     "email": "Эл. почта",
     "slug": "Slug",
-    "userId": "ID пользователя",
-    "addMember": "Добавить участника",
-    "memberAdded": "Участник успешно добавлен",
     "roleMember": "Участник",
     "roleAdmin": "Администратор",
-    "roleOwner": "Владелец"
+    "roleOwner": "Владелец",
+    "inviteByEmail": "Invite by email",
+    "inviteMember": "Send invitation",
+    "invitationSent": "Invitation sent successfully",
+    "pendingInvitations": "Pending invitations",
+    "cancelInvitation": "Cancel",
+    "invitedBy": "Invited by",
+    "expiresAt": "Expires",
+    "noInvitations": "No pending invitations",
+    "leaveOrg": "Leave organization",
+    "leaveOrgConfirmTitle": "Leave organization?",
+    "leaveOrgConfirmBody": "You will lose access to this organization. Your subscription will revert to a free personal plan.",
+    "transferOwnership": "Transfer ownership",
+    "transferOwnershipConfirmTitle": "Transfer ownership?",
+    "transferOwnershipConfirmBody": "This will make {name} the new owner. You will become an admin.",
+    "selectNewOwner": "Select new owner",
+    "deleteOrg": "Delete organization",
+    "deleteOrgConfirmTitle": "Delete organization?",
+    "deleteOrgConfirmBody": "This will permanently delete the organization, cancel the team subscription, and revert all members to free personal plans. This action cannot be undone.",
+    "spotsUsed": "{used} / {total} мест",
+    "dangerZone": "Danger zone",
+    "deleteOrgBlockedSubscription": "You have an active team subscription. Please cancel it first or contact our support team to delete the organization.",
+    "noOrgMessage": "You don't have an organization yet. Subscribe to a team plan to create one.",
+    "goToSubscription": "View team plans",
+    "addSeat": "Добавить место",
+    "removeSeat": "Удалить место",
+    "updateSeats": "Обновить места",
+    "seatsUpdated": "Места успешно обновлены",
+    "removeSeatConfirmTitle": "Удалить место",
+    "removeSeatConfirmBody": "Возврат средств не производится. При следующем продлении будет учтено уменьшенное количество мест.",
+    "removeSeatConfirmAction": "Удалить"
   },
   "common": {
     "loading": "Загрузка...",
@@ -306,12 +342,12 @@
     "intro": "Мы используем файлы cookie для улучшения вашего опыта. Эта политика объясняет, как и почему мы используем файлы cookie на нашем сайте."
   },
   "feature1": {
-    "title": "Feature 1",
-    "description": "Это страница-заглушка для Feature 1."
+    "title": "Функция 1",
+    "description": "Это страница-заглушка для Функции 1."
   },
   "feature2": {
-    "title": "Feature 2",
-    "description": "Это страница-заглушка для Feature 2."
+    "title": "Функция 2",
+    "description": "Это страница-заглушка для Функции 2."
   },
   "errorPage": {
     "title": "Что-то пошло не так",
@@ -319,5 +355,44 @@
     "retry": "Повторить",
     "home": "На главную",
     "errorId": "ID ошибки"
+  },
+  "invitation": {
+    "title": "Вас пригласили",
+    "description": "Вас пригласили присоединиться к {orgName}. Примите, чтобы присоединиться, или отклоните, чтобы проигнорировать.",
+    "fullName": "Полное имя",
+    "password": "Пароль",
+    "accept": "Принять приглашение",
+    "decline": "Отклонить приглашение"
+  },
+  "plans": {
+    "personal": {
+      "1": {
+        "name": "Бесплатный",
+        "description": "Для начинающих пользователей. Включает базовую аналитику и поддержку сообщества."
+      },
+      "2": {
+        "name": "Basic",
+        "description": "Для продвинутых пользователей. Расширенная аналитика, приоритетная поддержка по e-mail и доступ к API."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "Всё из Basic плюс пользовательские интеграции, журналы аудита и выделенная поддержка."
+      }
+    },
+    "team": {
+      "2": {
+        "name": "Basic",
+        "description": "Для небольших команд. Оплата за место, общие дашборды и командная аналитика."
+      },
+      "3": {
+        "name": "Pro",
+        "description": "Для растущих организаций. Оплата за место, SSO, журналы аудита и выделенная поддержка."
+      }
+    }
+  },
+  "products": {
+    "50": "50 кредитов",
+    "200": "200 кредитов",
+    "500": "500 кредитов"
   }
 }
