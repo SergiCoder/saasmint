@@ -137,18 +137,15 @@ describe("DjangoApiOrgMemberGateway", () => {
   });
 
   describe("transferOwnership", () => {
-    it("sends POST /orgs/:orgId/transfer-ownership/ with user_id", async () => {
+    it("sends PUT /orgs/:orgId/owner/ with user_id", async () => {
       mockApiFetch.mockResolvedValue(undefined);
 
       await gateway.transferOwnership("o1", "u2");
 
-      expect(mockApiFetch).toHaveBeenCalledWith(
-        "/orgs/o1/transfer-ownership/",
-        {
-          method: "POST",
-          body: JSON.stringify({ user_id: "u2" }),
-        },
-      );
+      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/owner/", {
+        method: "PUT",
+        body: JSON.stringify({ user_id: "u2" }),
+      });
     });
 
     it("propagates errors from apiFetch", async () => {

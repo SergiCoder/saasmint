@@ -5,6 +5,7 @@ import {
   keysToSnake,
   keysToCamel,
   keysToCamelWithPrice,
+  flattenPhone,
 } from "@/infrastructure/api/caseTransform";
 
 describe("toSnakeCase", () => {
@@ -148,5 +149,50 @@ describe("keysToCamelWithPrice", () => {
       planName: "Free",
       price: null,
     });
+  });
+});
+
+describe("flattenPhone", () => {
+  it("flattens a nested phone object into phonePrefix and phone fields", () => {
+    const raw = { phone: { prefix: "+34", number: "612345678" } };
+    const user = { id: "u1" };
+
+    flattenPhone(raw, user);
+
+    expect(user).toMatchObject({
+      id: "u1",
+      phonePrefix: "+34",
+      phone: "612345678",
+    });
+  });
+
+  it("sets both fields to null when phone is null", () => {
+    const raw = { phone: null };
+    const user: Record<string, unknown> = {};
+
+    flattenPhone(raw, user);
+
+    expect(user).toEqual({ phonePrefix: null, phone: null });
+  });
+
+  it("sets both fields to null when phone is undefined", () => {
+    const raw: Record<string, unknown> = {};
+    const user: Record<string, unknown> = {};
+
+    flattenPhone(raw, user);
+
+    expect(user).toEqual({ phonePrefix: null, phone: null });
+  });
+
+  it("overrides any pre-existing phone fields on the target", () => {
+    const raw = { phone: { prefix: "+1", number: "5550100" } };
+    const user: Record<string, unknown> = {
+      phonePrefix: "+999",
+      phone: "000",
+    };
+
+    flattenPhone(raw, user);
+
+    expect(user).toMatchObject({ phonePrefix: "+1", phone: "5550100" });
   });
 });

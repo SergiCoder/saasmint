@@ -73,6 +73,22 @@ describe("invitation server actions", () => {
       expect(result).toEqual({ error: "Missing required fields" });
       expect(mockAcceptInvitationExecute).not.toHaveBeenCalled();
     });
+
+    it("returns a friendly error and does not set cookies when use-case throws", async () => {
+      mockAcceptInvitationExecute.mockRejectedValue(new Error("token expired"));
+      const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const formData = new FormData();
+      formData.set("token", "abc123");
+      formData.set("fullName", "Bob Smith");
+      formData.set("password", "secret123");
+
+      const result = await acceptInvitation(null, formData);
+      expect(result).toEqual({ error: "Failed to accept invitation" });
+      expect(mockSetAuthCookies).not.toHaveBeenCalled();
+      expect(errSpy).toHaveBeenCalled();
+      errSpy.mockRestore();
+    });
   });
 
   describe("declineInvitation", () => {
@@ -94,6 +110,19 @@ describe("invitation server actions", () => {
 
       await declineInvitation(formData);
       expect(mockDeclineInvitationExecute).not.toHaveBeenCalled();
+    });
+
+    it("swallows errors and does not redirect when use-case throws", async () => {
+      mockDeclineInvitationExecute.mockRejectedValue(new Error("API 500"));
+      const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const formData = new FormData();
+      formData.set("token", "abc123");
+
+      await declineInvitation(formData);
+      expect(mockRedirect).not.toHaveBeenCalled();
+      expect(errSpy).toHaveBeenCalled();
+      errSpy.mockRestore();
     });
   });
 });

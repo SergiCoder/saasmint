@@ -41,8 +41,8 @@ export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
   }
 
   async transferOwnership(orgId: string, userId: string): Promise<void> {
-    await apiFetch<void>(`/orgs/${orgId}/transfer-ownership/`, {
-      method: "POST",
+    await apiFetch<void>(`/orgs/${orgId}/owner/`, {
+      method: "PUT",
       body: JSON.stringify({ user_id: userId }),
     });
   }

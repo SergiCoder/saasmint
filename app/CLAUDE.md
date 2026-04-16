@@ -27,7 +27,7 @@ Core types in `src/domain/models/`:
 - `PlanPrice` — individual plan price point (id, amount, displayAmount, currency)
 - `Product` — one-time purchase product (id, name, type: `one_time`, credits, `price`)
 - `ProductPrice` — individual product price point (id, amount, displayAmount, currency)
-- `Subscription` — active Stripe subscription (status, plan snapshot, period dates, trial)
+- `Subscription` — active Stripe subscription (status, plan snapshot, seat `quantity`, period dates, trial); team seat count is capped by `MAX_SEATS`
 
 Domain errors in `src/domain/errors/`:
 
@@ -92,7 +92,7 @@ Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, 
 - `(app)/` — authenticated pages (dashboard, subscription, profile, org) using `AppLayout`
 - `(public)/` — unauthenticated public pages (invitation acceptance)
 
-Route-specific client components live in co-located `_components/` directories (e.g. `(app)/subscription/_components/CheckoutButton.tsx`).
+Route-specific client components live in co-located `_components/` directories (e.g. `(app)/subscription/_components/CheckoutButton.tsx`). Shared server-side data fetchers live in co-located `_data/` directories and are wrapped in `React.cache()` so a layout and its pages share a single API call per render (e.g. `(app)/_data/getSubscription.ts`).
 
 ## Key Rules
 

@@ -16,7 +16,7 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
     try {
       const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
       const raw = await apiFetch<Record<string, unknown>>(
-        `/billing/subscription/${query}`,
+        `/billing/subscriptions/me/${query}`,
       );
       const sub = keysToCamel<Subscription>(raw);
       if (raw.plan && typeof raw.plan === "object") {
@@ -52,18 +52,18 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
   }
 
   async cancelSubscription(): Promise<void> {
-    await apiFetch<void>("/billing/subscription/", { method: "DELETE" });
+    await apiFetch<void>("/billing/subscriptions/me/", { method: "DELETE" });
   }
 
   async resumeSubscription(): Promise<void> {
-    await apiFetch<void>("/billing/subscription/", {
+    await apiFetch<void>("/billing/subscriptions/me/", {
       method: "PATCH",
       body: JSON.stringify({ cancel_at_period_end: false }),
     });
   }
 
   async updateSeats(quantity: number): Promise<void> {
-    await apiFetch<void>("/billing/subscription/", {
+    await apiFetch<void>("/billing/subscriptions/me/", {
       method: "PATCH",
       body: JSON.stringify({ quantity }),
     });

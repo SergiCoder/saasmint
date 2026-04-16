@@ -21,8 +21,4 @@ export class DjangoApiOrgGateway implements IOrgGateway {
     const data = await apiFetch<{ results: Org[] }>("/orgs/");
     return data.results;
   }
-
-  async deleteOrg(orgId: string): Promise<void> {
-    await apiFetch<void>(`/orgs/${orgId}/`, { method: "DELETE" });
-  }
 }

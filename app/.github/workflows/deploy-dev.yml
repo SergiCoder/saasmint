@@ -14,7 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1
+        # Pinned to a specific release tag instead of the floating @v1 major
+        # tag to mitigate supply-chain risk (a re-tag of v1 would otherwise
+        # silently run a new version of the action on the next deploy). Move
+        # to a full commit SHA once verified in the repo's release page.
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.VPS_HOST }}
           port: ${{ secrets.VPS_PORT }}

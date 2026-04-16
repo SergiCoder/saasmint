@@ -41,6 +41,13 @@ vi.mock("@/application/use-cases/billing/ResumeSubscription", () => ({
   },
 }));
 
+const mockUpdateSeatsExecute = vi.fn();
+vi.mock("@/application/use-cases/billing/UpdateSeats", () => ({
+  UpdateSeats: function UpdateSeats() {
+    return { execute: mockUpdateSeatsExecute };
+  },
+}));
+
 const mockGetCurrentUserExecute = vi.fn();
 vi.mock("@/application/use-cases/auth/GetCurrentUser", () => ({
   GetCurrentUser: function GetCurrentUser() {
@@ -71,6 +78,7 @@ let startCheckout: typeof import("@/app/actions/billing").startCheckout;
 let openBillingPortal: typeof import("@/app/actions/billing").openBillingPortal;
 let cancelSubscription: typeof import("@/app/actions/billing").cancelSubscription;
 let resumeSubscription: typeof import("@/app/actions/billing").resumeSubscription;
+let updateSeats: typeof import("@/app/actions/billing").updateSeats;
 
 beforeEach(async () => {
   vi.clearAllMocks();
@@ -79,6 +87,7 @@ beforeEach(async () => {
   openBillingPortal = mod.openBillingPortal;
   cancelSubscription = mod.cancelSubscription;
   resumeSubscription = mod.resumeSubscription;
+  updateSeats = mod.updateSeats;
 });
 
 describe("billing server actions", () => {
@@ -131,6 +140,44 @@ describe("billing server actions", () => {
           quantity: 5,
         }),
       );
+    });
+
+    it("forwards orgName when provided", async () => {
+      mockStartCheckoutExecute.mockResolvedValue({
+        url: "https://checkout.stripe.com/sess_team",
+      });
+
+      const formData = new FormData();
+      formData.set("planPriceId", "price_team");
+      formData.set("quantity", "3");
+      formData.set("orgName", "Acme Corp");
+
+      await expect(startCheckout(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockStartCheckoutExecute).toHaveBeenCalledWith(
+        expect.objectContaining({
+          planPriceId: "price_team",
+          quantity: 3,
+          orgName: "Acme Corp",
+        }),
+      );
+    });
+
+    it("omits orgName when value is empty", async () => {
+      mockStartCheckoutExecute.mockResolvedValue({
+        url: "https://checkout.stripe.com/sess_team",
+      });
+
+      const formData = new FormData();
+      formData.set("planPriceId", "price_team");
+      formData.set("orgName", "");
+
+      await expect(startCheckout(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      const callArgs = mockStartCheckoutExecute.mock.calls[0][0];
+      expect(callArgs.orgName).toBeUndefined();
     });
 
     it("omits quantity when value is 0 or invalid", async () => {
@@ -313,6 +360,93 @@ describe("billing server actions", () => {
       await resumeSubscription();
 
       expect(mockResumeSubscriptionExecute).not.toHaveBeenCalled();
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+      errSpy.mockRestore();
+    });
+  });
+
+  describe("updateSeats", () => {
+    const seatsUser = { id: "u1" };
+    const teamSubscription = { id: "s1", plan: { context: "team" } };
+
+    beforeEach(() => {
+      mockGetCurrentUserExecute.mockResolvedValue(seatsUser);
+      mockGetSubscriptionExecute.mockResolvedValue(teamSubscription);
+      mockCanManageBilling.mockResolvedValue(true);
+    });
+
+    it("updates seats and revalidates the org layout on success", async () => {
+      mockUpdateSeatsExecute.mockResolvedValue(undefined);
+
+      const formData = new FormData();
+      formData.set("quantity", "5");
+
+      const result = await updateSeats(undefined, formData);
+      expect(mockUpdateSeatsExecute).toHaveBeenCalledWith(5);
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        "/[locale]/org",
+        "layout",
+      );
+      expect(result).toEqual({ ok: true });
+    });
+
+    it("returns 'Invalid input' when quantity is missing", async () => {
+      const formData = new FormData();
+
+      const result = await updateSeats(undefined, formData);
+      expect(result).toEqual({ ok: false, error: "Invalid input" });
+      expect(mockUpdateSeatsExecute).not.toHaveBeenCalled();
+    });
+
+    it("returns 'Invalid seat count' when quantity is 0", async () => {
+      const formData = new FormData();
+      formData.set("quantity", "0");
+
+      const result = await updateSeats(undefined, formData);
+      expect(result).toEqual({ ok: false, error: "Invalid seat count" });
+      expect(mockUpdateSeatsExecute).not.toHaveBeenCalled();
+    });
+
+    it("returns 'Invalid seat count' when quantity is not a number", async () => {
+      const formData = new FormData();
+      formData.set("quantity", "abc");
+
+      const result = await updateSeats(undefined, formData);
+      expect(result).toEqual({ ok: false, error: "Invalid seat count" });
+    });
+
+    it("returns 'Invalid seat count' when quantity exceeds MAX_SEATS", async () => {
+      const formData = new FormData();
+      formData.set("quantity", "999999");
+
+      const result = await updateSeats(undefined, formData);
+      expect(result).toEqual({ ok: false, error: "Invalid seat count" });
+      expect(mockUpdateSeatsExecute).not.toHaveBeenCalled();
+    });
+
+    it("returns an error message when the caller cannot manage billing", async () => {
+      mockCanManageBilling.mockResolvedValue(false);
+      const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const formData = new FormData();
+      formData.set("quantity", "5");
+
+      const result = await updateSeats(undefined, formData);
+      expect(result.ok).toBe(false);
+      expect(mockUpdateSeatsExecute).not.toHaveBeenCalled();
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+      errSpy.mockRestore();
+    });
+
+    it("returns the use-case error message when UpdateSeats throws", async () => {
+      mockUpdateSeatsExecute.mockRejectedValue(new Error("Seat limit reached"));
+      const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const formData = new FormData();
+      formData.set("quantity", "5");
+
+      const result = await updateSeats(undefined, formData);
+      expect(result).toEqual({ ok: false, error: "Seat limit reached" });
       expect(mockRevalidatePath).not.toHaveBeenCalled();
       errSpy.mockRestore();
     });

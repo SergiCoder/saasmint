@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { StartCheckout } from "@/application/use-cases/billing/StartCheckout";
 import { subscriptionGateway } from "@/infrastructure/registry";
-import { friendlyError } from "@/lib/friendlyError";
 import { getCurrentUser } from "../../_data/getCurrentUser";
 import { APP_ORIGIN, assertTrustedRedirect } from "../_data/trustedRedirect";
 
@@ -29,11 +28,10 @@ export default async function CheckoutPage({
     url = session.url;
   } catch (err) {
     console.error("Failed to start checkout", err);
-    const message = friendlyError(
-      err,
-      "Something went wrong. Please try again.",
-    );
-    redirect(`/subscription?error=${encodeURIComponent(message)}`);
+    // Use a short, non-reflective error code the subscription page maps to
+    // a translated message — prevents an attacker-controlled ?error=... URL
+    // from displaying arbitrary text inside the authenticated app.
+    redirect(`/subscription?error=checkout_failed`);
   }
 
   if (!url) {

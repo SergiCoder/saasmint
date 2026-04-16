@@ -5,6 +5,10 @@ import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/lib/i18n/navigation";
 import { routing, type Locale } from "@/lib/i18n/routing";
 
+function isSupportedLocale(value: string): value is Locale {
+  return (routing.locales as readonly string[]).includes(value);
+}
+
 export function LocaleRedirect({
   preferredLocale,
 }: {
@@ -18,9 +22,9 @@ export function LocaleRedirect({
     if (
       preferredLocale &&
       preferredLocale !== locale &&
-      (routing.locales as readonly string[]).includes(preferredLocale)
+      isSupportedLocale(preferredLocale)
     ) {
-      router.replace(pathname, { locale: preferredLocale as Locale });
+      router.replace(pathname, { locale: preferredLocale });
     }
   }, [preferredLocale, locale, router, pathname]);
 

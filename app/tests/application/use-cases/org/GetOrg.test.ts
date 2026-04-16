@@ -13,7 +13,6 @@ const org: Org = {
 
 function makeGateway(overrides?: Partial<IOrgGateway>): IOrgGateway {
   return {
-    deleteOrg: vi.fn(),
     getOrg: vi.fn().mockResolvedValue(org),
     updateOrg: vi.fn(),
     listUserOrgs: vi.fn(),

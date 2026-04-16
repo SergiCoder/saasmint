@@ -69,8 +69,13 @@ describe("DjangoApiInvitationGateway", () => {
   });
 
   describe("listInvitations", () => {
-    it("fetches GET /orgs/:orgId/invitations/ and maps results", async () => {
-      mockApiFetch.mockResolvedValue([rawInvitation]);
+    it("fetches GET /orgs/:orgId/invitations/ and maps paginated results", async () => {
+      mockApiFetch.mockResolvedValue({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [rawInvitation],
+      });
 
       const result = await gateway.listInvitations("o1");
 
@@ -80,7 +85,12 @@ describe("DjangoApiInvitationGateway", () => {
     });
 
     it("returns an empty array when no invitations exist", async () => {
-      mockApiFetch.mockResolvedValue([]);
+      mockApiFetch.mockResolvedValue({
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      });
 
       const result = await gateway.listInvitations("o1");
       expect(result).toEqual([]);

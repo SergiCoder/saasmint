@@ -1,8 +1,7 @@
 import { cache } from "react";
-import { ListOrgMembers } from "@/application/use-cases/org-member/ListOrgMembers";
 import type { Subscription } from "@/domain/models/Subscription";
 import type { User } from "@/domain/models/User";
-import { orgMemberGateway } from "@/infrastructure/registry";
+import { getOrgMembers } from "../../_data/getOrgMembers";
 import { getUserOrgs } from "../../_data/getUserOrgs";
 
 /**
@@ -26,7 +25,7 @@ export const canManageBilling = cache(async function canManageBilling(
 
     // Team subscriptions belong to the user's first (currently only) org.
     const org = orgs[0];
-    const members = await new ListOrgMembers(orgMemberGateway).execute(org.id);
+    const members = await getOrgMembers(org.id);
     const me = members.find((m) => m.user.id === user.id);
     return me?.isBilling === true;
   } catch (err) {

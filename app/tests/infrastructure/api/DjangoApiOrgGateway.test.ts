@@ -92,24 +92,4 @@ describe("DjangoApiOrgGateway", () => {
       );
     });
   });
-
-  describe("deleteOrg", () => {
-    it("sends DELETE /orgs/:orgId/", async () => {
-      mockApiFetch.mockResolvedValue(undefined);
-
-      await gateway.deleteOrg("o1");
-
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/", {
-        method: "DELETE",
-      });
-    });
-
-    it("propagates errors from apiFetch", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
-
-      await expect(gateway.deleteOrg("o1")).rejects.toThrow(
-        "API 403: Forbidden",
-      );
-    });
-  });
 });

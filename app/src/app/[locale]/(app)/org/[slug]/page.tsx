@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { ListOrgMembers } from "@/application/use-cases/org-member/ListOrgMembers";
 import { ListInvitations } from "@/application/use-cases/invitation/ListInvitations";
-import { orgMemberGateway, invitationGateway } from "@/infrastructure/registry";
+import { invitationGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../../_data/getCurrentUser";
+import { getOrgMembers } from "../../_data/getOrgMembers";
 import { getSubscription } from "../../_data/getSubscription";
 import { getUserOrgs } from "../../_data/getUserOrgs";
 import { OrgMemberList } from "@/presentation/components/organisms/OrgMemberList";
@@ -11,7 +11,6 @@ import { InviteByEmailForm } from "./_components/InviteByEmailForm";
 import { MemberActions } from "./_components/MemberActions";
 import { InvitationList } from "./_components/InvitationList";
 import { TransferOwnershipForm } from "./_components/TransferOwnershipForm";
-import { OrgDangerZone } from "./_components/OrgDangerZone";
 import { SeatManager } from "./_components/SeatManager";
 
 interface OrgDetailPageProps {
@@ -33,7 +32,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
   if (!org) notFound();
 
   const [members, invitations, subscription] = await Promise.all([
-    new ListOrgMembers(orgMemberGateway).execute(org.id),
+    getOrgMembers(org.id),
     new ListInvitations(invitationGateway).execute(org.id).catch(() => []),
     getSubscription(),
   ]);
@@ -51,13 +50,14 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
     const isMemberOwner = m.role === "owner";
 
     let actions: React.ReactNode = null;
-    if (canManage && !isMemberOwner && !isSelf) {
+    if (canManage && !isMemberOwner && !isSelf && m.role !== "owner") {
       actions = (
         <MemberActions
           orgId={org.id}
           userId={m.user.id}
-          currentRole={m.role as "admin" | "member"}
+          currentRole={m.role}
           labels={{
+            menu: t("memberActionsMenu"),
             promoteToAdmin: t("promoteToAdmin"),
             demoteToMember: t("demoteToMember"),
             remove: t("remove"),
@@ -171,8 +171,6 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
           />
         </section>
       )}
-
-      {isOwner && <OrgDangerZone />}
     </div>
   );
 }

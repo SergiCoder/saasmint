@@ -13,6 +13,7 @@ interface MemberActionsProps {
   userId: string;
   currentRole: "admin" | "member";
   labels: {
+    menu: string;
     promoteToAdmin: string;
     demoteToMember: string;
     remove: string;
@@ -79,7 +80,7 @@ export function MemberActions({
         onClick={() => setOpen((v) => !v)}
         disabled={isPending}
         className="cursor-pointer rounded-md px-2 py-1 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50"
-        aria-label="Member actions"
+        aria-label={labels.menu}
       >
         ···
       </button>

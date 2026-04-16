@@ -49,8 +49,20 @@ describe("buildPlanCardGroups", () => {
       plans,
       locale: "en-US",
       labels,
-      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
-      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
       renderCta: () => null,
     });
     expect(groups).toHaveLength(1);
@@ -82,8 +94,20 @@ describe("buildPlanCardGroups", () => {
       plans,
       locale: "en-US",
       labels,
-      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
-      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
       renderCta: () => null,
     });
     // 100 vs 120 → 16.67% rounded to 17
@@ -112,8 +136,20 @@ describe("buildPlanCardGroups", () => {
       plans,
       locale: "en-US",
       labels,
-      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
-      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
       renderCta: () => null,
     });
     expect(groups[0].yearlySavingsPct).toBeUndefined();
@@ -129,8 +165,20 @@ describe("buildPlanCardGroups", () => {
       plans,
       locale: "en-US",
       labels,
-      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
-      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
       renderCta: () => null,
     });
     expect(groups.map((g) => g.tier)).toEqual([1, 2, 3]);
@@ -145,8 +193,20 @@ describe("buildPlanCardGroups", () => {
       plans,
       locale: "en-US",
       labels,
-      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
-      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
       renderCta: () => null,
     });
     expect(groups).toHaveLength(2);
@@ -161,8 +221,20 @@ describe("buildPlanCardGroups", () => {
       plans,
       locale: "en-US",
       labels,
-      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
-      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
       renderCta: () => null,
     });
     expect(groups[0].monthly?.intervalLabel).toBe("seat/month");
@@ -177,8 +249,20 @@ describe("buildPlanCardGroups", () => {
       plans,
       locale: "en-US",
       labels,
-      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
-      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
       renderCta: () => null,
     });
     const pro = groups.find((g) => g.tier === 3);
@@ -213,8 +297,20 @@ describe("buildPlanCardGroups", () => {
       currentPlanId: "basic-m",
       locale: "en-US",
       labels,
-      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
-      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
       renderCta: ({ plan, isCurrent, isUpgrade, ctaLabel }) => {
         ctaCalls.push({
           id: plan.id,
@@ -256,8 +352,20 @@ describe("buildPlanCardGroups", () => {
       currentPlanId: "personal-pro",
       locale: "en-US",
       labels,
-      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
-      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
       renderCta: ({ plan, isUpgrade }) => {
         ctaCalls.push({ id: plan.id, isUpgrade });
         return null;
@@ -290,8 +398,20 @@ describe("buildPlanCardGroups", () => {
       currentPlanId: "team-basic",
       locale: "en-US",
       labels,
-      planNames: { "personal.2": "Basic", "personal.3": "Pro", "personal.1": "Free", "team.2": "Basic", "team.3": "Pro" },
-      planDescriptions: { "personal.2": "Basic desc", "personal.3": "Pro desc", "personal.1": "Free desc", "team.2": "Team Basic desc", "team.3": "Team Pro desc" },
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
       renderCta: ({ plan, isUpgrade }) => {
         ctaCalls.push({ id: plan.id, isUpgrade });
         return null;

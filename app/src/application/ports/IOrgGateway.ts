@@ -10,5 +10,4 @@ export interface IOrgGateway {
   getOrg(orgId: string): Promise<Org>;
   updateOrg(orgId: string, input: UpdateOrgInput): Promise<Org>;
   listUserOrgs(userId: string): Promise<Org[]>;
-  deleteOrg(orgId: string): Promise<void>;
 }

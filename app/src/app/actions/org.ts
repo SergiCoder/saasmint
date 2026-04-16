@@ -1,21 +1,12 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
 import { CreateInvitation } from "@/application/use-cases/invitation/CreateInvitation";
 import { CancelInvitation } from "@/application/use-cases/invitation/CancelInvitation";
-import { ListOrgMembers } from "@/application/use-cases/org-member/ListOrgMembers";
 import { RemoveOrgMember } from "@/application/use-cases/org-member/RemoveOrgMember";
 import { UpdateOrgMemberRole } from "@/application/use-cases/org-member/UpdateOrgMemberRole";
 import { TransferOwnership } from "@/application/use-cases/org-member/TransferOwnership";
-import { DeleteOrg } from "@/application/use-cases/org/DeleteOrg";
-import {
-  authGateway,
-  invitationGateway,
-  orgGateway,
-  orgMemberGateway,
-} from "@/infrastructure/registry";
+import { invitationGateway, orgMemberGateway } from "@/infrastructure/registry";
 
 const assignableRoles = ["admin", "member"] as const;
 type AssignableRole = (typeof assignableRoles)[number];
@@ -48,7 +39,7 @@ export async function inviteMember(
     return { ok: false, error: "Failed to send invitation" };
   }
 
-  revalidatePath("/org");
+  revalidatePath("/[locale]/org", "layout");
   return { ok: true };
 }
 
@@ -66,7 +57,7 @@ export async function cancelInvitation(formData: FormData) {
     console.error("Failed to cancel invitation", err);
     return;
   }
-  revalidatePath("/org");
+  revalidatePath("/[locale]/org", "layout");
 }
 
 export async function removeMember(formData: FormData) {
@@ -83,7 +74,7 @@ export async function removeMember(formData: FormData) {
     console.error("Failed to remove member", err);
     return;
   }
-  revalidatePath("/org");
+  revalidatePath("/[locale]/org", "layout");
 }
 
 export async function updateMemberRole(formData: FormData) {
@@ -110,7 +101,7 @@ export async function updateMemberRole(formData: FormData) {
     console.error("Failed to update member role", err);
     return;
   }
-  revalidatePath("/org");
+  revalidatePath("/[locale]/org", "layout");
 }
 
 export async function transferOwnership(
@@ -130,30 +121,6 @@ export async function transferOwnership(
     return { ok: false, error: "Failed to transfer ownership" };
   }
 
-  revalidatePath("/org");
+  revalidatePath("/[locale]/org", "layout");
   return { ok: true };
-}
-
-export async function deleteOrg(formData: FormData) {
-  const orgId = formData.get("orgId");
-
-  if (typeof orgId !== "string") {
-    return;
-  }
-
-  try {
-    const user = await new GetCurrentUser(authGateway).execute();
-    const members = await new ListOrgMembers(orgMemberGateway).execute(orgId);
-    const me = members.find((m) => m.user.id === user.id);
-    if (me?.role !== "owner") {
-      console.error("Only the owner can delete the organization");
-      return;
-    }
-
-    await new DeleteOrg(orgGateway).execute(orgId);
-  } catch (err) {
-    console.error("Failed to delete organization", err);
-    return;
-  }
-  redirect("/dashboard");
 }

@@ -34,6 +34,13 @@ vi.mock("@/application/use-cases/org-member/RemoveOrgMember", () => ({
   },
 }));
 
+const mockUpdateOrgMemberRoleExecute = vi.fn();
+vi.mock("@/application/use-cases/org-member/UpdateOrgMemberRole", () => ({
+  UpdateOrgMemberRole: function UpdateOrgMemberRole() {
+    return { execute: mockUpdateOrgMemberRoleExecute };
+  },
+}));
+
 const mockTransferOwnershipExecute = vi.fn();
 vi.mock("@/application/use-cases/org-member/TransferOwnership", () => ({
   TransferOwnership: function TransferOwnership() {
@@ -41,30 +48,7 @@ vi.mock("@/application/use-cases/org-member/TransferOwnership", () => ({
   },
 }));
 
-const mockDeleteOrgExecute = vi.fn();
-vi.mock("@/application/use-cases/org/DeleteOrg", () => ({
-  DeleteOrg: function DeleteOrg() {
-    return { execute: mockDeleteOrgExecute };
-  },
-}));
-
-const mockGetCurrentUserExecute = vi.fn();
-vi.mock("@/application/use-cases/auth/GetCurrentUser", () => ({
-  GetCurrentUser: function GetCurrentUser() {
-    return { execute: mockGetCurrentUserExecute };
-  },
-}));
-
-const mockListOrgMembersExecute = vi.fn();
-vi.mock("@/application/use-cases/org-member/ListOrgMembers", () => ({
-  ListOrgMembers: function ListOrgMembers() {
-    return { execute: mockListOrgMembersExecute };
-  },
-}));
-
 vi.mock("@/infrastructure/registry", () => ({
-  authGateway: {},
-  orgGateway: {},
   orgMemberGateway: {},
   invitationGateway: {},
 }));
@@ -72,8 +56,8 @@ vi.mock("@/infrastructure/registry", () => ({
 let inviteMember: typeof import("@/app/actions/org").inviteMember;
 let cancelInvitation: typeof import("@/app/actions/org").cancelInvitation;
 let removeMember: typeof import("@/app/actions/org").removeMember;
+let updateMemberRole: typeof import("@/app/actions/org").updateMemberRole;
 let transferOwnership: typeof import("@/app/actions/org").transferOwnership;
-let deleteOrg: typeof import("@/app/actions/org").deleteOrg;
 
 beforeEach(async () => {
   vi.clearAllMocks();
@@ -81,8 +65,8 @@ beforeEach(async () => {
   inviteMember = mod.inviteMember;
   cancelInvitation = mod.cancelInvitation;
   removeMember = mod.removeMember;
+  updateMemberRole = mod.updateMemberRole;
   transferOwnership = mod.transferOwnership;
-  deleteOrg = mod.deleteOrg;
 });
 
 describe("org server actions", () => {
@@ -100,7 +84,10 @@ describe("org server actions", () => {
         email: "bob@example.com",
         role: "member",
       });
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/org");
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        "/[locale]/org",
+        "layout",
+      );
       expect(result).toEqual({ ok: true });
     });
 
@@ -148,7 +135,10 @@ describe("org server actions", () => {
         "org_1",
         "inv_1",
       );
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/org");
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        "/[locale]/org",
+        "layout",
+      );
     });
 
     it("returns early when orgId is missing", async () => {
@@ -157,6 +147,20 @@ describe("org server actions", () => {
 
       await cancelInvitation(formData);
       expect(mockCancelInvitationExecute).not.toHaveBeenCalled();
+    });
+
+    it("swallows errors without revalidating", async () => {
+      mockCancelInvitationExecute.mockRejectedValue(new Error("API 500"));
+      const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("invitationId", "inv_1");
+
+      await cancelInvitation(formData);
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+      expect(errSpy).toHaveBeenCalled();
+      errSpy.mockRestore();
     });
   });
 
@@ -173,7 +177,10 @@ describe("org server actions", () => {
         "org_1",
         "user_123",
       );
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/org");
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        "/[locale]/org",
+        "layout",
+      );
     });
 
     it("returns early when orgId is missing", async () => {
@@ -182,6 +189,77 @@ describe("org server actions", () => {
 
       await removeMember(formData);
       expect(mockRemoveOrgMemberExecute).not.toHaveBeenCalled();
+    });
+
+    it("swallows errors without revalidating", async () => {
+      mockRemoveOrgMemberExecute.mockRejectedValue(new Error("API 500"));
+      const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("userId", "user_123");
+
+      await removeMember(formData);
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+      expect(errSpy).toHaveBeenCalled();
+      errSpy.mockRestore();
+    });
+  });
+
+  describe("updateMemberRole", () => {
+    it("updates role and revalidates path", async () => {
+      mockUpdateOrgMemberRoleExecute.mockResolvedValue(undefined);
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("userId", "user_123");
+      formData.set("role", "admin");
+
+      await updateMemberRole(formData);
+      expect(mockUpdateOrgMemberRoleExecute).toHaveBeenCalledWith(
+        "org_1",
+        "user_123",
+        "admin",
+      );
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        "/[locale]/org",
+        "layout",
+      );
+    });
+
+    it("returns early when role is not assignable", async () => {
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("userId", "user_123");
+      formData.set("role", "owner");
+
+      await updateMemberRole(formData);
+      expect(mockUpdateOrgMemberRoleExecute).not.toHaveBeenCalled();
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+    });
+
+    it("returns early when a required field is missing", async () => {
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("role", "member");
+
+      await updateMemberRole(formData);
+      expect(mockUpdateOrgMemberRoleExecute).not.toHaveBeenCalled();
+    });
+
+    it("swallows errors without revalidating", async () => {
+      mockUpdateOrgMemberRoleExecute.mockRejectedValue(new Error("API 500"));
+      const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("userId", "user_123");
+      formData.set("role", "member");
+
+      await updateMemberRole(formData);
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+      expect(errSpy).toHaveBeenCalled();
+      errSpy.mockRestore();
     });
   });
 
@@ -198,7 +276,10 @@ describe("org server actions", () => {
         "org_1",
         "user_2",
       );
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/org");
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        "/[locale]/org",
+        "layout",
+      );
       expect(result).toEqual({ ok: true });
     });
 
@@ -214,44 +295,6 @@ describe("org server actions", () => {
         ok: false,
         error: "Failed to transfer ownership",
       });
-    });
-  });
-
-  describe("deleteOrg", () => {
-    it("deletes org and redirects to dashboard when user is owner", async () => {
-      mockGetCurrentUserExecute.mockResolvedValue({ id: "user_owner" });
-      mockListOrgMembersExecute.mockResolvedValue([
-        { user: { id: "user_owner" }, role: "owner" },
-      ]);
-      mockDeleteOrgExecute.mockResolvedValue(undefined);
-
-      const formData = new FormData();
-      formData.set("orgId", "org_1");
-
-      await expect(deleteOrg(formData)).rejects.toThrow("NEXT_REDIRECT");
-      expect(mockDeleteOrgExecute).toHaveBeenCalledWith("org_1");
-      expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
-    });
-
-    it("returns early when user is not owner", async () => {
-      mockGetCurrentUserExecute.mockResolvedValue({ id: "user_member" });
-      mockListOrgMembersExecute.mockResolvedValue([
-        { user: { id: "user_owner" }, role: "owner" },
-        { user: { id: "user_member" }, role: "member" },
-      ]);
-
-      const formData = new FormData();
-      formData.set("orgId", "org_1");
-
-      await deleteOrg(formData);
-      expect(mockDeleteOrgExecute).not.toHaveBeenCalled();
-    });
-
-    it("returns early when orgId is missing", async () => {
-      const formData = new FormData();
-
-      await deleteOrg(formData);
-      expect(mockDeleteOrgExecute).not.toHaveBeenCalled();
     });
   });
 });

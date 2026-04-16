@@ -2,13 +2,9 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { ListPlans } from "@/application/use-cases/billing/ListPlans";
 import { ListProducts } from "@/application/use-cases/billing/ListProducts";
-import { ListOrgMembers } from "@/application/use-cases/org-member/ListOrgMembers";
-import {
-  planGateway,
-  productGateway,
-  orgMemberGateway,
-} from "@/infrastructure/registry";
+import { planGateway, productGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../_data/getCurrentUser";
+import { getOrgMembers } from "../_data/getOrgMembers";
 import { getSubscription } from "../_data/getSubscription";
 import { getUserOrgs } from "../_data/getUserOrgs";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
@@ -23,6 +19,8 @@ import { ResumeSubscriptionButton } from "./_components/ResumeSubscriptionButton
 import { canManageBilling } from "./_data/canManageBilling";
 import {
   buildPlanCardGroups,
+  buildPlanTranslations,
+  buildProductTranslations,
   splitPlanGroupsByContext,
 } from "@/app/[locale]/_lib/buildPlanCards";
 import type { Plan } from "@/domain/models/Plan";
@@ -79,13 +77,13 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
     currentPlan?.interval === "year" ? "year" : "month";
   const isTeamSubscription = currentPlan?.context === "team";
 
-  // For team subscriptions, fetch org owner info
+  // For team subscriptions, fetch org owner info.
+  // Uses the cached getOrgMembers so we share the request with canManageBilling
+  // and don't double-fetch the member list per render.
   let teamOwnerName: string | null = null;
   if (isTeamSubscription && hasOrg) {
     try {
-      const members = await new ListOrgMembers(orgMemberGateway).execute(
-        userOrgs[0].id,
-      );
+      const members = await getOrgMembers(userOrgs[0].id);
       const owner = members.find((m) => m.role === "owner");
       if (owner) teamOwnerName = owner.user.fullName;
     } catch {
@@ -104,17 +102,9 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
     !Number.isNaN(periodEndDate.getTime()) &&
     periodEndDate.getUTCFullYear() < 9000;
 
-  const planNames: Record<string, string> = {};
-  const planDescriptions: Record<string, string> = {};
-  for (const plan of plans) {
-    const key = `${plan.context}.${plan.tier}`;
-    if (!planNames[key]) {
-      planNames[key] = tPlans(`${plan.context}.${plan.tier}.name` as never);
-      planDescriptions[key] = tPlans(
-        `${plan.context}.${plan.tier}.description` as never,
-      );
-    }
-  }
+  const { planNames, planDescriptions } = buildPlanTranslations(plans, (key) =>
+    tPlans(key as never),
+  );
 
   const groups = buildPlanCardGroups({
     plans,
@@ -180,8 +170,8 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
     <div className="mx-auto max-w-5xl space-y-12 pb-12">
       <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
 
-      {params.error && (
-        <AlertBanner variant="error">{params.error}</AlertBanner>
+      {params.error === "checkout_failed" && (
+        <AlertBanner variant="error">{t("checkoutError")}</AlertBanner>
       )}
 
       {subscription &&
@@ -305,8 +295,8 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
       <ProductsGrid
         title={t("products")}
         products={products}
-        productNames={Object.fromEntries(
-          products.map((p) => [p.credits, tProducts(`${p.credits}` as never)]),
+        productNames={buildProductTranslations(products, (key) =>
+          tProducts(key as never),
         )}
         creditsLabel={t("credits")}
         locale={locale}

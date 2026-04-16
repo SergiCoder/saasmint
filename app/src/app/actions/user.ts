@@ -6,6 +6,7 @@ import { DeleteAccount } from "@/application/use-cases/auth/DeleteAccount";
 import { UpdateUserProfile } from "@/application/use-cases/user/UpdateUserProfile";
 import { AuthError } from "@/domain/errors/AuthError";
 import { authGateway, userGateway } from "@/infrastructure/registry";
+import { routing } from "@/lib/i18n/routing";
 
 export async function updateAvatarUrl(
   avatarUrl: string | null,
@@ -93,6 +94,12 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
 }
 
 export async function updatePreferredLocale(locale: string): Promise<void> {
+  // Validate against the supported-locale allow-list: this is a server action
+  // callable by any authenticated client, so we must not forward arbitrary
+  // strings to the backend / storage.
+  if (!(routing.locales as readonly string[]).includes(locale)) {
+    return;
+  }
   try {
     const user = await new GetCurrentUser(authGateway).execute();
     await new UpdateUserProfile(userGateway).execute(user.id, {

@@ -1,5 +1,8 @@
 FROM node:22-alpine AS base
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Pin pnpm to a known-good version to keep builds reproducible and
+# mitigate supply-chain risk (a compromised pnpm@latest release would
+# otherwise run arbitrary install-time code on every rebuild).
+RUN corepack enable && corepack prepare pnpm@10.19.0 --activate
 WORKDIR /app
 
 # --- Dependencies ---

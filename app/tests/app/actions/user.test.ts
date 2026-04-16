@@ -54,6 +54,7 @@ const mockUser = {
 let updateProfile: typeof import("@/app/actions/user").updateProfile;
 let updateAvatarUrl: typeof import("@/app/actions/user").updateAvatarUrl;
 let deleteAccount: typeof import("@/app/actions/user").deleteAccount;
+let updatePreferredLocale: typeof import("@/app/actions/user").updatePreferredLocale;
 
 beforeEach(async () => {
   vi.clearAllMocks();
@@ -62,6 +63,7 @@ beforeEach(async () => {
   updateProfile = mod.updateProfile;
   updateAvatarUrl = mod.updateAvatarUrl;
   deleteAccount = mod.deleteAccount;
+  updatePreferredLocale = mod.updatePreferredLocale;
 });
 
 describe("user server actions", () => {
@@ -299,6 +301,32 @@ describe("user server actions", () => {
 
       const result = await updateAvatarUrl("https://example.com/avatar.webp");
       expect(result).toEqual({ error: "Failed to update avatar" });
+    });
+  });
+
+  describe("updatePreferredLocale", () => {
+    it("updates the current user's preferred locale", async () => {
+      mockUpdateUserProfileExecute.mockResolvedValue(undefined);
+
+      await updatePreferredLocale("fr");
+
+      expect(mockGetCurrentUserExecute).toHaveBeenCalledOnce();
+      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
+        preferredLocale: "fr",
+      });
+    });
+
+    it("silently ignores errors from GetCurrentUser", async () => {
+      mockGetCurrentUserExecute.mockRejectedValue(new Error("No session"));
+
+      await expect(updatePreferredLocale("fr")).resolves.toBeUndefined();
+      expect(mockUpdateUserProfileExecute).not.toHaveBeenCalled();
+    });
+
+    it("silently ignores errors from UpdateUserProfile", async () => {
+      mockUpdateUserProfileExecute.mockRejectedValue(new Error("API 500"));
+
+      await expect(updatePreferredLocale("fr")).resolves.toBeUndefined();
     });
   });
 

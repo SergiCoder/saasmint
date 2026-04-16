@@ -2,14 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { GetPhonePrefixes } from "@/application/use-cases/reference/GetPhonePrefixes";
 import { GetUserProfile } from "@/application/use-cases/user/GetUserProfile";
-import { ListOrgMembers } from "@/application/use-cases/org-member/ListOrgMembers";
-import {
-  referenceGateway,
-  userGateway,
-  orgMemberGateway,
-} from "@/infrastructure/registry";
-import { getUserOrgs } from "../_data/getUserOrgs";
+import { referenceGateway, userGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../_data/getCurrentUser";
+import { getOrgMembers } from "../_data/getOrgMembers";
+import { getUserOrgs } from "../_data/getUserOrgs";
 import { ChangePasswordForm } from "./_components/ChangePasswordForm";
 import { DangerZone } from "./_components/DangerZone";
 import { ProfileForm } from "./_components/ProfileForm";
@@ -33,9 +29,7 @@ export default async function ProfilePage() {
   let deleteRestriction: "owner" | "member" | undefined;
   if (userOrgs.length > 0) {
     try {
-      const members = await new ListOrgMembers(orgMemberGateway).execute(
-        userOrgs[0].id,
-      );
+      const members = await getOrgMembers(userOrgs[0].id);
       const me = members.find((m) => m.user.id === currentUser.id);
       deleteRestriction = me?.role === "owner" ? "owner" : "member";
     } catch {

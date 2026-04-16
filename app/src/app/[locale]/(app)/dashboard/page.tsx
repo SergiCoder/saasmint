@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
-import { ListOrgMembers } from "@/application/use-cases/org-member/ListOrgMembers";
-import { orgMemberGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../_data/getCurrentUser";
+import { getOrgMembers } from "../_data/getOrgMembers";
 import { getSubscription } from "../_data/getSubscription";
 import { getUserOrgs } from "../_data/getUserOrgs";
 import { OrgCard } from "@/presentation/components/molecules/OrgCard";
@@ -21,27 +20,31 @@ const ACTIONS = [
 ] as const;
 
 export default async function DashboardPage() {
-  const [t, tOrg, user] = await Promise.all([
+  // Fetch subscription alongside translations and the user — it has no
+  // dependency on user, so there's no reason to wait for user to load first.
+  const [t, tOrg, user, subscription] = await Promise.all([
     getTranslations("dashboard"),
     getTranslations("org"),
     getCurrentUser(),
-  ]);
-  const [orgs, subscription] = await Promise.all([
-    getUserOrgs(user.id),
     getSubscription(),
   ]);
+  const orgs = await getUserOrgs(user.id);
 
   const totalSpots =
     subscription?.plan.context === "team" ? subscription.quantity : null;
 
-  const memberCounts = await Promise.all(
-    orgs.map((org) =>
-      new ListOrgMembers(orgMemberGateway)
-        .execute(org.id)
-        .then((m) => m.length)
-        .catch(() => 0),
-    ),
-  );
+  // Only fetch per-org member counts when we actually render a spotsLabel
+  // (team subscriptions). Otherwise we pay for N roundtrips we never display.
+  const memberCounts =
+    totalSpots !== null
+      ? await Promise.all(
+          orgs.map((org) =>
+            getOrgMembers(org.id)
+              .then((m) => m.length)
+              .catch(() => 0),
+          ),
+        )
+      : [];
 
   return (
     <div className="space-y-8">

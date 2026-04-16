@@ -1,6 +1,47 @@
 import type { Plan, PlanTier } from "@/domain/models/Plan";
 import { PLAN_TIER_PRO } from "@/domain/models/Plan";
+import type { Product } from "@/domain/models/Product";
 import { formatCurrency } from "@/lib/formatCurrency";
+
+/**
+ * Build translated plan name / description maps keyed by `"{context}.{tier}"`.
+ * Consumers pass these into `buildPlanCardGroups` so the helper stays free of
+ * `next-intl` imports (works in both server and marketing contexts).
+ */
+export function buildPlanTranslations(
+  plans: Plan[],
+  tPlans: (key: string) => string,
+): {
+  planNames: Record<string, string>;
+  planDescriptions: Record<string, string>;
+} {
+  const planNames: Record<string, string> = {};
+  const planDescriptions: Record<string, string> = {};
+  for (const plan of plans) {
+    const key = `${plan.context}.${plan.tier}`;
+    if (!planNames[key]) {
+      planNames[key] = tPlans(`${plan.context}.${plan.tier}.name`);
+      planDescriptions[key] = tPlans(
+        `${plan.context}.${plan.tier}.description`,
+      );
+    }
+  }
+  return { planNames, planDescriptions };
+}
+
+/**
+ * Build the translated product name map keyed by credit count. Used by the
+ * `ProductsGrid` `productNames` prop on both the subscription and marketing
+ * pricing pages.
+ */
+export function buildProductTranslations(
+  products: Product[],
+  tProducts: (key: string) => string,
+): Record<number, string> {
+  return Object.fromEntries(
+    products.map((p) => [p.credits, tProducts(`${p.credits}`)]),
+  );
+}
 
 export interface PlanCardLabels {
   upgrade: string;

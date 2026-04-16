@@ -18,6 +18,8 @@ import { TeamCheckoutButton } from "@/app/[locale]/(app)/subscription/_component
 import { getOptionalUser } from "../_data/getOptionalUser";
 import {
   buildPlanCardGroups,
+  buildPlanTranslations,
+  buildProductTranslations,
   splitPlanGroupsByContext,
 } from "@/app/[locale]/_lib/buildPlanCards";
 import type { Plan } from "@/domain/models/Plan";
@@ -63,17 +65,9 @@ export default async function PricingPage() {
   const hasOrg = userOrgs.length > 0;
   const currentPlanId = subscription?.plan?.id;
 
-  const planNames: Record<string, string> = {};
-  const planDescriptions: Record<string, string> = {};
-  for (const plan of plans) {
-    const key = `${plan.context}.${plan.tier}`;
-    if (!planNames[key]) {
-      planNames[key] = tPlans(`${plan.context}.${plan.tier}.name` as never);
-      planDescriptions[key] = tPlans(
-        `${plan.context}.${plan.tier}.description` as never,
-      );
-    }
-  }
+  const { planNames, planDescriptions } = buildPlanTranslations(plans, (key) =>
+    tPlans(key as never),
+  );
 
   const groups = buildPlanCardGroups({
     plans,
@@ -185,8 +179,8 @@ export default async function PricingPage() {
         className="mt-16"
         title={t("products")}
         products={products}
-        productNames={Object.fromEntries(
-          products.map((p) => [p.credits, tProducts(`${p.credits}` as never)]),
+        productNames={buildProductTranslations(products, (key) =>
+          tProducts(key as never),
         )}
         creditsLabel={t("credits")}
         locale={locale}

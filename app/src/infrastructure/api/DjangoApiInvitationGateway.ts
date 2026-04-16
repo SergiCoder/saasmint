@@ -32,10 +32,10 @@ export class DjangoApiInvitationGateway implements IInvitationGateway {
   }
 
   async listInvitations(orgId: string): Promise<Invitation[]> {
-    const data = await apiFetch<Record<string, unknown>[]>(
+    const data = await apiFetch<{ results: Record<string, unknown>[] }>(
       `/orgs/${orgId}/invitations/`,
     );
-    return data.map(mapInvitation);
+    return data.results.map(mapInvitation);
   }
 
   async cancelInvitation(orgId: string, invitationId: string): Promise<void> {

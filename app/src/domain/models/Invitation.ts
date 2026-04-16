@@ -10,7 +10,7 @@ export interface Invitation {
   orgName: string;
   email: string;
   role: "admin" | "member";
-  status: "pending" | "accepted" | "expired" | "cancelled";
+  status: "pending" | "accepted" | "expired" | "cancelled" | "declined";
   invitedBy: InvitedBy;
   createdAt: string;
   expiresAt: string;

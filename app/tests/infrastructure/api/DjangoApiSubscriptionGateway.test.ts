@@ -19,7 +19,7 @@ describe("DjangoApiSubscriptionGateway", () => {
   const gateway = new DjangoApiSubscriptionGateway();
 
   describe("getSubscription", () => {
-    it("fetches and camelCases the subscription from GET /billing/subscription/", async () => {
+    it("fetches and camelCases the subscription from GET /billing/subscriptions/me/", async () => {
       mockApiFetch.mockResolvedValue({
         id: "s1",
         status: "active",
@@ -44,7 +44,7 @@ describe("DjangoApiSubscriptionGateway", () => {
 
       const result = await gateway.getSubscription();
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscription/");
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscriptions/me/");
       expect(result).toEqual({
         id: "s1",
         status: "active",
@@ -114,7 +114,7 @@ describe("DjangoApiSubscriptionGateway", () => {
       await gateway.getSubscription("eur");
 
       expect(mockApiFetch).toHaveBeenCalledWith(
-        "/billing/subscription/?currency=eur",
+        "/billing/subscriptions/me/?currency=eur",
       );
     });
   });
@@ -181,24 +181,24 @@ describe("DjangoApiSubscriptionGateway", () => {
   });
 
   describe("cancelSubscription", () => {
-    it("sends DELETE /billing/subscription/", async () => {
+    it("sends DELETE /billing/subscriptions/me/", async () => {
       mockApiFetch.mockResolvedValue(undefined);
 
       await gateway.cancelSubscription();
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscription/", {
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscriptions/me/", {
         method: "DELETE",
       });
     });
   });
 
   describe("resumeSubscription", () => {
-    it("sends PATCH /billing/subscription/ with cancel_at_period_end=false", async () => {
+    it("sends PATCH /billing/subscriptions/me/ with cancel_at_period_end=false", async () => {
       mockApiFetch.mockResolvedValue(undefined);
 
       await gateway.resumeSubscription();
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscription/", {
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscriptions/me/", {
         method: "PATCH",
         body: JSON.stringify({ cancel_at_period_end: false }),
       });
@@ -206,12 +206,12 @@ describe("DjangoApiSubscriptionGateway", () => {
   });
 
   describe("updateSeats", () => {
-    it("sends PATCH /billing/subscription/ with quantity", async () => {
+    it("sends PATCH /billing/subscriptions/me/ with quantity", async () => {
       mockApiFetch.mockResolvedValue(undefined);
 
       await gateway.updateSeats(5);
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscription/", {
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscriptions/me/", {
         method: "PATCH",
         body: JSON.stringify({ quantity: 5 }),
       });

@@ -12,6 +12,7 @@ vi.mock("@/app/actions/org", () => ({
 import { MemberActions } from "@/app/[locale]/(app)/org/[slug]/_components/MemberActions";
 
 const defaultLabels = {
+  menu: "Member actions",
   promoteToAdmin: "Promote to admin",
   demoteToMember: "Demote to member",
   remove: "Remove",
