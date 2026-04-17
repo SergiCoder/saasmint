@@ -113,6 +113,12 @@
       "divider": "veya",
       "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin."
     },
+    "callback": {
+      "pageTitle": "Oturum açma tamamlanıyor",
+      "completing": "Oturum açma tamamlanıyor…",
+      "noscript": "Oturum açmayı tamamlamak için JavaScript gerekli.",
+      "backToLogin": "Oturum açmaya dön"
+    },
     "register": {
       "title": "Hesabınızı oluşturun",
       "pageTitle": "Kayıt ol",

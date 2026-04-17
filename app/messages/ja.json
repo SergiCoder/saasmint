@@ -113,6 +113,12 @@
       "divider": "または",
       "error": "問題が発生しました。もう一度お試しください。"
     },
+    "callback": {
+      "pageTitle": "サインインを完了しています",
+      "completing": "サインインを完了しています…",
+      "noscript": "サインインを完了するには JavaScript が必要です。",
+      "backToLogin": "サインインに戻る"
+    },
     "register": {
       "title": "アカウントを作成",
       "pageTitle": "新規登録",

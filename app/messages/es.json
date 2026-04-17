@@ -113,6 +113,12 @@
       "divider": "o",
       "error": "Algo salió mal. Por favor, inténtalo de nuevo."
     },
+    "callback": {
+      "pageTitle": "Completando inicio de sesión",
+      "completing": "Completando inicio de sesión…",
+      "noscript": "Se requiere JavaScript para completar el inicio de sesión.",
+      "backToLogin": "Volver a iniciar sesión"
+    },
     "register": {
       "title": "Crea tu cuenta",
       "pageTitle": "Registrarse",

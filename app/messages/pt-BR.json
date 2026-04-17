@@ -113,6 +113,12 @@
       "divider": "ou",
       "error": "Algo deu errado. Por favor, tente novamente."
     },
+    "callback": {
+      "pageTitle": "Concluindo o login",
+      "completing": "Concluindo o login…",
+      "noscript": "JavaScript é necessário para concluir o login.",
+      "backToLogin": "Voltar ao login"
+    },
     "register": {
       "title": "Crie sua conta",
       "pageTitle": "Cadastrar",

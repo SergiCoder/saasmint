@@ -48,10 +48,32 @@ vi.mock("@/application/use-cases/org-member/TransferOwnership", () => ({
   },
 }));
 
+const mockGetCurrentUserExecute = vi.fn();
+vi.mock("@/application/use-cases/auth/GetCurrentUser", () => ({
+  GetCurrentUser: function GetCurrentUser() {
+    return { execute: mockGetCurrentUserExecute };
+  },
+}));
+
+const mockListOrgMembersExecute = vi.fn();
+vi.mock("@/application/use-cases/org-member/ListOrgMembers", () => ({
+  ListOrgMembers: function ListOrgMembers() {
+    return { execute: mockListOrgMembersExecute };
+  },
+}));
+
 vi.mock("@/infrastructure/registry", () => ({
+  authGateway: {},
   orgMemberGateway: {},
   invitationGateway: {},
 }));
+
+function mockRole(role: "owner" | "admin" | "member") {
+  mockGetCurrentUserExecute.mockResolvedValue({ id: "user_me" });
+  mockListOrgMembersExecute.mockResolvedValue([
+    { user: { id: "user_me" }, role },
+  ]);
+}
 
 let inviteMember: typeof import("@/app/actions/org").inviteMember;
 let cancelInvitation: typeof import("@/app/actions/org").cancelInvitation;
@@ -72,6 +94,7 @@ beforeEach(async () => {
 describe("org server actions", () => {
   describe("inviteMember", () => {
     it("creates invitation and revalidates path", async () => {
+      mockRole("admin");
       mockCreateInvitationExecute.mockResolvedValue({});
 
       const formData = new FormData();
@@ -91,7 +114,21 @@ describe("org server actions", () => {
       expect(result).toEqual({ ok: true });
     });
 
+    it("returns Not authorized when caller is a plain member", async () => {
+      mockRole("member");
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("email", "bob@example.com");
+      formData.set("role", "member");
+
+      const result = await inviteMember(undefined, formData);
+      expect(result).toEqual({ ok: false, error: "Not authorized" });
+      expect(mockCreateInvitationExecute).not.toHaveBeenCalled();
+    });
+
     it("returns error on failure", async () => {
+      mockRole("admin");
       mockCreateInvitationExecute.mockRejectedValue(new Error("Seat limit"));
 
       const formData = new FormData();
@@ -124,6 +161,7 @@ describe("org server actions", () => {
 
   describe("cancelInvitation", () => {
     it("cancels invitation and revalidates path", async () => {
+      mockRole("admin");
       mockCancelInvitationExecute.mockResolvedValue(undefined);
 
       const formData = new FormData();
@@ -141,6 +179,18 @@ describe("org server actions", () => {
       );
     });
 
+    it("no-ops when caller is a plain member", async () => {
+      mockRole("member");
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("invitationId", "inv_1");
+
+      await cancelInvitation(formData);
+      expect(mockCancelInvitationExecute).not.toHaveBeenCalled();
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+    });
+
     it("returns early when orgId is missing", async () => {
       const formData = new FormData();
       formData.set("invitationId", "inv_1");
@@ -150,6 +200,7 @@ describe("org server actions", () => {
     });
 
     it("swallows errors without revalidating", async () => {
+      mockRole("admin");
       mockCancelInvitationExecute.mockRejectedValue(new Error("API 500"));
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -166,6 +217,7 @@ describe("org server actions", () => {
 
   describe("removeMember", () => {
     it("removes member and revalidates path", async () => {
+      mockRole("admin");
       mockRemoveOrgMemberExecute.mockResolvedValue(undefined);
 
       const formData = new FormData();
@@ -183,6 +235,18 @@ describe("org server actions", () => {
       );
     });
 
+    it("no-ops when caller is a plain member", async () => {
+      mockRole("member");
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("userId", "user_123");
+
+      await removeMember(formData);
+      expect(mockRemoveOrgMemberExecute).not.toHaveBeenCalled();
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+    });
+
     it("returns early when orgId is missing", async () => {
       const formData = new FormData();
       formData.set("userId", "user_123");
@@ -192,6 +256,7 @@ describe("org server actions", () => {
     });
 
     it("swallows errors without revalidating", async () => {
+      mockRole("admin");
       mockRemoveOrgMemberExecute.mockRejectedValue(new Error("API 500"));
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -208,6 +273,7 @@ describe("org server actions", () => {
 
   describe("updateMemberRole", () => {
     it("updates role and revalidates path", async () => {
+      mockRole("admin");
       mockUpdateOrgMemberRoleExecute.mockResolvedValue(undefined);
 
       const formData = new FormData();
@@ -225,6 +291,19 @@ describe("org server actions", () => {
         "/[locale]/org",
         "layout",
       );
+    });
+
+    it("no-ops when caller is a plain member", async () => {
+      mockRole("member");
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("userId", "user_123");
+      formData.set("role", "admin");
+
+      await updateMemberRole(formData);
+      expect(mockUpdateOrgMemberRoleExecute).not.toHaveBeenCalled();
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
     });
 
     it("returns early when role is not assignable", async () => {
@@ -248,6 +327,7 @@ describe("org server actions", () => {
     });
 
     it("swallows errors without revalidating", async () => {
+      mockRole("admin");
       mockUpdateOrgMemberRoleExecute.mockRejectedValue(new Error("API 500"));
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -265,6 +345,7 @@ describe("org server actions", () => {
 
   describe("transferOwnership", () => {
     it("transfers ownership and revalidates path", async () => {
+      mockRole("owner");
       mockTransferOwnershipExecute.mockResolvedValue(undefined);
 
       const formData = new FormData();
@@ -283,7 +364,20 @@ describe("org server actions", () => {
       expect(result).toEqual({ ok: true });
     });
 
+    it("returns Not authorized when caller is only an admin", async () => {
+      mockRole("admin");
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+      formData.set("userId", "user_2");
+
+      const result = await transferOwnership(undefined, formData);
+      expect(result).toEqual({ ok: false, error: "Not authorized" });
+      expect(mockTransferOwnershipExecute).not.toHaveBeenCalled();
+    });
+
     it("returns error on failure", async () => {
+      mockRole("owner");
       mockTransferOwnershipExecute.mockRejectedValue(new Error("Not an admin"));
 
       const formData = new FormData();

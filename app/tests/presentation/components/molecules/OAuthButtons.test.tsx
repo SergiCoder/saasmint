@@ -11,7 +11,12 @@ vi.mock("next-intl", () => ({
     };
     return map[key] ?? key;
   },
-  useLocale: () => "en",
+}));
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+const mockStartOAuth = vi.fn();
+vi.mock("@/app/actions/auth", () => ({
+  startOAuth: (...args: unknown[]) => mockStartOAuth(...args),
 }));
 
 import { OAuthButtons } from "@/presentation/components/molecules/OAuthButtons";
@@ -32,6 +37,9 @@ describe("OAuthButtons", () => {
       },
       writable: true,
     });
+    mockStartOAuth.mockImplementation(async (provider: string) => ({
+      redirectUrl: `${API_URL}/api/v1/auth/oauth/${provider}/`,
+    }));
   });
 
   it("renders three provider buttons", () => {

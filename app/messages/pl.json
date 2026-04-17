@@ -113,6 +113,12 @@
       "divider": "lub",
       "error": "Coś poszło nie tak. Spróbuj ponownie."
     },
+    "callback": {
+      "pageTitle": "Kończenie logowania",
+      "completing": "Kończenie logowania…",
+      "noscript": "Do dokończenia logowania wymagany jest JavaScript.",
+      "backToLogin": "Wróć do logowania"
+    },
     "register": {
       "title": "Utwórz konto",
       "pageTitle": "Rejestracja",

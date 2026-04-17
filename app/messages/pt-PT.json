@@ -113,6 +113,12 @@
       "divider": "ou",
       "error": "Algo correu mal. Por favor, tente novamente."
     },
+    "callback": {
+      "pageTitle": "A concluir o início de sessão",
+      "completing": "A concluir o início de sessão…",
+      "noscript": "É necessário JavaScript para concluir o início de sessão.",
+      "backToLogin": "Voltar ao início de sessão"
+    },
     "register": {
       "title": "Crie a sua conta",
       "pageTitle": "Registar",

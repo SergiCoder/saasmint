@@ -113,6 +113,12 @@
       "divider": "of",
       "error": "Er is iets misgegaan. Probeer het opnieuw."
     },
+    "callback": {
+      "pageTitle": "Aanmelden voltooien",
+      "completing": "Aanmelden voltooien…",
+      "noscript": "JavaScript is vereist om het aanmelden te voltooien.",
+      "backToLogin": "Terug naar aanmelden"
+    },
     "register": {
       "title": "Maak uw account aan",
       "pageTitle": "Registreren",

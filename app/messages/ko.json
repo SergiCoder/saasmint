@@ -113,6 +113,12 @@
       "divider": "또는",
       "error": "문제가 발생했습니다. 다시 시도해 주세요."
     },
+    "callback": {
+      "pageTitle": "로그인 완료 중",
+      "completing": "로그인 완료 중…",
+      "noscript": "로그인을 완료하려면 JavaScript가 필요합니다.",
+      "backToLogin": "로그인으로 돌아가기"
+    },
     "register": {
       "title": "계정 만들기",
       "pageTitle": "회원가입",

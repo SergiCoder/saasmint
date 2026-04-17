@@ -20,6 +20,8 @@ const {
   getRefreshToken,
   setPendingPlan,
   consumePendingPlan,
+  setOAuthFlowCookies,
+  consumeOAuthFlowCookies,
 } = await import("@/infrastructure/auth/cookies");
 
 beforeEach(() => {
@@ -36,7 +38,7 @@ describe("setAuthCookies", () => {
       "access_abc",
       expect.objectContaining({
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "strict",
         path: "/",
       }),
     );
@@ -45,7 +47,7 @@ describe("setAuthCookies", () => {
       "refresh_xyz",
       expect.objectContaining({
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "strict",
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
       }),
@@ -54,6 +56,33 @@ describe("setAuthCookies", () => {
 
   it("sets access_token maxAge to 15 minutes", async () => {
     await setAuthCookies("a", "r");
+
+    const accessCall = mockSet.mock.calls.find(
+      (call: unknown[]) => call[0] === "access_token",
+    );
+    expect(accessCall?.[2]).toMatchObject({ maxAge: 15 * 60 });
+  });
+
+  it("uses expiresIn for access_token maxAge when within the 1h cap", async () => {
+    await setAuthCookies("a", "r", 900);
+
+    const accessCall = mockSet.mock.calls.find(
+      (call: unknown[]) => call[0] === "access_token",
+    );
+    expect(accessCall?.[2]).toMatchObject({ maxAge: 900 });
+  });
+
+  it("ignores expiresIn that exceeds the 1h cap and falls back to default", async () => {
+    await setAuthCookies("a", "r", 60 * 60 * 24);
+
+    const accessCall = mockSet.mock.calls.find(
+      (call: unknown[]) => call[0] === "access_token",
+    );
+    expect(accessCall?.[2]).toMatchObject({ maxAge: 15 * 60 });
+  });
+
+  it("ignores non-positive expiresIn and falls back to default", async () => {
+    await setAuthCookies("a", "r", 0);
 
     const accessCall = mockSet.mock.calls.find(
       (call: unknown[]) => call[0] === "access_token",
@@ -202,5 +231,86 @@ describe("consumePendingPlan", () => {
     const result = await consumePendingPlan();
 
     expect(result).toEqual({ plan: "price_pro_monthly", isTeam: false });
+  });
+});
+
+describe("setOAuthFlowCookies", () => {
+  it("sets httpOnly secure oauth_in_progress and oauth_next with 10-minute TTL", async () => {
+    await setOAuthFlowCookies("/dashboard");
+
+    expect(mockSet).toHaveBeenCalledTimes(2);
+    expect(mockSet).toHaveBeenCalledWith(
+      "oauth_in_progress",
+      "1",
+      expect.objectContaining({
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 10 * 60,
+      }),
+    );
+    expect(mockSet).toHaveBeenCalledWith(
+      "oauth_next",
+      "/dashboard",
+      expect.objectContaining({
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 10 * 60,
+      }),
+    );
+  });
+
+  it("stores arbitrary nextPath verbatim (validation is callers' responsibility)", async () => {
+    await setOAuthFlowCookies(
+      "/subscription/team-checkout?plan=price_team_pro",
+    );
+    expect(mockSet).toHaveBeenCalledWith(
+      "oauth_next",
+      "/subscription/team-checkout?plan=price_team_pro",
+      expect.any(Object),
+    );
+  });
+});
+
+describe("consumeOAuthFlowCookies", () => {
+  it("returns inProgress=true with next and deletes both cookies when gate is present", async () => {
+    mockGet.mockImplementation((name: string) => {
+      if (name === "oauth_in_progress") return { value: "1" };
+      if (name === "oauth_next") return { value: "/dashboard" };
+      return undefined;
+    });
+
+    const result = await consumeOAuthFlowCookies();
+
+    expect(result).toEqual({ inProgress: true, next: "/dashboard" });
+    expect(mockDelete).toHaveBeenCalledWith("oauth_in_progress");
+    expect(mockDelete).toHaveBeenCalledWith("oauth_next");
+  });
+
+  it("returns inProgress=false when gate cookie is missing, still deletes cookies", async () => {
+    mockGet.mockReturnValue(undefined);
+
+    const result = await consumeOAuthFlowCookies();
+
+    expect(result).toEqual({ inProgress: false, next: undefined });
+    // Defense in depth: delete is called regardless so stale partial state cannot persist
+    expect(mockDelete).toHaveBeenCalledWith("oauth_in_progress");
+    expect(mockDelete).toHaveBeenCalledWith("oauth_next");
+  });
+
+  it("returns inProgress=false when gate cookie has an unexpected value", async () => {
+    mockGet.mockImplementation((name: string) => {
+      if (name === "oauth_in_progress") return { value: "true" };
+      if (name === "oauth_next") return { value: "/dashboard" };
+      return undefined;
+    });
+
+    const result = await consumeOAuthFlowCookies();
+
+    expect(result.inProgress).toBe(false);
+    expect(result.next).toBe("/dashboard");
   });
 });

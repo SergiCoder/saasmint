@@ -130,6 +130,12 @@
       "divider": "or",
       "error": "Something went wrong. Please try again."
     },
+    "callback": {
+      "pageTitle": "Completing sign-in",
+      "completing": "Completing sign-in\u2026",
+      "noscript": "JavaScript is required to complete sign-in.",
+      "backToLogin": "Return to sign-in"
+    },
     "register": {
       "title": "Create your account",
       "pageTitle": "Sign up",

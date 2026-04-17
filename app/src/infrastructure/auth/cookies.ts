@@ -13,7 +13,7 @@ export const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 7;
 export const accessTokenCookieOptions = {
   httpOnly: true,
   secure: true,
-  sameSite: "lax" as const,
+  sameSite: "strict" as const,
   maxAge: ACCESS_TOKEN_MAX_AGE,
   path: "/",
 };
@@ -22,7 +22,7 @@ export const accessTokenCookieOptions = {
 export const refreshTokenCookieOptions = {
   httpOnly: true,
   secure: true,
-  sameSite: "lax" as const,
+  sameSite: "strict" as const,
   maxAge: REFRESH_TOKEN_MAX_AGE,
   path: "/",
 };
@@ -30,9 +30,14 @@ export const refreshTokenCookieOptions = {
 export async function setAuthCookies(
   accessToken: string,
   refreshToken: string,
+  expiresIn?: number,
 ): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.set(ACCESS_TOKEN_NAME, accessToken, accessTokenCookieOptions);
+  const accessOptions =
+    typeof expiresIn === "number" && expiresIn > 0 && expiresIn <= 3600
+      ? { ...accessTokenCookieOptions, maxAge: expiresIn }
+      : accessTokenCookieOptions;
+  cookieStore.set(ACCESS_TOKEN_NAME, accessToken, accessOptions);
   cookieStore.set(REFRESH_TOKEN_NAME, refreshToken, refreshTokenCookieOptions);
 }
 
@@ -99,4 +104,34 @@ export async function consumePendingPlan(): Promise<PendingPlan | undefined> {
     return { plan, isTeam: context === "team" };
   }
   return undefined;
+}
+
+const OAUTH_IN_PROGRESS_NAME = "oauth_in_progress";
+const OAUTH_NEXT_NAME = "oauth_next";
+const OAUTH_FLOW_MAX_AGE = 10 * 60;
+
+const oauthFlowCookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: "lax" as const,
+  maxAge: OAUTH_FLOW_MAX_AGE,
+  path: "/",
+};
+
+export async function setOAuthFlowCookies(nextPath: string): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set(OAUTH_IN_PROGRESS_NAME, "1", oauthFlowCookieOptions);
+  cookieStore.set(OAUTH_NEXT_NAME, nextPath, oauthFlowCookieOptions);
+}
+
+export async function consumeOAuthFlowCookies(): Promise<{
+  inProgress: boolean;
+  next: string | undefined;
+}> {
+  const cookieStore = await cookies();
+  const inProgress = cookieStore.get(OAUTH_IN_PROGRESS_NAME)?.value === "1";
+  const next = cookieStore.get(OAUTH_NEXT_NAME)?.value;
+  cookieStore.delete(OAUTH_IN_PROGRESS_NAME);
+  cookieStore.delete(OAUTH_NEXT_NAME);
+  return { inProgress, next };
 }

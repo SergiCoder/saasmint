@@ -113,6 +113,12 @@
       "divider": "o",
       "error": "Qualcosa è andato storto. Riprova."
     },
+    "callback": {
+      "pageTitle": "Completamento dell'accesso",
+      "completing": "Completamento dell'accesso…",
+      "noscript": "JavaScript è necessario per completare l'accesso.",
+      "backToLogin": "Torna all'accesso"
+    },
     "register": {
       "title": "Crea il tuo account",
       "pageTitle": "Registrati",

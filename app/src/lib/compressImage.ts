@@ -1,4 +1,5 @@
 const MAX_SIZE = 256;
+const MAX_INPUT_DIMENSION = 8192;
 const QUALITY = 0.8;
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
@@ -11,6 +12,14 @@ export function compressImage(file: File): Promise<Blob> {
     const objectUrl = URL.createObjectURL(file);
     img.onload = () => {
       URL.revokeObjectURL(objectUrl);
+      if (img.width > MAX_INPUT_DIMENSION || img.height > MAX_INPUT_DIMENSION) {
+        reject(
+          new Error(
+            `Image too large: ${img.width}x${img.height} (max ${MAX_INPUT_DIMENSION}px)`,
+          ),
+        );
+        return;
+      }
       const scale = Math.min(MAX_SIZE / img.width, MAX_SIZE / img.height, 1);
       const w = Math.round(img.width * scale);
       const h = Math.round(img.height * scale);

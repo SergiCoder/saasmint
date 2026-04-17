@@ -113,6 +113,12 @@
       "divider": "或",
       "error": "出了点问题。请重试。"
     },
+    "callback": {
+      "pageTitle": "正在完成登录",
+      "completing": "正在完成登录…",
+      "noscript": "完成登录需要 JavaScript。",
+      "backToLogin": "返回登录"
+    },
     "register": {
       "title": "创建您的账户",
       "pageTitle": "注册",

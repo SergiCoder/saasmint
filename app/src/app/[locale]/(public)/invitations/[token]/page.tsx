@@ -8,7 +8,11 @@ import { AcceptInvitationForm } from "./_components/AcceptInvitationForm";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("invitation");
-  return { title: t("title") };
+  return {
+    title: t("title"),
+    robots: { index: false, follow: false },
+    referrer: "no-referrer",
+  };
 }
 
 interface InvitationPageProps {

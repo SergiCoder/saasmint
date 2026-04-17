@@ -113,6 +113,12 @@
       "divider": "eller",
       "error": "Något gick fel. Försök igen."
     },
+    "callback": {
+      "pageTitle": "Slutför inloggning",
+      "completing": "Slutför inloggning…",
+      "noscript": "JavaScript krävs för att slutföra inloggningen.",
+      "backToLogin": "Tillbaka till inloggning"
+    },
     "register": {
       "title": "Skapa ditt konto",
       "pageTitle": "Registrera",

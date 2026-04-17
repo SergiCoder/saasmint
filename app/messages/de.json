@@ -113,6 +113,12 @@
       "divider": "oder",
       "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
     },
+    "callback": {
+      "pageTitle": "Anmeldung wird abgeschlossen",
+      "completing": "Anmeldung wird abgeschlossen…",
+      "noscript": "JavaScript wird benötigt, um die Anmeldung abzuschließen.",
+      "backToLogin": "Zurück zur Anmeldung"
+    },
     "register": {
       "title": "Konto erstellen",
       "pageTitle": "Registrieren",

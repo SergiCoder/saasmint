@@ -5,6 +5,9 @@ import { AuthError } from "@/domain/errors/AuthError";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
+const ALLOWED_AVATAR_MIME = new Set(["image/jpeg", "image/png", "image/webp"]);
+const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
+
 /** Resolve the auth token, returning an error string on failure. */
 async function resolveToken(
   fallbackError: string,
@@ -35,6 +38,17 @@ async function extractApiError(
 export async function uploadAvatar(
   formData: FormData,
 ): Promise<{ avatarUrl?: string; error?: string }> {
+  const file = formData.get("avatar");
+  if (!(file instanceof File) || file.size === 0) {
+    return { error: "No file provided." };
+  }
+  if (!ALLOWED_AVATAR_MIME.has(file.type)) {
+    return { error: "Unsupported image type." };
+  }
+  if (file.size > MAX_AVATAR_BYTES) {
+    return { error: "Image too large." };
+  }
+
   const auth = await resolveToken("Upload failed.");
   if ("error" in auth) return { error: auth.error };
 

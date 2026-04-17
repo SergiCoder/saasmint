@@ -113,6 +113,12 @@
       "divider": "atau",
       "error": "Terjadi kesalahan. Silakan coba lagi."
     },
+    "callback": {
+      "pageTitle": "Menyelesaikan login",
+      "completing": "Menyelesaikan login…",
+      "noscript": "JavaScript diperlukan untuk menyelesaikan login.",
+      "backToLogin": "Kembali ke login"
+    },
     "register": {
       "title": "Buat akun Anda",
       "pageTitle": "Daftar",

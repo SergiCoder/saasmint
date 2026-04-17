@@ -16,6 +16,18 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
+function makeImageFormData(
+  options: { type?: string; size?: number } = {},
+): FormData {
+  const { type = "image/webp", size = 1024 } = options;
+  const formData = new FormData();
+  formData.append(
+    "avatar",
+    new File([new Uint8Array(size)], "avatar.webp", { type }),
+  );
+  return formData;
+}
+
 describe("uploadAvatar", () => {
   it("uploads formData and returns avatarUrl on success", async () => {
     mockGetAuthToken.mockResolvedValue("token_abc");
@@ -24,8 +36,7 @@ describe("uploadAvatar", () => {
       json: () => Promise.resolve({ avatar_url: "https://cdn/avatar.webp" }),
     });
 
-    const formData = new FormData();
-    formData.append("avatar", new Blob(["img"]));
+    const formData = makeImageFormData();
 
     const result = await uploadAvatar(formData);
 
@@ -40,12 +51,33 @@ describe("uploadAvatar", () => {
     expect(result).toEqual({ avatarUrl: "https://cdn/avatar.webp" });
   });
 
+  it("rejects missing file without hitting the network", async () => {
+    const result = await uploadAvatar(new FormData());
+    expect(result).toEqual({ error: "No file provided." });
+    expect(mockFetch).not.toHaveBeenCalled();
+    expect(mockGetAuthToken).not.toHaveBeenCalled();
+  });
+
+  it("rejects disallowed MIME types", async () => {
+    const formData = makeImageFormData({ type: "image/gif" });
+    const result = await uploadAvatar(formData);
+    expect(result).toEqual({ error: "Unsupported image type." });
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it("rejects files over the size limit", async () => {
+    const formData = makeImageFormData({ size: 6 * 1024 * 1024 });
+    const result = await uploadAvatar(formData);
+    expect(result).toEqual({ error: "Image too large." });
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
   it("returns error when session is expired (AuthError)", async () => {
     mockGetAuthToken.mockRejectedValue(
       new AuthError("No active session", "NO_SESSION"),
     );
 
-    const result = await uploadAvatar(new FormData());
+    const result = await uploadAvatar(makeImageFormData());
 
     expect(result).toEqual({
       error: "Session expired. Please log in again.",
@@ -55,7 +87,7 @@ describe("uploadAvatar", () => {
   it("returns error when getAuthToken throws a non-auth error", async () => {
     mockGetAuthToken.mockRejectedValue(new Error("unexpected"));
 
-    const result = await uploadAvatar(new FormData());
+    const result = await uploadAvatar(makeImageFormData());
 
     expect(result).toEqual({ error: "Upload failed." });
   });
@@ -68,7 +100,7 @@ describe("uploadAvatar", () => {
       json: () => Promise.resolve({ detail: "File too large" }),
     });
 
-    const result = await uploadAvatar(new FormData());
+    const result = await uploadAvatar(makeImageFormData());
 
     expect(result).toEqual({ error: "File too large" });
   });
@@ -80,7 +112,7 @@ describe("uploadAvatar", () => {
       headers: new Headers({ "content-type": "text/plain" }),
     });
 
-    const result = await uploadAvatar(new FormData());
+    const result = await uploadAvatar(makeImageFormData());
 
     expect(result).toEqual({ error: "Upload failed." });
   });

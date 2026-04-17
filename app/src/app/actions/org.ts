@@ -6,12 +6,37 @@ import { CancelInvitation } from "@/application/use-cases/invitation/CancelInvit
 import { RemoveOrgMember } from "@/application/use-cases/org-member/RemoveOrgMember";
 import { UpdateOrgMemberRole } from "@/application/use-cases/org-member/UpdateOrgMemberRole";
 import { TransferOwnership } from "@/application/use-cases/org-member/TransferOwnership";
-import { invitationGateway, orgMemberGateway } from "@/infrastructure/registry";
+import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
+import { ListOrgMembers } from "@/application/use-cases/org-member/ListOrgMembers";
+import {
+  authGateway,
+  invitationGateway,
+  orgMemberGateway,
+} from "@/infrastructure/registry";
+import type { OrgMember } from "@/domain/models/OrgMember";
 
 const assignableRoles = ["admin", "member"] as const;
 type AssignableRole = (typeof assignableRoles)[number];
 
 export type OrgActionResult = { ok: true } | { ok: false; error: string };
+
+type OrgRole = OrgMember["role"];
+
+async function assertOrgRole(
+  orgId: string,
+  allowed: readonly OrgRole[],
+): Promise<boolean> {
+  try {
+    const [user, members] = await Promise.all([
+      new GetCurrentUser(authGateway).execute(),
+      new ListOrgMembers(orgMemberGateway).execute(orgId),
+    ]);
+    const me = members.find((m) => m.user.id === user.id);
+    return me ? allowed.includes(me.role) : false;
+  } catch {
+    return false;
+  }
+}
 
 export async function inviteMember(
   _prevState: unknown,
@@ -28,6 +53,10 @@ export async function inviteMember(
     !(assignableRoles as readonly string[]).includes(role)
   ) {
     return { ok: false, error: "Invalid input" };
+  }
+
+  if (!(await assertOrgRole(orgId, ["owner", "admin"]))) {
+    return { ok: false, error: "Not authorized" };
   }
 
   try {
@@ -51,6 +80,10 @@ export async function cancelInvitation(formData: FormData) {
     return;
   }
 
+  if (!(await assertOrgRole(orgId, ["owner", "admin"]))) {
+    return;
+  }
+
   try {
     await new CancelInvitation(invitationGateway).execute(orgId, invitationId);
   } catch (err) {
@@ -65,6 +98,10 @@ export async function removeMember(formData: FormData) {
   const userId = formData.get("userId");
 
   if (typeof orgId !== "string" || typeof userId !== "string") {
+    return;
+  }
+
+  if (!(await assertOrgRole(orgId, ["owner", "admin"]))) {
     return;
   }
 
@@ -91,6 +128,10 @@ export async function updateMemberRole(formData: FormData) {
     return;
   }
 
+  if (!(await assertOrgRole(orgId, ["owner", "admin"]))) {
+    return;
+  }
+
   try {
     await new UpdateOrgMemberRole(orgMemberGateway).execute(
       orgId,
@@ -113,6 +154,10 @@ export async function transferOwnership(
 
   if (typeof orgId !== "string" || typeof userId !== "string") {
     return { ok: false, error: "Invalid input" };
+  }
+
+  if (!(await assertOrgRole(orgId, ["owner"]))) {
+    return { ok: false, error: "Not authorized" };
   }
 
   try {

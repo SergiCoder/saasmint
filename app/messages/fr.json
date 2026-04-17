@@ -113,6 +113,12 @@
       "divider": "ou",
       "error": "Une erreur est survenue. Veuillez réessayer."
     },
+    "callback": {
+      "pageTitle": "Connexion en cours",
+      "completing": "Connexion en cours…",
+      "noscript": "JavaScript est requis pour terminer la connexion.",
+      "backToLogin": "Retour à la connexion"
+    },
     "register": {
       "title": "Créez votre compte",
       "pageTitle": "Inscription",

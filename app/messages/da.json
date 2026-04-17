@@ -113,6 +113,12 @@
       "divider": "eller",
       "error": "Noget gik galt. Prøv venligst igen."
     },
+    "callback": {
+      "pageTitle": "Fuldfører login",
+      "completing": "Fuldfører login…",
+      "noscript": "JavaScript kræves for at fuldføre loginnet.",
+      "backToLogin": "Tilbage til login"
+    },
     "register": {
       "title": "Opret din konto",
       "pageTitle": "Opret konto",
