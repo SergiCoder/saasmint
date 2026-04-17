@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockApiFetch = vi.fn();
+const mockApiFetchVoid = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetchVoid: (...args: unknown[]) => mockApiFetchVoid(...args),
 }));
 
 vi.mock("@/infrastructure/api/caseTransform", async () => {
@@ -48,10 +50,10 @@ describe("DjangoApiOrgMemberGateway", () => {
 
       expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/members/");
       expect(result).toHaveLength(1);
-      expect(result[0].user.id).toBe("u1");
-      expect(result[0].user.email).toBe("alice@example.com");
-      expect(result[0].user.fullName).toBe("Alice");
-      expect(result[0].role).toBe("admin");
+      expect(result[0]!.user.id).toBe("u1");
+      expect(result[0]!.user.email).toBe("alice@example.com");
+      expect(result[0]!.user.fullName).toBe("Alice");
+      expect(result[0]!.role).toBe("admin");
     });
 
     it("returns an empty array when no members exist", async () => {
@@ -77,17 +79,17 @@ describe("DjangoApiOrgMemberGateway", () => {
 
   describe("removeMember", () => {
     it("sends DELETE /orgs/:orgId/members/:userId/", async () => {
-      mockApiFetch.mockResolvedValue(undefined);
+      mockApiFetchVoid.mockResolvedValue(undefined);
 
       await gateway.removeMember("o1", "u2");
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/members/u2/", {
+      expect(mockApiFetchVoid).toHaveBeenCalledWith("/orgs/o1/members/u2/", {
         method: "DELETE",
       });
     });
 
     it("propagates errors from apiFetch", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
+      mockApiFetchVoid.mockRejectedValue(new Error("API 403: Forbidden"));
 
       await expect(gateway.removeMember("o1", "u2")).rejects.toThrow(
         "API 403: Forbidden",
@@ -118,17 +120,19 @@ describe("DjangoApiOrgMemberGateway", () => {
 
   describe("leaveOrg", () => {
     it("sends POST /orgs/:orgId/leave/", async () => {
-      mockApiFetch.mockResolvedValue(undefined);
+      mockApiFetchVoid.mockResolvedValue(undefined);
 
       await gateway.leaveOrg("o1");
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/leave/", {
+      expect(mockApiFetchVoid).toHaveBeenCalledWith("/orgs/o1/leave/", {
         method: "POST",
       });
     });
 
     it("propagates errors from apiFetch", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 400: Owner cannot leave"));
+      mockApiFetchVoid.mockRejectedValue(
+        new Error("API 400: Owner cannot leave"),
+      );
 
       await expect(gateway.leaveOrg("o1")).rejects.toThrow(
         "API 400: Owner cannot leave",
@@ -138,18 +142,18 @@ describe("DjangoApiOrgMemberGateway", () => {
 
   describe("transferOwnership", () => {
     it("sends PUT /orgs/:orgId/owner/ with user_id", async () => {
-      mockApiFetch.mockResolvedValue(undefined);
+      mockApiFetchVoid.mockResolvedValue(undefined);
 
       await gateway.transferOwnership("o1", "u2");
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/owner/", {
+      expect(mockApiFetchVoid).toHaveBeenCalledWith("/orgs/o1/owner/", {
         method: "PUT",
         body: JSON.stringify({ user_id: "u2" }),
       });
     });
 
     it("propagates errors from apiFetch", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
+      mockApiFetchVoid.mockRejectedValue(new Error("API 403: Forbidden"));
 
       await expect(gateway.transferOwnership("o1", "u2")).rejects.toThrow(
         "API 403: Forbidden",

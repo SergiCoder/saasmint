@@ -3,8 +3,8 @@ import type {
   IAuthGateway,
 } from "@/application/ports/IAuthGateway";
 import type { User } from "@/domain/models/User";
-import { apiFetch } from "./apiClient";
-import { flattenPhone, keysToCamel } from "./caseTransform";
+import { apiFetch, apiFetchVoid } from "./apiClient";
+import { parseUser } from "./parsers";
 import {
   clearAuthCookies,
   getRefreshToken,
@@ -13,15 +13,13 @@ import {
 export class DjangoApiAuthGateway implements IAuthGateway {
   async getCurrentUser(): Promise<User> {
     const raw = await apiFetch<Record<string, unknown>>("/account/");
-    const user = keysToCamel<User>(raw);
-    flattenPhone(raw, user);
-    return user;
+    return parseUser(raw);
   }
 
   async signOut(): Promise<void> {
     const refreshToken = await getRefreshToken();
     if (refreshToken) {
-      await apiFetch("/auth/logout/", {
+      await apiFetchVoid("/auth/logout/", {
         method: "POST",
         body: JSON.stringify({ refresh_token: refreshToken }),
       });
@@ -45,8 +43,6 @@ export class DjangoApiAuthGateway implements IAuthGateway {
       "/account/cancel-deletion/",
       { method: "POST" },
     );
-    const user = keysToCamel<User>(raw);
-    flattenPhone(raw, user);
-    return user;
+    return parseUser(raw);
   }
 }

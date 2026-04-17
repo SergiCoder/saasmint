@@ -81,9 +81,10 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
   // Uses the cached getOrgMembers so we share the request with canManageBilling
   // and don't double-fetch the member list per render.
   let teamOwnerName: string | null = null;
-  if (isTeamSubscription && hasOrg) {
+  const firstOrg = userOrgs.at(0);
+  if (isTeamSubscription && firstOrg) {
     try {
-      const members = await getOrgMembers(userOrgs[0].id);
+      const members = await getOrgMembers(firstOrg.id);
       const owner = members.find((m) => m.role === "owner");
       if (owner) teamOwnerName = owner.user.fullName;
     } catch {

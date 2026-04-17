@@ -57,6 +57,23 @@ describe("DjangoApiOrgGateway", () => {
       expect(result).toEqual(updated);
     });
 
+    it("converts camelCase input fields to snake_case in the body", async () => {
+      mockApiFetch.mockResolvedValue(org);
+
+      await gateway.updateOrg("o1", {
+        name: "Acme Corp",
+        logoUrl: "https://cdn/logo.png",
+      } as Parameters<typeof gateway.updateOrg>[1]);
+
+      const [, options] = mockApiFetch.mock.calls[0]!;
+      expect(options).toMatchObject({ method: "PATCH" });
+      const body = JSON.parse((options as { body: string }).body);
+      expect(body).toEqual({
+        name: "Acme Corp",
+        logo_url: "https://cdn/logo.png",
+      });
+    });
+
     it("propagates errors from apiFetch", async () => {
       mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
 

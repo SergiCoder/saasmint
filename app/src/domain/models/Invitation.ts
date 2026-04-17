@@ -1,17 +1,22 @@
 export interface InvitedBy {
-  id: string;
-  email: string;
-  fullName: string;
+  readonly id: string;
+  readonly email: string;
+  readonly fullName: string;
 }
 
 export interface Invitation {
-  id: string;
-  org: string;
-  orgName: string;
-  email: string;
-  role: "admin" | "member";
-  status: "pending" | "accepted" | "expired" | "cancelled" | "declined";
-  invitedBy: InvitedBy;
-  createdAt: string;
-  expiresAt: string;
+  readonly id: string;
+  readonly org: string;
+  readonly orgName: string;
+  readonly email: string;
+  readonly role: "admin" | "member";
+  readonly status:
+    | "pending"
+    | "accepted"
+    | "expired"
+    | "cancelled"
+    | "declined";
+  readonly invitedBy: InvitedBy;
+  readonly createdAt: string;
+  readonly expiresAt: string;
 }

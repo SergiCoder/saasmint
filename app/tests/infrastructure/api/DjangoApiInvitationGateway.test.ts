@@ -1,11 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockApiFetch = vi.fn();
+const mockApiFetchVoid = vi.fn();
 const mockPublicApiFetch = vi.fn();
+const mockPublicApiFetchVoid = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetchVoid: (...args: unknown[]) => mockApiFetchVoid(...args),
   publicApiFetch: (...args: unknown[]) => mockPublicApiFetch(...args),
+  publicApiFetchVoid: (...args: unknown[]) => mockPublicApiFetchVoid(...args),
 }));
 
 vi.mock("@/infrastructure/api/caseTransform", async () => {
@@ -81,7 +85,7 @@ describe("DjangoApiInvitationGateway", () => {
 
       expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/invitations/");
       expect(result).toHaveLength(1);
-      expect(result[0].invitedBy.fullName).toBe("Alice");
+      expect(result[0]!.invitedBy.fullName).toBe("Alice");
     });
 
     it("returns an empty array when no invitations exist", async () => {
@@ -99,13 +103,14 @@ describe("DjangoApiInvitationGateway", () => {
 
   describe("cancelInvitation", () => {
     it("sends DELETE /orgs/:orgId/invitations/:invitationId/", async () => {
-      mockApiFetch.mockResolvedValue(undefined);
+      mockApiFetchVoid.mockResolvedValue(undefined);
 
       await gateway.cancelInvitation("o1", "inv1");
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/invitations/inv1/", {
-        method: "DELETE",
-      });
+      expect(mockApiFetchVoid).toHaveBeenCalledWith(
+        "/orgs/o1/invitations/inv1/",
+        { method: "DELETE" },
+      );
     });
   });
 
@@ -149,11 +154,11 @@ describe("DjangoApiInvitationGateway", () => {
 
   describe("declineInvitation", () => {
     it("sends POST /invitations/:token/decline/", async () => {
-      mockPublicApiFetch.mockResolvedValue(undefined);
+      mockPublicApiFetchVoid.mockResolvedValue(undefined);
 
       await gateway.declineInvitation("abc123");
 
-      expect(mockPublicApiFetch).toHaveBeenCalledWith(
+      expect(mockPublicApiFetchVoid).toHaveBeenCalledWith(
         "/invitations/abc123/decline/",
         { method: "POST" },
       );

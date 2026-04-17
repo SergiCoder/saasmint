@@ -66,8 +66,8 @@ describe("buildPlanCardGroups", () => {
       renderCta: () => null,
     });
     expect(groups).toHaveLength(1);
-    expect(groups[0].monthly?.price).toBe("$19");
-    expect(groups[0].yearly?.price).toBe("$190");
+    expect(groups[0]!.monthly?.price).toBe("$19");
+    expect(groups[0]!.yearly?.price).toBe("$190");
   });
 
   it("computes yearly savings percentage when yearly is cheaper than 12x monthly", () => {
@@ -111,7 +111,7 @@ describe("buildPlanCardGroups", () => {
       renderCta: () => null,
     });
     // 100 vs 120 → 16.67% rounded to 17
-    expect(groups[0].yearlySavingsPct).toBe(17);
+    expect(groups[0]!.yearlySavingsPct).toBe(17);
   });
 
   it("omits yearlySavingsPct when there is no discount", () => {
@@ -152,7 +152,7 @@ describe("buildPlanCardGroups", () => {
       },
       renderCta: () => null,
     });
-    expect(groups[0].yearlySavingsPct).toBeUndefined();
+    expect(groups[0]!.yearlySavingsPct).toBeUndefined();
   });
 
   it("sorts groups by tier order: free, basic, pro", () => {
@@ -237,7 +237,7 @@ describe("buildPlanCardGroups", () => {
       },
       renderCta: () => null,
     });
-    expect(groups[0].monthly?.intervalLabel).toBe("seat/month");
+    expect(groups[0]!.monthly?.intervalLabel).toBe("seat/month");
   });
 
   it("marks the pro tier as highlighted", () => {

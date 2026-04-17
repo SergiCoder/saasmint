@@ -14,13 +14,13 @@ export type SubscriptionStatus =
 export const MAX_SEATS = 100;
 
 export interface Subscription {
-  id: string;
-  status: SubscriptionStatus;
-  plan: Plan;
-  quantity: number;
-  trialEndsAt: string | null;
-  currentPeriodStart: string;
-  currentPeriodEnd: string;
-  canceledAt: string | null;
-  createdAt: string;
+  readonly id: string;
+  readonly status: SubscriptionStatus;
+  readonly plan: Plan;
+  readonly quantity: number;
+  readonly trialEndsAt: string | null;
+  readonly currentPeriodStart: string;
+  readonly currentPeriodEnd: string;
+  readonly canceledAt: string | null;
+  readonly createdAt: string;
 }

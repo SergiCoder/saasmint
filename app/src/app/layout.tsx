@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { getLocale } from "next-intl/server";
+import { env } from "@/lib/env";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -8,7 +9,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const RTL_LOCALES = new Set(["ar"]);
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
   title: { default: "SaaSmint", template: "%s | SaaSmint" },
   description: "The platform teams actually ship with.",
   openGraph: {

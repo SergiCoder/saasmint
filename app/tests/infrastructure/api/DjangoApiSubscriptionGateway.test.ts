@@ -1,9 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { ApiError } from "@/domain/errors/ApiError";
 
 const mockApiFetch = vi.fn();
+const mockApiFetchVoid = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetchVoid: (...args: unknown[]) => mockApiFetchVoid(...args),
 }));
 
 const { DjangoApiSubscriptionGateway } =
@@ -63,8 +66,6 @@ describe("DjangoApiSubscriptionGateway", () => {
           },
         },
         quantity: 1,
-        discountPercent: null,
-        discountEndAt: null,
         trialEndsAt: null,
         currentPeriodStart: "2024-01-01T00:00:00Z",
         currentPeriodEnd: "2024-02-01T00:00:00Z",
@@ -74,18 +75,19 @@ describe("DjangoApiSubscriptionGateway", () => {
     });
 
     it("returns null when API responds with 404", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 404: Not Found"));
+      mockApiFetch.mockRejectedValue(new ApiError(404, "Not Found"));
 
       const result = await gateway.getSubscription();
       expect(result).toBeNull();
     });
 
     it("re-throws non-404 errors", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 500: Server Error"));
+      mockApiFetch.mockRejectedValue(new ApiError(500, "Server Error"));
 
-      await expect(gateway.getSubscription()).rejects.toThrow(
-        "API 500: Server Error",
-      );
+      await expect(gateway.getSubscription()).rejects.toBeInstanceOf(ApiError);
+      await expect(gateway.getSubscription()).rejects.toMatchObject({
+        status: 500,
+      });
     });
 
     it("appends ?currency= query string when currency is provided", async () => {
@@ -182,39 +184,43 @@ describe("DjangoApiSubscriptionGateway", () => {
 
   describe("cancelSubscription", () => {
     it("sends DELETE /billing/subscriptions/me/", async () => {
-      mockApiFetch.mockResolvedValue(undefined);
+      mockApiFetchVoid.mockResolvedValue(undefined);
 
       await gateway.cancelSubscription();
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscriptions/me/", {
-        method: "DELETE",
-      });
+      expect(mockApiFetchVoid).toHaveBeenCalledWith(
+        "/billing/subscriptions/me/",
+        { method: "DELETE" },
+      );
     });
   });
 
   describe("resumeSubscription", () => {
     it("sends PATCH /billing/subscriptions/me/ with cancel_at_period_end=false", async () => {
-      mockApiFetch.mockResolvedValue(undefined);
+      mockApiFetchVoid.mockResolvedValue(undefined);
 
       await gateway.resumeSubscription();
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscriptions/me/", {
-        method: "PATCH",
-        body: JSON.stringify({ cancel_at_period_end: false }),
-      });
+      expect(mockApiFetchVoid).toHaveBeenCalledWith(
+        "/billing/subscriptions/me/",
+        {
+          method: "PATCH",
+          body: JSON.stringify({ cancel_at_period_end: false }),
+        },
+      );
     });
   });
 
   describe("updateSeats", () => {
     it("sends PATCH /billing/subscriptions/me/ with quantity", async () => {
-      mockApiFetch.mockResolvedValue(undefined);
+      mockApiFetchVoid.mockResolvedValue(undefined);
 
       await gateway.updateSeats(5);
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscriptions/me/", {
-        method: "PATCH",
-        body: JSON.stringify({ quantity: 5 }),
-      });
+      expect(mockApiFetchVoid).toHaveBeenCalledWith(
+        "/billing/subscriptions/me/",
+        { method: "PATCH", body: JSON.stringify({ quantity: 5 }) },
+      );
     });
   });
 });

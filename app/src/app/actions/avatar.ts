@@ -2,8 +2,9 @@
 
 import { getAuthToken } from "@/infrastructure/api/apiClient";
 import { AuthError } from "@/domain/errors/AuthError";
+import { env } from "@/lib/env";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+const API_URL = env.NEXT_PUBLIC_API_URL;
 
 const ALLOWED_AVATAR_MIME = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_AVATAR_BYTES = 5 * 1024 * 1024;

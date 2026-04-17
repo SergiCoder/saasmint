@@ -17,12 +17,12 @@ Strict hexagonal architecture enforced by layer isolation:
 
 ## Domain Models
 
-Core types in `src/domain/models/`:
+Core types in `src/domain/models/`. All model fields are declared `readonly` (including `readonly string[]` arrays) — treat domain objects as immutable; build new copies rather than mutating in place.
 
 - `User` — authenticated user (id, account type, locale/currency preferences)
 - `Org` — organisation record (id, name, slug, logoUrl)
 - `OrgMember` — org membership (nested `user: OrgMemberUser`, role: `owner | admin | member`, isBilling flag)
-- `Invitation` — org invite (id, org, email, role: `admin | member`, status: `pending | accepted | expired | cancelled`, invitedBy, dates)
+- `Invitation` — org invite (id, org, email, role: `admin | member`, status: `pending | accepted | expired | cancelled | declined`, invitedBy, dates)
 - `Plan` — billing plan (context: `personal | team`, tier: `PlanTier` (1=free, 2=basic, 3=pro), interval: `month | year`, single `price`)
 - `PlanPrice` — individual plan price point (id, amount, displayAmount, currency)
 - `Product` — one-time purchase product (id, name, type: `one_time`, credits, `price`)
@@ -35,8 +35,10 @@ Domain errors in `src/domain/errors/`:
 - `AuthError` — authentication / authorisation failures
 - `BillingError` — payment and subscription failures
 - `OrgError` — organisation management failures
+- `ApiError` — generic HTTP failure from the Django API (carries `status`, raw `body`, and a `detail` getter that extracts Django-style `{ detail }` or `string[]` messages)
+- `NetworkError` — fetch couldn't reach the server (DNS, connection refused, timeout); carries the original exception as `cause`
 
-All error classes carry a `code: string` field for programmatic handling.
+All error classes carry a `code: string` field for programmatic handling (`ApiError` defaults its code to `HTTP_<status>`; `NetworkError` is `NETWORK_UNREACHABLE`). `src/lib/friendlyError.ts` turns these into a user-facing string with a fallback.
 
 ## Infrastructure
 
@@ -52,6 +54,30 @@ Avatar uploads go through the Django API (`POST /account/avatar/`). Client-side 
 Each gateway implements a port interface from `src/application/ports/` (e.g. `IOrgGateway`, `IAuthGateway`, `IReferenceGateway`).
 
 `src/infrastructure/registry.ts` exports singleton instances of every gateway — import gateways from the registry, not by instantiating classes directly.
+
+### API client
+
+`src/infrastructure/api/apiClient.ts` exposes four variants on top of a shared `raw()` helper:
+
+- `apiFetch<T>` / `apiFetchVoid` — require an access token; throw `AuthError("NO_SESSION")` if none
+- `apiFetchOptional<T>` — send the token when present, fall through to an anonymous request otherwise (used for endpoints that personalize for logged-in users but still work anonymously, e.g. plans list)
+- `publicApiFetch<T>` / `publicApiFetchVoid` — never send a token
+
+Non-OK responses are normalized: `401` on an authenticated request becomes `AuthError`; everything else becomes `ApiError(status, body)`. Network failures (ECONNREFUSED, fetch-failed, etc.) are rewrapped as a friendly "Unable to reach the server" error.
+
+### Response parsing
+
+Gateways never cast raw JSON to domain types. The pattern is:
+
+1. `apiFetch<Record<string, unknown>>(...)` to get untyped JSON
+2. `keysToCamel(raw)` (or `keysToCamelWithPrice` for Plan/Product/Subscription, plus `flattenPhone` for User) in `src/infrastructure/api/caseTransform.ts` to normalise key shape
+3. `UserSchema.parse(...)` etc. from `src/infrastructure/api/schemas.ts` — a set of Zod schemas `satisfies z.ZodType<DomainModel>` that validate and return a correctly-typed domain object
+
+Always validate through the relevant schema when adding a new endpoint; do not re-introduce `keysToCamel<T>()` generic casts.
+
+### Environment variables
+
+Public env vars are validated once at module load in `src/lib/env.ts` (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_APP_URL` must be valid URLs). The validator is intentionally zod-free so `src/proxy.ts` can import `env` without pulling zod into the Edge middleware bundle. Import `env` from `@/lib/env` instead of reading `process.env.NEXT_PUBLIC_*` directly so misconfiguration fails fast with a clear message.
 
 ## Authentication
 
@@ -106,6 +132,7 @@ Route-specific client components live in co-located `_components/` directories (
 - Payments: Stripe-hosted Checkout redirect only — no embedded forms
 - All user-facing strings through next-intl — never hardcoded
 - Brand color: teal `#0D9488` (`primary-600`)
+- TypeScript runs with `strict`, `noUncheckedIndexedAccess`, `noImplicitReturns`, and `noFallthroughCasesInSwitch` — array/tuple indexing yields `T | undefined`, so narrow before use instead of reaching for `!`
 
 ## Committing
 

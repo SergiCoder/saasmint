@@ -30,8 +30,8 @@ describe("InviteByEmailForm", () => {
 
     const options = select.querySelectorAll("option");
     expect(options).toHaveLength(2);
-    expect(options[0].value).toBe("member");
-    expect(options[1].value).toBe("admin");
+    expect(options[0]!.value).toBe("member");
+    expect(options[1]!.value).toBe("admin");
   });
 
   it("renders the submit button", () => {

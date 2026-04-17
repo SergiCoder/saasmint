@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { ApiError } from "@/domain/errors/ApiError";
 import { AuthError } from "@/domain/errors/AuthError";
 
 const mockGetAccessToken = vi.fn();
@@ -11,8 +12,14 @@ const fetchSpy = vi.fn();
 vi.stubGlobal("fetch", fetchSpy);
 
 // Import after mocks are set up
-const { getAuthToken, apiFetch, publicApiFetch } =
-  await import("@/infrastructure/api/apiClient");
+const {
+  getAuthToken,
+  apiFetch,
+  apiFetchVoid,
+  apiFetchOptional,
+  publicApiFetch,
+  publicApiFetchVoid,
+} = await import("@/infrastructure/api/apiClient");
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -82,11 +89,11 @@ describe("apiFetch", () => {
     });
 
     await apiFetch("/test/");
-    expect(fetchSpy.mock.calls[0][1].headers["content-type"]).toBeUndefined();
+    expect(fetchSpy.mock.calls[0]![1].headers["content-type"]).toBeUndefined();
 
     fetchSpy.mockClear();
     await apiFetch("/test/", { method: "POST", body: JSON.stringify({}) });
-    expect(fetchSpy.mock.calls[0][1].headers["content-type"]).toBe(
+    expect(fetchSpy.mock.calls[0]![1].headers["content-type"]).toBe(
       "application/json",
     );
   });
@@ -122,50 +129,55 @@ describe("apiFetch", () => {
     expect(result).toEqual(payload);
   });
 
-  it("returns undefined on 204 No Content", async () => {
+  it("apiFetchVoid resolves on 204 No Content without parsing body", async () => {
     fetchSpy.mockResolvedValue({
       ok: true,
       status: 204,
     });
 
-    const result = await apiFetch("/orgs/o1/members/u1/", {
-      method: "DELETE",
-    });
-    expect(result).toBeUndefined();
+    await expect(
+      apiFetchVoid("/orgs/o1/members/u1/", { method: "DELETE" }),
+    ).resolves.toBeUndefined();
   });
 
-  it("throws an error with status and body on non-2xx response", async () => {
+  it("throws ApiError with status and parsed JSON body on non-2xx", async () => {
     fetchSpy.mockResolvedValue({
       ok: false,
       status: 400,
-      text: () => Promise.resolve("Bad Request"),
+      text: () => Promise.resolve(JSON.stringify({ detail: "Bad Request" })),
     });
 
-    await expect(apiFetch("/account/")).rejects.toThrow("API 400: Bad Request");
-  });
-
-  it("throws on 404 with API prefix", async () => {
-    fetchSpy.mockResolvedValue({
-      ok: false,
-      status: 404,
-      text: () => Promise.resolve("Not Found"),
+    await expect(apiFetch("/account/")).rejects.toBeInstanceOf(ApiError);
+    await expect(apiFetch("/account/")).rejects.toMatchObject({
+      status: 400,
+      body: { detail: "Bad Request" },
     });
-
-    await expect(apiFetch("/billing/subscription/")).rejects.toThrow(
-      "API 404: Not Found",
-    );
   });
 
-  it("throws on 500 server error", async () => {
+  it("throws ApiError with raw text body when response is not JSON", async () => {
     fetchSpy.mockResolvedValue({
       ok: false,
       status: 500,
       text: () => Promise.resolve("Internal Server Error"),
     });
 
-    await expect(apiFetch("/account/")).rejects.toThrow(
-      "API 500: Internal Server Error",
-    );
+    await expect(apiFetch("/account/")).rejects.toBeInstanceOf(ApiError);
+    await expect(apiFetch("/account/")).rejects.toMatchObject({
+      status: 500,
+      body: "Internal Server Error",
+    });
+  });
+
+  it("throws ApiError with status 404 on not-found response", async () => {
+    fetchSpy.mockResolvedValue({
+      ok: false,
+      status: 404,
+      text: () => Promise.resolve("Not Found"),
+    });
+
+    await expect(apiFetch("/billing/subscription/")).rejects.toMatchObject({
+      status: 404,
+    });
   });
 
   it("allows custom headers to override defaults", async () => {
@@ -179,7 +191,7 @@ describe("apiFetch", () => {
       headers: { "Content-Type": "text/plain" },
     });
 
-    const headers = fetchSpy.mock.calls[0][1].headers;
+    const headers = fetchSpy.mock.calls[0]![1].headers;
     expect(headers["content-type"]).toBe("text/plain");
   });
 
@@ -230,7 +242,7 @@ describe("publicApiFetch", () => {
       "https://localhost:8443/api/v1/billing/plans/",
       expect.any(Object),
     );
-    const headers = fetchSpy.mock.calls[0][1].headers;
+    const headers = fetchSpy.mock.calls[0]![1].headers;
     expect(headers.authorization).toBeUndefined();
     expect(result).toEqual([{ id: "p1" }]);
   });
@@ -260,26 +272,29 @@ describe("publicApiFetch", () => {
       body: JSON.stringify({ a: 1 }),
     });
 
-    const headers = fetchSpy.mock.calls[0][1].headers;
+    const headers = fetchSpy.mock.calls[0]![1].headers;
     expect(headers["content-type"]).toBe("application/json");
   });
 
-  it("returns undefined on 204", async () => {
+  it("publicApiFetchVoid resolves on 204 without parsing body", async () => {
     fetchSpy.mockResolvedValue({ ok: true, status: 204 });
-    const result = await publicApiFetch("/public/");
-    expect(result).toBeUndefined();
+    await expect(publicApiFetchVoid("/public/")).resolves.toBeUndefined();
   });
 
-  it("throws a generic error on non-2xx response", async () => {
+  it("throws ApiError on non-2xx response", async () => {
     fetchSpy.mockResolvedValue({
       ok: false,
       status: 500,
       text: () => Promise.resolve("boom"),
     });
 
-    await expect(publicApiFetch("/billing/plans/")).rejects.toThrow(
-      "API 500: boom",
+    await expect(publicApiFetch("/billing/plans/")).rejects.toBeInstanceOf(
+      ApiError,
     );
+    await expect(publicApiFetch("/billing/plans/")).rejects.toMatchObject({
+      status: 500,
+      body: "boom",
+    });
   });
 
   it("does NOT wrap 401 in AuthError (no auth token sent)", async () => {
@@ -289,8 +304,8 @@ describe("publicApiFetch", () => {
       text: () => Promise.resolve("Unauthorized"),
     });
 
-    await expect(publicApiFetch("/billing/plans/")).rejects.toThrow(
-      "API 401: Unauthorized",
+    await expect(publicApiFetch("/billing/plans/")).rejects.toBeInstanceOf(
+      ApiError,
     );
     await expect(publicApiFetch("/billing/plans/")).rejects.not.toBeInstanceOf(
       AuthError,
@@ -323,5 +338,35 @@ describe("isNetworkError (via apiFetch)", () => {
     fetchSpy.mockRejectedValue(new Error("something else"));
 
     await expect(apiFetch("/account/")).rejects.toThrow("something else");
+  });
+});
+
+describe("apiFetchOptional", () => {
+  it("sends Authorization header when a token is present", async () => {
+    mockGetAccessToken.mockResolvedValue("tok_abc");
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve([]),
+    });
+
+    await apiFetchOptional("/billing/plans/");
+
+    const headers = fetchSpy.mock.calls[0]![1].headers;
+    expect(headers.authorization).toBe("Bearer tok_abc");
+  });
+
+  it("omits Authorization header when no token is present", async () => {
+    mockGetAccessToken.mockResolvedValue(undefined);
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve([]),
+    });
+
+    await apiFetchOptional("/billing/plans/");
+
+    const headers = fetchSpy.mock.calls[0]![1].headers;
+    expect(headers.authorization).toBeUndefined();
   });
 });

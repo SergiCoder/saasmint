@@ -1,4 +1,4 @@
 export interface PhonePrefix {
-  prefix: string;
-  label: string;
+  readonly prefix: string;
+  readonly label: string;
 }

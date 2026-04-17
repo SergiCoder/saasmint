@@ -176,7 +176,7 @@ describe("billing server actions", () => {
       await expect(startCheckout(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      const callArgs = mockStartCheckoutExecute.mock.calls[0][0];
+      const callArgs = mockStartCheckoutExecute.mock.calls[0]![0];
       expect(callArgs.orgName).toBeUndefined();
     });
 
@@ -192,7 +192,7 @@ describe("billing server actions", () => {
       await expect(startCheckout(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      const callArgs = mockStartCheckoutExecute.mock.calls[0][0];
+      const callArgs = mockStartCheckoutExecute.mock.calls[0]![0];
       expect(callArgs.quantity).toBeUndefined();
     });
 

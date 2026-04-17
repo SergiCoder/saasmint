@@ -7,11 +7,11 @@ export const PLAN_TIER_BASIC: PlanTier = 2;
 export const PLAN_TIER_PRO: PlanTier = 3;
 
 export interface Plan {
-  id: string;
-  name: string;
-  description: string;
-  context: "personal" | "team";
-  tier: PlanTier;
-  interval: "month" | "year";
-  price: PlanPrice | null;
+  readonly id: string;
+  readonly name: string;
+  readonly description: string;
+  readonly context: "personal" | "team";
+  readonly tier: PlanTier;
+  readonly interval: "month" | "year";
+  readonly price: PlanPrice | null;
 }

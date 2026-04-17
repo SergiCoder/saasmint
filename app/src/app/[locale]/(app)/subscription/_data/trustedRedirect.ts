@@ -6,7 +6,9 @@
  * two entry points cannot drift apart.
  */
 
-export const APP_ORIGIN = process.env.NEXT_PUBLIC_APP_URL!;
+import { env } from "@/lib/env";
+
+export const APP_ORIGIN = env.NEXT_PUBLIC_APP_URL;
 
 const TRUSTED_REDIRECT_HOSTS = ["checkout.stripe.com", "billing.stripe.com"];
 

@@ -1,15 +1,15 @@
 export interface OrgMemberUser {
-  id: string;
-  email: string;
-  fullName: string;
-  avatarUrl: string | null;
+  readonly id: string;
+  readonly email: string;
+  readonly fullName: string;
+  readonly avatarUrl: string | null;
 }
 
 export interface OrgMember {
-  id: string;
-  org: string;
-  user: OrgMemberUser;
-  role: "owner" | "admin" | "member";
-  isBilling: boolean;
-  joinedAt: string;
+  readonly id: string;
+  readonly org: string;
+  readonly user: OrgMemberUser;
+  readonly role: "owner" | "admin" | "member";
+  readonly isBilling: boolean;
+  readonly joinedAt: string;
 }

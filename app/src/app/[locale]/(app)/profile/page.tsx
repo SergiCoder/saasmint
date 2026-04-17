@@ -27,9 +27,10 @@ export default async function ProfilePage() {
   ]);
 
   let deleteRestriction: "owner" | "member" | undefined;
-  if (userOrgs.length > 0) {
+  const firstOrg = userOrgs.at(0);
+  if (firstOrg) {
     try {
-      const members = await getOrgMembers(userOrgs[0].id);
+      const members = await getOrgMembers(firstOrg.id);
       const me = members.find((m) => m.user.id === currentUser.id);
       deleteRestriction = me?.role === "owner" ? "owner" : "member";
     } catch {

@@ -2,6 +2,7 @@ import type { IProductGateway } from "@/application/ports/IProductGateway";
 import type { Product } from "@/domain/models/Product";
 import { apiFetch } from "./apiClient";
 import { keysToCamelWithPrice } from "./caseTransform";
+import { ProductSchema } from "./schemas";
 
 export class DjangoApiProductGateway implements IProductGateway {
   async listProducts(currency?: string): Promise<Product[]> {
@@ -9,6 +10,8 @@ export class DjangoApiProductGateway implements IProductGateway {
     const raw = await apiFetch<Record<string, unknown>[]>(
       `/billing/products/${query}`,
     );
-    return raw.map((r) => keysToCamelWithPrice<Product>(r, currency));
+    return raw.map((r) =>
+      ProductSchema.parse(keysToCamelWithPrice(r, currency)),
+    );
   }
 }

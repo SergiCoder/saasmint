@@ -1,12 +1,10 @@
 import type { AbstractIntlMessages } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
-import { routing } from "./routing";
-
-type Locale = (typeof routing.locales)[number];
+import { isLocale, routing } from "./routing";
 
 export default getRequestConfig(async ({ requestLocale }) => {
   let locale = await requestLocale;
-  if (!locale || !routing.locales.includes(locale as Locale)) {
+  if (!isLocale(locale)) {
     locale = routing.defaultLocale;
   }
 

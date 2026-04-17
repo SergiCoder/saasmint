@@ -10,10 +10,8 @@ export const OAUTH_NEXT_FALLBACK = "/dashboard";
 
 function stripLocale(pathname: string): string {
   const segments = pathname.split("/");
-  if (
-    segments.length >= 2 &&
-    (routing.locales as readonly string[]).includes(segments[1])
-  ) {
+  const candidate = segments[1];
+  if (candidate && (routing.locales as readonly string[]).includes(candidate)) {
     return "/" + segments.slice(2).join("/");
   }
   return pathname;

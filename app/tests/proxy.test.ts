@@ -247,6 +247,62 @@ describe("proxy", () => {
     });
   });
 
+  describe("malformed access tokens", () => {
+    it("treats a non-3-part token as expired", async () => {
+      const request = createMockRequest(`${APP_URL}/en/dashboard`, [
+        { name: "access_token", value: "only.two" },
+      ]);
+      const response = await proxy(request);
+      expect(response.status).toBe(307);
+      expect(response.headers.get("location")).toContain("/en/login");
+    });
+
+    it("treats a non-base64 payload as expired", async () => {
+      const request = createMockRequest(`${APP_URL}/en/dashboard`, [
+        { name: "access_token", value: "header.not-base64!@#.sig" },
+      ]);
+      const response = await proxy(request);
+      expect(response.status).toBe(307);
+      expect(response.headers.get("location")).toContain("/en/login");
+    });
+
+    it("treats a payload without exp as expired", async () => {
+      const header = btoa(JSON.stringify({ alg: "HS256" }));
+      const payload = btoa(JSON.stringify({ sub: "u1" }));
+      const token = `${header}.${payload}.sig`;
+      const request = createMockRequest(`${APP_URL}/en/dashboard`, [
+        { name: "access_token", value: token },
+      ]);
+      const response = await proxy(request);
+      expect(response.status).toBe(307);
+      expect(response.headers.get("location")).toContain("/en/login");
+    });
+
+    it("treats a payload with non-numeric exp as expired", async () => {
+      const header = btoa(JSON.stringify({ alg: "HS256" }));
+      const payload = btoa(JSON.stringify({ sub: "u1", exp: "later" }));
+      const token = `${header}.${payload}.sig`;
+      const request = createMockRequest(`${APP_URL}/en/dashboard`, [
+        { name: "access_token", value: token },
+      ]);
+      const response = await proxy(request);
+      expect(response.status).toBe(307);
+      expect(response.headers.get("location")).toContain("/en/login");
+    });
+
+    it("treats a payload that is a JSON primitive (not object) as expired", async () => {
+      const header = btoa(JSON.stringify({ alg: "HS256" }));
+      const payload = btoa(JSON.stringify("not-an-object"));
+      const token = `${header}.${payload}.sig`;
+      const request = createMockRequest(`${APP_URL}/en/dashboard`, [
+        { name: "access_token", value: token },
+      ]);
+      const response = await proxy(request);
+      expect(response.status).toBe(307);
+      expect(response.headers.get("location")).toContain("/en/login");
+    });
+  });
+
   describe("config", () => {
     it("exports a matcher config", async () => {
       const { config } = await import("@/proxy");

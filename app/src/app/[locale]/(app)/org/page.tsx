@@ -13,7 +13,7 @@ export default async function OrgListPage() {
   const user = await getCurrentUser();
   const orgs = await getUserOrgs(user.id);
 
-  if (orgs.length === 1) {
+  if (orgs.length === 1 && orgs[0]) {
     redirect(`/org/${orgs[0].slug}`);
   }
 

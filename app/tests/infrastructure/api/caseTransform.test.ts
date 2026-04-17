@@ -86,6 +86,67 @@ describe("keysToCamel", () => {
   it("handles empty objects", () => {
     expect(keysToCamel({})).toEqual({});
   });
+
+  it("recursively camelises nested plain objects", () => {
+    const input = {
+      outer_key: {
+        inner_key: "value",
+        deeper_nest: { deepest_field: 1 },
+      },
+    };
+    expect(keysToCamel(input)).toEqual({
+      outerKey: {
+        innerKey: "value",
+        deeperNest: { deepestField: 1 },
+      },
+    });
+  });
+
+  it("maps arrays of plain objects, camelising each entry", () => {
+    const input = {
+      nested_list: [{ first_name: "Alice" }, { first_name: "Bob" }],
+    };
+    expect(keysToCamel(input)).toEqual({
+      nestedList: [{ firstName: "Alice" }, { firstName: "Bob" }],
+    });
+  });
+
+  it("returns the same primitive when the top-level value is not an object", () => {
+    expect(keysToCamel(42)).toBe(42);
+    expect(keysToCamel("hello_world")).toBe("hello_world");
+    expect(keysToCamel(null)).toBe(null);
+    expect(keysToCamel(undefined)).toBe(undefined);
+    expect(keysToCamel(true)).toBe(true);
+  });
+
+  it("maps a top-level array of primitives", () => {
+    expect(keysToCamel([1, 2, 3])).toEqual([1, 2, 3]);
+  });
+
+  it("preserves Date instances (non-plain objects) untouched", () => {
+    const date = new Date("2024-01-01T00:00:00Z");
+    const result = keysToCamel({ created_at: date }) as {
+      createdAt: Date;
+    };
+    expect(result.createdAt).toBe(date);
+  });
+
+  it("preserves Map instances untouched", () => {
+    const map = new Map([["a", 1]]);
+    const result = keysToCamel({ some_map: map }) as {
+      someMap: Map<string, number>;
+    };
+    expect(result.someMap).toBe(map);
+  });
+
+  it("preserves class instances untouched", () => {
+    class Foo {
+      constructor(public snake_field: string) {}
+    }
+    const foo = new Foo("x");
+    const result = keysToCamel({ my_foo: foo }) as { myFoo: Foo };
+    expect(result.myFoo).toBe(foo);
+  });
 });
 
 describe("keysToCamelWithPrice", () => {
@@ -148,6 +209,17 @@ describe("keysToCamelWithPrice", () => {
     expect(keysToCamelWithPrice(input)).toEqual({
       planName: "Free",
       price: null,
+    });
+  });
+
+  it("does not derive displayAmount when amount is not a number", () => {
+    const input = {
+      id: "p1",
+      price: { id: "pp1", amount: "1900", currency: "eur" },
+    };
+    expect(keysToCamelWithPrice(input)).toEqual({
+      id: "p1",
+      price: { id: "pp1", amount: "1900", currency: "eur" },
     });
   });
 });

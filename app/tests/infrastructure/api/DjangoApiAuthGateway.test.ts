@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockApiFetch = vi.fn();
+const mockApiFetchVoid = vi.fn();
 const mockClearAuthCookies = vi.fn();
 const mockGetRefreshToken = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetchVoid: (...args: unknown[]) => mockApiFetchVoid(...args),
 }));
 
 vi.mock("@/infrastructure/auth/cookies", () => ({
@@ -15,6 +17,46 @@ vi.mock("@/infrastructure/auth/cookies", () => ({
 
 const { DjangoApiAuthGateway } =
   await import("@/infrastructure/api/DjangoApiAuthGateway");
+
+const snakeUserBase = {
+  id: "u1",
+  email: "alice@example.com",
+  full_name: "Alice",
+  avatar_url: null,
+  account_type: "personal",
+  preferred_locale: "en",
+  preferred_currency: "USD",
+  timezone: null,
+  job_title: null,
+  pronouns: null,
+  bio: null,
+  is_verified: true,
+  registration_method: "email",
+  linked_providers: [],
+  created_at: "2024-01-01T00:00:00Z",
+  updated_at: "2024-01-01T00:00:00Z",
+  scheduled_deletion_at: null,
+};
+
+const camelUserBase = {
+  id: "u1",
+  email: "alice@example.com",
+  fullName: "Alice",
+  avatarUrl: null,
+  accountType: "personal",
+  preferredLocale: "en",
+  preferredCurrency: "USD",
+  timezone: null,
+  jobTitle: null,
+  pronouns: null,
+  bio: null,
+  isVerified: true,
+  registrationMethod: "email",
+  linkedProviders: [],
+  createdAt: "2024-01-01T00:00:00Z",
+  updatedAt: "2024-01-01T00:00:00Z",
+  scheduledDeletionAt: null,
+};
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -26,14 +68,7 @@ describe("DjangoApiAuthGateway", () => {
   describe("getCurrentUser", () => {
     it("fetches /account/ and converts keys to camelCase", async () => {
       mockApiFetch.mockResolvedValue({
-        id: "u1",
-        email: "alice@example.com",
-        full_name: "Alice",
-        avatar_url: null,
-        account_type: "personal",
-        preferred_locale: "en",
-        preferred_currency: "USD",
-        is_verified: true,
+        ...snakeUserBase,
         phone: { prefix: "+1", number: "5551234" },
       });
 
@@ -41,30 +76,14 @@ describe("DjangoApiAuthGateway", () => {
 
       expect(mockApiFetch).toHaveBeenCalledWith("/account/");
       expect(result).toEqual({
-        id: "u1",
-        email: "alice@example.com",
-        fullName: "Alice",
-        avatarUrl: null,
-        accountType: "personal",
-        preferredLocale: "en",
-        preferredCurrency: "USD",
-        isVerified: true,
+        ...camelUserBase,
         phonePrefix: "+1",
         phone: "5551234",
       });
     });
 
     it("sets phone fields to null when phone is absent", async () => {
-      mockApiFetch.mockResolvedValue({
-        id: "u1",
-        email: "alice@example.com",
-        full_name: "Alice",
-        avatar_url: null,
-        account_type: "personal",
-        preferred_locale: "en",
-        preferred_currency: "USD",
-        is_verified: true,
-      });
+      mockApiFetch.mockResolvedValue({ ...snakeUserBase, phone: null });
 
       const result = await gateway.getCurrentUser();
 
@@ -84,12 +103,12 @@ describe("DjangoApiAuthGateway", () => {
   describe("signOut", () => {
     it("sends refresh_token to /auth/logout/ and clears cookies", async () => {
       mockGetRefreshToken.mockResolvedValue("refresh_abc");
-      mockApiFetch.mockResolvedValue(undefined);
+      mockApiFetchVoid.mockResolvedValue(undefined);
       mockClearAuthCookies.mockResolvedValue(undefined);
 
       await gateway.signOut();
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/auth/logout/", {
+      expect(mockApiFetchVoid).toHaveBeenCalledWith("/auth/logout/", {
         method: "POST",
         body: JSON.stringify({ refresh_token: "refresh_abc" }),
       });
@@ -102,7 +121,7 @@ describe("DjangoApiAuthGateway", () => {
 
       await gateway.signOut();
 
-      expect(mockApiFetch).not.toHaveBeenCalled();
+      expect(mockApiFetchVoid).not.toHaveBeenCalled();
       expect(mockClearAuthCookies).toHaveBeenCalledOnce();
     });
   });
@@ -138,11 +157,7 @@ describe("DjangoApiAuthGateway", () => {
   describe("cancelDeletion", () => {
     it("sends POST /account/cancel-deletion/ and returns camelCase user", async () => {
       mockApiFetch.mockResolvedValue({
-        id: "u1",
-        email: "alice@example.com",
-        full_name: "Alice",
-        avatar_url: null,
-        account_type: "personal",
+        ...snakeUserBase,
         phone: { prefix: "+44", number: "7700900000" },
       });
 
@@ -152,11 +167,7 @@ describe("DjangoApiAuthGateway", () => {
         method: "POST",
       });
       expect(result).toEqual({
-        id: "u1",
-        email: "alice@example.com",
-        fullName: "Alice",
-        avatarUrl: null,
-        accountType: "personal",
+        ...camelUserBase,
         phonePrefix: "+44",
         phone: "7700900000",
       });

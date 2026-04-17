@@ -21,10 +21,10 @@ export const canManageBilling = cache(async function canManageBilling(
 
   try {
     const orgs = await getUserOrgs(user.id);
-    if (orgs.length === 0) return false;
-
     // Team subscriptions belong to the user's first (currently only) org.
     const org = orgs[0];
+    if (!org) return false;
+
     const members = await getOrgMembers(org.id);
     const me = members.find((m) => m.user.id === user.id);
     return me?.isBilling === true;

@@ -3,17 +3,17 @@ import type {
   IInvitationGateway,
 } from "@/application/ports/IInvitationGateway";
 import type { Invitation } from "@/domain/models/Invitation";
-import { apiFetch, publicApiFetch } from "./apiClient";
+import {
+  apiFetch,
+  apiFetchVoid,
+  publicApiFetch,
+  publicApiFetchVoid,
+} from "./apiClient";
 import { keysToCamel } from "./caseTransform";
+import { InvitationSchema } from "./schemas";
 
-function mapInvitation(raw: Record<string, unknown>): Invitation {
-  const invitation = keysToCamel<Invitation>(raw);
-  if (raw.invited_by && typeof raw.invited_by === "object") {
-    invitation.invitedBy = keysToCamel(
-      raw.invited_by as Record<string, unknown>,
-    );
-  }
-  return invitation;
+function parseInvitation(raw: Record<string, unknown>): Invitation {
+  return InvitationSchema.parse(keysToCamel(raw));
 }
 
 export class DjangoApiInvitationGateway implements IInvitationGateway {
@@ -28,18 +28,18 @@ export class DjangoApiInvitationGateway implements IInvitationGateway {
         body: JSON.stringify(input),
       },
     );
-    return mapInvitation(raw);
+    return parseInvitation(raw);
   }
 
   async listInvitations(orgId: string): Promise<Invitation[]> {
     const data = await apiFetch<{ results: Record<string, unknown>[] }>(
       `/orgs/${orgId}/invitations/`,
     );
-    return data.results.map(mapInvitation);
+    return data.results.map(parseInvitation);
   }
 
   async cancelInvitation(orgId: string, invitationId: string): Promise<void> {
-    await apiFetch<void>(`/orgs/${orgId}/invitations/${invitationId}/`, {
+    await apiFetchVoid(`/orgs/${orgId}/invitations/${invitationId}/`, {
       method: "DELETE",
     });
   }
@@ -48,7 +48,7 @@ export class DjangoApiInvitationGateway implements IInvitationGateway {
     const raw = await publicApiFetch<Record<string, unknown>>(
       `/invitations/${token}/`,
     );
-    return mapInvitation(raw);
+    return parseInvitation(raw);
   }
 
   async acceptInvitation(
@@ -72,7 +72,7 @@ export class DjangoApiInvitationGateway implements IInvitationGateway {
   }
 
   async declineInvitation(token: string): Promise<void> {
-    await publicApiFetch<void>(`/invitations/${token}/decline/`, {
+    await publicApiFetchVoid(`/invitations/${token}/decline/`, {
       method: "POST",
     });
   }

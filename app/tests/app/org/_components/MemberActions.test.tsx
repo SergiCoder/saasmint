@@ -103,7 +103,7 @@ describe("MemberActions", () => {
       expect(mockUpdateMemberRole).toHaveBeenCalledTimes(1);
     });
 
-    const formData = mockUpdateMemberRole.mock.calls[0][0] as FormData;
+    const formData = mockUpdateMemberRole.mock.calls[0]![0] as FormData;
     expect(formData.get("orgId")).toBe("org-1");
     expect(formData.get("userId")).toBe("user-1");
     expect(formData.get("role")).toBe("admin");
@@ -128,7 +128,7 @@ describe("MemberActions", () => {
       expect(mockUpdateMemberRole).toHaveBeenCalledTimes(1);
     });
 
-    const formData = mockUpdateMemberRole.mock.calls[0][0] as FormData;
+    const formData = mockUpdateMemberRole.mock.calls[0]![0] as FormData;
     expect(formData.get("role")).toBe("member");
   });
 
@@ -172,7 +172,7 @@ describe("MemberActions", () => {
       expect(mockRemoveMember).toHaveBeenCalledTimes(1);
     });
 
-    const formData = mockRemoveMember.mock.calls[0][0] as FormData;
+    const formData = mockRemoveMember.mock.calls[0]![0] as FormData;
     expect(formData.get("orgId")).toBe("org-1");
     expect(formData.get("userId")).toBe("user-1");
   });

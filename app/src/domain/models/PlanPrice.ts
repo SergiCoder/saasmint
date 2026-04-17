@@ -1,6 +1,6 @@
 export interface PlanPrice {
-  id: string;
-  amount: number;
-  displayAmount: number;
-  currency: string;
+  readonly id: string;
+  readonly amount: number;
+  readonly displayAmount: number;
+  readonly currency: string;
 }

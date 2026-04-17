@@ -50,7 +50,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
     const isMemberOwner = m.role === "owner";
 
     let actions: React.ReactNode = null;
-    if (canManage && !isMemberOwner && !isSelf && m.role !== "owner") {
+    if (canManage && !isMemberOwner && !isSelf) {
       actions = (
         <MemberActions
           orgId={org.id}

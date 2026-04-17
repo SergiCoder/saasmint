@@ -1,14 +1,11 @@
 import type { IOrgMemberGateway } from "@/application/ports/IOrgMemberGateway";
 import type { OrgMember } from "@/domain/models/OrgMember";
-import { apiFetch } from "./apiClient";
+import { apiFetch, apiFetchVoid } from "./apiClient";
 import { keysToCamel } from "./caseTransform";
+import { OrgMemberSchema } from "./schemas";
 
-function mapMember(raw: Record<string, unknown>): OrgMember {
-  const member = keysToCamel<OrgMember>(raw);
-  if (raw.user && typeof raw.user === "object") {
-    member.user = keysToCamel(raw.user as Record<string, unknown>);
-  }
-  return member;
+function parseMember(raw: Record<string, unknown>): OrgMember {
+  return OrgMemberSchema.parse(keysToCamel(raw));
 }
 
 export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
@@ -16,11 +13,11 @@ export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
     const data = await apiFetch<{ results: Record<string, unknown>[] }>(
       `/orgs/${orgId}/members/`,
     );
-    return data.results.map(mapMember);
+    return data.results.map(parseMember);
   }
 
   async removeMember(orgId: string, userId: string): Promise<void> {
-    await apiFetch<void>(`/orgs/${orgId}/members/${userId}/`, {
+    await apiFetchVoid(`/orgs/${orgId}/members/${userId}/`, {
       method: "DELETE",
     });
   }
@@ -37,11 +34,11 @@ export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
   }
 
   async leaveOrg(orgId: string): Promise<void> {
-    await apiFetch<void>(`/orgs/${orgId}/leave/`, { method: "POST" });
+    await apiFetchVoid(`/orgs/${orgId}/leave/`, { method: "POST" });
   }
 
   async transferOwnership(orgId: string, userId: string): Promise<void> {
-    await apiFetch<void>(`/orgs/${orgId}/owner/`, {
+    await apiFetchVoid(`/orgs/${orgId}/owner/`, {
       method: "PUT",
       body: JSON.stringify({ user_id: userId }),
     });

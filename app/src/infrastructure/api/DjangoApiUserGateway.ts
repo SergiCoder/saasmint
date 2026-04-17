@@ -4,14 +4,13 @@ import type {
 } from "@/application/ports/IUserGateway";
 import type { User } from "@/domain/models/User";
 import { apiFetch } from "./apiClient";
-import { flattenPhone, keysToCamel, keysToSnake } from "./caseTransform";
+import { keysToSnake } from "./caseTransform";
+import { parseUser } from "./parsers";
 
 export class DjangoApiUserGateway implements IUserGateway {
   async getProfile(_userId: string): Promise<User> {
     const raw = await apiFetch<Record<string, unknown>>("/account/");
-    const user = keysToCamel<User>(raw);
-    flattenPhone(raw, user);
-    return user;
+    return parseUser(raw);
   }
 
   async updateProfile(
@@ -19,7 +18,7 @@ export class DjangoApiUserGateway implements IUserGateway {
     input: UpdateProfileInput,
   ): Promise<User> {
     const { phonePrefix, phone, ...rest } = input;
-    const payload: Record<string, unknown> = keysToSnake(rest);
+    const payload = keysToSnake(rest) as Record<string, unknown>;
 
     if ("phonePrefix" in input || "phone" in input) {
       payload.phone =
@@ -30,8 +29,6 @@ export class DjangoApiUserGateway implements IUserGateway {
       method: "PATCH",
       body: JSON.stringify(payload),
     });
-    const user = keysToCamel<User>(raw);
-    flattenPhone(raw, user);
-    return user;
+    return parseUser(raw);
   }
 }

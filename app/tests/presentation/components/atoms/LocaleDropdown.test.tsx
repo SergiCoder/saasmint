@@ -13,12 +13,17 @@ vi.mock("@/lib/i18n/navigation", () => ({
   usePathname: () => "/dashboard",
 }));
 
-vi.mock("@/lib/i18n/routing", () => ({
-  routing: {
-    locales: ["en", "es", "fr"],
-    defaultLocale: "en",
-  },
-}));
+vi.mock("@/lib/i18n/routing", () => {
+  const locales = ["en", "es", "fr"];
+  return {
+    routing: {
+      locales,
+      defaultLocale: "en",
+    },
+    isLocale: (value: unknown) =>
+      typeof value === "string" && locales.includes(value),
+  };
+});
 
 import { LocaleDropdown } from "@/presentation/components/atoms/LocaleDropdown";
 

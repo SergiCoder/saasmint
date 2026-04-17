@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/lib/i18n/navigation";
-import type { Locale } from "@/lib/i18n/routing";
+import { isLocale, type Locale } from "@/lib/i18n/routing";
 import { updatePreferredLocale } from "@/app/actions/user";
 
 const LOCALE_LABELS: Record<Locale, string> = {
@@ -89,7 +89,9 @@ export function LocaleDropdown() {
                 type="button"
                 role="option"
                 aria-selected={code === locale}
-                onClick={() => switchLocale(code as Locale)}
+                onClick={() => {
+                  if (isLocale(code)) switchLocale(code);
+                }}
                 className={`w-full cursor-pointer px-3 py-1.5 text-left text-sm transition-colors hover:bg-gray-100 ${
                   code === locale
                     ? "text-primary-600 font-medium"

@@ -18,6 +18,13 @@ import type { OrgMember } from "@/domain/models/OrgMember";
 const assignableRoles = ["admin", "member"] as const;
 type AssignableRole = (typeof assignableRoles)[number];
 
+function isAssignableRole(value: unknown): value is AssignableRole {
+  return (
+    typeof value === "string" &&
+    (assignableRoles as readonly string[]).includes(value)
+  );
+}
+
 export type OrgActionResult = { ok: true } | { ok: false; error: string };
 
 type OrgRole = OrgMember["role"];
@@ -49,8 +56,7 @@ export async function inviteMember(
   if (
     typeof orgId !== "string" ||
     typeof email !== "string" ||
-    typeof role !== "string" ||
-    !(assignableRoles as readonly string[]).includes(role)
+    !isAssignableRole(role)
   ) {
     return { ok: false, error: "Invalid input" };
   }
@@ -62,7 +68,7 @@ export async function inviteMember(
   try {
     await new CreateInvitation(invitationGateway).execute(orgId, {
       email,
-      role: role as AssignableRole,
+      role,
     });
   } catch {
     return { ok: false, error: "Failed to send invitation" };
@@ -122,8 +128,7 @@ export async function updateMemberRole(formData: FormData) {
   if (
     typeof orgId !== "string" ||
     typeof userId !== "string" ||
-    typeof role !== "string" ||
-    !(assignableRoles as readonly string[]).includes(role)
+    !isAssignableRole(role)
   ) {
     return;
   }
@@ -136,7 +141,7 @@ export async function updateMemberRole(formData: FormData) {
     await new UpdateOrgMemberRole(orgMemberGateway).execute(
       orgId,
       userId,
-      role as AssignableRole,
+      role,
     );
   } catch (err) {
     console.error("Failed to update member role", err);

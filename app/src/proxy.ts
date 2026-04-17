@@ -8,10 +8,11 @@ import {
   accessTokenCookieOptions,
   refreshTokenCookieOptions,
 } from "@/infrastructure/auth/cookies";
+import { env } from "@/lib/env";
 
 const intlMiddleware = createMiddleware(routing);
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+const API_URL = env.NEXT_PUBLIC_API_URL;
 
 const PROTECTED_PREFIXES = [
   "/dashboard",
@@ -23,12 +24,20 @@ const PROTECTED_PREFIXES = [
 
 function isTokenExpired(token: string): boolean {
   try {
-    const payload = JSON.parse(atob(token.split(".")[1])) as {
-      exp?: number;
-    };
-    if (typeof payload.exp !== "number") return true;
+    const parts = token.split(".");
+    if (parts.length !== 3 || !parts[1]) return true;
+    const payload: unknown = JSON.parse(atob(parts[1]));
+    if (
+      typeof payload !== "object" ||
+      payload === null ||
+      !("exp" in payload) ||
+      typeof (payload as { exp: unknown }).exp !== "number"
+    ) {
+      return true;
+    }
+    const exp = (payload as { exp: number }).exp;
     // Consider expired 30s early to avoid race conditions
-    return payload.exp * 1000 < Date.now() + 30_000;
+    return exp * 1000 < Date.now() + 30_000;
   } catch {
     return true;
   }

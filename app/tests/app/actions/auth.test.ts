@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { ApiError } from "@/domain/errors/ApiError";
 
 const mockRedirect = vi.fn();
 vi.mock("next/navigation", () => ({
@@ -119,9 +120,10 @@ describe("auth server actions", () => {
 
     it("returns friendly error from API detail field", async () => {
       mockPublicApiFetch.mockRejectedValue(
-        new Error(
-          'API 401: {"detail":"Invalid credentials.","code":"invalid_credentials"}',
-        ),
+        new ApiError(401, {
+          detail: "Invalid credentials.",
+          code: "invalid_credentials",
+        }),
       );
 
       const formData = new FormData();
@@ -230,7 +232,7 @@ describe("auth server actions", () => {
 
     it("returns friendly error from API detail field", async () => {
       mockPublicApiFetch.mockRejectedValue(
-        new Error('API 400: {"detail":"Email already in use."}'),
+        new ApiError(400, { detail: "Email already in use." }),
       );
 
       const formData = new FormData();
@@ -560,7 +562,7 @@ describe("auth server actions", () => {
 
     it("returns friendly error from API detail field", async () => {
       mockApiFetch.mockRejectedValue(
-        new Error('API 400: {"detail":"Current password is incorrect."}'),
+        new ApiError(400, { detail: "Current password is incorrect." }),
       );
 
       const formData = new FormData();
@@ -644,7 +646,7 @@ describe("auth server actions", () => {
 
     it("returns friendly error from API detail field", async () => {
       mockPublicApiFetch.mockRejectedValue(
-        new Error('API 400: {"detail":"Token has expired."}'),
+        new ApiError(400, { detail: "Token has expired." }),
       );
 
       const result = await verifyEmail("expired-token");

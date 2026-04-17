@@ -13,6 +13,7 @@ import {
   setOAuthFlowCookies,
   setPendingPlan,
 } from "@/infrastructure/auth/cookies";
+import { env } from "@/lib/env";
 import { friendlyError } from "@/lib/friendlyError";
 import { validateNext } from "@/lib/oauthNext";
 
@@ -273,8 +274,8 @@ export async function verifyEmail(
     : {};
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
+const API_URL = env.NEXT_PUBLIC_API_URL;
+const APP_URL = env.NEXT_PUBLIC_APP_URL;
 
 const OAUTH_PROVIDERS: readonly OAuthProvider[] = [
   "google",
