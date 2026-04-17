@@ -28,6 +28,7 @@ Core types in `src/domain/models/`:
 - `Product` — one-time purchase product (id, name, type: `one_time`, credits, `price`)
 - `ProductPrice` — individual product price point (id, amount, displayAmount, currency)
 - `Subscription` — active Stripe subscription (status, plan snapshot, seat `quantity`, period dates, trial); team seat count is capped by `MAX_SEATS`
+- `PhonePrefix` — reference entry for phone-number country prefixes (prefix, label)
 
 Domain errors in `src/domain/errors/`:
 
@@ -41,12 +42,14 @@ All error classes carry a `code: string` field for programmatic handling.
 
 Gateway implementations in `src/infrastructure/`, organised by provider:
 
-- `api/` — `DjangoApi*Gateway` classes that call `SaaSmint Core` via `apiFetch`
+- `api/` — `DjangoApi*Gateway` classes that call `SaaSmint Core` via `apiFetch` (auth, user, org, org-member, invitation, plan, product, subscription, reference)
 - `auth/` — `cookies.ts` for JWT cookie management (set, clear, read access/refresh tokens)
+
+Reference data (currencies, locales, timezones, phone prefixes) is served via `DjangoApiReferenceGateway` behind `IReferenceGateway`.
 
 Avatar uploads go through the Django API (`POST /account/avatar/`). Client-side image compression (`src/lib/compressImage.ts`) runs before upload.
 
-Each gateway implements a port interface from `src/application/ports/` (e.g. `IOrgGateway`, `IAuthGateway`).
+Each gateway implements a port interface from `src/application/ports/` (e.g. `IOrgGateway`, `IAuthGateway`, `IReferenceGateway`).
 
 `src/infrastructure/registry.ts` exports singleton instances of every gateway — import gateways from the registry, not by instantiating classes directly.
 
@@ -57,7 +60,7 @@ Django issues JWTs directly — no third-party auth provider.
 - **Tokens**: Access token (15 min) + refresh token (7 days) stored in HTTP-only secure cookies
 - **Login/Signup**: Server actions call Django `POST /auth/login/` and `POST /auth/register/`
 - **OAuth**: Redirect to Django `GET /auth/oauth/{provider}/`, Django handles code exchange, redirects back with tokens
-- **Middleware** (`src/proxy.ts`): Decodes JWT from cookie (base64 only), checks expiry, refreshes via `POST /auth/refresh/` if needed
+- **Middleware** (`src/proxy.ts`): On every route with a refresh token, decodes the access token JWT (base64 only), checks expiry, and refreshes via `POST /auth/refresh/` when expired or missing
 - **API calls**: `apiClient.ts` reads `access_token` cookie, sends as `Authorization: Bearer` header
 - **Email verification**: Django sends verification email, user clicks link → `verify-email` page calls `POST /auth/verify-email/`
 
@@ -111,9 +114,11 @@ Always use `/commit`. Never commit manually.
 ## Running
 
 ```bash
-make setup    # first-time setup
-make dev      # start dev server on port 3000
+pnpm install     # first-time setup
+pnpm dev         # start dev server on https://localhost:3000 (Turbopack, --experimental-https)
 ```
+
+The dev script reads the root CA and localhost certs from sibling `../saasmint-core/infra/certs/`; clone both repos side-by-side.
 
 ## Testing
 

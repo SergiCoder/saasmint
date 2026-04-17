@@ -24,9 +24,11 @@ Hexagonal architecture with strict layer isolation:
 ## Getting started
 
 ```bash
-make setup    # install dependencies
-make dev      # start dev server on port 3000
+pnpm install     # install dependencies
+pnpm dev         # start dev server on https://localhost:3000
 ```
+
+The dev script runs Next.js with `--experimental-https`, sourcing the root CA and localhost certs from [SaaSmint Core](https://github.com/SergiCoder/SaaSmint-Core) at `../saasmint-core/infra/certs/`. Clone both repos as siblings so `NODE_EXTRA_CA_CERTS` can resolve `rootCA.pem`.
 
 ## Testing
 
@@ -35,7 +37,7 @@ pnpm test             # run all tests once
 pnpm test:coverage    # run tests with v8 coverage report
 ```
 
-The backend ([SaaSmint Core](https://github.com/SergiCoder/SaaSmint-Core)) must be running on `https://localhost:8443`.
+The backend ([SaaSmint Core](https://github.com/SergiCoder/SaaSmint-Core)) must be running on `https://localhost:8443` by default (override via `NEXT_PUBLIC_API_URL`).
 
 ## Environment variables
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useEffect } from "react";
+import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
@@ -74,20 +74,20 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [formKey, setFormKey] = useState(0);
   const [phonePrefix, setPhonePrefix] = useState(user.phonePrefix || "");
   const [phone, setPhone] = useState(user.phone || "");
+  const [lastActionState, setLastActionState] = useState(state);
 
-  useEffect(() => {
+  if (state !== lastActionState) {
+    setLastActionState(state);
     if (state?.success) {
       setDirty(false);
-      setSaved(true);
       setFormKey((k) => k + 1);
-    } else {
-      setSaved(false);
     }
-  }, [state]);
+  }
+
+  const saved = state?.success === true;
 
   async function handleAvatarChange(file: File | null) {
     setAvatarError(null);
