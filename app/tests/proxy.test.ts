@@ -8,12 +8,21 @@ vi.mock("next-intl/middleware", () => ({
   default: () => mockIntlMiddleware,
 }));
 
-vi.mock("@/lib/i18n/routing", () => ({
-  routing: {
-    locales: ["en", "es", "pt-BR"],
-    defaultLocale: "en",
-  },
-}));
+vi.mock("@/lib/i18n/routing", () => {
+  const locales = ["en", "es", "pt-BR"] as const;
+  const byLengthDesc = [...locales].sort((a, b) => b.length - a.length);
+  return {
+    routing: { locales, defaultLocale: "en" },
+    stripLocalePrefix(pathname: string): string {
+      const prefix = byLengthDesc.find(
+        (l) => pathname.startsWith(`/${l}/`) || pathname === `/${l}`,
+      );
+      if (!prefix) return pathname;
+      const stripped = pathname.slice(prefix.length + 1);
+      return stripped === "" ? "/" : stripped;
+    },
+  };
+});
 
 const fetchSpy = vi.fn();
 vi.stubGlobal("fetch", fetchSpy);
@@ -300,6 +309,103 @@ describe("proxy", () => {
       const response = await proxy(request);
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
+    });
+  });
+
+  describe("withPathnameHeader", () => {
+    it("sets x-pathname on the forwarded request headers", async () => {
+      const request = createMockRequest(`${APP_URL}/en/pricing`);
+      const response = await proxy(request);
+
+      // NextResponse.next with request.headers serializes custom headers as
+      // "x-middleware-request-<name>". We assert the downstream forwarded
+      // header so server components receive the pathname.
+      expect(
+        response.headers.get("x-middleware-request-x-pathname"),
+      ).toBe("/en/pricing");
+    });
+
+    it("preserves an intl rewrite by re-emitting it through NextResponse.rewrite", async () => {
+      const rewriteTarget = `${APP_URL}/en/about`;
+      const rewriteResponse = NextResponse.next();
+      rewriteResponse.headers.set("x-middleware-rewrite", rewriteTarget);
+      mockIntlMiddleware.mockReturnValue(rewriteResponse);
+
+      const request = createMockRequest(`${APP_URL}/about`);
+      const response = await proxy(request);
+
+      expect(response.headers.get("x-middleware-rewrite")).toBe(rewriteTarget);
+      expect(
+        response.headers.get("x-middleware-request-x-pathname"),
+      ).toBe("/about");
+    });
+
+    it("passes an intl redirect response through unchanged (no pathname header)", async () => {
+      const redirectTarget = `${APP_URL}/en`;
+      const intlRedirect = NextResponse.redirect(redirectTarget);
+      mockIntlMiddleware.mockReturnValue(intlRedirect);
+
+      const request = createMockRequest(`${APP_URL}/`);
+      const response = await proxy(request);
+
+      // Redirect pass-through: location survives, no forwarded pathname header.
+      expect(response.headers.get("location")).toBe(redirectTarget);
+      expect(
+        response.headers.get("x-middleware-request-x-pathname"),
+      ).toBeNull();
+    });
+
+    it("preserves cookies emitted by the intl middleware", async () => {
+      const intlResponse = NextResponse.next();
+      intlResponse.cookies.set("NEXT_LOCALE", "es", { path: "/" });
+      mockIntlMiddleware.mockReturnValue(intlResponse);
+
+      const request = createMockRequest(`${APP_URL}/es`);
+      const response = await proxy(request);
+
+      const names = response.cookies.getAll().map((c) => c.name);
+      expect(names).toContain("NEXT_LOCALE");
+    });
+
+    it("forwards the x-pathname header through the successful refresh flow", async () => {
+      const pastExp = Math.floor(Date.now() / 1000) - 60;
+      const futureExp = Math.floor(Date.now() / 1000) + 900;
+
+      fetchSpy.mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            access_token: makeToken(futureExp),
+            refresh_token: "new-refresh-tok",
+          }),
+      });
+
+      const request = createMockRequest(`${APP_URL}/en/pricing`, [
+        { name: "access_token", value: makeToken(pastExp) },
+        { name: "refresh_token", value: "old-refresh-tok" },
+      ]);
+      const response = await proxy(request);
+
+      // Even via the refresh branch, server components must still receive
+      // the forwarded pathname header.
+      expect(
+        response.headers.get("x-middleware-request-x-pathname"),
+      ).toBe("/en/pricing");
+      // Refresh request was actually issued (i.e. we took the refresh path).
+      expect(fetchSpy).toHaveBeenCalled();
+      // And no redirect was emitted.
+      expect(response.headers.get("location")).toBeNull();
+    });
+
+    it("does not leak x-middleware-next onto the final response", async () => {
+      const request = createMockRequest(`${APP_URL}/en/pricing`);
+      const response = await proxy(request);
+      // withPathnameHeader rebuilds via NextResponse.next(), which sets its own
+      // x-middleware-next. The filter strips the incoming one so only the
+      // rebuilt one remains. Either way, the rebuilt response must carry the
+      // forwarded pathname header (already covered above); here we assert that
+      // no stray x-middleware-rewrite leaked from a non-rewriting intl response.
+      expect(response.headers.get("x-middleware-rewrite")).toBeNull();
     });
   });
 

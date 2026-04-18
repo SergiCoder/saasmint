@@ -34,3 +34,24 @@ export function isLocale(value: unknown): value is Locale {
     (routing.locales as readonly string[]).includes(value)
   );
 }
+
+// Sorted longest-first so "pt-BR" matches before "pt" would. Hoisted to
+// module scope because the locale list is a compile-time constant — no
+// need to re-sort on every request.
+const LOCALES_BY_LENGTH_DESC: readonly string[] = [...routing.locales].sort(
+  (a, b) => b.length - a.length,
+);
+
+/**
+ * Strips the locale prefix from a pathname.
+ * "/en/dashboard" → "/dashboard", "/pt-BR" → "/", "/other" → "/other".
+ * Edge-safe: no `next/headers` or runtime-specific imports.
+ */
+export function stripLocalePrefix(pathname: string): string {
+  const prefix = LOCALES_BY_LENGTH_DESC.find(
+    (l) => pathname.startsWith(`/${l}/`) || pathname === `/${l}`,
+  );
+  if (!prefix) return pathname;
+  const stripped = pathname.slice(prefix.length + 1);
+  return stripped === "" ? "/" : stripped;
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import { Input, type InputProps } from "../atoms/Input";
 import { Label } from "../atoms/Label";
 

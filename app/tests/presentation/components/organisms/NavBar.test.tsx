@@ -3,7 +3,6 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { NavBar } from "@/presentation/components/organisms";
 
-// Mock next-intl navigation (used by NavLink)
 vi.mock("@/lib/i18n/navigation", () => ({
   Link: ({
     href,
@@ -22,6 +21,12 @@ vi.mock("@/lib/i18n/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
 }));
 
+vi.mock("@/lib/pathname", () => ({
+  PATHNAME_HEADER: "x-pathname",
+  getPathname: async () => "/",
+  getPathnameWithoutLocale: async () => "/",
+}));
+
 const defaultProps = {
   appName: "TestApp",
   links: [
@@ -31,46 +36,48 @@ const defaultProps = {
   toggleNavLabel: "Toggle navigation",
 };
 
+async function renderNavBar(props: Parameters<typeof NavBar>[0]) {
+  const element = await NavBar(props);
+  return render(element);
+}
+
 describe("NavBar", () => {
-  it("renders the app name via Logo", () => {
-    render(<NavBar {...defaultProps} />);
+  it("renders the app name via Logo", async () => {
+    await renderNavBar(defaultProps);
     expect(screen.getByText("TestApp")).toBeInTheDocument();
   });
 
-  it("renders navigation links", () => {
-    render(<NavBar {...defaultProps} />);
+  it("renders navigation links", async () => {
+    await renderNavBar(defaultProps);
     const dashboardLinks = screen.getAllByText("Dashboard");
     const subscriptionLinks = screen.getAllByText("Subscription");
-    // Links appear in both desktop and (potentially) mobile nav
     expect(dashboardLinks.length).toBeGreaterThanOrEqual(1);
     expect(subscriptionLinks.length).toBeGreaterThanOrEqual(1);
   });
 
   describe("user avatar", () => {
-    it("renders avatar when user is provided", () => {
-      render(
-        <NavBar
-          {...defaultProps}
-          user={{ fullName: "Jane Doe", avatarUrl: null }}
-        />,
-      );
+    it("renders avatar when user is provided", async () => {
+      await renderNavBar({
+        ...defaultProps,
+        user: { fullName: "Jane Doe", avatarUrl: null },
+      });
       expect(screen.getByLabelText("Jane Doe")).toBeInTheDocument();
     });
 
-    it("does not render avatar when user is not provided", () => {
-      render(<NavBar {...defaultProps} />);
+    it("does not render avatar when user is not provided", async () => {
+      await renderNavBar(defaultProps);
       expect(screen.queryByLabelText("Jane Doe")).not.toBeInTheDocument();
     });
 
-    it("does not render avatar when user is null", () => {
-      render(<NavBar {...defaultProps} user={null} />);
+    it("does not render avatar when user is null", async () => {
+      await renderNavBar({ ...defaultProps, user: null });
       expect(screen.queryByLabelText("Jane Doe")).not.toBeInTheDocument();
     });
   });
 
   describe("mobile menu toggle", () => {
-    it("renders toggle button with aria-label", () => {
-      render(<NavBar {...defaultProps} />);
+    it("renders toggle button with aria-label", async () => {
+      await renderNavBar(defaultProps);
       const toggle = screen.getByRole("button", {
         name: "Toggle navigation",
       });
@@ -80,7 +87,7 @@ describe("NavBar", () => {
 
     it("opens mobile menu on toggle click", async () => {
       const user = userEvent.setup();
-      render(<NavBar {...defaultProps} />);
+      await renderNavBar(defaultProps);
       const toggle = screen.getByRole("button", {
         name: "Toggle navigation",
       });
@@ -92,7 +99,7 @@ describe("NavBar", () => {
 
     it("closes mobile menu on second toggle click", async () => {
       const user = userEvent.setup();
-      render(<NavBar {...defaultProps} />);
+      await renderNavBar(defaultProps);
       const toggle = screen.getByRole("button", {
         name: "Toggle navigation",
       });
@@ -105,8 +112,11 @@ describe("NavBar", () => {
     });
   });
 
-  it("renders actions slot", () => {
-    render(<NavBar {...defaultProps} actions={<button>Sign Out</button>} />);
+  it("renders actions slot", async () => {
+    await renderNavBar({
+      ...defaultProps,
+      actions: <button>Sign Out</button>,
+    });
     expect(
       screen.getByRole("button", { name: "Sign Out" }),
     ).toBeInTheDocument();
@@ -123,8 +133,8 @@ describe("NavBar", () => {
       userMenuSignOut: <button>Sign Out</button>,
     };
 
-    it("renders UserMenu instead of plain Avatar when userMenuItems provided", () => {
-      render(<NavBar {...userMenuProps} />);
+    it("renders UserMenu instead of plain Avatar when userMenuItems provided", async () => {
+      await renderNavBar(userMenuProps);
       const buttons = screen.getAllByRole("button");
       const menuTrigger = buttons.find(
         (btn) => btn.getAttribute("aria-haspopup") === "menu",
@@ -135,7 +145,7 @@ describe("NavBar", () => {
 
     it("renders user menu items in mobile panel", async () => {
       const user = userEvent.setup();
-      render(<NavBar {...userMenuProps} />);
+      await renderNavBar(userMenuProps);
       const toggle = screen.getByRole("button", {
         name: "Toggle navigation",
       });
@@ -150,12 +160,39 @@ describe("NavBar", () => {
     });
   });
 
-  it("applies custom className", () => {
-    const { container } = render(
-      <NavBar {...defaultProps} className="sticky top-0" />,
-    );
+  it("applies custom className", async () => {
+    const { container } = await renderNavBar({
+      ...defaultProps,
+      className: "sticky top-0",
+    });
     const nav = container.querySelector("nav");
     expect(nav?.className).toContain("sticky");
     expect(nav?.className).toContain("top-0");
+  });
+
+  describe("active state", () => {
+    it("marks the link matching current pathname as active", async () => {
+      vi.resetModules();
+      vi.doMock("@/lib/pathname", () => ({
+        PATHNAME_HEADER: "x-pathname",
+        getPathname: async () => "/en/dashboard",
+        getPathnameWithoutLocale: async () => "/dashboard",
+      }));
+      const { NavBar: NavBarReloaded } = await import(
+        "@/presentation/components/organisms/NavBar"
+      );
+      const element = await NavBarReloaded(defaultProps);
+      render(element);
+
+      const dashboardLinks = screen.getAllByRole("link", {
+        name: "Dashboard",
+      });
+      expect(dashboardLinks[0]).toHaveAttribute("aria-current", "page");
+
+      const subscriptionLinks = screen.getAllByRole("link", {
+        name: "Subscription",
+      });
+      expect(subscriptionLinks[0]).not.toHaveAttribute("aria-current");
+    });
   });
 });

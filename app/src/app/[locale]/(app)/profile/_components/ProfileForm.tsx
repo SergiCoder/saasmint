@@ -60,14 +60,17 @@ const SUPPORTED_CURRENCIES = [
   { value: "aed", label: "AED — UAE Dirham" },
 ] as const;
 
-const TIMEZONES = Intl.supportedValuesOf("timeZone");
-
 interface ProfileFormProps {
   user: User;
   phonePrefixes: PhonePrefix[];
+  timezones: readonly string[];
 }
 
-export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
+export function ProfileForm({
+  user,
+  phonePrefixes,
+  timezones,
+}: ProfileFormProps) {
   const t = useTranslations("profile");
   const [state, formAction, pending] = useActionState(updateProfile, null);
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl);
@@ -259,7 +262,7 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
             }
             className={selectClassName}
           >
-            {TIMEZONES.map((tz) => (
+            {timezones.map((tz) => (
               <option key={tz} value={tz}>
                 {tz.replace(/_/g, " ")}
               </option>

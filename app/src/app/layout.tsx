@@ -4,7 +4,12 @@ import { getLocale } from "next-intl/server";
 import { env } from "@/lib/env";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 const RTL_LOCALES = new Set(["ar"]);
 

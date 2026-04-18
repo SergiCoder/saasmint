@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { ErrorView } from "@/presentation/components/organisms/ErrorView";
+import { Button } from "@/presentation/components/atoms/Button";
 import "./globals.css";
 
 interface GlobalErrorProps {
@@ -23,12 +24,15 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
         <ErrorView
           title="Something went wrong"
           description="We hit an unexpected error. Please try again in a moment."
-          retryLabel="Try again"
           homeLabel="Back to home"
           homeHref="/"
           errorIdLabel="Error ID"
           errorId={error.digest}
-          onRetry={reset}
+          retrySlot={
+            <Button variant="primary" onClick={reset}>
+              Try again
+            </Button>
+          }
         />
       </body>
     </html>

@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { AppLayout } from "@/presentation/components/templates";
+import type { NavBarProps } from "@/presentation/components/organisms/NavBar";
 
 vi.mock("@/lib/i18n/navigation", () => ({
   Link: ({
@@ -18,6 +19,23 @@ vi.mock("@/lib/i18n/navigation", () => ({
   ),
   usePathname: () => "/dashboard",
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
+}));
+
+// NavBar is an async server component. Mock it with a synchronous renderer
+// so RTL's synchronous render() resolves in one tick.
+vi.mock("@/presentation/components/organisms/NavBar", () => ({
+  NavBar: ({ appName, links, user, actions }: NavBarProps) => (
+    <nav>
+      <span>{appName}</span>
+      {links.map((l) => (
+        <a key={l.label} href={l.href}>
+          {l.label}
+        </a>
+      ))}
+      {user && <span aria-label={user.fullName}>{user.fullName}</span>}
+      {actions}
+    </nav>
+  ),
 }));
 
 const defaultProps = {

@@ -5,7 +5,6 @@ import { ErrorView } from "@/presentation/components/organisms/ErrorView";
 const baseProps = {
   title: "Something went wrong",
   description: "An unexpected error occurred",
-  retryLabel: "Try again",
   homeLabel: "Back home",
   homeHref: "/",
 };
@@ -22,16 +21,25 @@ describe("ErrorView", () => {
     expect(home).toHaveAttribute("href", "/");
   });
 
-  it("does not render the retry button when onRetry is omitted", () => {
+  it("does not render a retry button when retrySlot is omitted", () => {
     render(<ErrorView {...baseProps} />);
     expect(
       screen.queryByRole("button", { name: "Try again" }),
     ).not.toBeInTheDocument();
   });
 
-  it("renders the retry button and calls onRetry when clicked", () => {
+  it("renders the retrySlot when provided and fires its click handler", () => {
     const onRetry = vi.fn();
-    render(<ErrorView {...baseProps} onRetry={onRetry} />);
+    render(
+      <ErrorView
+        {...baseProps}
+        retrySlot={
+          <button type="button" onClick={onRetry}>
+            Try again
+          </button>
+        }
+      />,
+    );
 
     const button = screen.getByRole("button", { name: "Try again" });
     fireEvent.click(button);

@@ -62,7 +62,7 @@ export function SubscriptionCard({
         <Badge variant={statusVariant[status]}>{statusLabel}</Badge>
       </div>
 
-      {currentPeriodEndIso && periodEndLabel && (
+      {currentPeriodEndIso && periodEndLabel && periodEndLocale && (
         <dl className="mt-6 space-y-3 text-sm">
           <div className="flex justify-between">
             <dt className="text-gray-500">{periodEndLabel}</dt>

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { ErrorView } from "@/presentation/components/organisms/ErrorView";
+import { Button } from "@/presentation/components/atoms/Button";
 
 interface ErrorPageProps {
   error: Error & { digest?: string };
@@ -20,12 +21,15 @@ export default function AuthError({ error, reset }: ErrorPageProps) {
     <ErrorView
       title={t("title")}
       description={t("description")}
-      retryLabel={t("retry")}
       homeLabel={t("home")}
       homeHref="/"
       errorIdLabel={t("errorId")}
       errorId={error.digest}
-      onRetry={reset}
+      retrySlot={
+        <Button variant="primary" onClick={reset}>
+          {t("retry")}
+        </Button>
+      }
     />
   );
 }

@@ -35,15 +35,17 @@ export default async function DashboardPage() {
 
   // Only fetch per-org member counts when we actually render a spotsLabel
   // (team subscriptions). Otherwise we pay for N roundtrips we never display.
-  const orgRows = await Promise.all(
-    orgs.map(async (org) => {
-      if (totalSpots === null) return { org, count: 0 };
-      const count = await getOrgMembers(org.id)
-        .then((m) => m.length)
-        .catch(() => 0);
-      return { org, count };
-    }),
-  );
+  const orgRows =
+    totalSpots === null
+      ? orgs.map((org) => ({ org, count: 0 }))
+      : await Promise.all(
+          orgs.map(async (org) => {
+            const count = await getOrgMembers(org.id)
+              .then((m) => m.length)
+              .catch(() => 0);
+            return { org, count };
+          }),
+        );
 
   return (
     <div className="space-y-8">

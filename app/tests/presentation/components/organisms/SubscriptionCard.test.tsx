@@ -8,6 +8,7 @@ const defaultProps = {
   statusLabel: "Active",
   subtitle: "Billed monthly",
   currentPeriodEndIso: "2027-01-15T00:00:00.000Z",
+  periodEndLocale: "en-US",
   periodEndLabel: "Renews on",
   cancelAtPeriodEnd: false,
 };

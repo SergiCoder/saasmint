@@ -1,27 +1,22 @@
-"use client";
-
-import { Button } from "@/presentation/components/atoms/Button";
-
 export interface ErrorViewProps {
   title: string;
   description: string;
-  retryLabel: string;
   homeLabel: string;
   homeHref: string;
   errorIdLabel?: string;
   errorId?: string;
-  onRetry?: () => void;
+  /** Optional retry button slot (e.g. <Button onClick={reset}>Retry</Button>). */
+  retrySlot?: React.ReactNode;
 }
 
 export function ErrorView({
   title,
   description,
-  retryLabel,
   homeLabel,
   homeHref,
   errorIdLabel,
   errorId,
-  onRetry,
+  retrySlot,
 }: ErrorViewProps) {
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-4 py-16">
@@ -47,11 +42,7 @@ export function ErrorView({
         </h1>
         <p className="mb-8 text-sm text-gray-600">{description}</p>
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-          {onRetry && (
-            <Button variant="primary" onClick={onRetry}>
-              {retryLabel}
-            </Button>
-          )}
+          {retrySlot}
           <a
             href={homeHref}
             className="focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"

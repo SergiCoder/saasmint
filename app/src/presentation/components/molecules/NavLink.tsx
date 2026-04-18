@@ -1,21 +1,23 @@
-"use client";
-
-import { Link, usePathname } from "@/lib/i18n/navigation";
+import { Link } from "@/lib/i18n/navigation";
 
 export interface NavLinkProps {
   href: string;
   children: React.ReactNode;
   className?: string;
+  isActive?: boolean;
 }
 
-export function NavLink({ href, children, className = "" }: NavLinkProps) {
-  const pathname = usePathname();
+export function NavLink({
+  href,
+  children,
+  className = "",
+  isActive = false,
+}: NavLinkProps) {
   const isHash = href === "#" || href.startsWith("#");
-  const isActive =
-    !isHash && (pathname === href || pathname.startsWith(`${href}/`));
+  const active = !isHash && isActive;
 
   const linkClassName = `text-sm font-medium transition-colors ${
-    isActive ? "text-primary-600" : "text-gray-600 hover:text-gray-900"
+    active ? "text-primary-600" : "text-gray-600 hover:text-gray-900"
   } ${className}`;
 
   if (isHash) {
@@ -39,7 +41,7 @@ export function NavLink({ href, children, className = "" }: NavLinkProps) {
     <Link
       href={linkHref}
       className={linkClassName}
-      aria-current={isActive ? "page" : undefined}
+      aria-current={active ? "page" : undefined}
     >
       {children}
     </Link>

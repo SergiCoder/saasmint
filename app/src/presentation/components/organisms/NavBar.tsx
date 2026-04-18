@@ -1,11 +1,10 @@
-"use client";
-
-import { useState } from "react";
 import { Logo } from "../atoms/Logo";
 import { Avatar } from "../atoms/Avatar";
 import { LocaleDropdown } from "../atoms/LocaleDropdown";
 import { NavLink } from "../molecules/NavLink";
 import { UserMenu, type UserMenuItem } from "../molecules/UserMenu";
+import { MobileMenuToggle } from "./MobileMenuToggle";
+import { getPathnameWithoutLocale } from "@/lib/pathname";
 
 export interface NavBarLink {
   href: string;
@@ -29,7 +28,14 @@ export interface NavBarProps {
   className?: string;
 }
 
-export function NavBar({
+function isLinkActive(href: string, pathname: string): boolean {
+  if (href === "#" || href.startsWith("#")) return false;
+  const target = href.indexOf("#") >= 0 ? href.slice(0, href.indexOf("#")) : href;
+  if (!target) return false;
+  return pathname === target || pathname.startsWith(`${target}/`);
+}
+
+export async function NavBar({
   appName,
   links,
   user,
@@ -39,7 +45,7 @@ export function NavBar({
   toggleNavLabel,
   className = "",
 }: NavBarProps) {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = await getPathnameWithoutLocale();
 
   return (
     <nav
@@ -50,7 +56,11 @@ export function NavBar({
 
         <div className="hidden items-center gap-8 md:flex">
           {links.map((link) => (
-            <NavLink key={link.label} href={link.href}>
+            <NavLink
+              key={link.label}
+              href={link.href}
+              isActive={isLinkActive(link.href, pathname)}
+            >
               {link.label}
             </NavLink>
           ))}
@@ -70,44 +80,14 @@ export function NavBar({
               <Avatar src={user.avatarUrl} alt={user.fullName} size="sm" />
             )
           )}
-          <button
-            type="button"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 md:hidden"
-            aria-expanded={mobileOpen}
-            aria-label={toggleNavLabel}
-          >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              {mobileOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                />
-              )}
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {mobileOpen && (
-        <div className="border-t border-gray-200 bg-white/97 backdrop-blur-xl md:hidden">
-          <div className="space-y-1 px-5 py-4 sm:px-8">
+          <MobileMenuToggle toggleNavLabel={toggleNavLabel}>
             {links.map((link) => (
-              <NavLink key={link.label} href={link.href} className="block py-2">
+              <NavLink
+                key={link.label}
+                href={link.href}
+                className="block py-2"
+                isActive={isLinkActive(link.href, pathname)}
+              >
                 {link.label}
               </NavLink>
             ))}
@@ -122,18 +102,17 @@ export function NavBar({
                     key={item.label}
                     href={item.href}
                     className="block py-2"
+                    isActive={isLinkActive(item.href, pathname)}
                   >
                     {item.label}
                   </NavLink>
                 ))}
-                {userMenuSignOut && (
-                  <div className="pt-1">{userMenuSignOut}</div>
-                )}
+                {userMenuSignOut && <div className="pt-1">{userMenuSignOut}</div>}
               </>
             )}
-          </div>
+          </MobileMenuToggle>
         </div>
-      )}
+      </div>
     </nav>
   );
 }
