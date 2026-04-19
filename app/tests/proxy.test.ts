@@ -256,6 +256,83 @@ describe("proxy", () => {
     });
   });
 
+  describe("anonymous routes skip token refresh", () => {
+    // These routes never read the session user. Even with an expired access
+    // token and a valid refresh token, the middleware must NOT call Django —
+    // the round-trip would just add latency to every navigation.
+    const pastExp = () => Math.floor(Date.now() / 1000) - 60;
+
+    const anonymousPaths = [
+      "/login",
+      "/signup",
+      "/forgot-password",
+      "/reset-password",
+      "/verify-email",
+      "/auth/callback",
+      "/invitations",
+    ];
+
+    for (const path of anonymousPaths) {
+      it(`skips refresh on ${path} even with expired access + valid refresh`, async () => {
+        const request = createMockRequest(`${APP_URL}/en${path}`, [
+          { name: "access_token", value: makeToken(pastExp()) },
+          { name: "refresh_token", value: "valid-refresh-tok" },
+        ]);
+
+        const response = await proxy(request);
+
+        expect(fetchSpy).not.toHaveBeenCalled();
+        // Anonymous routes should also not redirect to login.
+        expect(response.headers.get("location")).toBeNull();
+      });
+
+      it(`skips refresh on ${path} when only refresh_token is present`, async () => {
+        const request = createMockRequest(`${APP_URL}/en${path}`, [
+          { name: "refresh_token", value: "valid-refresh-tok" },
+        ]);
+
+        const response = await proxy(request);
+
+        expect(fetchSpy).not.toHaveBeenCalled();
+        expect(response.headers.get("location")).toBeNull();
+      });
+    }
+
+    it("skips refresh on a nested anonymous path (e.g. /invitations/abc123)", async () => {
+      const request = createMockRequest(`${APP_URL}/en/invitations/abc123`, [
+        { name: "access_token", value: makeToken(pastExp()) },
+        { name: "refresh_token", value: "valid-refresh-tok" },
+      ]);
+
+      await proxy(request);
+
+      expect(fetchSpy).not.toHaveBeenCalled();
+    });
+
+    it("still refreshes on a non-anonymous marketing route like /pricing", async () => {
+      const futureExp = Math.floor(Date.now() / 1000) + 900;
+      fetchSpy.mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            access_token: makeToken(futureExp),
+            refresh_token: "new-refresh-tok",
+          }),
+      });
+
+      const request = createMockRequest(`${APP_URL}/en/pricing`, [
+        { name: "access_token", value: makeToken(pastExp()) },
+        { name: "refresh_token", value: "valid-refresh-tok" },
+      ]);
+
+      await proxy(request);
+
+      // Sanity check — the inverse of the anonymous-skip behaviour: non-anon
+      // routes still go through Django.
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("malformed access tokens", () => {
     it("treats a non-3-part token as expired", async () => {
       const request = createMockRequest(`${APP_URL}/en/dashboard`, [
@@ -320,9 +397,9 @@ describe("proxy", () => {
       // NextResponse.next with request.headers serializes custom headers as
       // "x-middleware-request-<name>". We assert the downstream forwarded
       // header so server components receive the pathname.
-      expect(
-        response.headers.get("x-middleware-request-x-pathname"),
-      ).toBe("/en/pricing");
+      expect(response.headers.get("x-middleware-request-x-pathname")).toBe(
+        "/en/pricing",
+      );
     });
 
     it("preserves an intl rewrite by re-emitting it through NextResponse.rewrite", async () => {
@@ -335,9 +412,9 @@ describe("proxy", () => {
       const response = await proxy(request);
 
       expect(response.headers.get("x-middleware-rewrite")).toBe(rewriteTarget);
-      expect(
-        response.headers.get("x-middleware-request-x-pathname"),
-      ).toBe("/about");
+      expect(response.headers.get("x-middleware-request-x-pathname")).toBe(
+        "/about",
+      );
     });
 
     it("passes an intl redirect response through unchanged (no pathname header)", async () => {
@@ -388,9 +465,9 @@ describe("proxy", () => {
 
       // Even via the refresh branch, server components must still receive
       // the forwarded pathname header.
-      expect(
-        response.headers.get("x-middleware-request-x-pathname"),
-      ).toBe("/en/pricing");
+      expect(response.headers.get("x-middleware-request-x-pathname")).toBe(
+        "/en/pricing",
+      );
       // Refresh request was actually issued (i.e. we took the refresh path).
       expect(fetchSpy).toHaveBeenCalled();
       // And no redirect was emitted.

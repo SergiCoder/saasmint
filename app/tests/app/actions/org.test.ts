@@ -107,10 +107,7 @@ describe("org server actions", () => {
         email: "bob@example.com",
         role: "member",
       });
-      expect(mockRevalidatePath).toHaveBeenCalledWith(
-        "/[locale]/org",
-        "layout",
-      );
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/org", "layout");
       expect(result).toEqual({ ok: true });
     });
 
@@ -173,10 +170,7 @@ describe("org server actions", () => {
         "org_1",
         "inv_1",
       );
-      expect(mockRevalidatePath).toHaveBeenCalledWith(
-        "/[locale]/org",
-        "layout",
-      );
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/org", "layout");
     });
 
     it("no-ops when caller is a plain member", async () => {
@@ -229,10 +223,7 @@ describe("org server actions", () => {
         "org_1",
         "user_123",
       );
-      expect(mockRevalidatePath).toHaveBeenCalledWith(
-        "/[locale]/org",
-        "layout",
-      );
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/org", "layout");
     });
 
     it("no-ops when caller is a plain member", async () => {
@@ -287,10 +278,7 @@ describe("org server actions", () => {
         "user_123",
         "admin",
       );
-      expect(mockRevalidatePath).toHaveBeenCalledWith(
-        "/[locale]/org",
-        "layout",
-      );
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/org", "layout");
     });
 
     it("no-ops when caller is a plain member", async () => {
@@ -357,10 +345,7 @@ describe("org server actions", () => {
         "org_1",
         "user_2",
       );
-      expect(mockRevalidatePath).toHaveBeenCalledWith(
-        "/[locale]/org",
-        "layout",
-      );
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/org", "layout");
       expect(result).toEqual({ ok: true });
     });
 

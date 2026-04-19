@@ -7,16 +7,16 @@ describe("GetStartedButton", () => {
     render(
       <GetStartedButton planPriceId="price_123">Get started</GetStartedButton>,
     );
-    const link = screen.getByRole("link");
+    const link = screen.getByRole("link", { name: "Get started" });
     expect(link).toHaveAttribute("href", "/signup?plan=price_123");
   });
 
-  it("renders the children inside the button", () => {
+  it("renders the children inside the link", () => {
     render(
       <GetStartedButton planPriceId="price_123">Get started</GetStartedButton>,
     );
     expect(
-      screen.getByRole("button", { name: "Get started" }),
+      screen.getByRole("link", { name: "Get started" }),
     ).toBeInTheDocument();
   });
 
@@ -26,15 +26,25 @@ describe("GetStartedButton", () => {
         Get started
       </GetStartedButton>,
     );
-    const button = screen.getByRole("button", { name: "Get started" });
-    expect(button.className).toMatch(/bg-primary|primary/);
+    const link = screen.getByRole("link", { name: "Get started" });
+    expect(link.className).toMatch(/bg-primary|primary/);
   });
 
   it("uses the secondary variant by default", () => {
     render(
       <GetStartedButton planPriceId="price_123">Get started</GetStartedButton>,
     );
-    const button = screen.getByRole("button", { name: "Get started" });
-    expect(button.className).not.toMatch(/bg-primary-600/);
+    const link = screen.getByRole("link", { name: "Get started" });
+    expect(link.className).not.toMatch(/bg-primary-600/);
+  });
+
+  it("adds context=team to the query string when provided", () => {
+    render(
+      <GetStartedButton planPriceId="price_123" context="team">
+        Get started
+      </GetStartedButton>,
+    );
+    const link = screen.getByRole("link", { name: "Get started" });
+    expect(link).toHaveAttribute("href", "/signup?plan=price_123&context=team");
   });
 });

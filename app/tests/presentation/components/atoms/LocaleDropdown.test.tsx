@@ -1,8 +1,9 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockReplace = vi.fn();
+const mockUpdatePreferredLocale = vi.fn();
 
 vi.mock("next-intl", () => ({
   useLocale: () => "en",
@@ -25,7 +26,18 @@ vi.mock("@/lib/i18n/routing", () => {
   };
 });
 
+vi.mock("@/app/actions/user", () => ({
+  updatePreferredLocale: (...args: unknown[]) =>
+    mockUpdatePreferredLocale(...args),
+}));
+
 import { LocaleDropdown } from "@/presentation/components/atoms/LocaleDropdown";
+
+beforeEach(() => {
+  mockReplace.mockClear();
+  mockUpdatePreferredLocale.mockReset();
+  mockUpdatePreferredLocale.mockResolvedValue(undefined);
+});
 
 describe("LocaleDropdown", () => {
   it("renders the current locale in uppercase", () => {
@@ -117,5 +129,44 @@ describe("LocaleDropdown", () => {
 
     await user.click(screen.getByText("Outside"));
     expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+  });
+
+  it("calls updatePreferredLocale with the chosen locale", async () => {
+    const user = userEvent.setup();
+    render(<LocaleDropdown />);
+
+    await user.click(screen.getByRole("button"));
+    await user.click(screen.getByRole("option", { name: "Français" }));
+
+    await waitFor(() => {
+      expect(mockUpdatePreferredLocale).toHaveBeenCalledWith("fr");
+    });
+  });
+
+  it("does not crash when updatePreferredLocale rejects (fire-and-forget catch)", async () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const rejection = new Error("server 500");
+    mockUpdatePreferredLocale.mockRejectedValue(rejection);
+
+    const user = userEvent.setup();
+    render(<LocaleDropdown />);
+
+    await user.click(screen.getByRole("button"));
+    // The click handler must not throw even though the server action rejects.
+    await user.click(screen.getByRole("option", { name: "Español" }));
+
+    // Visual swap happened regardless of the failed save.
+    expect(mockReplace).toHaveBeenCalledWith("/dashboard", { locale: "es" });
+
+    await waitFor(() => {
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Failed to save preferred locale",
+        rejection,
+      );
+    });
+
+    consoleErrorSpy.mockRestore();
   });
 });

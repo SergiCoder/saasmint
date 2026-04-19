@@ -357,6 +357,11 @@
     "home": "Terug naar start",
     "errorId": "Fout-ID"
   },
+  "notFound": {
+    "title": "Pagina niet gevonden",
+    "description": "We konden de pagina die u zocht niet vinden.",
+    "home": "Terug naar home"
+  },
   "invitation": {
     "title": "Je bent uitgenodigd",
     "description": "Je bent uitgenodigd om lid te worden van {orgName}. Accepteer om lid te worden of weiger om te negeren.",

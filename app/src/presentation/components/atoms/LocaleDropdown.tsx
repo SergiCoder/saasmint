@@ -49,7 +49,13 @@ export function LocaleDropdown() {
   function switchLocale(next: Locale) {
     setOpen(false);
     router.replace(pathname, { locale: next });
-    updatePreferredLocale(next);
+    // Fire-and-forget: saving the preference should not block the visual
+    // locale swap. The action itself already swallows server errors, so
+    // this catch only guards against transport failures (offline, aborted
+    // RSC request) that would otherwise surface as an unhandled rejection.
+    updatePreferredLocale(next).catch((err) => {
+      console.error("Failed to save preferred locale", err);
+    });
   }
 
   return (

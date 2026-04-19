@@ -357,6 +357,11 @@
     "home": "Tilbage til start",
     "errorId": "Fejl-ID"
   },
+  "notFound": {
+    "title": "Siden blev ikke fundet",
+    "description": "Vi kunne ikke finde den side, du ledte efter.",
+    "home": "Tilbage til forsiden"
+  },
   "invitation": {
     "title": "Du er blevet inviteret",
     "description": "Du er blevet inviteret til at blive medlem af {orgName}. Acceptér for at deltage eller afvis for at ignorere.",

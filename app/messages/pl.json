@@ -357,6 +357,11 @@
     "home": "Wróć do strony głównej",
     "errorId": "ID błędu"
   },
+  "notFound": {
+    "title": "Strona nie została znaleziona",
+    "description": "Nie mogliśmy znaleźć strony, której szukałeś.",
+    "home": "Wróć do strony głównej"
+  },
   "invitation": {
     "title": "Otrzymałeś zaproszenie",
     "description": "Otrzymałeś zaproszenie do dołączenia do {orgName}. Zaakceptuj, aby dołączyć, lub odrzuć, aby zignorować.",

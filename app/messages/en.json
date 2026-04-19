@@ -132,7 +132,7 @@
     },
     "callback": {
       "pageTitle": "Completing sign-in",
-      "completing": "Completing sign-in\u2026",
+      "completing": "Completing sign-in…",
       "noscript": "JavaScript is required to complete sign-in.",
       "backToLogin": "Return to sign-in"
     },
@@ -395,5 +395,10 @@
     "retry": "Try again",
     "home": "Back to home",
     "errorId": "Error ID"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "We couldn't find the page you were looking for.",
+    "home": "Back to home"
   }
 }

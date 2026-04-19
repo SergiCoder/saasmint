@@ -357,6 +357,11 @@
     "home": "Tillbaka till start",
     "errorId": "Fel-ID"
   },
+  "notFound": {
+    "title": "Sidan hittades inte",
+    "description": "Vi kunde inte hitta sidan du letade efter.",
+    "home": "Tillbaka till startsidan"
+  },
   "invitation": {
     "title": "Du har blivit inbjuden",
     "description": "Du har blivit inbjuden att gå med i {orgName}. Acceptera för att gå med eller avböj för att ignorera.",

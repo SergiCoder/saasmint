@@ -1,3 +1,5 @@
+import { Link } from "@/lib/i18n/navigation";
+
 export interface ErrorViewProps {
   title: string;
   description: string;
@@ -43,12 +45,12 @@ export function ErrorView({
         <p className="mb-8 text-sm text-gray-600">{description}</p>
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           {retrySlot}
-          <a
+          <Link
             href={homeHref}
             className="focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
           >
             {homeLabel}
-          </a>
+          </Link>
         </div>
         {errorId && errorIdLabel && (
           <p className="mt-8 font-mono text-xs text-gray-400">

@@ -12,6 +12,7 @@ const mockTranslate = vi.fn((key: string, params?: Record<string, unknown>) => {
 
 vi.mock("next-intl/server", () => ({
   getTranslations: vi.fn(() => Promise.resolve(mockTranslate)),
+  setRequestLocale: vi.fn(),
 }));
 
 vi.mock("next", () => ({
@@ -103,7 +104,9 @@ function makeOrg(overrides: Partial<Org> = {}): Org {
 }
 
 async function renderPage() {
-  const jsx = await DashboardPage();
+  const jsx = await DashboardPage({
+    params: Promise.resolve({ locale: "en" }),
+  });
   return render(jsx);
 }
 

@@ -74,7 +74,7 @@ export async function inviteMember(
     return { ok: false, error: "Failed to send invitation" };
   }
 
-  revalidatePath("/[locale]/org", "layout");
+  revalidatePath("/org", "layout");
   return { ok: true };
 }
 
@@ -96,7 +96,7 @@ export async function cancelInvitation(formData: FormData) {
     console.error("Failed to cancel invitation", err);
     return;
   }
-  revalidatePath("/[locale]/org", "layout");
+  revalidatePath("/org", "layout");
 }
 
 export async function removeMember(formData: FormData) {
@@ -117,7 +117,7 @@ export async function removeMember(formData: FormData) {
     console.error("Failed to remove member", err);
     return;
   }
-  revalidatePath("/[locale]/org", "layout");
+  revalidatePath("/org", "layout");
 }
 
 export async function updateMemberRole(formData: FormData) {
@@ -147,7 +147,7 @@ export async function updateMemberRole(formData: FormData) {
     console.error("Failed to update member role", err);
     return;
   }
-  revalidatePath("/[locale]/org", "layout");
+  revalidatePath("/org", "layout");
 }
 
 export async function transferOwnership(
@@ -171,6 +171,6 @@ export async function transferOwnership(
     return { ok: false, error: "Failed to transfer ownership" };
   }
 
-  revalidatePath("/[locale]/org", "layout");
+  revalidatePath("/org", "layout");
   return { ok: true };
 }

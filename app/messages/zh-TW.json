@@ -357,6 +357,11 @@
     "home": "返回首頁",
     "errorId": "錯誤 ID"
   },
+  "notFound": {
+    "title": "找不到頁面",
+    "description": "我們找不到您要尋找的頁面。",
+    "home": "返回首頁"
+  },
   "invitation": {
     "title": "您收到了邀請",
     "description": "您已被邀請加入 {orgName}。接受以加入，或拒絕以忽略。",

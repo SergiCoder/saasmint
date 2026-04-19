@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { OAuthButtons } from "@/presentation/components/molecules/OAuthButtons";
 import { signIn } from "@/app/actions/auth";
 import { AuthForm } from "../_components/AuthForm";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("auth.login");
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "auth.login" });
   return { title: t("pageTitle") };
 }
 
@@ -22,6 +27,7 @@ const ERROR_KEYS: Record<string, string> = {
 };
 
 interface Props {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{
     error?: string;
     registered?: string;
@@ -31,9 +37,14 @@ interface Props {
   }>;
 }
 
-export default async function LoginPage({ searchParams }: Props) {
-  const t = await getTranslations("auth.login");
-  const { error, registered, deleted, plan, context } = await searchParams;
+export default async function LoginPage({ params, searchParams }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const [t, { error, registered, deleted, plan, context }] = await Promise.all([
+    getTranslations("auth.login"),
+    searchParams,
+  ]);
   const isTeam = context === "team";
 
   const errorKey = error ? ERROR_KEYS[error] : undefined;

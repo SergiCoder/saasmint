@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ListPlans } from "@/application/use-cases/billing/ListPlans";
 import { GetSubscription } from "@/application/use-cases/billing/GetSubscription";
 import { ListProducts } from "@/application/use-cases/billing/ListProducts";
@@ -26,17 +26,24 @@ import type { Plan } from "@/domain/models/Plan";
 import { PLAN_TIER_PRO } from "@/domain/models/Plan";
 import type { Product } from "@/domain/models/Product";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("billing");
+interface Props {
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "billing" });
   return { title: t("pricingTitle") };
 }
 
-export default async function PricingPage() {
-  const [t, tPlans, tProducts, locale, user] = await Promise.all([
+export default async function PricingPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const [t, tPlans, tProducts, user] = await Promise.all([
     getTranslations("billing"),
     getTranslations("plans"),
     getTranslations("products"),
-    getLocale(),
     getOptionalUser(),
   ]);
 

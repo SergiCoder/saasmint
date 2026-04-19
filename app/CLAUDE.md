@@ -86,7 +86,7 @@ Django issues JWTs directly — no third-party auth provider.
 - **Tokens**: Access token (15 min) + refresh token (7 days) stored in HTTP-only secure cookies
 - **Login/Signup**: Server actions call Django `POST /auth/login/` and `POST /auth/register/`
 - **OAuth**: Server action sets a short-lived `oauth_in_progress` flow cookie and redirects to Django `GET /auth/oauth/{provider}/`. Django completes the provider handshake and redirects back to `/auth/callback#code=<opaque>`. A client component strips the fragment via `history.replaceState` and calls the `exchangeOAuthCode` server action, which validates the flow cookie and exchanges the code at `POST /auth/oauth/exchange/` for tokens. Post-login redirect targets are validated against an allowlist (`src/lib/oauthNext.ts`)
-- **Middleware** (`src/proxy.ts`): On every route with a refresh token, decodes the access token JWT (base64 only), checks expiry, and refreshes via `POST /auth/refresh/` when expired or missing. The middleware also forwards the current request pathname as an `x-pathname` request header (`PATHNAME_HEADER` in `src/lib/pathname.ts`), so server components can read it via `getPathname()` / `getPathnameWithoutLocale()` without falling back to `usePathname()` on the client.
+- **Middleware** (`src/proxy.ts`): On routes that actually read the session user, decodes the access token JWT (base64 only), checks expiry, and refreshes via `POST /auth/refresh/` when expired or missing. Anonymous-only routes (`/login`, `/signup`, `/forgot-password`, `/reset-password`, `/verify-email`, `/auth/callback`, `/invitations`) skip the refresh round-trip. The middleware also forwards the current request pathname as an `x-pathname` request header (`PATHNAME_HEADER` in `src/lib/pathname.ts`), so server components can read it via `getPathname()` / `getPathnameWithoutLocale()` without falling back to `usePathname()` on the client.
 - **API calls**: `apiClient.ts` reads `access_token` cookie, sends as `Authorization: Bearer` header
 - **Email verification**: Django sends verification email, user clicks link → `verify-email` page calls `POST /auth/verify-email/`
 
@@ -94,7 +94,7 @@ Django issues JWTs directly — no third-party auth provider.
 
 Strict atomic design in `src/presentation/components/`:
 
-- `atoms/` — Button, Input, Badge, Avatar, AvatarUpload, Label, Spinner, Logo, SectionLabel, LocaleDropdown, FormattedDate, Divider, GitHubIcon, GoogleIcon, MicrosoftIcon
+- `atoms/` — Button, Input, Badge, Avatar, AvatarUpload, Label, Spinner, FullPageSpinner, Logo, SectionLabel, LocaleDropdown, FormattedDate, Divider, GitHubIcon, GoogleIcon, MicrosoftIcon
 - `molecules/` — FormField, MetricCard, NavLink, PlanCard, AlertBanner, ConfirmDialog, FeatureCard, StatItem, TrustBar, OrgCard, OAuthButtons, UserMenu, PronounsPicker
 - `organisms/` — NavBar, MobileMenuToggle, Footer, PricingTable, PricingSection, PricingIntervalSwitch, SubscriptionCard, OrgMemberList, InvoiceTable, CtaSection, DashboardMock, ErrorView, ProductsGrid, FeaturesGrid, LogoCloud, StatsSection
 - `templates/` — MarketingLayout, AuthLayout, AppLayout, PolicyPage

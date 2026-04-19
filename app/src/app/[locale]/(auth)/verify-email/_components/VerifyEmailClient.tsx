@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "@/lib/i18n/navigation";
+import { useEffect, useRef, useState } from "react";
+import { Link, useRouter } from "@/lib/i18n/navigation";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Spinner } from "@/presentation/components/atoms/Spinner";
 import { verifyEmail } from "@/app/actions/auth";
@@ -16,15 +15,18 @@ export function VerifyEmailClient({ token }: VerifyEmailClientProps) {
   const t = useTranslations("auth.verifyEmail");
   const router = useRouter();
   const [error, setError] = useState<string | null>(token ? null : t("error"));
+  // Django consumes the verification token on first hit. React 19 StrictMode
+  // replays effects in dev, so without this guard we'd send the same token
+  // twice and the second call would always fail with "already used."
+  const firedRef = useRef(false);
 
   useEffect(() => {
     if (!token) return;
-
-    let ignore = false;
+    if (firedRef.current) return;
+    firedRef.current = true;
 
     verifyEmail(token)
       .then((result) => {
-        if (ignore) return;
         if (result?.error) {
           setError(result.error);
         } else if (result?.pendingPlan) {
@@ -38,13 +40,7 @@ export function VerifyEmailClient({ token }: VerifyEmailClientProps) {
           router.push("/dashboard");
         }
       })
-      .catch(() => {
-        if (!ignore) setError(t("error"));
-      });
-
-    return () => {
-      ignore = true;
-    };
+      .catch(() => setError(t("error")));
   }, [token, router, t]);
 
   if (error) {

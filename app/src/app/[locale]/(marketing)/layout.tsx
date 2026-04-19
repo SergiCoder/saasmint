@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { MarketingLayout } from "@/presentation/components/templates/MarketingLayout";
 import { getOptionalUser } from "./_data/getOptionalUser";
@@ -9,11 +9,16 @@ const primaryLinkClass =
 
 interface MarketingLayoutRouteProps {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }
 
 export default async function MarketingLayoutRoute({
   children,
+  params,
 }: MarketingLayoutRouteProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const [t, tCommon, tFooter, user] = await Promise.all([
     getTranslations("nav"),
     getTranslations("common"),

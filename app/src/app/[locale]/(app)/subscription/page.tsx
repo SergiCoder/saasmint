@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ListPlans } from "@/application/use-cases/billing/ListPlans";
 import { ListProducts } from "@/application/use-cases/billing/ListProducts";
 import { planGateway, productGateway } from "@/infrastructure/registry";
@@ -27,21 +27,30 @@ import type { Plan } from "@/domain/models/Plan";
 import { PLAN_TIER_PRO } from "@/domain/models/Plan";
 import type { Product } from "@/domain/models/Product";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("billing");
-  return { title: t("title") };
-}
-
 interface BillingPageProps {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ status?: string; error?: string }>;
 }
 
-export default async function BillingPage({ searchParams }: BillingPageProps) {
-  const [t, tPlans, tProducts, locale, user, params] = await Promise.all([
+export async function generateMetadata({
+  params,
+}: BillingPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "billing" });
+  return { title: t("title") };
+}
+
+export default async function BillingPage({
+  params,
+  searchParams,
+}: BillingPageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const [t, tPlans, tProducts, user, query] = await Promise.all([
     getTranslations("billing"),
     getTranslations("plans"),
     getTranslations("products"),
-    getLocale(),
     getCurrentUser(),
     searchParams,
   ]);
@@ -171,7 +180,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
     <div className="mx-auto max-w-5xl space-y-12 pb-12">
       <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
 
-      {params.error === "checkout_failed" && (
+      {query.error === "checkout_failed" && (
         <AlertBanner variant="error">{t("checkoutError")}</AlertBanner>
       )}
 

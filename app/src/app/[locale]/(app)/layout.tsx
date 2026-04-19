@@ -1,4 +1,4 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AppLayout } from "@/presentation/components/templates/AppLayout";
 import { redirect } from "@/lib/i18n/navigation";
 import { getPathnameWithoutLocale } from "@/lib/pathname";
@@ -10,16 +10,20 @@ import { getUserOrgs } from "./_data/getUserOrgs";
 
 interface AppLayoutRouteProps {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }
 
 export default async function AppLayoutRoute({
   children,
+  params,
 }: AppLayoutRouteProps) {
-  const [t, tCommon, user, locale] = await Promise.all([
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const [t, tCommon, user] = await Promise.all([
     getTranslations("nav"),
     getTranslations("common"),
     getCurrentUser(),
-    getLocale(),
   ]);
 
   // If the user has a preferred locale that differs from the current URL,
@@ -38,8 +42,7 @@ export default async function AppLayoutRoute({
     getUserOrgs(user.id),
   ]);
 
-  const hasOrg =
-    subscription?.plan.context === "team" || userOrgs.length > 0;
+  const hasOrg = subscription?.plan.context === "team" || userOrgs.length > 0;
 
   const navLinks = [
     { href: "/dashboard", label: t("dashboard") },

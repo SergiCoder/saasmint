@@ -23,6 +23,22 @@ const PROTECTED_PREFIXES = [
   "/admin",
 ];
 
+// Routes that never read the session user — refreshing the access token
+// while we're serving them is wasted latency on every navigation.
+const ANONYMOUS_PREFIXES = [
+  "/login",
+  "/signup",
+  "/forgot-password",
+  "/reset-password",
+  "/verify-email",
+  "/auth/callback",
+  "/invitations",
+];
+
+function needsUser(pathnameWithoutLocale: string): boolean {
+  return !ANONYMOUS_PREFIXES.some((p) => pathnameWithoutLocale.startsWith(p));
+}
+
 function isTokenExpired(token: string): boolean {
   try {
     const parts = token.split(".");
@@ -91,11 +107,16 @@ export async function proxy(request: NextRequest) {
   let accessToken = request.cookies.get(ACCESS_TOKEN_NAME)?.value;
   const refreshToken = request.cookies.get(REFRESH_TOKEN_NAME)?.value;
 
-  // Attempt token refresh whenever the access token is expired and a refresh
-  // token exists, regardless of whether the route is protected.  Public pages
-  // like /pricing read the user profile to personalise currency / locale, so
-  // they also need a valid token.
-  if ((!accessToken || isTokenExpired(accessToken)) && refreshToken) {
+  // Only refresh on routes that actually read the user (protected app routes
+  // and the marketing layout which personalises the nav). Anonymous-only
+  // routes (login, signup, OAuth callback, invitation acceptance) never
+  // touch the session, so skip the Django round-trip on those navigations.
+  const shouldRefresh =
+    needsUser(pathnameWithoutLocale) &&
+    (!accessToken || isTokenExpired(accessToken)) &&
+    !!refreshToken;
+
+  if (shouldRefresh) {
     try {
       const res = await fetch(`${API_URL}/api/v1/auth/refresh/`, {
         method: "POST",

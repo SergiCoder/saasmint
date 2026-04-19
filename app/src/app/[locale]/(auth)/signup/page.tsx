@@ -1,22 +1,34 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
 import { OAuthButtons } from "@/presentation/components/molecules/OAuthButtons";
 import { signUp } from "@/app/actions/auth";
 import { AuthForm } from "../_components/AuthForm";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("auth.register");
-  return { title: t("pageTitle") };
-}
-
 interface SignupPageProps {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ plan?: string; context?: string }>;
 }
 
-export default async function SignupPage({ searchParams }: SignupPageProps) {
-  const t = await getTranslations("auth.register");
-  const { plan, context } = await searchParams;
+export async function generateMetadata({
+  params,
+}: SignupPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "auth.register" });
+  return { title: t("pageTitle") };
+}
+
+export default async function SignupPage({
+  params,
+  searchParams,
+}: SignupPageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const [t, { plan, context }] = await Promise.all([
+    getTranslations("auth.register"),
+    searchParams,
+  ]);
   const isTeam = context === "team";
   const loginParams = new URLSearchParams();
   if (plan) loginParams.set("plan", plan);

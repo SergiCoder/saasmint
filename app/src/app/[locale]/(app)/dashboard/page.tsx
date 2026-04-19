@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { getCurrentUser } from "../_data/getCurrentUser";
 import { getOrgMembers } from "../_data/getOrgMembers";
@@ -7,8 +7,13 @@ import { getSubscription } from "../_data/getSubscription";
 import { getUserOrgs } from "../_data/getUserOrgs";
 import { OrgCard } from "@/presentation/components/molecules/OrgCard";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("dashboard");
+interface Props {
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "dashboard" });
   return { title: t("title") };
 }
 
@@ -19,7 +24,10 @@ const ACTIONS = [
   { key: "actionCustomize", href: "#", icon: "🎨" },
 ] as const;
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   // Fetch subscription alongside translations and the user — it has no
   // dependency on user, so there's no reason to wait for user to load first.
   const [t, tOrg, user, subscription] = await Promise.all([

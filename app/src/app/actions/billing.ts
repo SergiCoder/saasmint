@@ -114,7 +114,7 @@ export async function cancelSubscription(): Promise<BillingActionResult> {
     console.error("Failed to cancel subscription", err);
     return { ok: false, error: toErrorMessage(err) };
   }
-  revalidatePath("/[locale]/subscription", "page");
+  revalidatePath("/subscription", "layout");
   return { ok: true };
 }
 
@@ -126,7 +126,7 @@ export async function resumeSubscription(): Promise<BillingActionResult> {
     console.error("Failed to resume subscription", err);
     return { ok: false, error: toErrorMessage(err) };
   }
-  revalidatePath("/[locale]/subscription", "page");
+  revalidatePath("/subscription", "layout");
   return { ok: true };
 }
 
@@ -152,6 +152,6 @@ export async function updateSeats(
     console.error("Failed to update seats", err);
     return { ok: false, error: toErrorMessage(err) };
   }
-  revalidatePath("/[locale]/org", "layout");
+  revalidatePath("/org", "layout");
   return { ok: true };
 }

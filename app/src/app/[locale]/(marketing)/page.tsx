@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { Badge } from "@/presentation/components/atoms/Badge";
 import { TrustBar } from "@/presentation/components/molecules/TrustBar";
@@ -34,7 +34,14 @@ const FEATURE_ITEMS = [
   { key: "featureInt", icon: "🎨" },
 ] as const;
 
-export default async function LandingPage() {
+interface Props {
+  params: Promise<{ locale: string }>;
+}
+
+export default async function LandingPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const t = await getTranslations("landing");
 
   const features = FEATURE_ITEMS.map(({ key, icon }) => ({

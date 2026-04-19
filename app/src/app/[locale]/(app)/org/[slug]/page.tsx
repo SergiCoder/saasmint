@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ListInvitations } from "@/application/use-cases/invitation/ListInvitations";
 import { invitationGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../../_data/getCurrentUser";
@@ -14,16 +14,16 @@ import { TransferOwnershipForm } from "./_components/TransferOwnershipForm";
 import { SeatManager } from "./_components/SeatManager";
 
 interface OrgDetailPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }
 
 export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
 
-  const [t, tCommon, locale, user] = await Promise.all([
+  const [t, tCommon, user] = await Promise.all([
     getTranslations("org"),
     getTranslations("common"),
-    getLocale(),
     getCurrentUser(),
   ]);
   const orgs = await getUserOrgs(user.id);

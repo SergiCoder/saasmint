@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { GetInvitationByToken } from "@/application/use-cases/invitation/GetInvitationByToken";
 import { invitationGateway } from "@/infrastructure/registry";
 import { Button } from "@/presentation/components/atoms/Button";
 import { declineInvitation } from "@/app/actions/invitation";
 import { AcceptInvitationForm } from "./_components/AcceptInvitationForm";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("invitation");
+interface InvitationPageProps {
+  params: Promise<{ locale: string; token: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: InvitationPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "invitation" });
   return {
     title: t("title"),
     robots: { index: false, follow: false },
@@ -15,12 +22,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-interface InvitationPageProps {
-  params: Promise<{ token: string }>;
-}
-
 export default async function InvitationPage({ params }: InvitationPageProps) {
-  const { token } = await params;
+  const { locale, token } = await params;
+  setRequestLocale(locale);
+
   const [t, invitation] = await Promise.all([
     getTranslations("invitation"),
     new GetInvitationByToken(invitationGateway).execute(token),

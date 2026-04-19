@@ -357,6 +357,11 @@
     "home": "Retour à l'accueil",
     "errorId": "ID d'erreur"
   },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "Nous n'avons pas trouvé la page que vous cherchiez.",
+    "home": "Retour à l'accueil"
+  },
   "invitation": {
     "title": "Vous avez été invité",
     "description": "Vous avez été invité à rejoindre {orgName}. Acceptez pour rejoindre ou déclinez pour ignorer.",

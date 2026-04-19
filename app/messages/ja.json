@@ -357,6 +357,11 @@
     "home": "ホームに戻る",
     "errorId": "エラー ID"
   },
+  "notFound": {
+    "title": "ページが見つかりません",
+    "description": "お探しのページが見つかりませんでした。",
+    "home": "ホームに戻る"
+  },
   "invitation": {
     "title": "招待されました",
     "description": "{orgName} への参加に招待されました。参加するには承諾、無視するには辞退してください。",

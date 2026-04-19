@@ -1,16 +1,22 @@
 import { redirect } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 import { StartCheckout } from "@/application/use-cases/billing/StartCheckout";
 import { subscriptionGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../../_data/getCurrentUser";
 import { APP_ORIGIN, assertTrustedRedirect } from "../_data/trustedRedirect";
 
 interface CheckoutPageProps {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ plan?: string }>;
 }
 
 export default async function CheckoutPage({
+  params,
   searchParams,
 }: CheckoutPageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const [, { plan }] = await Promise.all([getCurrentUser(), searchParams]);
 
   if (!plan) {

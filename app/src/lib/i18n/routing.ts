@@ -35,6 +35,9 @@ export function isLocale(value: unknown): value is Locale {
   );
 }
 
+/** Locales whose text direction is right-to-left. */
+export const RTL_LOCALES: ReadonlySet<Locale> = new Set<Locale>(["ar"]);
+
 // Sorted longest-first so "pt-BR" matches before "pt" would. Hoisted to
 // module scope because the locale list is a compile-time constant — no
 // need to re-sort on every request.

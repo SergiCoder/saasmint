@@ -357,6 +357,11 @@
     "home": "返回首页",
     "errorId": "错误 ID"
   },
+  "notFound": {
+    "title": "页面未找到",
+    "description": "我们找不到您要查找的页面。",
+    "home": "返回首页"
+  },
   "invitation": {
     "title": "您收到了邀请",
     "description": "您已被邀请加入 {orgName}。接受以加入，或拒绝以忽略。",

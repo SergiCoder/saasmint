@@ -282,8 +282,8 @@ describe("billing server actions", () => {
       expect(mockCanManageBilling).toHaveBeenCalledWith(user, subscription);
       expect(mockCancelSubscriptionExecute).toHaveBeenCalledOnce();
       expect(mockRevalidatePath).toHaveBeenCalledWith(
-        "/[locale]/subscription",
-        "page",
+        "/subscription",
+        "layout",
       );
     });
 
@@ -346,8 +346,8 @@ describe("billing server actions", () => {
       expect(mockCanManageBilling).toHaveBeenCalledWith(user, subscription);
       expect(mockResumeSubscriptionExecute).toHaveBeenCalledOnce();
       expect(mockRevalidatePath).toHaveBeenCalledWith(
-        "/[locale]/subscription",
-        "page",
+        "/subscription",
+        "layout",
       );
     });
 
@@ -383,10 +383,7 @@ describe("billing server actions", () => {
 
       const result = await updateSeats(undefined, formData);
       expect(mockUpdateSeatsExecute).toHaveBeenCalledWith(5);
-      expect(mockRevalidatePath).toHaveBeenCalledWith(
-        "/[locale]/org",
-        "layout",
-      );
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/org", "layout");
       expect(result).toEqual({ ok: true });
     });
 

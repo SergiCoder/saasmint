@@ -357,6 +357,11 @@
     "home": "Ana sayfaya dön",
     "errorId": "Hata kimliği"
   },
+  "notFound": {
+    "title": "Sayfa bulunamadı",
+    "description": "Aradığınız sayfayı bulamadık.",
+    "home": "Ana sayfaya dön"
+  },
   "invitation": {
     "title": "Davet edildiniz",
     "description": "{orgName} organizasyonuna katılmaya davet edildiniz. Katılmak için kabul edin veya yoksaymak için reddedin.",

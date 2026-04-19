@@ -357,6 +357,11 @@
     "home": "Torna alla home",
     "errorId": "ID errore"
   },
+  "notFound": {
+    "title": "Pagina non trovata",
+    "description": "Non siamo riusciti a trovare la pagina che cercavi.",
+    "home": "Torna alla home"
+  },
   "invitation": {
     "title": "Sei stato invitato",
     "description": "Sei stato invitato a unirti a {orgName}. Accetta per unirti o rifiuta per ignorare.",

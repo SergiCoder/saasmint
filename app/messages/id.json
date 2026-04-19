@@ -357,6 +357,11 @@
     "home": "Kembali ke beranda",
     "errorId": "ID kesalahan"
   },
+  "notFound": {
+    "title": "Halaman tidak ditemukan",
+    "description": "Kami tidak dapat menemukan halaman yang Anda cari.",
+    "home": "Kembali ke beranda"
+  },
   "invitation": {
     "title": "Anda telah diundang",
     "description": "Anda telah diundang untuk bergabung dengan {orgName}. Terima untuk bergabung atau tolak untuk mengabaikan.",

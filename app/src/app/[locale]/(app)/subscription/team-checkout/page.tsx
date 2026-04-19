@@ -1,21 +1,25 @@
 import { redirect } from "next/navigation";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ListPlans } from "@/application/use-cases/billing/ListPlans";
 import { planGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../../_data/getCurrentUser";
 import { TeamCheckoutForm } from "./_components/TeamCheckoutForm";
 
 interface TeamCheckoutPageProps {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ plan?: string }>;
 }
 
 export default async function TeamCheckoutPage({
+  params,
   searchParams,
 }: TeamCheckoutPageProps) {
-  const [t, tPlans, locale, user, { plan: planPriceId }] = await Promise.all([
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const [t, tPlans, user, { plan: planPriceId }] = await Promise.all([
     getTranslations("billing"),
     getTranslations("plans"),
-    getLocale(),
     getCurrentUser(),
     searchParams,
   ]);

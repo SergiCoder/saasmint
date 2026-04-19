@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { GetPhonePrefixes } from "@/application/use-cases/reference/GetPhonePrefixes";
 import { GetUserProfile } from "@/application/use-cases/user/GetUserProfile";
 import { referenceGateway, userGateway } from "@/infrastructure/registry";
@@ -13,12 +13,20 @@ import { ProfileForm } from "./_components/ProfileForm";
 // Static data — compute once at module load, not per request.
 const TIMEZONES = Intl.supportedValuesOf("timeZone");
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("profile");
+interface Props {
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "profile" });
   return { title: t("title") };
 }
 
-export default async function ProfilePage() {
+export default async function ProfilePage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const [t, currentUser] = await Promise.all([
     getTranslations("profile"),
     getCurrentUser(),

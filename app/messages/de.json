@@ -357,6 +357,11 @@
     "home": "Zur Startseite",
     "errorId": "Fehler-ID"
   },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "description": "Die gesuchte Seite konnten wir nicht finden.",
+    "home": "Zurück zur Startseite"
+  },
   "invitation": {
     "title": "Du wurdest eingeladen",
     "description": "Du wurdest eingeladen, {orgName} beizutreten. Akzeptiere, um beizutreten, oder lehne ab, um zu ignorieren.",
