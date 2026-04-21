@@ -4,7 +4,7 @@ import type { IOrgGateway } from "@/application/ports/IOrgGateway";
 export class ListUserOrgs {
   constructor(private readonly orgs: IOrgGateway) {}
 
-  async execute(userId: string): Promise<Org[]> {
-    return this.orgs.listUserOrgs(userId);
+  async execute(): Promise<Org[]> {
+    return this.orgs.listUserOrgs();
   }
 }

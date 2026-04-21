@@ -28,16 +28,16 @@ describe("getUserOrgs", () => {
     ];
     mockListUserOrgsExecute.mockResolvedValue(orgs);
 
-    const result = await getUserOrgs("user_1");
+    const result = await getUserOrgs();
 
-    expect(mockListUserOrgsExecute).toHaveBeenCalledWith("user_1");
+    expect(mockListUserOrgsExecute).toHaveBeenCalledWith();
     expect(result).toBe(orgs);
   });
 
   it("returns an empty array when the use-case throws", async () => {
     mockListUserOrgsExecute.mockRejectedValue(new Error("API 500"));
 
-    const result = await getUserOrgs("user_1");
+    const result = await getUserOrgs();
 
     expect(result).toEqual([]);
   });
@@ -45,7 +45,7 @@ describe("getUserOrgs", () => {
   it("returns an empty array when the user has no orgs", async () => {
     mockListUserOrgsExecute.mockResolvedValue([]);
 
-    const result = await getUserOrgs("user_1");
+    const result = await getUserOrgs();
 
     expect(result).toEqual([]);
   });

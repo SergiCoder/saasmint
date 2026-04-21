@@ -8,15 +8,12 @@ import { keysToSnake } from "./caseTransform";
 import { parseUser } from "./parsers";
 
 export class DjangoApiUserGateway implements IUserGateway {
-  async getProfile(_userId: string): Promise<User> {
+  async getProfile(): Promise<User> {
     const raw = await apiFetch<Record<string, unknown>>("/account/");
     return parseUser(raw);
   }
 
-  async updateProfile(
-    _userId: string,
-    input: UpdateProfileInput,
-  ): Promise<User> {
+  async updateProfile(input: UpdateProfileInput): Promise<User> {
     const { phonePrefix, phone, ...rest } = input;
     const payload = keysToSnake(rest) as Record<string, unknown>;
 

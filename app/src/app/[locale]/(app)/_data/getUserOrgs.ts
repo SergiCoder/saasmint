@@ -8,8 +8,6 @@ import type { Org } from "@/domain/models/Org";
  * Wrapped with React.cache() so that layout + page share a single API call
  * per server render pass.
  */
-export const getUserOrgs = cache(async function getUserOrgs(
-  userId: string,
-): Promise<Org[]> {
-  return new ListUserOrgs(orgGateway).execute(userId).catch(() => []);
+export const getUserOrgs = cache(async function getUserOrgs(): Promise<Org[]> {
+  return new ListUserOrgs(orgGateway).execute().catch(() => []);
 });

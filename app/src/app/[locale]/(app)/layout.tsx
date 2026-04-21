@@ -39,7 +39,7 @@ export default async function AppLayoutRoute({
 
   const [subscription, userOrgs] = await Promise.all([
     getSubscription(),
-    getUserOrgs(user.id),
+    getUserOrgs(),
   ]);
 
   const hasOrg = subscription?.plan.context === "team" || userOrgs.length > 0;

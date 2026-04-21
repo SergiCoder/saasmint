@@ -26,7 +26,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
     getTranslations("common"),
     getCurrentUser(),
   ]);
-  const orgs = await getUserOrgs(user.id);
+  const orgs = await getUserOrgs();
   const org = orgs.find((o) => o.slug === slug);
 
   if (!org) notFound();

@@ -48,9 +48,9 @@ vi.mock("@/app/[locale]/(app)/_data/getSubscription", () => ({
   getSubscription: () => mockGetSubscription(),
 }));
 
-const mockGetUserOrgs = vi.fn<(userId: string) => Promise<Org[]>>();
+const mockGetUserOrgs = vi.fn<() => Promise<Org[]>>();
 vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
-  getUserOrgs: (userId: string) => mockGetUserOrgs(userId),
+  getUserOrgs: () => mockGetUserOrgs(),
 }));
 
 // Stub AppLayout template so we can inspect the navLinks/userMenuItems the

@@ -65,7 +65,7 @@ export default async function PricingPage({ params }: Props) {
           .catch((): Product[] => [])
       : Promise.resolve([] as Product[]),
     user
-      ? new ListUserOrgs(orgGateway).execute(user.id).catch(() => [])
+      ? new ListUserOrgs(orgGateway).execute().catch(() => [])
       : Promise.resolve([]),
   ]);
 

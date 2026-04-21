@@ -57,7 +57,7 @@ describe("canManageBilling", () => {
     const result = await canManageBilling(user, teamSub);
 
     expect(result).toBe(true);
-    expect(mockGetUserOrgs).toHaveBeenCalledWith("user-1");
+    expect(mockGetUserOrgs).toHaveBeenCalledWith();
     expect(mockListOrgMembers).toHaveBeenCalledWith("org-1");
   });
 

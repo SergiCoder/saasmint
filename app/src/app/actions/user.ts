@@ -12,8 +12,8 @@ export async function updateAvatarUrl(
   avatarUrl: string | null,
 ): Promise<{ error?: string }> {
   try {
-    const user = await new GetCurrentUser(authGateway).execute();
-    await new UpdateUserProfile(userGateway).execute(user.id, { avatarUrl });
+    await new GetCurrentUser(authGateway).execute();
+    await new UpdateUserProfile(userGateway).execute({ avatarUrl });
   } catch (err) {
     if (err instanceof AuthError) {
       return { error: "Session expired. Please log in again." };
@@ -25,9 +25,8 @@ export async function updateAvatarUrl(
 }
 
 export async function updateProfile(_prevState: unknown, formData: FormData) {
-  let user;
   try {
-    user = await new GetCurrentUser(authGateway).execute();
+    await new GetCurrentUser(authGateway).execute();
   } catch (err) {
     if (err instanceof AuthError) {
       return { error: "Session expired. Please log in again." };
@@ -71,7 +70,7 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
   }
 
   try {
-    await new UpdateUserProfile(userGateway).execute(user.id, {
+    await new UpdateUserProfile(userGateway).execute({
       fullName,
       ...(typeof preferredLocale === "string" &&
         preferredLocale && { preferredLocale }),
@@ -101,8 +100,7 @@ export async function updatePreferredLocale(locale: string): Promise<void> {
     return;
   }
   try {
-    const user = await new GetCurrentUser(authGateway).execute();
-    await new UpdateUserProfile(userGateway).execute(user.id, {
+    await new UpdateUserProfile(userGateway).execute({
       preferredLocale: locale,
     });
   } catch {

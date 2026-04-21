@@ -218,11 +218,11 @@ describe("DashboardPage", () => {
     );
   });
 
-  it("passes user.id to ListUserOrgs", async () => {
+  it("calls ListUserOrgs without arguments (current user resolved from auth)", async () => {
     mockGetCurrentUser.mockResolvedValue(makeUser({ id: "user-42" }));
 
     await renderPage();
 
-    expect(mockListUserOrgsExecute).toHaveBeenCalledWith("user-42");
+    expect(mockListUserOrgsExecute).toHaveBeenCalledWith();
   });
 });

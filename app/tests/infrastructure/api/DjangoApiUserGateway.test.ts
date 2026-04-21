@@ -76,7 +76,7 @@ describe("DjangoApiUserGateway", () => {
     it("fetches the user profile and converts keys to camelCase", async () => {
       mockApiFetch.mockResolvedValue(snakeUser);
 
-      const result = await gateway.getProfile("u1");
+      const result = await gateway.getProfile();
 
       expect(mockApiFetch).toHaveBeenCalledWith("/account/");
       expect(result).toEqual(camelUser);
@@ -85,7 +85,7 @@ describe("DjangoApiUserGateway", () => {
     it("flattens nested phone object into phonePrefix and phone", async () => {
       mockApiFetch.mockResolvedValue(snakeUserWithPhone);
 
-      const result = await gateway.getProfile("u1");
+      const result = await gateway.getProfile();
 
       expect(result).toEqual(camelUserWithPhone);
     });
@@ -93,7 +93,7 @@ describe("DjangoApiUserGateway", () => {
     it("sets phonePrefix and phone to null when phone is null", async () => {
       mockApiFetch.mockResolvedValue(snakeUser);
 
-      const result = await gateway.getProfile("u1");
+      const result = await gateway.getProfile();
 
       expect(result.phonePrefix).toBeNull();
       expect(result.phone).toBeNull();
@@ -102,7 +102,7 @@ describe("DjangoApiUserGateway", () => {
     it("propagates errors from apiFetch", async () => {
       mockApiFetch.mockRejectedValue(new Error("API 500: Server Error"));
 
-      await expect(gateway.getProfile("u1")).rejects.toThrow(
+      await expect(gateway.getProfile()).rejects.toThrow(
         "API 500: Server Error",
       );
     });
@@ -113,7 +113,7 @@ describe("DjangoApiUserGateway", () => {
       mockApiFetch.mockResolvedValue(snakeUser);
 
       const input = { fullName: "Alice Smith" };
-      const result = await gateway.updateProfile("u1", input);
+      const result = await gateway.updateProfile(input);
 
       expect(mockApiFetch).toHaveBeenCalledWith("/account/", {
         method: "PATCH",
@@ -125,7 +125,7 @@ describe("DjangoApiUserGateway", () => {
     it("nests phone prefix and number into phone object", async () => {
       mockApiFetch.mockResolvedValue(snakeUserWithPhone);
 
-      await gateway.updateProfile("u1", {
+      await gateway.updateProfile({
         fullName: "Alice",
         phonePrefix: "+34",
         phone: "612345678",
@@ -143,7 +143,7 @@ describe("DjangoApiUserGateway", () => {
     it("sends phone as null when prefix and number are empty", async () => {
       mockApiFetch.mockResolvedValue(snakeUser);
 
-      await gateway.updateProfile("u1", {
+      await gateway.updateProfile({
         fullName: "Alice",
         phonePrefix: null,
         phone: null,
@@ -162,7 +162,7 @@ describe("DjangoApiUserGateway", () => {
       mockApiFetch.mockRejectedValue(new Error("API 500: Server Error"));
 
       await expect(
-        gateway.updateProfile("u1", { fullName: "Alice" }),
+        gateway.updateProfile({ fullName: "Alice" }),
       ).rejects.toThrow("API 500: Server Error");
     });
   });

@@ -7,7 +7,7 @@ import type {
 export class UpdateUserProfile {
   constructor(private readonly users: IUserGateway) {}
 
-  async execute(userId: string, input: UpdateProfileInput): Promise<User> {
-    return this.users.updateProfile(userId, input);
+  async execute(input: UpdateProfileInput): Promise<User> {
+    return this.users.updateProfile(input);
   }
 }

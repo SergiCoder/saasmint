@@ -32,9 +32,9 @@ export default async function ProfilePage({ params }: Props) {
     getCurrentUser(),
   ]);
   const [user, phonePrefixes, userOrgs] = await Promise.all([
-    new GetUserProfile(userGateway).execute(currentUser.id),
+    new GetUserProfile(userGateway).execute(),
     new GetPhonePrefixes(referenceGateway).execute(),
-    getUserOrgs(currentUser.id),
+    getUserOrgs(),
   ]);
 
   let deleteRestriction: "owner" | "member" | undefined;

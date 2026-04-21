@@ -9,7 +9,7 @@ function parseOrg(raw: Record<string, unknown>): Org {
 }
 
 export class DjangoApiOrgGateway implements IOrgGateway {
-  async listUserOrgs(_userId: string): Promise<Org[]> {
+  async listUserOrgs(): Promise<Org[]> {
     const data = await apiFetch<{ results: Record<string, unknown>[] }>(
       "/orgs/",
     );

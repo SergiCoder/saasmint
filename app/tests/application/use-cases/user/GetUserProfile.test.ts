@@ -37,10 +37,10 @@ function makeGateway(overrides?: Partial<IUserGateway>): IUserGateway {
 }
 
 describe("GetUserProfile", () => {
-  it("returns the user profile", async () => {
+  it("returns the current user's profile", async () => {
     const gateway = makeGateway();
-    const result = await new GetUserProfile(gateway).execute("u1");
+    const result = await new GetUserProfile(gateway).execute();
     expect(result).toEqual(user);
-    expect(gateway.getProfile).toHaveBeenCalledWith("u1");
+    expect(gateway.getProfile).toHaveBeenCalledWith();
   });
 });

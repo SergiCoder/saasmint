@@ -69,7 +69,7 @@ export default async function BillingPage({
         console.error("Failed to fetch products", err);
         return [];
       }),
-    getUserOrgs(user.id),
+    getUserOrgs(),
   ]);
 
   const hasOrg = userOrgs.length > 0;

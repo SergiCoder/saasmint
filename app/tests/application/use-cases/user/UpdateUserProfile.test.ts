@@ -44,8 +44,8 @@ describe("UpdateUserProfile", () => {
       preferredLocale: "fr",
       preferredCurrency: "EUR",
     };
-    const result = await new UpdateUserProfile(gateway).execute("u1", input);
+    const result = await new UpdateUserProfile(gateway).execute(input);
     expect(result).toEqual(user);
-    expect(gateway.updateProfile).toHaveBeenCalledWith("u1", input);
+    expect(gateway.updateProfile).toHaveBeenCalledWith(input);
   });
 });

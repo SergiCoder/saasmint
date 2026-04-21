@@ -36,7 +36,7 @@ export default async function DashboardPage({ params }: Props) {
     getCurrentUser(),
     getSubscription(),
   ]);
-  const orgs = await getUserOrgs(user.id);
+  const orgs = await getUserOrgs();
 
   const totalSpots =
     subscription?.plan.context === "team" ? subscription.quantity : null;

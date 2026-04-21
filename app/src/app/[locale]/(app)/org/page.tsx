@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "../_data/getCurrentUser";
 import { getUserOrgs } from "../_data/getUserOrgs";
 import { OrgCard } from "@/presentation/components/molecules/OrgCard";
 
@@ -19,11 +18,7 @@ export default async function OrgListPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const user = await getCurrentUser();
-  const [t, orgs] = await Promise.all([
-    getTranslations("org"),
-    getUserOrgs(user.id),
-  ]);
+  const [t, orgs] = await Promise.all([getTranslations("org"), getUserOrgs()]);
 
   if (orgs.length === 0) {
     redirect("/subscription");

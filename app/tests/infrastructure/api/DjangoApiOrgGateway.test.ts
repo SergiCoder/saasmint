@@ -30,7 +30,7 @@ describe("DjangoApiOrgGateway", () => {
       const orgs = [org, { ...org, id: "o2", name: "Other", slug: "other" }];
       mockApiFetch.mockResolvedValue({ results: orgs });
 
-      const result = await gateway.listUserOrgs("u1");
+      const result = await gateway.listUserOrgs();
 
       expect(mockApiFetch).toHaveBeenCalledWith("/orgs/");
       expect(result).toEqual(orgs);
@@ -39,14 +39,14 @@ describe("DjangoApiOrgGateway", () => {
     it("returns an empty array when no orgs exist", async () => {
       mockApiFetch.mockResolvedValue({ results: [] });
 
-      const result = await gateway.listUserOrgs("u1");
+      const result = await gateway.listUserOrgs();
       expect(result).toEqual([]);
     });
 
     it("propagates errors from apiFetch", async () => {
       mockApiFetch.mockRejectedValue(new Error("API 500: Server Error"));
 
-      await expect(gateway.listUserOrgs("u1")).rejects.toThrow(
+      await expect(gateway.listUserOrgs()).rejects.toThrow(
         "API 500: Server Error",
       );
     });

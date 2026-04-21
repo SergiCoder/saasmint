@@ -28,10 +28,10 @@ function makeGateway(overrides?: Partial<IOrgGateway>): IOrgGateway {
 }
 
 describe("ListUserOrgs", () => {
-  it("returns all orgs for a user", async () => {
+  it("returns all orgs for the current user", async () => {
     const gateway = makeGateway();
-    const result = await new ListUserOrgs(gateway).execute("u1");
+    const result = await new ListUserOrgs(gateway).execute();
     expect(result).toEqual(orgs);
-    expect(gateway.listUserOrgs).toHaveBeenCalledWith("u1");
+    expect(gateway.listUserOrgs).toHaveBeenCalledWith();
   });
 });

@@ -25,9 +25,9 @@ vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
 
-const mockGetUserOrgs = vi.fn<(userId: string) => Promise<Org[]>>();
+const mockGetUserOrgs = vi.fn<() => Promise<Org[]>>();
 vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
-  getUserOrgs: (userId: string) => mockGetUserOrgs(userId),
+  getUserOrgs: () => mockGetUserOrgs(),
 }));
 
 vi.mock("@/presentation/components/molecules/OrgCard", async () => {
@@ -131,7 +131,7 @@ describe("OrgListPage", () => {
     expect(screen.getByTestId("org-card-initech")).toHaveTextContent("Initech");
   });
 
-  it("passes the authenticated user id to getUserOrgs", async () => {
+  it("calls getUserOrgs once per render", async () => {
     mockGetCurrentUser.mockResolvedValue(makeUser({ id: "user-42" }));
     mockGetUserOrgs.mockResolvedValue([
       makeOrg({ id: "o1", slug: "acme" }),
@@ -140,6 +140,7 @@ describe("OrgListPage", () => {
 
     await OrgListPage({ params: Promise.resolve({ locale: "en" }) });
 
-    expect(mockGetUserOrgs).toHaveBeenCalledWith("user-42");
+    expect(mockGetUserOrgs).toHaveBeenCalledOnce();
+    expect(mockGetUserOrgs).toHaveBeenCalledWith();
   });
 });

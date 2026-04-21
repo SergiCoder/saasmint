@@ -78,7 +78,7 @@ describe("user server actions", () => {
 
       const result = await updateProfile(undefined, formData);
       expect(mockGetCurrentUserExecute).toHaveBeenCalledOnce();
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
+      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
         fullName: "Jane Doe",
 
         preferredLocale: "fr",
@@ -140,7 +140,7 @@ describe("user server actions", () => {
       formData.set("bio", "Hello world");
 
       const result = await updateProfile(undefined, formData);
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
+      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
         fullName: "Jane Doe",
 
         phonePrefix: "+34",
@@ -164,7 +164,7 @@ describe("user server actions", () => {
       formData.set("bio", "");
 
       const result = await updateProfile(undefined, formData);
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
+      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
         fullName: "Jane",
 
         phonePrefix: null,
@@ -184,7 +184,7 @@ describe("user server actions", () => {
       formData.set("fullName", "Jane");
 
       const result = await updateProfile(undefined, formData);
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
+      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
         fullName: "Jane",
 
         phonePrefix: null,
@@ -268,7 +268,7 @@ describe("user server actions", () => {
       await updateAvatarUrl("https://example.com/avatar.webp");
 
       expect(mockGetCurrentUserExecute).toHaveBeenCalledOnce();
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
+      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
         avatarUrl: "https://example.com/avatar.webp",
       });
       expect(mockRevalidatePath).toHaveBeenCalledWith("/", "layout");
@@ -279,7 +279,7 @@ describe("user server actions", () => {
 
       await updateAvatarUrl(null);
 
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
+      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
         avatarUrl: null,
       });
     });
@@ -310,17 +310,9 @@ describe("user server actions", () => {
 
       await updatePreferredLocale("fr");
 
-      expect(mockGetCurrentUserExecute).toHaveBeenCalledOnce();
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith("user_123", {
+      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
         preferredLocale: "fr",
       });
-    });
-
-    it("silently ignores errors from GetCurrentUser", async () => {
-      mockGetCurrentUserExecute.mockRejectedValue(new Error("No session"));
-
-      await expect(updatePreferredLocale("fr")).resolves.toBeUndefined();
-      expect(mockUpdateUserProfileExecute).not.toHaveBeenCalled();
     });
 
     it("silently ignores errors from UpdateUserProfile", async () => {
