@@ -303,7 +303,8 @@
     "delete": "Hapus",
     "confirm": "Konfirmasi",
     "toggleNav": "Alihkan navigasi",
-    "dismiss": "Tutup"
+    "dismiss": "Tutup",
+    "unknownError": "Kesalahan tidak diketahui"
   },
   "contact": {
     "title": "Hubungi kami",

@@ -21,12 +21,12 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const [t, tCommon, user] = await Promise.all([
+  const [t, tCommon, user, orgs] = await Promise.all([
     getTranslations("org"),
     getTranslations("common"),
     getCurrentUser(),
+    getUserOrgs(),
   ]);
-  const orgs = await getUserOrgs();
   const org = orgs.find((o) => o.slug === slug);
 
   if (!org) notFound();

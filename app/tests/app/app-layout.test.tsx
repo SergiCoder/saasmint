@@ -243,9 +243,9 @@ describe("(app)/layout", () => {
       href: "/profile",
       locale: "es",
     });
-    // Must not continue to fetch sub/orgs after deciding to redirect.
-    expect(mockGetSubscription).not.toHaveBeenCalled();
-    expect(mockGetUserOrgs).not.toHaveBeenCalled();
+    // sub/orgs fetches fire in parallel with getCurrentUser now — the
+    // layout optimises for the common case (locales match) and accepts
+    // two discarded GETs when a redirect does fire.
   });
 
   it("does not redirect when preferredLocale matches the URL locale", async () => {

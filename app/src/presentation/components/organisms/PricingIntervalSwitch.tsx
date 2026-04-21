@@ -1,16 +1,24 @@
-"use client";
-
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { Link } from "@/lib/i18n/navigation";
 
 export interface PricingIntervalSwitchProps {
-  defaultInterval: "month" | "year";
+  selectedInterval: "month" | "year";
   ariaLabel: string;
   monthlyLabel: string;
   yearlyLabel: string;
+  /** URL for the monthly tab (typically current path with ?interval=month). */
+  monthlyHref: string;
+  /** URL for the yearly tab. */
+  yearlyHref: string;
   header: ReactNode;
   savingsBadge?: ReactNode;
-  monthlyGrid: ReactNode;
-  yearlyGrid: ReactNode;
+  /**
+   * Grid for the selected interval only. The non-selected grid is *not*
+   * rendered — toggling navigates to the other URL and the server renders
+   * the opposite grid from scratch. Halves the HTML payload compared to
+   * the previous "render both, CSS-hide one" design.
+   */
+  grid: ReactNode;
 }
 
 function toggleClass(selected: boolean): string {
@@ -20,58 +28,60 @@ function toggleClass(selected: boolean): string {
 }
 
 export function PricingIntervalSwitch({
-  defaultInterval,
+  selectedInterval,
   ariaLabel,
   monthlyLabel,
   yearlyLabel,
+  monthlyHref,
+  yearlyHref,
   header,
   savingsBadge,
-  monthlyGrid,
-  yearlyGrid,
+  grid,
 }: PricingIntervalSwitchProps) {
-  const [selectedInterval, setSelectedInterval] = useState<"month" | "year">(
-    defaultInterval,
-  );
-
   return (
     <>
       <div className="space-y-4 text-center">
         {header}
         <div className="flex flex-wrap items-center justify-center gap-3">
+          {/*
+            prefetch={false}: toggling is same-path different-search-param,
+            and the server render fans out to 6+ Django calls on the
+            authed subscription page. Default prefetch would refetch the
+            opposite-interval grid on hover/visibility even when the user
+            never toggles, erasing most of the single-grid payload win.
+          */}
           <div
             role="tablist"
             aria-label={ariaLabel}
             className="inline-flex rounded-full border border-gray-200 bg-white p-1"
           >
-            <button
-              type="button"
+            <Link
               role="tab"
               aria-selected={selectedInterval === "month"}
-              onClick={() => setSelectedInterval("month")}
+              href={monthlyHref}
+              replace
+              scroll={false}
+              prefetch={false}
               className={toggleClass(selectedInterval === "month")}
             >
               {monthlyLabel}
-            </button>
-            <button
-              type="button"
+            </Link>
+            <Link
               role="tab"
               aria-selected={selectedInterval === "year"}
-              onClick={() => setSelectedInterval("year")}
+              href={yearlyHref}
+              replace
+              scroll={false}
+              prefetch={false}
               className={toggleClass(selectedInterval === "year")}
             >
               {yearlyLabel}
-            </button>
+            </Link>
           </div>
           {savingsBadge}
         </div>
       </div>
-
-      <div className={selectedInterval === "month" ? "" : "hidden"}>
-        {monthlyGrid}
-      </div>
-      <div className={selectedInterval === "year" ? "" : "hidden"}>
-        {yearlyGrid}
-      </div>
+      {grid}
     </>
   );
 }

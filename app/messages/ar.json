@@ -303,7 +303,8 @@
     "delete": "حذف",
     "confirm": "تأكيد",
     "toggleNav": "تبديل التنقل",
-    "dismiss": "إغلاق"
+    "dismiss": "إغلاق",
+    "unknownError": "خطأ غير معروف"
   },
   "contact": {
     "title": "اتصل بنا",

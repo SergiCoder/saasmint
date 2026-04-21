@@ -342,7 +342,8 @@
     "delete": "Delete",
     "confirm": "Confirm",
     "toggleNav": "Toggle navigation",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "unknownError": "Unknown error"
   },
   "contact": {
     "title": "Contact us",

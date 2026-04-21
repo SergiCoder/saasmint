@@ -303,7 +303,8 @@
     "delete": "Radera",
     "confirm": "Bekräfta",
     "toggleNav": "Växla navigering",
-    "dismiss": "Stäng"
+    "dismiss": "Stäng",
+    "unknownError": "Okänt fel"
   },
   "contact": {
     "title": "Kontakta oss",

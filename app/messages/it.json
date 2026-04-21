@@ -303,7 +303,8 @@
     "delete": "Elimina",
     "confirm": "Conferma",
     "toggleNav": "Attiva/disattiva navigazione",
-    "dismiss": "Chiudi"
+    "dismiss": "Chiudi",
+    "unknownError": "Errore sconosciuto"
   },
   "contact": {
     "title": "Contattaci",

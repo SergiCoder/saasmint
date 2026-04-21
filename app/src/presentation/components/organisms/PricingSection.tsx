@@ -18,8 +18,12 @@ export interface PricingSectionProps {
    * and non-empty, the badge is shown next to the yearly toggle.
    */
   savingsBadge?: string;
-  /** Initial billing interval. Defaults to "month". */
-  defaultInterval?: "month" | "year";
+  /** Currently-selected billing interval (driven by the page's search params). */
+  selectedInterval: "month" | "year";
+  /** URL for the monthly tab. */
+  monthlyHref: string;
+  /** URL for the yearly tab. */
+  yearlyHref: string;
   className?: string;
 }
 
@@ -29,7 +33,9 @@ export function PricingSection({
   groups,
   labels,
   savingsBadge,
-  defaultInterval = "month",
+  selectedInterval,
+  monthlyHref,
+  yearlyHref,
   className = "",
 }: PricingSectionProps) {
   if (groups.length === 0) return null;
@@ -49,7 +55,8 @@ export function PricingSection({
 
   const gridClassName = `mx-auto grid gap-8 ${gridMaxWidthClass} ${gridColsClass}`;
 
-  const renderGrid = (pickYearly: boolean) => (
+  const pickYearly = selectedInterval === "year";
+  const grid = (
     <div className={gridClassName}>
       {groups.map((group) => {
         const variant = pickYearly
@@ -75,10 +82,12 @@ export function PricingSection({
   return (
     <section className={`space-y-8 ${className}`}>
       <PricingIntervalSwitch
-        defaultInterval={defaultInterval}
+        selectedInterval={selectedInterval}
         ariaLabel={title}
         monthlyLabel={labels.monthly}
         yearlyLabel={labels.yearly}
+        monthlyHref={monthlyHref}
+        yearlyHref={yearlyHref}
         header={
           <div>
             <h2 className="text-2xl font-semibold text-gray-900">{title}</h2>
@@ -92,8 +101,7 @@ export function PricingSection({
             <Badge variant="success">{savingsBadge}</Badge>
           ) : undefined
         }
-        monthlyGrid={renderGrid(false)}
-        yearlyGrid={renderGrid(true)}
+        grid={grid}
       />
     </section>
   );

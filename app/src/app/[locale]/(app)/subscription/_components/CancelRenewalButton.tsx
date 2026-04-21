@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { cancelSubscription } from "@/app/actions/billing";
 import {
   ConfirmDialog,
@@ -23,6 +24,7 @@ export function CancelRenewalButton({
   confirmAction,
   confirmDismiss,
 }: CancelRenewalButtonProps) {
+  const tCommon = useTranslations("common");
   const confirmRef = useRef<ConfirmDialogHandle>(null);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +44,7 @@ export function CancelRenewalButton({
           setError(result.error);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error");
+        setError(err instanceof Error ? err.message : tCommon("unknownError"));
       }
     });
   };

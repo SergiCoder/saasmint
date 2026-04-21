@@ -303,7 +303,8 @@
     "delete": "Slett",
     "confirm": "Bekreft",
     "toggleNav": "Veksle navigasjon",
-    "dismiss": "Lukk"
+    "dismiss": "Lukk",
+    "unknownError": "Ukjent feil"
   },
   "contact": {
     "title": "Kontakt oss",

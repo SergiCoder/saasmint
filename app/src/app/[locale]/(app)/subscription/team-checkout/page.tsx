@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ListPlans } from "@/application/use-cases/billing/ListPlans";
 import { planGateway } from "@/infrastructure/registry";
+import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { getCurrentUser } from "../../_data/getCurrentUser";
 import { TeamCheckoutForm } from "./_components/TeamCheckoutForm";
 
@@ -42,7 +43,7 @@ export default async function TeamCheckoutPage({
       <div className="rounded-xl border border-gray-200 p-6 shadow-sm">
         <TeamCheckoutForm
           planPriceId={plan.price.id}
-          planName={tPlans(`${plan.context}.${plan.tier}.name` as never)}
+          planName={translatePlanName(tPlans, plan)}
           displayAmount={plan.price.displayAmount}
           currency={plan.price.currency}
           locale={locale}

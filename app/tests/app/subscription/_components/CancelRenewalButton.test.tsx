@@ -117,7 +117,7 @@ describe("CancelRenewalButton", () => {
     await user.click(screen.getByRole("button", { name: "Yes, cancel" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Unknown error")).toBeInTheDocument();
+      expect(screen.getByText("unknownError")).toBeInTheDocument();
     });
   });
 

@@ -3,31 +3,9 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/lib/i18n/navigation";
-import { isLocale, type Locale } from "@/lib/i18n/routing";
+import type { Locale } from "@/lib/i18n/routing";
+import { LOCALES } from "@/lib/i18n/locales";
 import { updatePreferredLocale } from "@/app/actions/user";
-
-const LOCALE_LABELS: Record<Locale, string> = {
-  en: "English",
-  es: "Español",
-  fr: "Français",
-  de: "Deutsch",
-  "pt-BR": "Português (BR)",
-  it: "Italiano",
-  ja: "日本語",
-  "zh-CN": "简体中文",
-  nl: "Nederlands",
-  ar: "العربية",
-  ko: "한국어",
-  ru: "Русский",
-  pl: "Polski",
-  tr: "Türkçe",
-  sv: "Svenska",
-  id: "Bahasa Indonesia",
-  "zh-TW": "繁體中文",
-  da: "Dansk",
-  nb: "Norsk bokmål",
-  "pt-PT": "Português (PT)",
-};
 
 export function LocaleDropdown() {
   const locale = useLocale();
@@ -89,15 +67,13 @@ export function LocaleDropdown() {
           role="listbox"
           className="absolute right-0 z-50 mt-1 max-h-60 w-48 overflow-auto rounded-md border border-gray-200 bg-white py-1 shadow-lg"
         >
-          {Object.entries(LOCALE_LABELS).map(([code, label]) => (
+          {LOCALES.map(({ code, label }) => (
             <li key={code}>
               <button
                 type="button"
                 role="option"
                 aria-selected={code === locale}
-                onClick={() => {
-                  if (isLocale(code)) switchLocale(code);
-                }}
+                onClick={() => switchLocale(code)}
                 className={`w-full cursor-pointer px-3 py-1.5 text-left text-sm transition-colors hover:bg-gray-100 ${
                   code === locale
                     ? "text-primary-600 font-medium"

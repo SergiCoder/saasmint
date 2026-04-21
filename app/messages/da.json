@@ -303,7 +303,8 @@
     "delete": "Slet",
     "confirm": "Bekræft",
     "toggleNav": "Skift navigation",
-    "dismiss": "Luk"
+    "dismiss": "Luk",
+    "unknownError": "Ukendt fejl"
   },
   "contact": {
     "title": "Kontakt os",

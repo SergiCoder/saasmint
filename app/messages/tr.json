@@ -303,7 +303,8 @@
     "delete": "Sil",
     "confirm": "Onayla",
     "toggleNav": "Gezinmeyi aç/kapat",
-    "dismiss": "Kapat"
+    "dismiss": "Kapat",
+    "unknownError": "Bilinmeyen hata"
   },
   "contact": {
     "title": "Bize ulaşın",

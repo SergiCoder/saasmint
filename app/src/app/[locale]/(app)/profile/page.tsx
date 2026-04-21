@@ -3,9 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { GetPhonePrefixes } from "@/application/use-cases/reference/GetPhonePrefixes";
 import { GetUserProfile } from "@/application/use-cases/user/GetUserProfile";
 import { referenceGateway, userGateway } from "@/infrastructure/registry";
-import { getCurrentUser } from "../_data/getCurrentUser";
-import { getOrgMembers } from "../_data/getOrgMembers";
-import { getUserOrgs } from "../_data/getUserOrgs";
+import { getMyOrgRole } from "../_data/getMyOrgRole";
 import { ChangePasswordForm } from "./_components/ChangePasswordForm";
 import { DangerZone } from "./_components/DangerZone";
 import { ProfileForm } from "./_components/ProfileForm";
@@ -27,28 +25,15 @@ export default async function ProfilePage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, currentUser] = await Promise.all([
+  const [t, user, phonePrefixes, myOrgRole] = await Promise.all([
     getTranslations("profile"),
-    getCurrentUser(),
-  ]);
-  const [user, phonePrefixes, userOrgs] = await Promise.all([
     new GetUserProfile(userGateway).execute(),
     new GetPhonePrefixes(referenceGateway).execute(),
-    getUserOrgs(),
+    getMyOrgRole(),
   ]);
 
-  let deleteRestriction: "owner" | "member" | undefined;
-  const firstOrg = userOrgs.at(0);
-  if (firstOrg) {
-    try {
-      const members = await getOrgMembers(firstOrg.id);
-      const me = members.find((m) => m.user.id === currentUser.id);
-      deleteRestriction = me?.role === "owner" ? "owner" : "member";
-    } catch {
-      // If we can't determine the role, block deletion conservatively
-      deleteRestriction = "member";
-    }
-  }
+  const deleteRestriction: "owner" | "member" | undefined =
+    myOrgRole === null ? undefined : myOrgRole === "owner" ? "owner" : "member";
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">

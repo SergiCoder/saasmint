@@ -11,31 +11,9 @@ import { Label } from "@/presentation/components/atoms/Label";
 import { uploadAvatar, deleteAvatar } from "@/app/actions/avatar";
 import { compressImage } from "@/lib/compressImage";
 import { updateProfile, updateAvatarUrl } from "@/app/actions/user";
+import { LOCALES } from "@/lib/i18n/locales";
 import type { User } from "@/domain/models/User";
 import type { PhonePrefix } from "@/domain/models/PhonePrefix";
-
-const SUPPORTED_LOCALES = [
-  { value: "en", label: "English" },
-  { value: "es", label: "Español" },
-  { value: "fr", label: "Français" },
-  { value: "de", label: "Deutsch" },
-  { value: "it", label: "Italiano" },
-  { value: "pt-BR", label: "Português (Brasil)" },
-  { value: "pt-PT", label: "Português (Portugal)" },
-  { value: "ja", label: "日本語" },
-  { value: "zh-CN", label: "中文 (简体)" },
-  { value: "zh-TW", label: "中文 (繁體)" },
-  { value: "ko", label: "한국어" },
-  { value: "ru", label: "Русский" },
-  { value: "pl", label: "Polski" },
-  { value: "da", label: "Dansk" },
-  { value: "sv", label: "Svenska" },
-  { value: "nb", label: "Norsk Bokmål" },
-  { value: "nl", label: "Nederlands" },
-  { value: "ar", label: "العربية" },
-  { value: "tr", label: "Türkçe" },
-  { value: "id", label: "Bahasa Indonesia" },
-] as const;
 
 const SUPPORTED_CURRENCIES = [
   { value: "usd", label: "USD — US Dollar" },
@@ -230,9 +208,9 @@ export function ProfileForm({
             defaultValue={user.preferredLocale}
             className={selectClassName}
           >
-            {SUPPORTED_LOCALES.map((locale) => (
-              <option key={locale.value} value={locale.value}>
-                {locale.label}
+            {LOCALES.map(({ code, label }) => (
+              <option key={code} value={code}>
+                {label}
               </option>
             ))}
           </select>

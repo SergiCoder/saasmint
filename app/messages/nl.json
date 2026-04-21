@@ -303,7 +303,8 @@
     "delete": "Verwijderen",
     "confirm": "Bevestigen",
     "toggleNav": "Navigatie wisselen",
-    "dismiss": "Sluiten"
+    "dismiss": "Sluiten",
+    "unknownError": "Onbekende fout"
   },
   "contact": {
     "title": "Contact",

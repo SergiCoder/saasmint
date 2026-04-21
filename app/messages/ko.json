@@ -303,7 +303,8 @@
     "delete": "삭제",
     "confirm": "확인",
     "toggleNav": "내비게이션 전환",
-    "dismiss": "닫기"
+    "dismiss": "닫기",
+    "unknownError": "알 수 없는 오류"
   },
   "contact": {
     "title": "문의하기",

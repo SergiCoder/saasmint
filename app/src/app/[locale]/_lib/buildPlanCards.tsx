@@ -5,12 +5,13 @@ import { formatCurrency } from "@/lib/formatCurrency";
 
 /**
  * Build translated plan name / description maps keyed by `"{context}.{tier}"`.
- * Consumers pass these into `buildPlanCardGroups` so the helper stays free of
- * `next-intl` imports (works in both server and marketing contexts).
+ * Consumers pass their typed `tPlans` directly; the `(key: never) => string`
+ * parameter accepts any typed next-intl translator (never is the bottom
+ * type) and localises the dynamic-key `as never` cast to this helper.
  */
 export function buildPlanTranslations(
   plans: Plan[],
-  tPlans: (key: string) => string,
+  tPlans: (key: never) => string,
 ): {
   planNames: Record<string, string>;
   planDescriptions: Record<string, string>;
@@ -20,9 +21,9 @@ export function buildPlanTranslations(
   for (const plan of plans) {
     const key = `${plan.context}.${plan.tier}`;
     if (!planNames[key]) {
-      planNames[key] = tPlans(`${plan.context}.${plan.tier}.name`);
+      planNames[key] = tPlans(`${plan.context}.${plan.tier}.name` as never);
       planDescriptions[key] = tPlans(
-        `${plan.context}.${plan.tier}.description`,
+        `${plan.context}.${plan.tier}.description` as never,
       );
     }
   }
@@ -36,10 +37,10 @@ export function buildPlanTranslations(
  */
 export function buildProductTranslations(
   products: Product[],
-  tProducts: (key: string) => string,
+  tProducts: (key: never) => string,
 ): Record<number, string> {
   return Object.fromEntries(
-    products.map((p) => [p.credits, tProducts(`${p.credits}`)]),
+    products.map((p) => [p.credits, tProducts(`${p.credits}` as never)]),
   );
 }
 

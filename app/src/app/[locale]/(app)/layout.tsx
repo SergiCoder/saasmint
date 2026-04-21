@@ -20,10 +20,12 @@ export default async function AppLayoutRoute({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, tCommon, user] = await Promise.all([
+  const [t, tCommon, user, subscription, userOrgs] = await Promise.all([
     getTranslations("nav"),
     getTranslations("common"),
     getCurrentUser(),
+    getSubscription(),
+    getUserOrgs(),
   ]);
 
   // If the user has a preferred locale that differs from the current URL,
@@ -36,11 +38,6 @@ export default async function AppLayoutRoute({
     const pathname = await getPathnameWithoutLocale();
     redirect({ href: pathname, locale: user.preferredLocale });
   }
-
-  const [subscription, userOrgs] = await Promise.all([
-    getSubscription(),
-    getUserOrgs(),
-  ]);
 
   const hasOrg = subscription?.plan.context === "team" || userOrgs.length > 0;
 

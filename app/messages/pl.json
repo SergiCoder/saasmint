@@ -303,7 +303,8 @@
     "delete": "Usuń",
     "confirm": "Potwierdź",
     "toggleNav": "Przełącz nawigację",
-    "dismiss": "Zamknij"
+    "dismiss": "Zamknij",
+    "unknownError": "Nieznany błąd"
   },
   "contact": {
     "title": "Kontakt",

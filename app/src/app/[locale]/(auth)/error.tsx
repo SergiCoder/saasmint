@@ -1,35 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
-import { useTranslations } from "next-intl";
-import { ErrorView } from "@/presentation/components/organisms/ErrorView";
-import { Button } from "@/presentation/components/atoms/Button";
+import { RouteErrorBoundary } from "@/presentation/components/organisms/RouteErrorBoundary";
 
 interface ErrorPageProps {
   error: Error & { digest?: string };
   reset: () => void;
 }
 
-export default function AuthError({ error, reset }: ErrorPageProps) {
-  const t = useTranslations("errorPage");
-
-  useEffect(() => {
-    console.error("[auth] route error:", error);
-  }, [error]);
-
-  return (
-    <ErrorView
-      title={t("title")}
-      description={t("description")}
-      homeLabel={t("home")}
-      homeHref="/"
-      errorIdLabel={t("errorId")}
-      errorId={error.digest}
-      retrySlot={
-        <Button variant="primary" onClick={reset}>
-          {t("retry")}
-        </Button>
-      }
-    />
-  );
+export default function AuthError(props: ErrorPageProps) {
+  return <RouteErrorBoundary {...props} homeHref="/" tag="auth" />;
 }

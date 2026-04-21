@@ -303,7 +303,8 @@
     "delete": "刪除",
     "confirm": "確認",
     "toggleNav": "切換導覽",
-    "dismiss": "關閉"
+    "dismiss": "關閉",
+    "unknownError": "未知錯誤"
   },
   "contact": {
     "title": "聯絡我們",

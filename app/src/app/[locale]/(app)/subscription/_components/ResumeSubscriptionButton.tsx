@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/presentation/components/atoms/Button";
 import { resumeSubscription } from "@/app/actions/billing";
 
@@ -11,6 +12,7 @@ interface ResumeSubscriptionButtonProps {
 export function ResumeSubscriptionButton({
   children,
 }: ResumeSubscriptionButtonProps) {
+  const tCommon = useTranslations("common");
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +25,7 @@ export function ResumeSubscriptionButton({
           setError(result.error);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error");
+        setError(err instanceof Error ? err.message : tCommon("unknownError"));
       }
     });
   };
