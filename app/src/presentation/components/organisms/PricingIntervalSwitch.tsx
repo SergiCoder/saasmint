@@ -15,9 +15,7 @@ export interface PricingIntervalSwitchProps {
 
 function toggleClass(selected: boolean): string {
   return `cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-    selected
-      ? "bg-primary-600 text-white"
-      : "text-gray-600 hover:text-gray-900"
+    selected ? "bg-primary-600 text-white" : "text-gray-600 hover:text-gray-900"
   }`;
 }
 
@@ -68,8 +66,12 @@ export function PricingIntervalSwitch({
         </div>
       </div>
 
-      <div className={selectedInterval === "month" ? "" : "hidden"}>{monthlyGrid}</div>
-      <div className={selectedInterval === "year" ? "" : "hidden"}>{yearlyGrid}</div>
+      <div className={selectedInterval === "month" ? "" : "hidden"}>
+        {monthlyGrid}
+      </div>
+      <div className={selectedInterval === "year" ? "" : "hidden"}>
+        {yearlyGrid}
+      </div>
     </>
   );
 }

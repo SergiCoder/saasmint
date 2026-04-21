@@ -8,6 +8,5 @@ export interface IOrgMemberGateway {
     userId: string,
     role: OrgMember["role"],
   ): Promise<void>;
-  leaveOrg(orgId: string): Promise<void>;
   transferOwnership(orgId: string, userId: string): Promise<void>;
 }

@@ -41,40 +41,4 @@ describe("DjangoApiReferenceGateway", () => {
       );
     });
   });
-
-  describe("getCurrencies", () => {
-    it("fetches currencies from /currencies/", async () => {
-      const currencies = ["usd", "eur", "gbp"];
-      mockPublicApiFetch.mockResolvedValue(currencies);
-
-      const result = await gateway.getCurrencies();
-
-      expect(mockPublicApiFetch).toHaveBeenCalledWith("/currencies/");
-      expect(result).toEqual(currencies);
-    });
-  });
-
-  describe("getLocales", () => {
-    it("fetches locales from /locales/", async () => {
-      const locales = ["en", "es", "fr"];
-      mockPublicApiFetch.mockResolvedValue(locales);
-
-      const result = await gateway.getLocales();
-
-      expect(mockPublicApiFetch).toHaveBeenCalledWith("/locales/");
-      expect(result).toEqual(locales);
-    });
-  });
-
-  describe("getTimezones", () => {
-    it("fetches timezones from /timezones/", async () => {
-      const timezones = ["Europe/Madrid", "America/New_York"];
-      mockPublicApiFetch.mockResolvedValue(timezones);
-
-      const result = await gateway.getTimezones();
-
-      expect(mockPublicApiFetch).toHaveBeenCalledWith("/timezones/");
-      expect(result).toEqual(timezones);
-    });
-  });
 });

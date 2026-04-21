@@ -118,28 +118,6 @@ describe("DjangoApiOrgMemberGateway", () => {
     });
   });
 
-  describe("leaveOrg", () => {
-    it("sends POST /orgs/:orgId/leave/", async () => {
-      mockApiFetchVoid.mockResolvedValue(undefined);
-
-      await gateway.leaveOrg("o1");
-
-      expect(mockApiFetchVoid).toHaveBeenCalledWith("/orgs/o1/leave/", {
-        method: "POST",
-      });
-    });
-
-    it("propagates errors from apiFetch", async () => {
-      mockApiFetchVoid.mockRejectedValue(
-        new Error("API 400: Owner cannot leave"),
-      );
-
-      await expect(gateway.leaveOrg("o1")).rejects.toThrow(
-        "API 400: Owner cannot leave",
-      );
-    });
-  });
-
   describe("transferOwnership", () => {
     it("sends PUT /orgs/:orgId/owner/ with user_id", async () => {
       mockApiFetchVoid.mockResolvedValue(undefined);

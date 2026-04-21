@@ -13,9 +13,6 @@ function makeGateway(
 ): IReferenceGateway {
   return {
     getPhonePrefixes: vi.fn().mockResolvedValue(phonePrefixes),
-    getCurrencies: vi.fn(),
-    getLocales: vi.fn(),
-    getTimezones: vi.fn(),
     ...overrides,
   };
 }

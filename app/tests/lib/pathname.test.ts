@@ -6,9 +6,8 @@ vi.mock("next/headers", () => ({
   headers: () => Promise.resolve({ get: mockGet }),
 }));
 
-const { PATHNAME_HEADER, getPathname, getPathnameWithoutLocale } = await import(
-  "@/lib/pathname"
-);
+const { PATHNAME_HEADER, getPathname, getPathnameWithoutLocale } =
+  await import("@/lib/pathname");
 
 beforeEach(() => {
   vi.clearAllMocks();

@@ -39,7 +39,6 @@ function makeGateway(
     listMembers: vi.fn().mockResolvedValue(members),
     removeMember: vi.fn(),
     updateMemberRole: vi.fn(),
-    leaveOrg: vi.fn(),
     transferOwnership: vi.fn(),
     ...overrides,
   };

@@ -37,12 +37,4 @@ export class DjangoApiAuthGateway implements IAuthGateway {
       scheduledDeletionAt: res?.scheduled_deletion_at ?? null,
     };
   }
-
-  async cancelDeletion(): Promise<User> {
-    const raw = await apiFetch<Record<string, unknown>>(
-      "/account/cancel-deletion/",
-      { method: "POST" },
-    );
-    return parseUser(raw);
-  }
 }

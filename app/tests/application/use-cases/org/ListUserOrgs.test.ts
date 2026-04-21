@@ -22,8 +22,6 @@ const orgs: Org[] = [
 
 function makeGateway(overrides?: Partial<IOrgGateway>): IOrgGateway {
   return {
-    getOrg: vi.fn(),
-    updateOrg: vi.fn(),
     listUserOrgs: vi.fn().mockResolvedValue(orgs),
     ...overrides,
   };

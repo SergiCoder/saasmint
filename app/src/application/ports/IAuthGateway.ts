@@ -8,5 +8,4 @@ export interface IAuthGateway {
   getCurrentUser(): Promise<User>;
   signOut(): Promise<void>;
   deleteAccount(): Promise<DeleteAccountResult>;
-  cancelDeletion(): Promise<User>;
 }

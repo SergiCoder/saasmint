@@ -24,7 +24,6 @@ export {
   type OrgMemberListProps,
   type OrgMemberRow,
 } from "./OrgMemberList";
-export { PricingTable, type PricingTableProps } from "./PricingTable";
 export {
   PricingSection,
   type PricingSectionProps,

@@ -8,7 +8,6 @@ function makeGateway(overrides?: Partial<IAuthGateway>): IAuthGateway {
     getCurrentUser: vi.fn(),
     signOut: vi.fn(),
     deleteAccount: vi.fn().mockResolvedValue({ scheduledDeletionAt: null }),
-    cancelDeletion: vi.fn(),
     ...overrides,
   };
 }

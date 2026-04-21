@@ -93,6 +93,8 @@ describe("MobileMenuToggle", () => {
 
     expect(screen.getByText("Alpha")).toBeInTheDocument();
     expect(screen.getByText("Beta")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Sign Out" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Sign Out" }),
+    ).toBeInTheDocument();
   });
 });

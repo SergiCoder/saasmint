@@ -153,32 +153,4 @@ describe("DjangoApiAuthGateway", () => {
       expect(result).toEqual({ scheduledDeletionAt: null });
     });
   });
-
-  describe("cancelDeletion", () => {
-    it("sends POST /account/cancel-deletion/ and returns camelCase user", async () => {
-      mockApiFetch.mockResolvedValue({
-        ...snakeUserBase,
-        phone: { prefix: "+44", number: "7700900000" },
-      });
-
-      const result = await gateway.cancelDeletion();
-
-      expect(mockApiFetch).toHaveBeenCalledWith("/account/cancel-deletion/", {
-        method: "POST",
-      });
-      expect(result).toEqual({
-        ...camelUserBase,
-        phonePrefix: "+44",
-        phone: "7700900000",
-      });
-    });
-
-    it("propagates errors from apiFetch", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
-
-      await expect(gateway.cancelDeletion()).rejects.toThrow(
-        "API 403: Forbidden",
-      );
-    });
-  });
 });

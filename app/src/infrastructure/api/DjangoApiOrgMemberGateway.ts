@@ -33,10 +33,6 @@ export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
     });
   }
 
-  async leaveOrg(orgId: string): Promise<void> {
-    await apiFetchVoid(`/orgs/${orgId}/leave/`, { method: "POST" });
-  }
-
   async transferOwnership(orgId: string, userId: string): Promise<void> {
     await apiFetchVoid(`/orgs/${orgId}/owner/`, {
       method: "PUT",

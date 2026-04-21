@@ -16,7 +16,9 @@ describe("PricingIntervalSwitch", () => {
   it("renders the header, both tabs, and both grids", () => {
     render(<PricingIntervalSwitch {...baseProps} defaultInterval="month" />);
 
-    expect(screen.getByRole("heading", { name: "Pricing" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Pricing" }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("tablist", { name: "Billing interval" }),
     ).toBeInTheDocument();
@@ -39,12 +41,12 @@ describe("PricingIntervalSwitch", () => {
       "false",
     );
 
-    expect(screen.getByTestId("monthly-grid").parentElement?.className).not.toContain(
-      "hidden",
-    );
-    expect(screen.getByTestId("yearly-grid").parentElement?.className).toContain(
-      "hidden",
-    );
+    expect(
+      screen.getByTestId("monthly-grid").parentElement?.className,
+    ).not.toContain("hidden");
+    expect(
+      screen.getByTestId("yearly-grid").parentElement?.className,
+    ).toContain("hidden");
   });
 
   it("respects defaultInterval='year'", () => {
@@ -58,12 +60,12 @@ describe("PricingIntervalSwitch", () => {
       "aria-selected",
       "false",
     );
-    expect(screen.getByTestId("monthly-grid").parentElement?.className).toContain(
-      "hidden",
-    );
-    expect(screen.getByTestId("yearly-grid").parentElement?.className).not.toContain(
-      "hidden",
-    );
+    expect(
+      screen.getByTestId("monthly-grid").parentElement?.className,
+    ).toContain("hidden");
+    expect(
+      screen.getByTestId("yearly-grid").parentElement?.className,
+    ).not.toContain("hidden");
   });
 
   it("switches from monthly to yearly on tab click", async () => {
@@ -80,12 +82,12 @@ describe("PricingIntervalSwitch", () => {
       "aria-selected",
       "false",
     );
-    expect(screen.getByTestId("yearly-grid").parentElement?.className).not.toContain(
-      "hidden",
-    );
-    expect(screen.getByTestId("monthly-grid").parentElement?.className).toContain(
-      "hidden",
-    );
+    expect(
+      screen.getByTestId("yearly-grid").parentElement?.className,
+    ).not.toContain("hidden");
+    expect(
+      screen.getByTestId("monthly-grid").parentElement?.className,
+    ).toContain("hidden");
   });
 
   it("switches back from yearly to monthly on tab click", async () => {
@@ -98,12 +100,12 @@ describe("PricingIntervalSwitch", () => {
       "aria-selected",
       "true",
     );
-    expect(screen.getByTestId("monthly-grid").parentElement?.className).not.toContain(
-      "hidden",
-    );
-    expect(screen.getByTestId("yearly-grid").parentElement?.className).toContain(
-      "hidden",
-    );
+    expect(
+      screen.getByTestId("monthly-grid").parentElement?.className,
+    ).not.toContain("hidden");
+    expect(
+      screen.getByTestId("yearly-grid").parentElement?.className,
+    ).toContain("hidden");
   });
 
   it("renders an optional savingsBadge slot when provided", () => {

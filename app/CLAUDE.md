@@ -34,7 +34,6 @@ Domain errors in `src/domain/errors/`:
 
 - `AuthError` — authentication / authorisation failures
 - `BillingError` — payment and subscription failures
-- `OrgError` — organisation management failures
 - `ApiError` — generic HTTP failure from the Django API (carries `status`, raw `body`, and a `detail` getter that extracts Django-style `{ detail }` or `string[]` messages)
 - `NetworkError` — fetch couldn't reach the server (DNS, connection refused, timeout); carries the original exception as `cause`
 
@@ -96,7 +95,7 @@ Strict atomic design in `src/presentation/components/`:
 
 - `atoms/` — Button, Input, Badge, Avatar, AvatarUpload, Label, Spinner, FullPageSpinner, Logo, SectionLabel, LocaleDropdown, FormattedDate, Divider, GitHubIcon, GoogleIcon, MicrosoftIcon
 - `molecules/` — FormField, MetricCard, NavLink, PlanCard, AlertBanner, ConfirmDialog, FeatureCard, StatItem, TrustBar, OrgCard, OAuthButtons, UserMenu, PronounsPicker
-- `organisms/` — NavBar, MobileMenuToggle, Footer, PricingTable, PricingSection, PricingIntervalSwitch, SubscriptionCard, OrgMemberList, InvoiceTable, CtaSection, DashboardMock, ErrorView, ProductsGrid, FeaturesGrid, LogoCloud, StatsSection
+- `organisms/` — NavBar, MobileMenuToggle, Footer, PricingSection, PricingIntervalSwitch, SubscriptionCard, OrgMemberList, InvoiceTable, CtaSection, DashboardMock, ErrorView, ProductsGrid, FeaturesGrid, LogoCloud, StatsSection
 - `templates/` — MarketingLayout, AuthLayout, AppLayout, PolicyPage
 
 ## Presentation Conventions

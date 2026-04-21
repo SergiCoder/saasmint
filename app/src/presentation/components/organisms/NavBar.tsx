@@ -30,7 +30,8 @@ export interface NavBarProps {
 
 function isLinkActive(href: string, pathname: string): boolean {
   if (href === "#" || href.startsWith("#")) return false;
-  const target = href.indexOf("#") >= 0 ? href.slice(0, href.indexOf("#")) : href;
+  const target =
+    href.indexOf("#") >= 0 ? href.slice(0, href.indexOf("#")) : href;
   if (!target) return false;
   return pathname === target || pathname.startsWith(`${target}/`);
 }
@@ -107,7 +108,9 @@ export async function NavBar({
                     {item.label}
                   </NavLink>
                 ))}
-                {userMenuSignOut && <div className="pt-1">{userMenuSignOut}</div>}
+                {userMenuSignOut && (
+                  <div className="pt-1">{userMenuSignOut}</div>
+                )}
               </>
             )}
           </MobileMenuToggle>

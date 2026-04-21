@@ -178,9 +178,8 @@ describe("NavBar", () => {
         getPathname: async () => "/en/dashboard",
         getPathnameWithoutLocale: async () => "/dashboard",
       }));
-      const { NavBar: NavBarReloaded } = await import(
-        "@/presentation/components/organisms/NavBar"
-      );
+      const { NavBar: NavBarReloaded } =
+        await import("@/presentation/components/organisms/NavBar");
       const element = await NavBarReloaded(defaultProps);
       render(element);
 
