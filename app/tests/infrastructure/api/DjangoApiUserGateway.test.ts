@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockApiFetch = vi.fn();
+const mockApiFetchVoid = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetchVoid: (...args: unknown[]) => mockApiFetchVoid(...args),
 }));
 
 const { DjangoApiUserGateway } =
@@ -162,6 +164,54 @@ describe("DjangoApiUserGateway", () => {
       await expect(
         gateway.updateProfile("u1", { fullName: "Alice" }),
       ).rejects.toThrow("API 500: Server Error");
+    });
+  });
+
+  describe("uploadAvatar", () => {
+    it("sends POST /account/avatar/ with FormData and maps avatar_url", async () => {
+      mockApiFetch.mockResolvedValue({ avatar_url: "https://cdn/avatar.webp" });
+
+      const formData = new FormData();
+      formData.append(
+        "avatar",
+        new File([new Uint8Array(64)], "a.webp", { type: "image/webp" }),
+      );
+
+      const result = await gateway.uploadAvatar(formData);
+
+      expect(mockApiFetch).toHaveBeenCalledWith("/account/avatar/", {
+        method: "POST",
+        body: formData,
+      });
+      expect(result).toEqual({ avatarUrl: "https://cdn/avatar.webp" });
+    });
+
+    it("propagates errors from apiFetch", async () => {
+      mockApiFetch.mockRejectedValue(new Error("API 400: Bad Request"));
+
+      await expect(gateway.uploadAvatar(new FormData())).rejects.toThrow(
+        "API 400: Bad Request",
+      );
+    });
+  });
+
+  describe("deleteAvatar", () => {
+    it("sends DELETE /account/avatar/ via apiFetchVoid", async () => {
+      mockApiFetchVoid.mockResolvedValue(undefined);
+
+      await gateway.deleteAvatar();
+
+      expect(mockApiFetchVoid).toHaveBeenCalledWith("/account/avatar/", {
+        method: "DELETE",
+      });
+    });
+
+    it("propagates errors from apiFetchVoid", async () => {
+      mockApiFetchVoid.mockRejectedValue(new Error("API 404: Not Found"));
+
+      await expect(gateway.deleteAvatar()).rejects.toThrow(
+        "API 404: Not Found",
+      );
     });
   });
 });

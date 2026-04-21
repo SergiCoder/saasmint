@@ -47,7 +47,7 @@ async function raw(
   if (authToken) {
     headers.set("Authorization", `Bearer ${authToken}`);
   }
-  if (options.body) {
+  if (options.body && !(options.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
   }
   if (options.headers) {

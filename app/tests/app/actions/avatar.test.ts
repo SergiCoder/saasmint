@@ -1,14 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { ApiError } from "@/domain/errors/ApiError";
 import { AuthError } from "@/domain/errors/AuthError";
 
-const mockGetAuthToken = vi.fn();
+const mockUploadAvatar = vi.fn();
+const mockDeleteAvatar = vi.fn();
 
-vi.mock("@/infrastructure/api/apiClient", () => ({
-  getAuthToken: () => mockGetAuthToken(),
+vi.mock("@/infrastructure/registry", () => ({
+  userGateway: {
+    uploadAvatar: (...args: unknown[]) => mockUploadAvatar(...args),
+    deleteAvatar: (...args: unknown[]) => mockDeleteAvatar(...args),
+  },
 }));
-
-const mockFetch = vi.fn();
-vi.stubGlobal("fetch", mockFetch);
 
 const { uploadAvatar, deleteAvatar } = await import("@/app/actions/avatar");
 
@@ -29,51 +31,41 @@ function makeImageFormData(
 }
 
 describe("uploadAvatar", () => {
-  it("uploads formData and returns avatarUrl on success", async () => {
-    mockGetAuthToken.mockResolvedValue("token_abc");
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ avatar_url: "https://cdn/avatar.webp" }),
+  it("calls the gateway and returns avatarUrl on success", async () => {
+    mockUploadAvatar.mockResolvedValue({
+      avatarUrl: "https://cdn/avatar.webp",
     });
 
     const formData = makeImageFormData();
 
     const result = await uploadAvatar(formData);
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining("/api/v1/account/avatar/"),
-      expect.objectContaining({
-        method: "POST",
-        headers: { Authorization: "Bearer token_abc" },
-        body: formData,
-      }),
-    );
+    expect(mockUploadAvatar).toHaveBeenCalledWith(formData);
     expect(result).toEqual({ avatarUrl: "https://cdn/avatar.webp" });
   });
 
-  it("rejects missing file without hitting the network", async () => {
+  it("rejects missing file without hitting the gateway", async () => {
     const result = await uploadAvatar(new FormData());
     expect(result).toEqual({ error: "No file provided." });
-    expect(mockFetch).not.toHaveBeenCalled();
-    expect(mockGetAuthToken).not.toHaveBeenCalled();
+    expect(mockUploadAvatar).not.toHaveBeenCalled();
   });
 
   it("rejects disallowed MIME types", async () => {
     const formData = makeImageFormData({ type: "image/gif" });
     const result = await uploadAvatar(formData);
     expect(result).toEqual({ error: "Unsupported image type." });
-    expect(mockFetch).not.toHaveBeenCalled();
+    expect(mockUploadAvatar).not.toHaveBeenCalled();
   });
 
   it("rejects files over the size limit", async () => {
     const formData = makeImageFormData({ size: 6 * 1024 * 1024 });
     const result = await uploadAvatar(formData);
     expect(result).toEqual({ error: "Image too large." });
-    expect(mockFetch).not.toHaveBeenCalled();
+    expect(mockUploadAvatar).not.toHaveBeenCalled();
   });
 
-  it("returns error when session is expired (AuthError)", async () => {
-    mockGetAuthToken.mockRejectedValue(
+  it("maps AuthError to a session-expired message", async () => {
+    mockUploadAvatar.mockRejectedValue(
       new AuthError("No active session", "NO_SESSION"),
     );
 
@@ -84,33 +76,26 @@ describe("uploadAvatar", () => {
     });
   });
 
-  it("returns error when getAuthToken throws a non-auth error", async () => {
-    mockGetAuthToken.mockRejectedValue(new Error("unexpected"));
-
-    const result = await uploadAvatar(makeImageFormData());
-
-    expect(result).toEqual({ error: "Upload failed." });
-  });
-
-  it("returns API error detail when response is not ok (JSON body)", async () => {
-    mockGetAuthToken.mockResolvedValue("token_abc");
-    mockFetch.mockResolvedValue({
-      ok: false,
-      headers: new Headers({ "content-type": "application/json" }),
-      json: () => Promise.resolve({ detail: "File too large" }),
-    });
+  it("extracts ApiError detail when the upstream body provides one", async () => {
+    mockUploadAvatar.mockRejectedValue(
+      new ApiError(413, { detail: "File too large" }),
+    );
 
     const result = await uploadAvatar(makeImageFormData());
 
     expect(result).toEqual({ error: "File too large" });
   });
 
-  it("returns fallback error when response is not ok (non-JSON body)", async () => {
-    mockGetAuthToken.mockResolvedValue("token_abc");
-    mockFetch.mockResolvedValue({
-      ok: false,
-      headers: new Headers({ "content-type": "text/plain" }),
-    });
+  it("returns fallback message for ApiError without detail", async () => {
+    mockUploadAvatar.mockRejectedValue(new ApiError(500, "boom"));
+
+    const result = await uploadAvatar(makeImageFormData());
+
+    expect(result).toEqual({ error: "Upload failed." });
+  });
+
+  it("returns fallback message for unknown errors", async () => {
+    mockUploadAvatar.mockRejectedValue(new Error("unexpected"));
 
     const result = await uploadAvatar(makeImageFormData());
 
@@ -119,24 +104,17 @@ describe("uploadAvatar", () => {
 });
 
 describe("deleteAvatar", () => {
-  it("sends DELETE request and returns empty object on success", async () => {
-    mockGetAuthToken.mockResolvedValue("token_abc");
-    mockFetch.mockResolvedValue({ ok: true });
+  it("calls the gateway and returns an empty object on success", async () => {
+    mockDeleteAvatar.mockResolvedValue(undefined);
 
     const result = await deleteAvatar();
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining("/api/v1/account/avatar/"),
-      expect.objectContaining({
-        method: "DELETE",
-        headers: { Authorization: "Bearer token_abc" },
-      }),
-    );
+    expect(mockDeleteAvatar).toHaveBeenCalledOnce();
     expect(result).toEqual({});
   });
 
-  it("returns error when session is expired", async () => {
-    mockGetAuthToken.mockRejectedValue(
+  it("maps AuthError to a session-expired message", async () => {
+    mockDeleteAvatar.mockRejectedValue(
       new AuthError("No active session", "NO_SESSION"),
     );
 
@@ -147,25 +125,26 @@ describe("deleteAvatar", () => {
     });
   });
 
-  it("returns API error detail when delete fails (JSON body)", async () => {
-    mockGetAuthToken.mockResolvedValue("token_abc");
-    mockFetch.mockResolvedValue({
-      ok: false,
-      headers: new Headers({ "content-type": "application/json" }),
-      json: () => Promise.resolve({ detail: "Avatar not found" }),
-    });
+  it("extracts ApiError detail when the upstream body provides one", async () => {
+    mockDeleteAvatar.mockRejectedValue(
+      new ApiError(404, { detail: "Avatar not found" }),
+    );
 
     const result = await deleteAvatar();
 
     expect(result).toEqual({ error: "Avatar not found" });
   });
 
-  it("returns fallback error when delete fails (non-JSON body)", async () => {
-    mockGetAuthToken.mockResolvedValue("token_abc");
-    mockFetch.mockResolvedValue({
-      ok: false,
-      headers: new Headers({ "content-type": "text/plain" }),
-    });
+  it("returns fallback message for ApiError without detail", async () => {
+    mockDeleteAvatar.mockRejectedValue(new ApiError(500, null));
+
+    const result = await deleteAvatar();
+
+    expect(result).toEqual({ error: "Delete failed." });
+  });
+
+  it("returns fallback message for unknown errors", async () => {
+    mockDeleteAvatar.mockRejectedValue(new Error("unexpected"));
 
     const result = await deleteAvatar();
 

@@ -3,7 +3,7 @@ import type {
   UpdateProfileInput,
 } from "@/application/ports/IUserGateway";
 import type { User } from "@/domain/models/User";
-import { apiFetch } from "./apiClient";
+import { apiFetch, apiFetchVoid } from "./apiClient";
 import { keysToSnake } from "./caseTransform";
 import { parseUser } from "./parsers";
 
@@ -30,5 +30,17 @@ export class DjangoApiUserGateway implements IUserGateway {
       body: JSON.stringify(payload),
     });
     return parseUser(raw);
+  }
+
+  async uploadAvatar(formData: FormData): Promise<{ avatarUrl: string }> {
+    const raw = await apiFetch<{ avatar_url: string }>("/account/avatar/", {
+      method: "POST",
+      body: formData,
+    });
+    return { avatarUrl: raw.avatar_url };
+  }
+
+  async deleteAvatar(): Promise<void> {
+    await apiFetchVoid("/account/avatar/", { method: "DELETE" });
   }
 }

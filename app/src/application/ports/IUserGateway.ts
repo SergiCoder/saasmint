@@ -16,4 +16,6 @@ export interface UpdateProfileInput {
 export interface IUserGateway {
   getProfile(userId: string): Promise<User>;
   updateProfile(userId: string, input: UpdateProfileInput): Promise<User>;
+  uploadAvatar(formData: FormData): Promise<{ avatarUrl: string }>;
+  deleteAvatar(): Promise<void>;
 }

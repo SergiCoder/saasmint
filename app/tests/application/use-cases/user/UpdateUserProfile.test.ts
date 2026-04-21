@@ -30,6 +30,8 @@ function makeGateway(overrides?: Partial<IUserGateway>): IUserGateway {
   return {
     getProfile: vi.fn(),
     updateProfile: vi.fn().mockResolvedValue(user),
+    uploadAvatar: vi.fn(),
+    deleteAvatar: vi.fn(),
     ...overrides,
   };
 }
