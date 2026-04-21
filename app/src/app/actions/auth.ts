@@ -16,6 +16,11 @@ import {
 import { env } from "@/lib/env";
 import { friendlyError } from "@/lib/friendlyError";
 import { validateNext } from "@/lib/oauthNext";
+import {
+  getOAuthRedirectUrl,
+  isOAuthProvider,
+  type OAuthProvider,
+} from "@/infrastructure/auth/oauth";
 
 interface TokenResponse {
   access_token: string;
@@ -29,8 +34,6 @@ interface OAuthExchangeResponse {
   token_type?: string;
   expires_in?: number;
 }
-
-export type OAuthProvider = "google" | "github" | "microsoft";
 
 export type StartOAuthResult = { redirectUrl: string };
 
@@ -274,20 +277,13 @@ export async function verifyEmail(
     : {};
 }
 
-const API_URL = env.NEXT_PUBLIC_API_URL;
 const APP_URL = env.NEXT_PUBLIC_APP_URL;
-
-const OAUTH_PROVIDERS: readonly OAuthProvider[] = [
-  "google",
-  "github",
-  "microsoft",
-];
 
 export async function startOAuth(
   provider: OAuthProvider,
   nextPath: string | undefined,
 ): Promise<StartOAuthResult> {
-  if (!OAUTH_PROVIDERS.includes(provider)) {
+  if (!isOAuthProvider(provider)) {
     throw new Error("Invalid OAuth provider");
   }
 
@@ -302,11 +298,7 @@ export async function startOAuth(
     isValidPlanSlug(planFromNext) &&
     (await resolvePlanContext(planFromNext)) === "team";
 
-  const url = new URL(`${API_URL}/api/v1/auth/oauth/${provider}/`);
-  if (isTeam) {
-    url.searchParams.set("account_type", "org_owner");
-  }
-  return { redirectUrl: url.toString() };
+  return { redirectUrl: getOAuthRedirectUrl(provider, { isTeam }) };
 }
 
 export async function exchangeOAuthCode(

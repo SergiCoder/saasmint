@@ -7,7 +7,8 @@ import { Divider } from "@/presentation/components/atoms/Divider";
 import { GoogleIcon } from "@/presentation/components/atoms/GoogleIcon";
 import { GitHubIcon } from "@/presentation/components/atoms/GitHubIcon";
 import { MicrosoftIcon } from "@/presentation/components/atoms/MicrosoftIcon";
-import { startOAuth, type OAuthProvider } from "@/app/actions/auth";
+import { startOAuth } from "@/app/actions/auth";
+import type { OAuthProvider } from "@/infrastructure/auth/oauth";
 
 const providers = [
   {
