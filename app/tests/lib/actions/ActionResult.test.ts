@@ -1,0 +1,144 @@
+import { describe, it, expect } from "vitest";
+import { ok, fail, toActionError } from "@/lib/actions/ActionResult";
+import { ApiError } from "@/domain/errors/ApiError";
+import { AuthError } from "@/domain/errors/AuthError";
+import { BillingError } from "@/domain/errors/BillingError";
+import { NetworkError } from "@/domain/errors/NetworkError";
+
+describe("ok", () => {
+  it("returns a void success envelope without a data key", () => {
+    const result = ok();
+    expect(result).toEqual({ ok: true });
+    expect(result).not.toHaveProperty("data");
+  });
+
+  it("wraps provided data in a success envelope", () => {
+    const result = ok({ id: "u1" });
+    expect(result).toEqual({ ok: true, data: { id: "u1" } });
+  });
+
+  it("wraps falsy-but-defined data (e.g. null, 0, '', false)", () => {
+    expect(ok(null)).toEqual({ ok: true, data: null });
+    expect(ok(0)).toEqual({ ok: true, data: 0 });
+    expect(ok("")).toEqual({ ok: true, data: "" });
+    expect(ok(false)).toEqual({ ok: true, data: false });
+  });
+});
+
+describe("fail", () => {
+  it("returns a bare error envelope when no extras are provided", () => {
+    expect(fail("bad_thing")).toEqual({ ok: false, code: "bad_thing" });
+  });
+
+  it("omits message/fieldErrors when they are falsy", () => {
+    expect(fail("bad_thing", {})).toEqual({ ok: false, code: "bad_thing" });
+    expect(fail("bad_thing", { message: "" })).toEqual({
+      ok: false,
+      code: "bad_thing",
+    });
+  });
+
+  it("forwards message when provided", () => {
+    expect(fail("bad", { message: "boom" })).toEqual({
+      ok: false,
+      code: "bad",
+      message: "boom",
+    });
+  });
+
+  it("forwards fieldErrors when provided", () => {
+    expect(
+      fail("invalid_input", { fieldErrors: { email: "required" } }),
+    ).toEqual({
+      ok: false,
+      code: "invalid_input",
+      fieldErrors: { email: "required" },
+    });
+  });
+
+  it("forwards both message and fieldErrors when both provided", () => {
+    const result = fail("invalid_input", {
+      message: "please fix the fields",
+      fieldErrors: { email: "required" },
+    });
+    expect(result).toEqual({
+      ok: false,
+      code: "invalid_input",
+      message: "please fix the fields",
+      fieldErrors: { email: "required" },
+    });
+  });
+});
+
+describe("toActionError", () => {
+  it("maps AuthError to session_expired regardless of the error's own code", () => {
+    expect(toActionError(new AuthError("nope", "NO_SESSION"))).toEqual({
+      ok: false,
+      code: "session_expired",
+    });
+  });
+
+  it("maps NetworkError to network_unreachable", () => {
+    expect(toActionError(new NetworkError("down"))).toEqual({
+      ok: false,
+      code: "network_unreachable",
+    });
+  });
+
+  it("forwards BillingError's code", () => {
+    expect(
+      toActionError(new BillingError("no payment method", "NO_PAYMENT_METHOD")),
+    ).toEqual({ ok: false, code: "NO_PAYMENT_METHOD" });
+  });
+
+  it("maps ApiError with a `detail` string body, forwarding the detail as message", () => {
+    const err = new ApiError(400, { detail: "invalid email" });
+    expect(toActionError(err)).toEqual({
+      ok: false,
+      code: "HTTP_400",
+      message: "invalid email",
+    });
+  });
+
+  it("maps ApiError with a string[] body, joining detail parts", () => {
+    const err = new ApiError(400, ["bad", "worse"]);
+    expect(toActionError(err)).toEqual({
+      ok: false,
+      code: "HTTP_400",
+      message: "bad worse",
+    });
+  });
+
+  it("maps ApiError without a recognisable body, emitting just the code", () => {
+    const err = new ApiError(500, "<!DOCTYPE html>");
+    expect(toActionError(err)).toEqual({ ok: false, code: "HTTP_500" });
+  });
+
+  it("respects a custom ApiError code", () => {
+    const err = new ApiError(409, { detail: "conflict" }, "CUSTOM_CODE");
+    expect(toActionError(err)).toEqual({
+      ok: false,
+      code: "CUSTOM_CODE",
+      message: "conflict",
+    });
+  });
+
+  it("collapses plain Error to unknown_error", () => {
+    expect(toActionError(new Error("boom"))).toEqual({
+      ok: false,
+      code: "unknown_error",
+    });
+  });
+
+  it("collapses non-Error throwables (string, null, undefined) to unknown_error", () => {
+    expect(toActionError("string error")).toEqual({
+      ok: false,
+      code: "unknown_error",
+    });
+    expect(toActionError(null)).toEqual({ ok: false, code: "unknown_error" });
+    expect(toActionError(undefined)).toEqual({
+      ok: false,
+      code: "unknown_error",
+    });
+  });
+});

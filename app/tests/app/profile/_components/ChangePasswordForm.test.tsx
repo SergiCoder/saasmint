@@ -19,7 +19,7 @@ describe("ChangePasswordForm", () => {
     ).toBeInTheDocument();
   });
 
-  it("requires both password fields with minLength 8 and uses new-password autocomplete", () => {
+  it("requires both password fields with minLength 10 and uses new-password autocomplete", () => {
     render(<ChangePasswordForm />);
 
     const password = screen.getByLabelText(/newPassword/) as HTMLInputElement;
@@ -31,8 +31,8 @@ describe("ChangePasswordForm", () => {
     expect(confirm).toBeRequired();
     expect(password).toHaveAttribute("type", "password");
     expect(confirm).toHaveAttribute("type", "password");
-    expect(password).toHaveAttribute("minLength", "8");
-    expect(confirm).toHaveAttribute("minLength", "8");
+    expect(password).toHaveAttribute("minLength", "10");
+    expect(confirm).toHaveAttribute("minLength", "10");
     expect(password).toHaveAttribute("autoComplete", "new-password");
     expect(confirm).toHaveAttribute("autoComplete", "new-password");
   });

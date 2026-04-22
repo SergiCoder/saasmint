@@ -44,7 +44,7 @@ export function DeleteAccountDialog({ userEmail }: DeleteAccountDialogProps) {
     setPending(true);
     setError(null);
     const result = await deleteAccount();
-    if (result.error) {
+    if (!result.ok) {
       setError(t("deleteDialogError"));
       setPending(false);
       return;

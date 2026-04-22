@@ -152,6 +152,13 @@
       "success": "Twój e-mail został zweryfikowany. Przekierowywanie do panelu...",
       "error": "Weryfikacja e-maila nie powiodła się. Link mógł wygasnąć.",
       "backToLogin": "Powrót do logowania"
+    },
+    "passwordRequirements": {
+      "title": "Twoje hasło musi:",
+      "minLength": "Mieć co najmniej 10 znaków",
+      "notCommon": "Nie być powszechnie używanym hasłem",
+      "notSimilar": "Nie być zbyt podobne do Twojego e-maila lub imienia",
+      "notNumeric": "Nie składać się wyłącznie z cyfr"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "Przełącz nawigację",
     "dismiss": "Zamknij",
     "unknownError": "Nieznany błąd"
+  },
+  "actionErrors": {
+    "account_delete_failed": "Nie udało się usunąć konta",
+    "avatar_update_failed": "Nie udało się zaktualizować awatara",
+    "checkout_failed": "Nie udało się rozpocząć płatności",
+    "current_password_required": "Aktualne hasło jest wymagane",
+    "email_and_password_required": "E-mail i hasło są wymagane",
+    "email_required": "Adres e-mail jest wymagany",
+    "full_name_invalid": "Imię i nazwisko musi mieć od 3 do 255 znaków",
+    "image_too_large": "Obraz jest zbyt duży",
+    "invalid_input": "Nieprawidłowe dane",
+    "invalid_reset_link": "Ten link do resetowania jest nieprawidłowy lub wygasł. Poproś o nowy.",
+    "invalid_seat_count": "Nieprawidłowa liczba miejsc",
+    "network_unreachable": "Nie można połączyć się z serwerem. Sprawdź połączenie i spróbuj ponownie.",
+    "no_file": "Nie podano pliku",
+    "no_subscription": "Brak aktywnej subskrypcji",
+    "not_authorized": "Nie masz uprawnień do wykonania tej czynności",
+    "not_billing_member": "Nie masz uprawnień do zarządzania rozliczeniami",
+    "passwords_do_not_match": "Hasła nie pasują do siebie",
+    "password_too_short": "Hasło musi mieć co najmniej 10 znaków",
+    "profile_load_failed": "Nie udało się wczytać profilu",
+    "session_expired": "Sesja wygasła. Zaloguj się ponownie.",
+    "unknown_error": "Coś poszło nie tak. Spróbuj ponownie.",
+    "unsupported_image": "Nieobsługiwany typ obrazu"
   },
   "contact": {
     "title": "Kontakt",

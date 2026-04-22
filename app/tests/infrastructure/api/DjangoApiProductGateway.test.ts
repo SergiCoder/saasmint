@@ -34,7 +34,7 @@ describe("DjangoApiProductGateway", () => {
 
   describe("listProducts", () => {
     it("fetches products with GET /billing/products/", async () => {
-      mockApiFetch.mockResolvedValue(products);
+      mockApiFetch.mockResolvedValue({ results: products });
 
       const result = await gateway.listProducts();
 
@@ -43,14 +43,14 @@ describe("DjangoApiProductGateway", () => {
     });
 
     it("returns an empty array when no products exist", async () => {
-      mockApiFetch.mockResolvedValue([]);
+      mockApiFetch.mockResolvedValue({ results: [] });
 
       const result = await gateway.listProducts();
       expect(result).toEqual([]);
     });
 
     it("appends ?currency= query string when currency is provided", async () => {
-      mockApiFetch.mockResolvedValue(products);
+      mockApiFetch.mockResolvedValue({ results: products });
 
       await gateway.listProducts("eur");
 

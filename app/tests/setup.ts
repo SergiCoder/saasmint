@@ -5,6 +5,7 @@ import { afterEach, vi } from "vitest";
 vi.mock("next-intl", () => ({
   useLocale: () => "en",
   useTranslations: () => (key: string) => key,
+  useMessages: () => ({}),
 }));
 
 vi.mock("@/lib/i18n/navigation", async () => {

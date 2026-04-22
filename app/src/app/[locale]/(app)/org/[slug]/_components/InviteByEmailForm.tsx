@@ -6,6 +6,7 @@ import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Button } from "@/presentation/components/atoms/Button";
 import { inviteMember } from "@/app/actions/org";
+import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 
 interface InviteByEmailFormProps {
   orgId: string;
@@ -13,12 +14,13 @@ interface InviteByEmailFormProps {
 
 export function InviteByEmailForm({ orgId }: InviteByEmailFormProps) {
   const t = useTranslations("org");
+  const translateError = useActionErrorMessage();
   const [state, formAction, pending] = useActionState(inviteMember, null);
 
   return (
     <form action={formAction} className="space-y-4">
       {state && !state.ok && (
-        <AlertBanner variant="error">{state.error}</AlertBanner>
+        <AlertBanner variant="error">{translateError(state)}</AlertBanner>
       )}
       {state?.ok && (
         <AlertBanner variant="success">{t("invitationSent")}</AlertBanner>

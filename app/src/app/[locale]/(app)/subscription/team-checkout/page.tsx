@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ListPlans } from "@/application/use-cases/billing/ListPlans";
 import { planGateway } from "@/infrastructure/registry";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { getCurrentUser } from "../../_data/getCurrentUser";
@@ -30,7 +29,7 @@ export default async function TeamCheckoutPage({
   }
 
   const currency = user.preferredCurrency;
-  const plans = await new ListPlans(planGateway).execute(currency);
+  const plans = await planGateway.listPlans(currency);
   const plan = plans.find((p) => p.price?.id === planPriceId);
 
   if (!plan || !plan.price || plan.context !== "team") {

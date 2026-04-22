@@ -3,6 +3,8 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { NavBar } from "@/presentation/components/organisms";
 
+const mockUsePathname = vi.fn<() => string>(() => "/");
+
 vi.mock("@/lib/i18n/navigation", () => ({
   Link: ({
     href,
@@ -17,14 +19,8 @@ vi.mock("@/lib/i18n/navigation", () => ({
       {children}
     </a>
   ),
-  usePathname: () => "/",
+  usePathname: () => mockUsePathname(),
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
-}));
-
-vi.mock("@/lib/pathname", () => ({
-  PATHNAME_HEADER: "x-pathname",
-  getPathname: async () => "/",
-  getPathnameWithoutLocale: async () => "/",
 }));
 
 const defaultProps = {
@@ -36,9 +32,8 @@ const defaultProps = {
   toggleNavLabel: "Toggle navigation",
 };
 
-async function renderNavBar(props: Parameters<typeof NavBar>[0]) {
-  const element = await NavBar(props);
-  return render(element);
+function renderNavBar(props: Parameters<typeof NavBar>[0]) {
+  return render(NavBar(props));
 }
 
 describe("NavBar", () => {
@@ -171,17 +166,9 @@ describe("NavBar", () => {
   });
 
   describe("active state", () => {
-    it("marks the link matching current pathname as active", async () => {
-      vi.resetModules();
-      vi.doMock("@/lib/pathname", () => ({
-        PATHNAME_HEADER: "x-pathname",
-        getPathname: async () => "/en/dashboard",
-        getPathnameWithoutLocale: async () => "/dashboard",
-      }));
-      const { NavBar: NavBarReloaded } =
-        await import("@/presentation/components/organisms/NavBar");
-      const element = await NavBarReloaded(defaultProps);
-      render(element);
+    it("marks the link matching current pathname as active", () => {
+      mockUsePathname.mockReturnValue("/dashboard");
+      renderNavBar(defaultProps);
 
       const dashboardLinks = screen.getAllByRole("link", {
         name: "Dashboard",

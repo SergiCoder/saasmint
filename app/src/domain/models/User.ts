@@ -19,5 +19,4 @@ export interface User {
   readonly linkedProviders: readonly string[];
   readonly createdAt: string;
   readonly updatedAt: string;
-  readonly scheduledDeletionAt: string | null;
 }

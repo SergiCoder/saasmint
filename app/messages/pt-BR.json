@@ -152,6 +152,13 @@
       "success": "Seu e-mail foi verificado. Redirecionando para seu painel...",
       "error": "A verificação do e-mail falhou. O link pode ter expirado.",
       "backToLogin": "Voltar para o login"
+    },
+    "passwordRequirements": {
+      "title": "Sua senha deve:",
+      "minLength": "Ter pelo menos 10 caracteres",
+      "notCommon": "Não ser uma senha comum",
+      "notSimilar": "Não ser muito parecida com seu e-mail ou nome",
+      "notNumeric": "Não ser apenas números"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "Alternar navegação",
     "dismiss": "Fechar",
     "unknownError": "Erro desconhecido"
+  },
+  "actionErrors": {
+    "account_delete_failed": "Não foi possível excluir a conta",
+    "avatar_update_failed": "Não foi possível atualizar o avatar",
+    "checkout_failed": "Não foi possível iniciar o pagamento",
+    "current_password_required": "A senha atual é obrigatória",
+    "email_and_password_required": "E-mail e senha são obrigatórios",
+    "email_required": "O e-mail é obrigatório",
+    "full_name_invalid": "O nome completo deve ter entre 3 e 255 caracteres",
+    "image_too_large": "Imagem muito grande",
+    "invalid_input": "Entrada inválida",
+    "invalid_reset_link": "Este link de redefinição é inválido ou expirou. Solicite um novo.",
+    "invalid_seat_count": "Número de assentos inválido",
+    "network_unreachable": "Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.",
+    "no_file": "Nenhum arquivo fornecido",
+    "no_subscription": "Nenhuma assinatura ativa",
+    "not_authorized": "Você não tem autorização para realizar esta ação",
+    "not_billing_member": "Você não tem permissão para gerenciar a cobrança",
+    "passwords_do_not_match": "As senhas não coincidem",
+    "password_too_short": "A senha deve ter pelo menos 10 caracteres",
+    "profile_load_failed": "Não foi possível carregar o perfil",
+    "session_expired": "Sessão expirada. Faça login novamente.",
+    "unknown_error": "Algo deu errado. Tente novamente.",
+    "unsupported_image": "Tipo de imagem não suportado"
   },
   "contact": {
     "title": "Fale conosco",

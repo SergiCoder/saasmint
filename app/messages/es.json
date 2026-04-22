@@ -152,6 +152,13 @@
       "success": "Tu correo electrónico ha sido verificado. Redirigiendo a tu panel de control...",
       "error": "La verificación del correo electrónico falló. El enlace puede haber expirado.",
       "backToLogin": "Volver a iniciar sesión"
+    },
+    "passwordRequirements": {
+      "title": "Tu contraseña debe:",
+      "minLength": "Tener al menos 10 caracteres",
+      "notCommon": "No ser una contraseña común",
+      "notSimilar": "No parecerse demasiado a tu correo electrónico o nombre",
+      "notNumeric": "No ser solo números"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "Alternar navegación",
     "dismiss": "Descartar",
     "unknownError": "Error desconocido"
+  },
+  "actionErrors": {
+    "account_delete_failed": "No se pudo eliminar la cuenta",
+    "avatar_update_failed": "No se pudo actualizar el avatar",
+    "checkout_failed": "No se pudo iniciar el pago",
+    "current_password_required": "La contraseña actual es obligatoria",
+    "email_and_password_required": "El correo y la contraseña son obligatorios",
+    "email_required": "El correo electrónico es obligatorio",
+    "full_name_invalid": "El nombre completo debe tener entre 3 y 255 caracteres",
+    "image_too_large": "Imagen demasiado grande",
+    "invalid_input": "Entrada no válida",
+    "invalid_reset_link": "Este enlace de restablecimiento no es válido o ha caducado. Solicita uno nuevo.",
+    "invalid_seat_count": "Número de asientos no válido",
+    "network_unreachable": "No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.",
+    "no_file": "No se ha proporcionado ningún archivo",
+    "no_subscription": "No hay suscripción activa",
+    "not_authorized": "No tienes permiso para realizar esta acción",
+    "not_billing_member": "No tienes permiso para gestionar la facturación",
+    "passwords_do_not_match": "Las contraseñas no coinciden",
+    "password_too_short": "La contraseña debe tener al menos 10 caracteres",
+    "profile_load_failed": "No se pudo cargar el perfil",
+    "session_expired": "La sesión ha caducado. Vuelve a iniciar sesión.",
+    "unknown_error": "Algo salió mal. Inténtalo de nuevo.",
+    "unsupported_image": "Tipo de imagen no admitido"
   },
   "contact": {
     "title": "Contacto",

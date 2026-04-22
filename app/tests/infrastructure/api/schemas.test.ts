@@ -29,7 +29,6 @@ const validUser = {
   linkedProviders: [],
   createdAt: "2024-01-01T00:00:00Z",
   updatedAt: "2024-01-01T00:00:00Z",
-  scheduledDeletionAt: null,
 };
 
 const validOrg = {
@@ -255,6 +254,15 @@ describe("PlanSchema", () => {
   it("rejects a tier outside 1|2|3", () => {
     expect(() => PlanSchema.parse({ ...validPlan, tier: 4 })).toThrow();
     expect(() => PlanSchema.parse({ ...validPlan, tier: 0 })).toThrow();
+  });
+
+  it("maps Django's string tiers (free/basic/pro) to numeric PlanTier", () => {
+    expect(PlanSchema.parse({ ...validPlan, tier: "free" }).tier).toBe(1);
+    expect(PlanSchema.parse({ ...validPlan, tier: "basic" }).tier).toBe(2);
+    expect(PlanSchema.parse({ ...validPlan, tier: "pro" }).tier).toBe(3);
+    expect(() =>
+      PlanSchema.parse({ ...validPlan, tier: "enterprise" }),
+    ).toThrow();
   });
 
   it("rejects an unknown interval", () => {

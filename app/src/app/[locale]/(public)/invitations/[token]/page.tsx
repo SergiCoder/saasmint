@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { GetInvitationByToken } from "@/application/use-cases/invitation/GetInvitationByToken";
 import { invitationGateway } from "@/infrastructure/registry";
 import { Button } from "@/presentation/components/atoms/Button";
 import { declineInvitation } from "@/app/actions/invitation";
@@ -28,7 +27,7 @@ export default async function InvitationPage({ params }: InvitationPageProps) {
 
   const [t, invitation] = await Promise.all([
     getTranslations("invitation"),
-    new GetInvitationByToken(invitationGateway).execute(token),
+    invitationGateway.getByToken(token),
   ]);
 
   return (

@@ -1,7 +1,4 @@
-import type {
-  DeleteAccountResult,
-  IAuthGateway,
-} from "@/application/ports/IAuthGateway";
+import type { IAuthGateway } from "@/application/ports/IAuthGateway";
 import type { User } from "@/domain/models/User";
 import { apiFetch, apiFetchVoid } from "./apiClient";
 import { parseUser } from "./parsers";
@@ -27,14 +24,8 @@ export class DjangoApiAuthGateway implements IAuthGateway {
     await clearAuthCookies();
   }
 
-  async deleteAccount(): Promise<DeleteAccountResult> {
-    const res = await apiFetch<{ scheduled_deletion_at: string } | undefined>(
-      "/account/",
-      { method: "DELETE" },
-    );
+  async deleteAccount(): Promise<void> {
+    await apiFetchVoid("/account/", { method: "DELETE" });
     await clearAuthCookies();
-    return {
-      scheduledDeletionAt: res?.scheduled_deletion_at ?? null,
-    };
   }
 }

@@ -1,39 +1,22 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const mockRedirect = vi.fn();
-vi.mock("next/navigation", () => ({
-  redirect: (...args: unknown[]) => mockRedirect(...args),
-}));
+vi.mock("next/navigation", () => ({ redirect: vi.fn() }));
 
 const mockRevalidatePath = vi.fn();
 vi.mock("next/cache", () => ({
   revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 
-const mockGetCurrentUserExecute = vi.fn();
-vi.mock("@/application/use-cases/auth/GetCurrentUser", () => ({
-  GetCurrentUser: function GetCurrentUser() {
-    return { execute: mockGetCurrentUserExecute };
-  },
-}));
-
-const mockDeleteAccountExecute = vi.fn();
-vi.mock("@/application/use-cases/auth/DeleteAccount", () => ({
-  DeleteAccount: function DeleteAccount() {
-    return { execute: mockDeleteAccountExecute };
-  },
-}));
-
-const mockUpdateUserProfileExecute = vi.fn();
-vi.mock("@/application/use-cases/user/UpdateUserProfile", () => ({
-  UpdateUserProfile: function UpdateUserProfile() {
-    return { execute: mockUpdateUserProfileExecute };
-  },
-}));
+const mockGetCurrentUser = vi.fn();
+const mockDeleteAccount = vi.fn();
+const mockUpdateProfile = vi.fn();
 
 vi.mock("@/infrastructure/registry", () => ({
-  authGateway: {},
-  userGateway: {},
+  authGateway: {
+    getCurrentUser: mockGetCurrentUser,
+    deleteAccount: mockDeleteAccount,
+  },
+  userGateway: { updateProfile: mockUpdateProfile },
 }));
 
 const mockUser = {
@@ -58,7 +41,7 @@ let updatePreferredLocale: typeof import("@/app/actions/user").updatePreferredLo
 
 beforeEach(async () => {
   vi.clearAllMocks();
-  mockGetCurrentUserExecute.mockResolvedValue(mockUser);
+  mockGetCurrentUser.mockResolvedValue(mockUser);
   const mod = await import("@/app/actions/user");
   updateProfile = mod.updateProfile;
   updateAvatarUrl = mod.updateAvatarUrl;
@@ -69,7 +52,7 @@ beforeEach(async () => {
 describe("user server actions", () => {
   describe("updateProfile", () => {
     it("updates profile and revalidates /profile", async () => {
-      mockUpdateUserProfileExecute.mockResolvedValue(undefined);
+      mockUpdateProfile.mockResolvedValue(undefined);
 
       const formData = new FormData();
       formData.set("fullName", "Jane Doe");
@@ -77,10 +60,9 @@ describe("user server actions", () => {
       formData.set("preferredCurrency", "eur");
 
       const result = await updateProfile(undefined, formData);
-      expect(mockGetCurrentUserExecute).toHaveBeenCalledOnce();
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
+      expect(mockGetCurrentUser).toHaveBeenCalledOnce();
+      expect(mockUpdateProfile).toHaveBeenCalledWith({
         fullName: "Jane Doe",
-
         preferredLocale: "fr",
         preferredCurrency: "eur",
         phonePrefix: null,
@@ -91,44 +73,21 @@ describe("user server actions", () => {
         bio: null,
       });
       expect(mockRevalidatePath).toHaveBeenCalledWith("/profile");
-      expect(result).toEqual({ success: true });
+      expect(result).toEqual({ ok: true });
     });
 
-    it("rejects empty fullName", async () => {
-      const formData = new FormData();
-      formData.set("fullName", "");
-
-      const result = await updateProfile(undefined, formData);
-      expect(result).toEqual({
-        error: "Full name must be between 3 and 255 characters",
-      });
-      expect(mockUpdateUserProfileExecute).not.toHaveBeenCalled();
+    it("rejects fullName outside 3-255 chars", async () => {
+      for (const name of ["", "Ab", "A".repeat(256)]) {
+        const formData = new FormData();
+        formData.set("fullName", name);
+        const result = await updateProfile(undefined, formData);
+        expect(result).toEqual({ ok: false, code: "full_name_invalid" });
+      }
+      expect(mockUpdateProfile).not.toHaveBeenCalled();
     });
 
-    it("rejects fullName shorter than 3 characters", async () => {
-      const formData = new FormData();
-      formData.set("fullName", "Ab");
-
-      const result = await updateProfile(undefined, formData);
-      expect(result).toEqual({
-        error: "Full name must be between 3 and 255 characters",
-      });
-      expect(mockUpdateUserProfileExecute).not.toHaveBeenCalled();
-    });
-
-    it("rejects fullName longer than 255 characters", async () => {
-      const formData = new FormData();
-      formData.set("fullName", "A".repeat(256));
-
-      const result = await updateProfile(undefined, formData);
-      expect(result).toEqual({
-        error: "Full name must be between 3 and 255 characters",
-      });
-      expect(mockUpdateUserProfileExecute).not.toHaveBeenCalled();
-    });
-
-    it("updates profile with new custom fields", async () => {
-      mockUpdateUserProfileExecute.mockResolvedValue(undefined);
+    it("updates profile with custom fields", async () => {
+      mockUpdateProfile.mockResolvedValue(undefined);
 
       const formData = new FormData();
       formData.set("fullName", "Jane Doe");
@@ -140,9 +99,8 @@ describe("user server actions", () => {
       formData.set("bio", "Hello world");
 
       const result = await updateProfile(undefined, formData);
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
+      expect(mockUpdateProfile).toHaveBeenCalledWith({
         fullName: "Jane Doe",
-
         phonePrefix: "+34",
         phone: "612345678",
         timezone: "Europe/Madrid",
@@ -150,11 +108,11 @@ describe("user server actions", () => {
         pronouns: "she/her",
         bio: "Hello world",
       });
-      expect(result).toEqual({ success: true });
+      expect(result).toEqual({ ok: true });
     });
 
-    it("sends null for empty custom fields", async () => {
-      mockUpdateUserProfileExecute.mockResolvedValue(undefined);
+    it("sends null for empty custom fields and omits locale/currency when missing", async () => {
+      mockUpdateProfile.mockResolvedValue(undefined);
 
       const formData = new FormData();
       formData.set("fullName", "Jane");
@@ -164,9 +122,8 @@ describe("user server actions", () => {
       formData.set("bio", "");
 
       const result = await updateProfile(undefined, formData);
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
+      expect(mockUpdateProfile).toHaveBeenCalledWith({
         fullName: "Jane",
-
         phonePrefix: null,
         phone: null,
         timezone: null,
@@ -174,79 +131,56 @@ describe("user server actions", () => {
         pronouns: null,
         bio: null,
       });
-      expect(result).toEqual({ success: true });
+      expect(result).toEqual({ ok: true });
     });
 
-    it("omits locale and currency when not provided", async () => {
-      mockUpdateUserProfileExecute.mockResolvedValue(undefined);
-
-      const formData = new FormData();
-      formData.set("fullName", "Jane");
-
-      const result = await updateProfile(undefined, formData);
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
-        fullName: "Jane",
-
-        phonePrefix: null,
-        phone: null,
-        timezone: null,
-        jobTitle: null,
-        pronouns: null,
-        bio: null,
-      });
-      expect(result).toEqual({ success: true });
-    });
-
-    it("returns error on failure", async () => {
-      mockUpdateUserProfileExecute.mockRejectedValue(new Error("Server error"));
+    it("returns an envelope error when gateway throws", async () => {
+      mockUpdateProfile.mockRejectedValue(new Error("Server error"));
+      const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const formData = new FormData();
       formData.set("fullName", "Jane Doe");
 
       const result = await updateProfile(undefined, formData);
-      expect(result).toEqual({ error: "Failed to update profile" });
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
+      errSpy.mockRestore();
     });
 
-    it("returns fieldErrors when phone prefix is set but number is missing", async () => {
-      const formData = new FormData();
-      formData.set("fullName", "Jane Doe");
-      formData.set("phonePrefix", "+34");
-
-      const result = await updateProfile(undefined, formData);
-      expect(result).toEqual({
+    it("returns fieldErrors for phone mismatch / too short", async () => {
+      const prefixOnly = new FormData();
+      prefixOnly.set("fullName", "Jane Doe");
+      prefixOnly.set("phonePrefix", "+34");
+      expect(await updateProfile(undefined, prefixOnly)).toEqual({
+        ok: false,
+        code: "invalid_input",
         fieldErrors: { phone: "phoneNumberRequired" },
       });
-      expect(mockUpdateUserProfileExecute).not.toHaveBeenCalled();
-    });
 
-    it("returns fieldErrors when phone number is set but prefix is missing", async () => {
-      const formData = new FormData();
-      formData.set("fullName", "Jane Doe");
-      formData.set("phone", "612345678");
-
-      const result = await updateProfile(undefined, formData);
-      expect(result).toEqual({
+      const phoneOnly = new FormData();
+      phoneOnly.set("fullName", "Jane Doe");
+      phoneOnly.set("phone", "612345678");
+      expect(await updateProfile(undefined, phoneOnly)).toEqual({
+        ok: false,
+        code: "invalid_input",
         fieldErrors: { phone: "phonePrefixRequired" },
       });
-      expect(mockUpdateUserProfileExecute).not.toHaveBeenCalled();
-    });
 
-    it("returns fieldErrors when phone number is too short", async () => {
-      const formData = new FormData();
-      formData.set("fullName", "Jane Doe");
-      formData.set("phonePrefix", "+34");
-      formData.set("phone", "123");
-
-      const result = await updateProfile(undefined, formData);
-      expect(result).toEqual({
+      const tooShort = new FormData();
+      tooShort.set("fullName", "Jane Doe");
+      tooShort.set("phonePrefix", "+34");
+      tooShort.set("phone", "123");
+      expect(await updateProfile(undefined, tooShort)).toEqual({
+        ok: false,
+        code: "invalid_input",
         fieldErrors: { phone: "phoneTooShort" },
       });
-      expect(mockUpdateUserProfileExecute).not.toHaveBeenCalled();
+
+      expect(mockUpdateProfile).not.toHaveBeenCalled();
     });
 
-    it("returns session expired error when GetCurrentUser throws AuthError", async () => {
+    it("returns session_expired when getCurrentUser throws AuthError", async () => {
       const { AuthError } = await import("@/domain/errors/AuthError");
-      mockGetCurrentUserExecute.mockRejectedValue(
+      mockGetCurrentUser.mockRejectedValue(
         new AuthError("No active session", "NO_SESSION"),
       );
 
@@ -254,96 +188,82 @@ describe("user server actions", () => {
       formData.set("fullName", "Jane Doe");
 
       const result = await updateProfile(undefined, formData);
-      expect(result).toEqual({
-        error: "Session expired. Please log in again.",
-      });
-      expect(mockUpdateUserProfileExecute).not.toHaveBeenCalled();
+      expect(result).toEqual({ ok: false, code: "session_expired" });
+      expect(mockUpdateProfile).not.toHaveBeenCalled();
     });
   });
 
   describe("updateAvatarUrl", () => {
-    it("updates avatar URL and revalidates /profile", async () => {
-      mockUpdateUserProfileExecute.mockResolvedValue(undefined);
+    it("updates avatar URL and revalidates /", async () => {
+      mockUpdateProfile.mockResolvedValue(undefined);
 
       await updateAvatarUrl("https://example.com/avatar.webp");
 
-      expect(mockGetCurrentUserExecute).toHaveBeenCalledOnce();
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
+      expect(mockGetCurrentUser).toHaveBeenCalledOnce();
+      expect(mockUpdateProfile).toHaveBeenCalledWith({
         avatarUrl: "https://example.com/avatar.webp",
       });
       expect(mockRevalidatePath).toHaveBeenCalledWith("/", "layout");
     });
 
     it("sends null to clear avatar", async () => {
-      mockUpdateUserProfileExecute.mockResolvedValue(undefined);
+      mockUpdateProfile.mockResolvedValue(undefined);
 
       await updateAvatarUrl(null);
 
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
-        avatarUrl: null,
-      });
+      expect(mockUpdateProfile).toHaveBeenCalledWith({ avatarUrl: null });
     });
 
-    it("returns session expired error when GetCurrentUser throws AuthError", async () => {
+    it("returns session_expired when getCurrentUser throws AuthError", async () => {
       const { AuthError } = await import("@/domain/errors/AuthError");
-      mockGetCurrentUserExecute.mockRejectedValue(
+      mockGetCurrentUser.mockRejectedValue(
         new AuthError("No active session", "NO_SESSION"),
       );
 
       const result = await updateAvatarUrl("https://example.com/avatar.webp");
-      expect(result).toEqual({
-        error: "Session expired. Please log in again.",
-      });
+      expect(result).toEqual({ ok: false, code: "session_expired" });
     });
 
-    it("returns generic error on non-auth failure", async () => {
-      mockUpdateUserProfileExecute.mockRejectedValue(new Error("Server error"));
+    it("returns avatar_update_failed on non-auth failure", async () => {
+      mockUpdateProfile.mockRejectedValue(new Error("Server error"));
 
       const result = await updateAvatarUrl("https://example.com/avatar.webp");
-      expect(result).toEqual({ error: "Failed to update avatar" });
+      expect(result).toEqual({ ok: false, code: "avatar_update_failed" });
     });
   });
 
   describe("updatePreferredLocale", () => {
     it("updates the current user's preferred locale", async () => {
-      mockUpdateUserProfileExecute.mockResolvedValue(undefined);
+      mockUpdateProfile.mockResolvedValue(undefined);
 
       await updatePreferredLocale("fr");
 
-      expect(mockUpdateUserProfileExecute).toHaveBeenCalledWith({
-        preferredLocale: "fr",
-      });
+      expect(mockUpdateProfile).toHaveBeenCalledWith({ preferredLocale: "fr" });
     });
 
-    it("silently ignores errors from UpdateUserProfile", async () => {
-      mockUpdateUserProfileExecute.mockRejectedValue(new Error("API 500"));
+    it("silently ignores errors", async () => {
+      mockUpdateProfile.mockRejectedValue(new Error("API 500"));
 
       await expect(updatePreferredLocale("fr")).resolves.toBeUndefined();
     });
   });
 
   describe("deleteAccount", () => {
-    it("deletes account and returns success", async () => {
-      mockDeleteAccountExecute.mockResolvedValue({
-        scheduledDeletionAt: null,
-      });
+    it("deletes account and returns ok", async () => {
+      mockDeleteAccount.mockResolvedValue(undefined);
 
       const result = await deleteAccount();
 
-      expect(mockDeleteAccountExecute).toHaveBeenCalledOnce();
-      expect(result).toEqual({
-        success: true,
-        scheduledDeletionAt: null,
-      });
+      expect(mockDeleteAccount).toHaveBeenCalledOnce();
+      expect(result).toEqual({ ok: true });
     });
 
-    it("returns error on failure", async () => {
-      mockDeleteAccountExecute.mockRejectedValue(new Error("Server error"));
+    it("returns account_delete_failed on failure", async () => {
+      mockDeleteAccount.mockRejectedValue(new Error("Server error"));
 
       const result = await deleteAccount();
 
-      expect(result).toEqual({ error: "Failed to delete account" });
-      expect(mockRedirect).not.toHaveBeenCalled();
+      expect(result).toEqual({ ok: false, code: "account_delete_failed" });
     });
   });
 });

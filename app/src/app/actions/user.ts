@@ -1,95 +1,91 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { GetCurrentUser } from "@/application/use-cases/auth/GetCurrentUser";
-import { DeleteAccount } from "@/application/use-cases/auth/DeleteAccount";
-import { UpdateUserProfile } from "@/application/use-cases/user/UpdateUserProfile";
 import { AuthError } from "@/domain/errors/AuthError";
 import { authGateway, userGateway } from "@/infrastructure/registry";
 import { routing } from "@/lib/i18n/routing";
+import {
+  ok,
+  fail,
+  toActionError,
+  type ActionResult,
+} from "@/lib/actions/ActionResult";
+import { getString } from "@/lib/actions/parseFormData";
 
 export async function updateAvatarUrl(
   avatarUrl: string | null,
-): Promise<{ error?: string }> {
+): Promise<ActionResult> {
   try {
-    await new GetCurrentUser(authGateway).execute();
-    await new UpdateUserProfile(userGateway).execute({ avatarUrl });
+    await authGateway.getCurrentUser();
+    await userGateway.updateProfile({ avatarUrl });
   } catch (err) {
-    if (err instanceof AuthError) {
-      return { error: "Session expired. Please log in again." };
-    }
-    return { error: "Failed to update avatar" };
+    if (err instanceof AuthError) return fail("session_expired");
+    return fail("avatar_update_failed");
   }
   revalidatePath("/", "layout");
-  return {};
+  return ok();
 }
 
-export async function updateProfile(_prevState: unknown, formData: FormData) {
+export async function updateProfile(
+  _prevState: unknown,
+  formData: FormData,
+): Promise<ActionResult> {
   try {
-    await new GetCurrentUser(authGateway).execute();
+    await authGateway.getCurrentUser();
   } catch (err) {
-    if (err instanceof AuthError) {
-      return { error: "Session expired. Please log in again." };
-    }
-    return { error: "Failed to load profile" };
+    return err instanceof AuthError
+      ? fail("session_expired")
+      : fail("profile_load_failed");
   }
 
-  const fullName = formData.get("fullName");
-  const preferredLocale = formData.get("preferredLocale");
-  const preferredCurrency = formData.get("preferredCurrency");
-  const phonePrefix = formData.get("phonePrefix");
-  const phone = formData.get("phone");
-  const timezone = formData.get("timezone");
-  const jobTitle = formData.get("jobTitle");
-  const pronouns = formData.get("pronouns");
-  const bio = formData.get("bio");
-
-  if (
-    typeof fullName !== "string" ||
-    fullName.length < 3 ||
-    fullName.length > 255
-  ) {
-    return { error: "Full name must be between 3 and 255 characters" };
+  const fullName = getString(formData, "fullName");
+  if (!fullName || fullName.length < 3 || fullName.length > 255) {
+    return fail("full_name_invalid");
   }
 
-  const hasPrefix = typeof phonePrefix === "string" && phonePrefix !== "";
-  const hasPhone = typeof phone === "string" && phone !== "";
+  const phonePrefix = getString(formData, "phonePrefix") || null;
+  const phone = getString(formData, "phone") || null;
+  const hasPrefix = phonePrefix !== null;
+  const hasPhone = phone !== null;
 
   if (hasPrefix !== hasPhone) {
-    return {
+    return fail("invalid_input", {
       fieldErrors: {
         phone: hasPrefix ? "phoneNumberRequired" : "phonePrefixRequired",
       },
-    };
+    });
   }
 
-  if (hasPhone && (phone as string).length < 4) {
-    return {
-      fieldErrors: { phone: "phoneTooShort" },
-    };
+  if (phone && phone.length < 4) {
+    return fail("invalid_input", { fieldErrors: { phone: "phoneTooShort" } });
   }
+
+  const preferredLocale = getString(formData, "preferredLocale");
+  const preferredCurrency = getString(formData, "preferredCurrency");
+  const timezone = getString(formData, "timezone") || null;
+  const jobTitle = getString(formData, "jobTitle") || null;
+  const pronouns = getString(formData, "pronouns") || null;
+  const bio = getString(formData, "bio") || null;
 
   try {
-    await new UpdateUserProfile(userGateway).execute({
+    await userGateway.updateProfile({
       fullName,
-      ...(typeof preferredLocale === "string" &&
-        preferredLocale && { preferredLocale }),
-      ...(typeof preferredCurrency === "string" &&
-        preferredCurrency && { preferredCurrency }),
-      phonePrefix: hasPrefix ? (phonePrefix as string) : null,
-      phone: hasPhone ? (phone as string) : null,
-      timezone: typeof timezone === "string" && timezone ? timezone : null,
-      jobTitle: typeof jobTitle === "string" && jobTitle ? jobTitle : null,
-      pronouns: typeof pronouns === "string" && pronouns ? pronouns : null,
-      bio: typeof bio === "string" && bio ? bio : null,
+      ...(preferredLocale ? { preferredLocale } : {}),
+      ...(preferredCurrency ? { preferredCurrency } : {}),
+      phonePrefix,
+      phone,
+      timezone,
+      jobTitle,
+      pronouns,
+      bio,
     });
   } catch (err) {
     console.error("[updateProfile]", err);
-    return { error: "Failed to update profile" };
+    return toActionError(err);
   }
 
   revalidatePath("/profile");
-  return { success: true };
+  return ok();
 }
 
 export async function updatePreferredLocale(locale: string): Promise<void> {
@@ -100,23 +96,17 @@ export async function updatePreferredLocale(locale: string): Promise<void> {
     return;
   }
   try {
-    await new UpdateUserProfile(userGateway).execute({
-      preferredLocale: locale,
-    });
+    await userGateway.updateProfile({ preferredLocale: locale });
   } catch {
     // Not authenticated or update failed — silently ignore
   }
 }
 
-export async function deleteAccount(): Promise<{
-  error?: string;
-  success?: boolean;
-  scheduledDeletionAt?: string | null;
-}> {
+export async function deleteAccount(): Promise<ActionResult> {
   try {
-    const result = await new DeleteAccount(authGateway).execute();
-    return { success: true, scheduledDeletionAt: result.scheduledDeletionAt };
+    await authGateway.deleteAccount();
+    return ok();
   } catch {
-    return { error: "Failed to delete account" };
+    return fail("account_delete_failed");
   }
 }

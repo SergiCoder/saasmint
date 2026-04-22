@@ -2,9 +2,9 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const mockCancelSubscription = vi.fn();
+const mockCancelRenewal = vi.fn();
 vi.mock("@/app/actions/billing", () => ({
-  cancelSubscription: (...args: unknown[]) => mockCancelSubscription(...args),
+  cancelRenewal: (...args: unknown[]) => mockCancelRenewal(...args),
 }));
 
 import { CancelRenewalButton } from "@/app/[locale]/(app)/subscription/_components/CancelRenewalButton";
@@ -18,7 +18,7 @@ const defaultProps = {
 };
 
 beforeEach(() => {
-  mockCancelSubscription.mockReset();
+  mockCancelRenewal.mockReset();
 });
 
 describe("CancelRenewalButton", () => {
@@ -47,8 +47,8 @@ describe("CancelRenewalButton", () => {
     ).toBeInTheDocument();
   });
 
-  it("calls cancelSubscription when confirm is clicked", async () => {
-    mockCancelSubscription.mockResolvedValueOnce({ ok: true });
+  it("calls cancelRenewal when confirm is clicked", async () => {
+    mockCancelRenewal.mockResolvedValueOnce({ ok: true, data: null });
     const user = userEvent.setup();
     render(<CancelRenewalButton {...defaultProps} />);
 
@@ -56,12 +56,12 @@ describe("CancelRenewalButton", () => {
     await user.click(screen.getByRole("button", { name: "Yes, cancel" }));
 
     await waitFor(() => {
-      expect(mockCancelSubscription).toHaveBeenCalledTimes(1);
+      expect(mockCancelRenewal).toHaveBeenCalledTimes(1);
     });
   });
 
   it("closes the dialog after a successful confirmation", async () => {
-    mockCancelSubscription.mockResolvedValueOnce({ ok: true });
+    mockCancelRenewal.mockResolvedValueOnce({ ok: true, data: null });
     const user = userEvent.setup();
     render(<CancelRenewalButton {...defaultProps} />);
 
@@ -75,10 +75,11 @@ describe("CancelRenewalButton", () => {
     });
   });
 
-  it("displays the error returned by cancelSubscription", async () => {
-    mockCancelSubscription.mockResolvedValueOnce({
+  it("displays the server-provided message when the envelope carries one", async () => {
+    mockCancelRenewal.mockResolvedValueOnce({
       ok: false,
-      error: "boom",
+      code: "HTTP_500",
+      message: "boom",
     });
     const user = userEvent.setup();
     render(<CancelRenewalButton {...defaultProps} />);
@@ -92,9 +93,10 @@ describe("CancelRenewalButton", () => {
   });
 
   it("keeps the dialog open when the action returns an error", async () => {
-    mockCancelSubscription.mockResolvedValueOnce({
+    mockCancelRenewal.mockResolvedValueOnce({
       ok: false,
-      error: "nope",
+      code: "HTTP_500",
+      message: "nope",
     });
     const user = userEvent.setup();
     render(<CancelRenewalButton {...defaultProps} />);
@@ -108,8 +110,8 @@ describe("CancelRenewalButton", () => {
     expect(screen.getByText("Are you sure?")).toBeInTheDocument();
   });
 
-  it("displays a fallback error when the action throws a non-Error", async () => {
-    mockCancelSubscription.mockRejectedValueOnce("nope");
+  it("falls back to the unknown_error translation when only an unknown code is returned", async () => {
+    mockCancelRenewal.mockResolvedValueOnce({ ok: false, code: "HTTP_500" });
     const user = userEvent.setup();
     render(<CancelRenewalButton {...defaultProps} />);
 
@@ -117,7 +119,7 @@ describe("CancelRenewalButton", () => {
     await user.click(screen.getByRole("button", { name: "Yes, cancel" }));
 
     await waitFor(() => {
-      expect(screen.getByText("unknownError")).toBeInTheDocument();
+      expect(screen.getByText("unknown_error")).toBeInTheDocument();
     });
   });
 

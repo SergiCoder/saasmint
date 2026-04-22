@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { GetPhonePrefixes } from "@/application/use-cases/reference/GetPhonePrefixes";
-import { GetUserProfile } from "@/application/use-cases/user/GetUserProfile";
 import { referenceGateway, userGateway } from "@/infrastructure/registry";
 import { getMyOrgRole } from "../_data/getMyOrgRole";
 import { ChangePasswordForm } from "./_components/ChangePasswordForm";
@@ -27,8 +25,8 @@ export default async function ProfilePage({ params }: Props) {
 
   const [t, user, phonePrefixes, myOrgRole] = await Promise.all([
     getTranslations("profile"),
-    new GetUserProfile(userGateway).execute(),
-    new GetPhonePrefixes(referenceGateway).execute(),
+    userGateway.getProfile(),
+    referenceGateway.getPhonePrefixes(),
     getMyOrgRole(),
   ]);
 

@@ -1,48 +1,49 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { AcceptInvitation } from "@/application/use-cases/invitation/AcceptInvitation";
-import { DeclineInvitation } from "@/application/use-cases/invitation/DeclineInvitation";
 import { invitationGateway } from "@/infrastructure/registry";
 import { setAuthCookies } from "@/infrastructure/auth/cookies";
+import {
+  fail,
+  toActionError,
+  type ActionResult,
+} from "@/lib/actions/ActionResult";
+import { getString } from "@/lib/actions/parseFormData";
 
 export async function acceptInvitation(
   _prev: unknown,
   formData: FormData,
-): Promise<{ error: string } | void> {
-  const token = formData.get("token");
-  const fullName = formData.get("fullName");
-  const password = formData.get("password");
+): Promise<ActionResult> {
+  const token = getString(formData, "token");
+  const fullName = getString(formData, "fullName");
+  const password = getString(formData, "password");
 
-  if (
-    typeof token !== "string" ||
-    typeof fullName !== "string" ||
-    typeof password !== "string"
-  ) {
-    return { error: "Missing required fields" };
+  if (!token || !fullName || !password) {
+    return fail("invalid_input");
   }
 
   try {
-    const { accessToken, refreshToken } = await new AcceptInvitation(
-      invitationGateway,
-    ).execute(token, { fullName, password });
+    const { accessToken, refreshToken } = await invitationGateway.acceptInvitation(
+      token,
+      { fullName, password },
+    );
     await setAuthCookies(accessToken, refreshToken);
   } catch (err) {
     console.error("Failed to accept invitation", err);
-    return { error: "Failed to accept invitation" };
+    return toActionError(err);
   }
   redirect("/dashboard");
 }
 
-export async function declineInvitation(formData: FormData) {
-  const token = formData.get("token");
-
-  if (typeof token !== "string") {
-    return;
-  }
+// Fire-and-forget: consumed via `<form action={fn}>` which requires
+// `Promise<void>`. Errors log server-side; the redirect on success is the
+// signal to the user.
+export async function declineInvitation(formData: FormData): Promise<void> {
+  const token = getString(formData, "token");
+  if (!token) return;
 
   try {
-    await new DeclineInvitation(invitationGateway).execute(token);
+    await invitationGateway.declineInvitation(token);
   } catch (err) {
     console.error("Failed to decline invitation", err);
     return;

@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ListPlans } from "@/application/use-cases/billing/ListPlans";
-import { GetSubscription } from "@/application/use-cases/billing/GetSubscription";
-import { ListProducts } from "@/application/use-cases/billing/ListProducts";
-import { ListUserOrgs } from "@/application/use-cases/org/ListUserOrgs";
 import {
   planGateway,
   productGateway,
@@ -58,23 +54,17 @@ export default async function PricingPage({ params, searchParams }: Props) {
   const currency = user?.preferredCurrency;
 
   const [plans, subscription, products, userOrgs] = await Promise.all([
-    new ListPlans(planGateway).execute(currency).catch((err): Plan[] => {
+    planGateway.listPlans(currency).catch((err: unknown): Plan[] => {
       console.error("Failed to fetch plans", err);
       return [];
     }),
     user
-      ? new GetSubscription(subscriptionGateway)
-          .execute(currency)
-          .catch(() => null)
+      ? subscriptionGateway.getSubscription(currency).catch(() => null)
       : Promise.resolve(null),
     user
-      ? new ListProducts(productGateway)
-          .execute(currency)
-          .catch((): Product[] => [])
+      ? productGateway.listProducts(currency).catch((): Product[] => [])
       : Promise.resolve([] as Product[]),
-    user
-      ? new ListUserOrgs(orgGateway).execute().catch(() => [])
-      : Promise.resolve([]),
+    user ? orgGateway.listUserOrgs().catch(() => []) : Promise.resolve([]),
   ]);
 
   const hasOrg = userOrgs.length > 0;

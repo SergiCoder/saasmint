@@ -152,6 +152,13 @@
       "success": "E-postanız doğrulandı. Kontrol panelinize yönlendiriliyorsunuz...",
       "error": "E-posta doğrulaması başarısız oldu. Bağlantının süresi dolmuş olabilir.",
       "backToLogin": "Girişe dön"
+    },
+    "passwordRequirements": {
+      "title": "Parolanız şu koşulları karşılamalıdır:",
+      "minLength": "En az 10 karakter uzunluğunda olmalı",
+      "notCommon": "Yaygın kullanılan bir parola olmamalı",
+      "notSimilar": "E-postanıza veya adınıza çok benzememelidir",
+      "notNumeric": "Yalnızca rakamlardan oluşmamalıdır"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "Gezinmeyi aç/kapat",
     "dismiss": "Kapat",
     "unknownError": "Bilinmeyen hata"
+  },
+  "actionErrors": {
+    "account_delete_failed": "Hesap silinemedi",
+    "avatar_update_failed": "Avatar güncellenemedi",
+    "checkout_failed": "Ödeme başlatılamadı",
+    "current_password_required": "Mevcut şifre gereklidir",
+    "email_and_password_required": "E-posta ve şifre gereklidir",
+    "email_required": "E-posta gereklidir",
+    "full_name_invalid": "Ad soyad 3 ile 255 karakter arasında olmalıdır",
+    "image_too_large": "Görsel çok büyük",
+    "invalid_input": "Geçersiz giriş",
+    "invalid_reset_link": "Bu sıfırlama bağlantısı geçersiz veya süresi dolmuş. Lütfen yenisini isteyin.",
+    "invalid_seat_count": "Geçersiz koltuk sayısı",
+    "network_unreachable": "Sunucuya ulaşılamıyor. Lütfen bağlantınızı kontrol edip tekrar deneyin.",
+    "no_file": "Dosya sağlanmadı",
+    "no_subscription": "Aktif abonelik yok",
+    "not_authorized": "Bu işlemi gerçekleştirme yetkiniz yok",
+    "not_billing_member": "Faturalandırmayı yönetme izniniz yok",
+    "passwords_do_not_match": "Şifreler eşleşmiyor",
+    "password_too_short": "Parola en az 10 karakter olmalıdır",
+    "profile_load_failed": "Profil yüklenemedi",
+    "session_expired": "Oturumun süresi doldu. Lütfen tekrar giriş yapın.",
+    "unknown_error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+    "unsupported_image": "Desteklenmeyen görsel türü"
   },
   "contact": {
     "title": "Bize ulaşın",

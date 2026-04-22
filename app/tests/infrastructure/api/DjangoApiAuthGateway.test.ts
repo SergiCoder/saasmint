@@ -35,7 +35,6 @@ const snakeUserBase = {
   linked_providers: [],
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
-  scheduled_deletion_at: null,
 };
 
 const camelUserBase = {
@@ -55,7 +54,6 @@ const camelUserBase = {
   linkedProviders: [],
   createdAt: "2024-01-01T00:00:00Z",
   updatedAt: "2024-01-01T00:00:00Z",
-  scheduledDeletionAt: null,
 };
 
 beforeEach(() => {
@@ -128,29 +126,15 @@ describe("DjangoApiAuthGateway", () => {
 
   describe("deleteAccount", () => {
     it("sends DELETE /account/ and clears cookies", async () => {
-      mockApiFetch.mockResolvedValue({
-        scheduled_deletion_at: "2024-02-01T00:00:00Z",
-      });
+      mockApiFetchVoid.mockResolvedValue(undefined);
       mockClearAuthCookies.mockResolvedValue(undefined);
 
-      const result = await gateway.deleteAccount();
+      await gateway.deleteAccount();
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/account/", {
+      expect(mockApiFetchVoid).toHaveBeenCalledWith("/account/", {
         method: "DELETE",
       });
       expect(mockClearAuthCookies).toHaveBeenCalledOnce();
-      expect(result).toEqual({
-        scheduledDeletionAt: "2024-02-01T00:00:00Z",
-      });
-    });
-
-    it("returns null scheduledDeletionAt when API returns undefined", async () => {
-      mockApiFetch.mockResolvedValue(undefined);
-      mockClearAuthCookies.mockResolvedValue(undefined);
-
-      const result = await gateway.deleteAccount();
-
-      expect(result).toEqual({ scheduledDeletionAt: null });
     });
   });
 });

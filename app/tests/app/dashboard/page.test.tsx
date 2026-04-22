@@ -25,30 +25,13 @@ vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
 }));
 
 const mockListUserOrgsExecute = vi.fn<() => Promise<Org[]>>();
-vi.mock("@/application/use-cases/org/ListUserOrgs", () => ({
-  ListUserOrgs: function ListUserOrgs() {
-    return { execute: mockListUserOrgsExecute };
-  },
-}));
-
 const mockListOrgMembersExecute = vi.fn(() => Promise.resolve([]));
-vi.mock("@/application/use-cases/org-member/ListOrgMembers", () => ({
-  ListOrgMembers: function ListOrgMembers() {
-    return { execute: mockListOrgMembersExecute };
-  },
-}));
-
 const mockGetSubscriptionExecute = vi.fn(() => Promise.resolve(null));
-vi.mock("@/application/use-cases/billing/GetSubscription", () => ({
-  GetSubscription: function GetSubscription() {
-    return { execute: mockGetSubscriptionExecute };
-  },
-}));
 
 vi.mock("@/infrastructure/registry", () => ({
-  orgGateway: {},
-  orgMemberGateway: {},
-  subscriptionGateway: {},
+  orgGateway: { listUserOrgs: () => mockListUserOrgsExecute() },
+  orgMemberGateway: { listMembers: () => mockListOrgMembersExecute() },
+  subscriptionGateway: { getSubscription: () => mockGetSubscriptionExecute() },
 }));
 
 vi.mock("@/presentation/components/molecules/OrgCard", async () => {
@@ -87,7 +70,6 @@ function makeUser(overrides: Partial<User> = {}): User {
     registrationMethod: "email",
     linkedProviders: [],
     updatedAt: "2025-01-01T00:00:00Z",
-    scheduledDeletionAt: null,
     ...overrides,
   };
 }

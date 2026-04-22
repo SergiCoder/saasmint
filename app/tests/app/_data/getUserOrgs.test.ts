@@ -1,14 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const mockListUserOrgsExecute = vi.fn();
-vi.mock("@/application/use-cases/org/ListUserOrgs", () => ({
-  ListUserOrgs: function ListUserOrgs() {
-    return { execute: mockListUserOrgsExecute };
-  },
-}));
+const mockListUserOrgs = vi.fn();
 
 vi.mock("@/infrastructure/registry", () => ({
-  orgGateway: {},
+  orgGateway: {
+    listUserOrgs: (...args: unknown[]) => mockListUserOrgs(...args),
+  },
 }));
 
 let getUserOrgs: typeof import("@/app/[locale]/(app)/_data/getUserOrgs").getUserOrgs;
@@ -21,21 +18,21 @@ beforeEach(async () => {
 });
 
 describe("getUserOrgs", () => {
-  it("returns the orgs list resolved by the use-case", async () => {
+  it("returns the orgs list resolved by the gateway", async () => {
     const orgs = [
       { id: "o1", name: "Acme", slug: "acme", logoUrl: null },
       { id: "o2", name: "Globex", slug: "globex", logoUrl: null },
     ];
-    mockListUserOrgsExecute.mockResolvedValue(orgs);
+    mockListUserOrgs.mockResolvedValue(orgs);
 
     const result = await getUserOrgs();
 
-    expect(mockListUserOrgsExecute).toHaveBeenCalledWith();
+    expect(mockListUserOrgs).toHaveBeenCalledWith();
     expect(result).toBe(orgs);
   });
 
-  it("returns an empty array when the use-case throws", async () => {
-    mockListUserOrgsExecute.mockRejectedValue(new Error("API 500"));
+  it("returns an empty array when the gateway throws", async () => {
+    mockListUserOrgs.mockRejectedValue(new Error("API 500"));
 
     const result = await getUserOrgs();
 
@@ -43,7 +40,7 @@ describe("getUserOrgs", () => {
   });
 
   it("returns an empty array when the user has no orgs", async () => {
-    mockListUserOrgsExecute.mockResolvedValue([]);
+    mockListUserOrgs.mockResolvedValue([]);
 
     const result = await getUserOrgs();
 

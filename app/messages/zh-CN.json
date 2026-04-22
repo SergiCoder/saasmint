@@ -152,6 +152,13 @@
       "success": "您的邮箱已验证。正在跳转到控制面板...",
       "error": "邮箱验证失败。链接可能已过期。",
       "backToLogin": "返回登录"
+    },
+    "passwordRequirements": {
+      "title": "您的密码必须：",
+      "minLength": "至少包含 10 个字符",
+      "notCommon": "不能是常用密码",
+      "notSimilar": "不能与您的邮箱或姓名过于相似",
+      "notNumeric": "不能全部是数字"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "切换导航",
     "dismiss": "关闭",
     "unknownError": "未知错误"
+  },
+  "actionErrors": {
+    "account_delete_failed": "账号删除失败",
+    "avatar_update_failed": "头像更新失败",
+    "checkout_failed": "无法开始结账",
+    "current_password_required": "请输入当前密码",
+    "email_and_password_required": "请输入邮箱和密码",
+    "email_required": "请输入邮箱",
+    "full_name_invalid": "全名长度需在 3 到 255 个字符之间",
+    "image_too_large": "图片过大",
+    "invalid_input": "输入无效",
+    "invalid_reset_link": "该重置链接无效或已过期。请重新申请。",
+    "invalid_seat_count": "席位数量无效",
+    "network_unreachable": "无法连接到服务器。请检查网络后重试。",
+    "no_file": "未提供文件",
+    "no_subscription": "没有有效的订阅",
+    "not_authorized": "您无权执行此操作",
+    "not_billing_member": "您无权管理账单",
+    "passwords_do_not_match": "两次输入的密码不一致",
+    "password_too_short": "密码长度至少为 10 个字符",
+    "profile_load_failed": "加载个人资料失败",
+    "session_expired": "会话已过期,请重新登录。",
+    "unknown_error": "出了点问题,请重试。",
+    "unsupported_image": "不支持的图片类型"
   },
   "contact": {
     "title": "联系我们",

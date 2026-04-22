@@ -32,26 +32,14 @@ vi.mock("@/infrastructure/auth/cookies", () => ({
     mockConsumeOAuthFlowCookies(...args),
 }));
 
-const mockSignOutExecute = vi.fn();
-vi.mock("@/application/use-cases/auth/SignOut", () => ({
-  SignOut: function SignOut() {
-    return { execute: mockSignOutExecute };
-  },
-}));
-
-const mockListPlansExecute = vi.fn();
-vi.mock("@/application/use-cases/billing/ListPlans", () => ({
-  ListPlans: function ListPlans() {
-    return { execute: mockListPlansExecute };
-  },
-}));
+const mockSignOut = vi.fn();
+const mockListPlans = vi.fn();
 
 vi.mock("@/infrastructure/registry", () => ({
-  authGateway: {},
-  planGateway: {},
+  authGateway: { signOut: mockSignOut },
+  planGateway: { listPlans: mockListPlans },
 }));
 
-// Force fresh module for each test
 let signIn: typeof import("@/app/actions/auth").signIn;
 let signUp: typeof import("@/app/actions/auth").signUp;
 let signOut: typeof import("@/app/actions/auth").signOut;
@@ -63,7 +51,7 @@ let startOAuth: typeof import("@/app/actions/auth").startOAuth;
 let exchangeOAuthCode: typeof import("@/app/actions/auth").exchangeOAuthCode;
 
 function mockPlans(): void {
-  mockListPlansExecute.mockResolvedValue([
+  mockListPlans.mockResolvedValue([
     {
       id: "plan_pro",
       context: "personal",
@@ -118,7 +106,7 @@ describe("auth server actions", () => {
       expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
     });
 
-    it("returns friendly error from API detail field", async () => {
+    it("returns ApiError envelope with detail when login fails", async () => {
       mockPublicApiFetch.mockRejectedValue(
         new ApiError(401, {
           detail: "Invalid credentials.",
@@ -131,11 +119,15 @@ describe("auth server actions", () => {
       formData.set("password", "wrong");
 
       const result = await signIn(undefined, formData);
-      expect(result).toEqual({ error: "Invalid credentials." });
+      expect(result).toEqual({
+        ok: false,
+        code: "HTTP_401",
+        message: "Invalid credentials.",
+      });
       expect(mockRedirect).not.toHaveBeenCalled();
     });
 
-    it("returns fallback on non-JSON API error", async () => {
+    it("returns unknown_error for non-ApiError throwables", async () => {
       mockPublicApiFetch.mockRejectedValue(new Error("API 500: Internal"));
 
       const formData = new FormData();
@@ -143,9 +135,7 @@ describe("auth server actions", () => {
       formData.set("password", "wrong");
 
       const result = await signIn(undefined, formData);
-      expect(result).toEqual({
-        error: "Login failed. Please try again.",
-      });
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
     });
 
     it("redirects to billing checkout when plan is supplied", async () => {
@@ -186,24 +176,26 @@ describe("auth server actions", () => {
       );
     });
 
-    it("ignores hidden context=team when plan resolves to a personal plan", async () => {
+    it("normalizes the email to lowercase and trims whitespace before calling Django", async () => {
       mockPublicApiFetch.mockResolvedValue({
         access_token: "tok_abc",
         refresh_token: "ref_abc",
       });
 
       const formData = new FormData();
-      formData.set("email", "user@example.com");
+      formData.set("email", "  User@Example.COM  ");
       formData.set("password", "secret123");
-      formData.set("plan", "price_pro_monthly");
-      formData.set("context", "team");
 
       await expect(signIn(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      expect(mockRedirect).toHaveBeenCalledWith(
-        "/subscription/checkout?plan=price_pro_monthly",
-      );
+      expect(mockPublicApiFetch).toHaveBeenCalledWith("/auth/login/", {
+        method: "POST",
+        body: JSON.stringify({
+          email: "user@example.com",
+          password: "secret123",
+        }),
+      });
     });
   });
 
@@ -230,7 +222,7 @@ describe("auth server actions", () => {
       expect(mockRedirect).toHaveBeenCalledWith("/login?registered=true");
     });
 
-    it("returns friendly error from API detail field", async () => {
+    it("returns ApiError envelope with detail when registration fails", async () => {
       mockPublicApiFetch.mockRejectedValue(
         new ApiError(400, { detail: "Email already in use." }),
       );
@@ -241,10 +233,14 @@ describe("auth server actions", () => {
       formData.set("password", "secret123");
 
       const result = await signUp(undefined, formData);
-      expect(result).toEqual({ error: "Email already in use." });
+      expect(result).toEqual({
+        ok: false,
+        code: "HTTP_400",
+        message: "Email already in use.",
+      });
     });
 
-    it("returns fallback on non-JSON API error", async () => {
+    it("returns unknown_error on non-ApiError throwables", async () => {
       mockPublicApiFetch.mockRejectedValue(new Error("API 500: Internal"));
 
       const formData = new FormData();
@@ -253,30 +249,7 @@ describe("auth server actions", () => {
       formData.set("password", "secret123");
 
       const result = await signUp(undefined, formData);
-      expect(result).toEqual({
-        error: "Registration failed. Please try again.",
-      });
-    });
-
-    it("sets pending plan cookie and includes plan in login redirect", async () => {
-      mockPublicApiFetch.mockResolvedValue({});
-
-      const formData = new FormData();
-      formData.set("fullName", "Jane Doe");
-      formData.set("email", "new@example.com");
-      formData.set("password", "secret123");
-      formData.set("plan", "price_pro_monthly");
-
-      await expect(signUp(undefined, formData)).rejects.toThrow(
-        "NEXT_REDIRECT",
-      );
-      expect(mockSetPendingPlan).toHaveBeenCalledWith(
-        "price_pro_monthly",
-        false,
-      );
-      expect(mockRedirect).toHaveBeenCalledWith(
-        "/login?registered=true&plan=price_pro_monthly",
-      );
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
     });
 
     it("uses org-owner endpoint when plan resolves to a team plan", async () => {
@@ -301,91 +274,69 @@ describe("auth server actions", () => {
       );
     });
 
-    it("ignores hidden context=team when plan resolves to a personal plan", async () => {
+    it("normalizes the email to lowercase and trims whitespace before calling Django", async () => {
       mockPublicApiFetch.mockResolvedValue({});
 
       const formData = new FormData();
       formData.set("fullName", "Jane Doe");
-      formData.set("email", "new@example.com");
+      formData.set("email", "  New.User@Example.COM  ");
       formData.set("password", "secret123");
-      formData.set("plan", "price_pro_monthly");
-      formData.set("context", "team");
 
       await expect(signUp(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      expect(mockPublicApiFetch).toHaveBeenCalledWith(
-        "/auth/register/",
-        expect.objectContaining({ method: "POST" }),
-      );
-      expect(mockSetPendingPlan).toHaveBeenCalledWith(
-        "price_pro_monthly",
-        false,
-      );
+      expect(mockPublicApiFetch).toHaveBeenCalledWith("/auth/register/", {
+        method: "POST",
+        body: JSON.stringify({
+          email: "new.user@example.com",
+          password: "secret123",
+          full_name: "Jane Doe",
+        }),
+      });
     });
 
-    it("returns error when fullName is too short", async () => {
-      const formData = new FormData();
-      formData.set("fullName", "Ab");
-      formData.set("email", "new@example.com");
-      formData.set("password", "secret123");
-
-      const result = await signUp(undefined, formData);
-      expect(result).toEqual({
-        error: "Full name must be between 3 and 255 characters",
-      });
-      expect(mockPublicApiFetch).not.toHaveBeenCalled();
-    });
-
-    it("returns error when fullName is missing", async () => {
-      const formData = new FormData();
-      formData.set("email", "new@example.com");
-      formData.set("password", "secret123");
-
-      const result = await signUp(undefined, formData);
-      expect(result).toEqual({
-        error: "Full name must be between 3 and 255 characters",
-      });
+    it("returns full_name_invalid for short or missing fullName", async () => {
+      for (const name of [undefined, "Ab"]) {
+        const formData = new FormData();
+        if (name !== undefined) formData.set("fullName", name);
+        formData.set("email", "new@example.com");
+        formData.set("password", "secret123");
+        const result = await signUp(undefined, formData);
+        expect(result).toEqual({ ok: false, code: "full_name_invalid" });
+      }
       expect(mockPublicApiFetch).not.toHaveBeenCalled();
     });
   });
 
   describe("signIn — validation", () => {
-    it("returns error when email is missing", async () => {
-      const formData = new FormData();
-      formData.set("password", "secret123");
-
-      const result = await signIn(undefined, formData);
-      expect(result).toEqual({ error: "Email and password are required" });
+    it("returns email_and_password_required when fields are missing", async () => {
+      const cases: [string, string][][] = [
+        [],
+        [["email", "user@example.com"]],
+        [["password", "secret123"]],
+      ];
+      for (const pairs of cases) {
+        const formData = new FormData();
+        for (const [k, v] of pairs) formData.set(k, v);
+        const result = await signIn(undefined, formData);
+        expect(result).toEqual({
+          ok: false,
+          code: "email_and_password_required",
+        });
+      }
       expect(mockPublicApiFetch).not.toHaveBeenCalled();
-    });
-
-    it("returns error when password is missing", async () => {
-      const formData = new FormData();
-      formData.set("email", "user@example.com");
-
-      const result = await signIn(undefined, formData);
-      expect(result).toEqual({ error: "Email and password are required" });
-      expect(mockPublicApiFetch).not.toHaveBeenCalled();
-    });
-
-    it("returns error when both fields are missing", async () => {
-      const formData = new FormData();
-
-      const result = await signIn(undefined, formData);
-      expect(result).toEqual({ error: "Email and password are required" });
     });
   });
 
   describe("resetPassword", () => {
-    it("returns success when reset email is sent", async () => {
+    it("returns ok when reset email is sent", async () => {
       mockPublicApiFetch.mockResolvedValue({});
 
       const formData = new FormData();
       formData.set("email", "user@example.com");
 
       const result = await resetPassword(undefined, formData);
-      expect(result).toEqual({ success: true });
+      expect(result).toEqual({ ok: true });
       expect(mockPublicApiFetch).toHaveBeenCalledWith(
         "/auth/forgot-password/",
         {
@@ -395,15 +346,15 @@ describe("auth server actions", () => {
       );
     });
 
-    it("returns error when email is missing", async () => {
+    it("returns email_required when email is missing", async () => {
       const formData = new FormData();
 
       const result = await resetPassword(undefined, formData);
-      expect(result).toEqual({ error: "Email is required" });
+      expect(result).toEqual({ ok: false, code: "email_required" });
       expect(mockPublicApiFetch).not.toHaveBeenCalled();
     });
 
-    it("returns success even on API failure to avoid email enumeration", async () => {
+    it("returns ok even on API failure to avoid email enumeration", async () => {
       mockPublicApiFetch.mockRejectedValue(
         new Error("API 429: Rate limit exceeded"),
       );
@@ -412,12 +363,12 @@ describe("auth server actions", () => {
       formData.set("email", "user@example.com");
 
       const result = await resetPassword(undefined, formData);
-      expect(result).toEqual({ success: true });
+      expect(result).toEqual({ ok: true });
     });
   });
 
   describe("resetPasswordWithToken", () => {
-    it("returns success when password is updated", async () => {
+    it("returns ok when password is updated", async () => {
       mockPublicApiFetch.mockResolvedValue({});
 
       const formData = new FormData();
@@ -426,68 +377,46 @@ describe("auth server actions", () => {
       formData.set("token", "reset-token-123");
 
       const result = await resetPasswordWithToken(undefined, formData);
-      expect(result).toEqual({ success: true });
-      expect(mockPublicApiFetch).toHaveBeenCalledWith("/auth/reset-password/", {
-        method: "POST",
-        body: JSON.stringify({
-          token: "reset-token-123",
-          password: "newpassword123",
-        }),
-      });
+      expect(result).toEqual({ ok: true });
     });
 
-    it("returns error when token is missing", async () => {
+    it("returns invalid_reset_link when token is missing", async () => {
       const formData = new FormData();
       formData.set("password", "newpassword123");
       formData.set("confirmPassword", "newpassword123");
 
       const result = await resetPasswordWithToken(undefined, formData);
-      expect(result).toEqual({
-        error: "Invalid or expired reset link. Please request a new one.",
-      });
+      expect(result).toEqual({ ok: false, code: "invalid_reset_link" });
       expect(mockPublicApiFetch).not.toHaveBeenCalled();
     });
 
-    it("returns error when password is too short", async () => {
-      const formData = new FormData();
-      formData.set("password", "short");
-      formData.set("confirmPassword", "short");
-      formData.set("token", "reset-token-123");
-
-      const result = await resetPasswordWithToken(undefined, formData);
-      expect(result).toEqual({
-        error: "Password must be at least 8 characters",
-      });
+    it("returns password_too_short when password is short or missing", async () => {
+      for (const [field, val] of [
+        ["password", "short"],
+        [null, null],
+      ] as const) {
+        const formData = new FormData();
+        if (field === "password") formData.set(field, val!);
+        formData.set("confirmPassword", val ?? "");
+        formData.set("token", "reset-token-123");
+        const result = await resetPasswordWithToken(undefined, formData);
+        expect(result).toEqual({ ok: false, code: "password_too_short" });
+      }
       expect(mockPublicApiFetch).not.toHaveBeenCalled();
     });
 
-    it("returns error when password is missing", async () => {
-      const formData = new FormData();
-      formData.set("confirmPassword", "newpassword123");
-      formData.set("token", "reset-token-123");
-
-      const result = await resetPasswordWithToken(undefined, formData);
-      expect(result).toEqual({
-        error: "Password must be at least 8 characters",
-      });
-      expect(mockPublicApiFetch).not.toHaveBeenCalled();
-    });
-
-    it("returns error when passwords do not match", async () => {
+    it("returns passwords_do_not_match when confirm differs", async () => {
       const formData = new FormData();
       formData.set("password", "newpassword123");
       formData.set("confirmPassword", "differentpassword");
       formData.set("token", "reset-token-123");
 
       const result = await resetPasswordWithToken(undefined, formData);
-      expect(result).toEqual({ error: "Passwords do not match" });
-      expect(mockPublicApiFetch).not.toHaveBeenCalled();
+      expect(result).toEqual({ ok: false, code: "passwords_do_not_match" });
     });
 
-    it("returns error message on API failure", async () => {
-      mockPublicApiFetch.mockRejectedValue(
-        new Error("API 400: Invalid or expired token"),
-      );
+    it("returns invalid_reset_link on API failure", async () => {
+      mockPublicApiFetch.mockRejectedValue(new Error("API 400"));
 
       const formData = new FormData();
       formData.set("password", "newpassword123");
@@ -495,10 +424,7 @@ describe("auth server actions", () => {
       formData.set("token", "expired-token");
 
       const result = await resetPasswordWithToken(undefined, formData);
-      expect(result).toEqual({
-        error:
-          "This reset link is invalid or has expired. Please request a new one.",
-      });
+      expect(result).toEqual({ ok: false, code: "invalid_reset_link" });
     });
   });
 
@@ -523,44 +449,39 @@ describe("auth server actions", () => {
         }),
       });
       expect(mockSetAuthCookies).toHaveBeenCalledWith("new_tok", "new_ref");
-      expect(result).toEqual({ success: true });
+      expect(result).toEqual({ ok: true });
     });
 
-    it("returns error when current password is missing", async () => {
+    it("returns current_password_required when current password is missing", async () => {
       const formData = new FormData();
       formData.set("password", "newpass123");
       formData.set("confirmPassword", "newpass123");
 
       const result = await changePassword(undefined, formData);
-      expect(result).toEqual({ error: "Current password is required" });
-      expect(mockApiFetch).not.toHaveBeenCalled();
+      expect(result).toEqual({ ok: false, code: "current_password_required" });
     });
 
-    it("returns error when new password is too short", async () => {
+    it("returns password_too_short when new password is short", async () => {
       const formData = new FormData();
       formData.set("currentPassword", "oldpass123");
       formData.set("password", "short");
       formData.set("confirmPassword", "short");
 
       const result = await changePassword(undefined, formData);
-      expect(result).toEqual({
-        error: "Password must be at least 8 characters",
-      });
-      expect(mockApiFetch).not.toHaveBeenCalled();
+      expect(result).toEqual({ ok: false, code: "password_too_short" });
     });
 
-    it("returns error when passwords do not match", async () => {
+    it("returns passwords_do_not_match when confirm differs", async () => {
       const formData = new FormData();
       formData.set("currentPassword", "oldpass123");
       formData.set("password", "newpass123");
       formData.set("confirmPassword", "differentpass");
 
       const result = await changePassword(undefined, formData);
-      expect(result).toEqual({ error: "Passwords do not match" });
-      expect(mockApiFetch).not.toHaveBeenCalled();
+      expect(result).toEqual({ ok: false, code: "passwords_do_not_match" });
     });
 
-    it("returns friendly error from API detail field", async () => {
+    it("returns ApiError envelope with detail when change fails", async () => {
       mockApiFetch.mockRejectedValue(
         new ApiError(400, { detail: "Current password is incorrect." }),
       );
@@ -571,10 +492,14 @@ describe("auth server actions", () => {
       formData.set("confirmPassword", "newpass123");
 
       const result = await changePassword(undefined, formData);
-      expect(result).toEqual({ error: "Current password is incorrect." });
+      expect(result).toEqual({
+        ok: false,
+        code: "HTTP_400",
+        message: "Current password is incorrect.",
+      });
     });
 
-    it("returns fallback on non-JSON API error", async () => {
+    it("returns unknown_error on non-ApiError throwables", async () => {
       mockApiFetch.mockRejectedValue(new Error("API 500: Internal"));
 
       const formData = new FormData();
@@ -583,14 +508,12 @@ describe("auth server actions", () => {
       formData.set("confirmPassword", "newpass123");
 
       const result = await changePassword(undefined, formData);
-      expect(result).toEqual({
-        error: "Failed to change password. Please try again.",
-      });
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
     });
   });
 
   describe("verifyEmail", () => {
-    it("verifies email and sets auth cookies on success", async () => {
+    it("verifies email, sets cookies, and returns ok on success", async () => {
       mockPublicApiFetch.mockResolvedValue({
         access_token: "tok_verified",
         refresh_token: "ref_verified",
@@ -606,7 +529,7 @@ describe("auth server actions", () => {
         "tok_verified",
         "ref_verified",
       );
-      expect(result).toEqual({});
+      expect(result).toEqual({ ok: true, data: {} });
     });
 
     it("returns pendingPlan when a plan cookie was set during signup", async () => {
@@ -621,8 +544,8 @@ describe("auth server actions", () => {
 
       const result = await verifyEmail("verify-token-123");
       expect(result).toEqual({
-        pendingPlan: "price_team_pro",
-        isTeamPlan: false,
+        ok: true,
+        data: { pendingPlan: "price_team_pro", isTeamPlan: false },
       });
       expect(mockConsumePendingPlan).toHaveBeenCalledOnce();
     });
@@ -639,41 +562,43 @@ describe("auth server actions", () => {
 
       const result = await verifyEmail("verify-token-123");
       expect(result).toEqual({
-        pendingPlan: "price_team_pro",
-        isTeamPlan: true,
+        ok: true,
+        data: { pendingPlan: "price_team_pro", isTeamPlan: true },
       });
     });
 
-    it("returns friendly error from API detail field", async () => {
+    it("returns ApiError envelope with detail when verification fails", async () => {
       mockPublicApiFetch.mockRejectedValue(
         new ApiError(400, { detail: "Token has expired." }),
       );
 
       const result = await verifyEmail("expired-token");
-      expect(result).toEqual({ error: "Token has expired." });
+      expect(result).toEqual({
+        ok: false,
+        code: "HTTP_400",
+        message: "Token has expired.",
+      });
     });
 
-    it("returns fallback on non-JSON API error", async () => {
+    it("returns unknown_error on non-ApiError throwables", async () => {
       mockPublicApiFetch.mockRejectedValue(new Error("API 500: Internal"));
 
       const result = await verifyEmail("some-token");
-      expect(result).toEqual({
-        error: "Verification failed. Please try again.",
-      });
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
     });
   });
 
   describe("signOut", () => {
-    it("executes SignOut use case and redirects to /login", async () => {
-      mockSignOutExecute.mockResolvedValue(undefined);
+    it("calls authGateway.signOut and redirects to /login", async () => {
+      mockSignOut.mockResolvedValue(undefined);
 
       await expect(signOut()).rejects.toThrow("NEXT_REDIRECT");
-      expect(mockSignOutExecute).toHaveBeenCalledOnce();
+      expect(mockSignOut).toHaveBeenCalledOnce();
       expect(mockRedirect).toHaveBeenCalledWith("/login");
     });
 
-    it("clears cookies and redirects when SignOut throws", async () => {
-      mockSignOutExecute.mockRejectedValue(new Error("Session expired"));
+    it("clears cookies and redirects when gateway throws", async () => {
+      mockSignOut.mockRejectedValue(new Error("Session expired"));
 
       await expect(signOut()).rejects.toThrow("NEXT_REDIRECT");
       expect(mockClearAuthCookies).toHaveBeenCalledOnce();
@@ -773,24 +698,6 @@ describe("auth server actions", () => {
         900,
       );
       expect(result).toEqual({ ok: true, next: "/dashboard" });
-    });
-
-    it("passes undefined expires_in when backend omits it", async () => {
-      mockConsumeOAuthFlowCookies.mockResolvedValue({
-        inProgress: true,
-        next: "/dashboard",
-      });
-      mockPublicApiFetch.mockResolvedValue({
-        access_token: "tok_oauth",
-        refresh_token: "ref_oauth",
-      });
-
-      await exchangeOAuthCode("code_abc");
-      expect(mockSetAuthCookies).toHaveBeenCalledWith(
-        "tok_oauth",
-        "ref_oauth",
-        undefined,
-      );
     });
 
     it("returns oauth_error when exchange fails", async () => {

@@ -152,6 +152,13 @@
       "success": "Votre e-mail a été vérifié. Redirection vers votre tableau de bord...",
       "error": "La vérification de l'e-mail a échoué. Le lien a peut-être expiré.",
       "backToLogin": "Retour à la connexion"
+    },
+    "passwordRequirements": {
+      "title": "Votre mot de passe doit :",
+      "minLength": "Contenir au moins 10 caractères",
+      "notCommon": "Ne pas être un mot de passe courant",
+      "notSimilar": "Ne pas être trop similaire à votre e-mail ou à votre nom",
+      "notNumeric": "Ne pas être entièrement composé de chiffres"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "Basculer la navigation",
     "dismiss": "Fermer",
     "unknownError": "Erreur inconnue"
+  },
+  "actionErrors": {
+    "account_delete_failed": "Échec de la suppression du compte",
+    "avatar_update_failed": "Échec de la mise à jour de l'avatar",
+    "checkout_failed": "Impossible de démarrer le paiement",
+    "current_password_required": "Le mot de passe actuel est requis",
+    "email_and_password_required": "L'e-mail et le mot de passe sont requis",
+    "email_required": "L'e-mail est requis",
+    "full_name_invalid": "Le nom complet doit contenir entre 3 et 255 caractères",
+    "image_too_large": "Image trop volumineuse",
+    "invalid_input": "Entrée invalide",
+    "invalid_reset_link": "Ce lien de réinitialisation est invalide ou a expiré. Veuillez en demander un nouveau.",
+    "invalid_seat_count": "Nombre de sièges invalide",
+    "network_unreachable": "Impossible de joindre le serveur. Veuillez vérifier votre connexion et réessayer.",
+    "no_file": "Aucun fichier fourni",
+    "no_subscription": "Aucun abonnement actif",
+    "not_authorized": "Vous n'êtes pas autorisé à effectuer cette action",
+    "not_billing_member": "Vous n'avez pas l'autorisation de gérer la facturation",
+    "passwords_do_not_match": "Les mots de passe ne correspondent pas",
+    "password_too_short": "Le mot de passe doit contenir au moins 10 caractères",
+    "profile_load_failed": "Échec du chargement du profil",
+    "session_expired": "Session expirée. Veuillez vous reconnecter.",
+    "unknown_error": "Une erreur est survenue. Veuillez réessayer.",
+    "unsupported_image": "Type d'image non pris en charge"
   },
   "contact": {
     "title": "Contactez-nous",

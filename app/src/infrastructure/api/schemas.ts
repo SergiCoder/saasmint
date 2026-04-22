@@ -3,7 +3,13 @@ import type { Invitation } from "@/domain/models/Invitation";
 import type { Org } from "@/domain/models/Org";
 import type { OrgMember } from "@/domain/models/OrgMember";
 import type { PhonePrefix } from "@/domain/models/PhonePrefix";
-import type { Plan } from "@/domain/models/Plan";
+import {
+  PLAN_TIER_BASIC,
+  PLAN_TIER_FREE,
+  PLAN_TIER_PRO,
+  type Plan,
+  type PlanTier,
+} from "@/domain/models/Plan";
 import type { Product } from "@/domain/models/Product";
 import type { Subscription } from "@/domain/models/Subscription";
 import type { User } from "@/domain/models/User";
@@ -36,7 +42,6 @@ export const UserSchema = z.object({
   linkedProviders: z.array(z.string()),
   createdAt: z.string(),
   updatedAt: z.string(),
-  scheduledDeletionAt: nullableString,
 }) satisfies z.ZodType<User>;
 
 export const OrgSchema = z.object({
@@ -77,12 +82,21 @@ export const InvitationSchema = z.object({
   expiresAt: z.string(),
 }) satisfies z.ZodType<Invitation>;
 
+const TIER_STRING_TO_NUMBER: Record<string, PlanTier> = {
+  free: PLAN_TIER_FREE,
+  basic: PLAN_TIER_BASIC,
+  pro: PLAN_TIER_PRO,
+};
+
 export const PlanSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
   context: z.enum(["personal", "team"]),
-  tier: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+  tier: z.preprocess(
+    (v) => (typeof v === "string" ? (TIER_STRING_TO_NUMBER[v] ?? v) : v),
+    z.union([z.literal(1), z.literal(2), z.literal(3)]),
+  ),
   interval: z.enum(["month", "year"]),
   price: priceSchema.nullable(),
 }) satisfies z.ZodType<Plan>;

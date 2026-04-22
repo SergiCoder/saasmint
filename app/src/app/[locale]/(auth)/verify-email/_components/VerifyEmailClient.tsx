@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Spinner } from "@/presentation/components/atoms/Spinner";
 import { verifyEmail } from "@/app/actions/auth";
+import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 
 interface VerifyEmailClientProps {
   token?: string;
@@ -13,6 +14,7 @@ interface VerifyEmailClientProps {
 
 export function VerifyEmailClient({ token }: VerifyEmailClientProps) {
   const t = useTranslations("auth.verifyEmail");
+  const translateError = useActionErrorMessage();
   const router = useRouter();
   const [error, setError] = useState<string | null>(token ? null : t("error"));
   // Django consumes the verification token on first hit. React 19 StrictMode
@@ -27,21 +29,23 @@ export function VerifyEmailClient({ token }: VerifyEmailClientProps) {
 
     verifyEmail(token)
       .then((result) => {
-        if (result?.error) {
-          setError(result.error);
-        } else if (result?.pendingPlan) {
-          const checkoutPath = result.isTeamPlan
+        if (!result.ok) {
+          setError(translateError(result));
+          return;
+        }
+        if (result.data.pendingPlan) {
+          const checkoutPath = result.data.isTeamPlan
             ? "/subscription/team-checkout"
             : "/subscription/checkout";
           router.push(
-            `${checkoutPath}?plan=${encodeURIComponent(result.pendingPlan)}`,
+            `${checkoutPath}?plan=${encodeURIComponent(result.data.pendingPlan)}`,
           );
         } else {
           router.push("/dashboard");
         }
       })
       .catch(() => setError(t("error")));
-  }, [token, router, t]);
+  }, [token, router, t, translateError]);
 
   if (error) {
     return (

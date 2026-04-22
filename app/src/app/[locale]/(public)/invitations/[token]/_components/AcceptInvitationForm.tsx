@@ -6,6 +6,7 @@ import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Button } from "@/presentation/components/atoms/Button";
 import { acceptInvitation } from "@/app/actions/invitation";
+import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 
 interface AcceptInvitationFormProps {
   token: string;
@@ -13,13 +14,14 @@ interface AcceptInvitationFormProps {
 
 export function AcceptInvitationForm({ token }: AcceptInvitationFormProps) {
   const t = useTranslations("invitation");
+  const translateError = useActionErrorMessage();
   const [state, formAction, pending] = useActionState(acceptInvitation, null);
 
   return (
     <>
-      {state?.error && (
+      {state && !state.ok && (
         <AlertBanner variant="error" className="mb-4">
-          {state.error}
+          {translateError(state)}
         </AlertBanner>
       )}
       <form action={formAction} className="space-y-4 text-left">

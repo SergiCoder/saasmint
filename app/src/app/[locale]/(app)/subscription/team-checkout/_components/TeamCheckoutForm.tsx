@@ -8,6 +8,7 @@ import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { startCheckout } from "@/app/actions/billing";
 import { MAX_SEATS } from "@/domain/models/Subscription";
 import { formatCurrency } from "@/lib/formatCurrency";
+import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 
 interface TeamCheckoutFormProps {
   planPriceId: string;
@@ -37,6 +38,7 @@ export function TeamCheckoutForm({
   minSeats = 2,
   labels,
 }: TeamCheckoutFormProps) {
+  const translateError = useActionErrorMessage();
   const [quantity, setQuantity] = useState(minSeats);
   const [state, action, isPending] = useActionState(startCheckout, undefined);
   const total = displayAmount * quantity;
@@ -56,7 +58,9 @@ export function TeamCheckoutForm({
       </div>
 
       {state && !state.ok && (
-        <AlertBanner variant="error">{state.error || labels.error}</AlertBanner>
+        <AlertBanner variant="error">
+          {translateError(state) || labels.error}
+        </AlertBanner>
       )}
 
       <FormField label={labels.orgName} name="orgName" required />

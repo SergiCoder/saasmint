@@ -14,12 +14,12 @@ Next.js 16 SaaS frontend template paired with [SaaSmint Core](https://github.com
 
 Hexagonal architecture with strict layer isolation:
 
-| Layer          | Location                        | Can import                                             |
-| -------------- | ------------------------------- | ------------------------------------------------------ |
-| Domain         | `src/domain/`                   | nothing external                                       |
-| Application    | `src/application/`              | `domain/` only                                         |
-| Infrastructure | `src/infrastructure/`           | `domain/`, `application/ports/`                        |
-| Presentation   | `src/presentation/`, `src/app/` | `domain/`, `application/use-cases/`, `infrastructure/` |
+| Layer          | Location                        | Can import                                         |
+| -------------- | ------------------------------- | -------------------------------------------------- |
+| Domain         | `src/domain/`                   | nothing external                                   |
+| Application    | `src/application/`              | `domain/` only                                     |
+| Infrastructure | `src/infrastructure/`           | `domain/`, `application/ports/`                    |
+| Presentation   | `src/presentation/`, `src/app/` | `domain/`, `application/ports/`, `infrastructure/` |
 
 ## Getting started
 

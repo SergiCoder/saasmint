@@ -4,7 +4,6 @@ import { LocaleDropdown } from "../atoms/LocaleDropdown";
 import { NavLink } from "../molecules/NavLink";
 import { UserMenu, type UserMenuItem } from "../molecules/UserMenu";
 import { MobileMenuToggle } from "./MobileMenuToggle";
-import { getPathnameWithoutLocale } from "@/lib/pathname";
 
 export interface NavBarLink {
   href: string;
@@ -28,15 +27,7 @@ export interface NavBarProps {
   className?: string;
 }
 
-function isLinkActive(href: string, pathname: string): boolean {
-  if (href === "#" || href.startsWith("#")) return false;
-  const target =
-    href.indexOf("#") >= 0 ? href.slice(0, href.indexOf("#")) : href;
-  if (!target) return false;
-  return pathname === target || pathname.startsWith(`${target}/`);
-}
-
-export async function NavBar({
+export function NavBar({
   appName,
   links,
   user,
@@ -46,8 +37,6 @@ export async function NavBar({
   toggleNavLabel,
   className = "",
 }: NavBarProps) {
-  const pathname = await getPathnameWithoutLocale();
-
   return (
     <nav
       className={`fixed top-0 right-0 left-0 z-50 border-b border-gray-200 bg-white/85 backdrop-blur-xl ${className}`}
@@ -57,11 +46,7 @@ export async function NavBar({
 
         <div className="hidden items-center gap-8 md:flex">
           {links.map((link) => (
-            <NavLink
-              key={link.label}
-              href={link.href}
-              isActive={isLinkActive(link.href, pathname)}
-            >
+            <NavLink key={link.label} href={link.href}>
               {link.label}
             </NavLink>
           ))}
@@ -83,12 +68,7 @@ export async function NavBar({
           )}
           <MobileMenuToggle toggleNavLabel={toggleNavLabel}>
             {links.map((link) => (
-              <NavLink
-                key={link.label}
-                href={link.href}
-                className="block py-2"
-                isActive={isLinkActive(link.href, pathname)}
-              >
+              <NavLink key={link.label} href={link.href} className="block py-2">
                 {link.label}
               </NavLink>
             ))}
@@ -103,7 +83,6 @@ export async function NavBar({
                     key={item.label}
                     href={item.href}
                     className="block py-2"
-                    isActive={isLinkActive(item.href, pathname)}
                   >
                     {item.label}
                   </NavLink>

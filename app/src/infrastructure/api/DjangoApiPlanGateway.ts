@@ -11,9 +11,9 @@ function parsePlan(raw: Record<string, unknown>, currency?: string): Plan {
 export class DjangoApiPlanGateway implements IPlanGateway {
   async listPlans(currency?: string): Promise<Plan[]> {
     const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
-    const raw = await apiFetchOptional<Record<string, unknown>[]>(
+    const data = await apiFetchOptional<{ results: Record<string, unknown>[] }>(
       `/billing/plans/${query}`,
     );
-    return raw.map((r) => parsePlan(r, currency));
+    return data.results.map((r) => parsePlan(r, currency));
   }
 }

@@ -66,7 +66,7 @@ describe("DeleteAccountDialog", () => {
   });
 
   it("calls deleteAccount and redirects on success when emails match", async () => {
-    mockDeleteAccount.mockResolvedValueOnce({ error: null });
+    mockDeleteAccount.mockResolvedValueOnce({ ok: true });
     const user = userEvent.setup();
     render(<DeleteAccountDialog userEmail="me@example.com" />);
 
@@ -86,7 +86,10 @@ describe("DeleteAccountDialog", () => {
   });
 
   it("displays an error and does not redirect when deleteAccount fails", async () => {
-    mockDeleteAccount.mockResolvedValueOnce({ error: "boom" });
+    mockDeleteAccount.mockResolvedValueOnce({
+      ok: false,
+      code: "account_delete_failed",
+    });
     const user = userEvent.setup();
     render(<DeleteAccountDialog userEmail="me@example.com" />);
 

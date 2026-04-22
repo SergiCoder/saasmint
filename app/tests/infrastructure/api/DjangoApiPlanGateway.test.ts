@@ -49,7 +49,7 @@ describe("DjangoApiPlanGateway", () => {
 
   describe("listPlans", () => {
     it("calls apiFetchOptional on /billing/plans/", async () => {
-      mockApiFetchOptional.mockResolvedValue(rawPlans);
+      mockApiFetchOptional.mockResolvedValue({ results: rawPlans });
 
       const result = await gateway.listPlans();
 
@@ -58,7 +58,7 @@ describe("DjangoApiPlanGateway", () => {
     });
 
     it("returns an empty array when no plans exist", async () => {
-      mockApiFetchOptional.mockResolvedValue([]);
+      mockApiFetchOptional.mockResolvedValue({ results: [] });
 
       const result = await gateway.listPlans();
 
@@ -66,7 +66,7 @@ describe("DjangoApiPlanGateway", () => {
     });
 
     it("appends ?currency= query string when currency is provided", async () => {
-      mockApiFetchOptional.mockResolvedValue([]);
+      mockApiFetchOptional.mockResolvedValue({ results: [] });
 
       await gateway.listPlans("eur");
 
@@ -88,7 +88,7 @@ describe("DjangoApiPlanGateway", () => {
 
   describe("listPlans (price transformation)", () => {
     it("camelises nested price keys (display_amount → displayAmount)", async () => {
-      mockApiFetchOptional.mockResolvedValue([rawPlans[0]]);
+      mockApiFetchOptional.mockResolvedValue({ results: [rawPlans[0]] });
 
       const [plan] = await gateway.listPlans();
 
@@ -101,17 +101,19 @@ describe("DjangoApiPlanGateway", () => {
     });
 
     it("derives displayAmount from amount when the API omits it", async () => {
-      mockApiFetchOptional.mockResolvedValue([
-        {
-          id: "p1",
-          name: "Starter",
-          description: "",
-          context: "personal",
-          tier: 2,
-          interval: "month",
-          price: { id: "pp1", amount: 1500, currency: "eur" },
-        },
-      ]);
+      mockApiFetchOptional.mockResolvedValue({
+        results: [
+          {
+            id: "p1",
+            name: "Starter",
+            description: "",
+            context: "personal",
+            tier: 2,
+            interval: "month",
+            price: { id: "pp1", amount: 1500, currency: "eur" },
+          },
+        ],
+      });
 
       const [plan] = await gateway.listPlans();
 
@@ -123,17 +125,19 @@ describe("DjangoApiPlanGateway", () => {
     });
 
     it("falls back to the requested currency when the API omits it", async () => {
-      mockApiFetchOptional.mockResolvedValue([
-        {
-          id: "p1",
-          name: "Starter",
-          description: "",
-          context: "personal",
-          tier: 2,
-          interval: "month",
-          price: { id: "pp1", amount: 1500, display_amount: 15 },
-        },
-      ]);
+      mockApiFetchOptional.mockResolvedValue({
+        results: [
+          {
+            id: "p1",
+            name: "Starter",
+            description: "",
+            context: "personal",
+            tier: 2,
+            interval: "month",
+            price: { id: "pp1", amount: 1500, display_amount: 15 },
+          },
+        ],
+      });
 
       const [plan] = await gateway.listPlans("gbp");
 
@@ -141,17 +145,19 @@ describe("DjangoApiPlanGateway", () => {
     });
 
     it("defaults currency to 'usd' when neither the API nor the caller provides one", async () => {
-      mockApiFetchOptional.mockResolvedValue([
-        {
-          id: "p1",
-          name: "Starter",
-          description: "",
-          context: "personal",
-          tier: 2,
-          interval: "month",
-          price: { id: "pp1", amount: 999, display_amount: 9.99 },
-        },
-      ]);
+      mockApiFetchOptional.mockResolvedValue({
+        results: [
+          {
+            id: "p1",
+            name: "Starter",
+            description: "",
+            context: "personal",
+            tier: 2,
+            interval: "month",
+            price: { id: "pp1", amount: 999, display_amount: 9.99 },
+          },
+        ],
+      });
 
       const [plan] = await gateway.listPlans();
 

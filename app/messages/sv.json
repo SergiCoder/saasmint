@@ -152,6 +152,13 @@
       "success": "Din e-post har verifierats. Omdirigerar till din instrumentpanel...",
       "error": "E-postverifiering misslyckades. Länken kan ha löpt ut.",
       "backToLogin": "Tillbaka till inloggning"
+    },
+    "passwordRequirements": {
+      "title": "Ditt lösenord måste:",
+      "minLength": "Vara minst 10 tecken långt",
+      "notCommon": "Inte vara ett vanligt förekommande lösenord",
+      "notSimilar": "Inte likna din e-postadress eller ditt namn för mycket",
+      "notNumeric": "Inte bara bestå av siffror"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "Växla navigering",
     "dismiss": "Stäng",
     "unknownError": "Okänt fel"
+  },
+  "actionErrors": {
+    "account_delete_failed": "Det gick inte att ta bort kontot",
+    "avatar_update_failed": "Det gick inte att uppdatera avataren",
+    "checkout_failed": "Det gick inte att starta betalningen",
+    "current_password_required": "Nuvarande lösenord krävs",
+    "email_and_password_required": "E-post och lösenord krävs",
+    "email_required": "E-post krävs",
+    "full_name_invalid": "Fullständigt namn måste vara mellan 3 och 255 tecken",
+    "image_too_large": "Bilden är för stor",
+    "invalid_input": "Ogiltig inmatning",
+    "invalid_reset_link": "Den här återställningslänken är ogiltig eller har gått ut. Begär en ny.",
+    "invalid_seat_count": "Ogiltigt antal platser",
+    "network_unreachable": "Det gick inte att nå servern. Kontrollera din anslutning och försök igen.",
+    "no_file": "Ingen fil angiven",
+    "no_subscription": "Ingen aktiv prenumeration",
+    "not_authorized": "Du har inte behörighet att utföra den här åtgärden",
+    "not_billing_member": "Du har inte behörighet att hantera faktureringen",
+    "passwords_do_not_match": "Lösenorden matchar inte",
+    "password_too_short": "Lösenordet måste vara minst 10 tecken",
+    "profile_load_failed": "Det gick inte att ladda profilen",
+    "session_expired": "Sessionen har gått ut. Logga in igen.",
+    "unknown_error": "Något gick fel. Försök igen.",
+    "unsupported_image": "Bildtypen stöds inte"
   },
   "contact": {
     "title": "Kontakta oss",

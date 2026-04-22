@@ -152,6 +152,13 @@
       "success": "Ihre E-Mail wurde bestätigt. Sie werden zum Dashboard weitergeleitet...",
       "error": "E-Mail-Bestätigung fehlgeschlagen. Der Link ist möglicherweise abgelaufen.",
       "backToLogin": "Zurück zur Anmeldung"
+    },
+    "passwordRequirements": {
+      "title": "Dein Passwort muss:",
+      "minLength": "Mindestens 10 Zeichen lang sein",
+      "notCommon": "Kein häufig verwendetes Passwort sein",
+      "notSimilar": "Deiner E-Mail oder deinem Namen nicht zu ähnlich sein",
+      "notNumeric": "Nicht nur aus Zahlen bestehen"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "Navigation umschalten",
     "dismiss": "Schließen",
     "unknownError": "Unbekannter Fehler"
+  },
+  "actionErrors": {
+    "account_delete_failed": "Konto konnte nicht gelöscht werden",
+    "avatar_update_failed": "Avatar konnte nicht aktualisiert werden",
+    "checkout_failed": "Bezahlvorgang konnte nicht gestartet werden",
+    "current_password_required": "Aktuelles Passwort ist erforderlich",
+    "email_and_password_required": "E-Mail und Passwort sind erforderlich",
+    "email_required": "E-Mail ist erforderlich",
+    "full_name_invalid": "Der vollständige Name muss zwischen 3 und 255 Zeichen lang sein",
+    "image_too_large": "Bild zu groß",
+    "invalid_input": "Ungültige Eingabe",
+    "invalid_reset_link": "Dieser Zurücksetzungslink ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen an.",
+    "invalid_seat_count": "Ungültige Platzanzahl",
+    "network_unreachable": "Der Server ist nicht erreichbar. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "no_file": "Keine Datei angegeben",
+    "no_subscription": "Kein aktives Abonnement",
+    "not_authorized": "Sie sind nicht berechtigt, diese Aktion auszuführen",
+    "not_billing_member": "Sie haben keine Berechtigung, die Abrechnung zu verwalten",
+    "passwords_do_not_match": "Passwörter stimmen nicht überein",
+    "password_too_short": "Das Passwort muss mindestens 10 Zeichen lang sein",
+    "profile_load_failed": "Profil konnte nicht geladen werden",
+    "session_expired": "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
+    "unknown_error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "unsupported_image": "Nicht unterstützter Bildtyp"
   },
   "contact": {
     "title": "Kontakt",

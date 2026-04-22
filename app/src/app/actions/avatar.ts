@@ -1,49 +1,37 @@
 "use server";
 
-import { ApiError } from "@/domain/errors/ApiError";
-import { AuthError } from "@/domain/errors/AuthError";
 import { userGateway } from "@/infrastructure/registry";
+import {
+  ok,
+  fail,
+  toActionError,
+  type ActionResult,
+} from "@/lib/actions/ActionResult";
 
 const ALLOWED_AVATAR_MIME = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
 
-function toErrorMessage(err: unknown, fallback: string): string {
-  if (err instanceof AuthError) {
-    return "Session expired. Please log in again.";
-  }
-  if (err instanceof ApiError) {
-    return err.detail ?? fallback;
-  }
-  return fallback;
-}
-
 export async function uploadAvatar(
   formData: FormData,
-): Promise<{ avatarUrl?: string; error?: string }> {
+): Promise<ActionResult<{ avatarUrl: string }>> {
   const file = formData.get("avatar");
-  if (!(file instanceof File) || file.size === 0) {
-    return { error: "No file provided." };
-  }
-  if (!ALLOWED_AVATAR_MIME.has(file.type)) {
-    return { error: "Unsupported image type." };
-  }
-  if (file.size > MAX_AVATAR_BYTES) {
-    return { error: "Image too large." };
-  }
+  if (!(file instanceof File) || file.size === 0) return fail("no_file");
+  if (!ALLOWED_AVATAR_MIME.has(file.type)) return fail("unsupported_image");
+  if (file.size > MAX_AVATAR_BYTES) return fail("image_too_large");
 
   try {
     const { avatarUrl } = await userGateway.uploadAvatar(formData);
-    return { avatarUrl };
+    return ok({ avatarUrl });
   } catch (err) {
-    return { error: toErrorMessage(err, "Upload failed.") };
+    return toActionError(err);
   }
 }
 
-export async function deleteAvatar(): Promise<{ error?: string }> {
+export async function deleteAvatar(): Promise<ActionResult> {
   try {
     await userGateway.deleteAvatar();
-    return {};
+    return ok();
   } catch (err) {
-    return { error: toErrorMessage(err, "Delete failed.") };
+    return toActionError(err);
   }
 }

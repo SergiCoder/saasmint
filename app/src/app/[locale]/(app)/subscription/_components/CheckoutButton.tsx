@@ -2,8 +2,8 @@
 
 import { useActionState } from "react";
 import { Button } from "@/presentation/components/atoms/Button";
-import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { startCheckout } from "@/app/actions/billing";
+import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 
 interface CheckoutButtonProps {
   planPriceId: string;
@@ -16,13 +16,14 @@ export function CheckoutButton({
   children,
   highlighted = false,
 }: CheckoutButtonProps) {
+  const translateError = useActionErrorMessage();
   const [state, action, isPending] = useActionState(startCheckout, undefined);
 
   return (
     <form action={action}>
       <input type="hidden" name="planPriceId" value={planPriceId} />
       {state && !state.ok && (
-        <p className="mb-2 text-sm text-red-600">{state.error}</p>
+        <p className="mb-2 text-sm text-red-600">{translateError(state)}</p>
       )}
       <Button
         type="submit"

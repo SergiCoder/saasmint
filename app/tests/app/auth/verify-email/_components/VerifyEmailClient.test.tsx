@@ -35,7 +35,7 @@ beforeEach(() => {
 
 describe("VerifyEmailClient", () => {
   it("calls verifyEmail once with the token on mount", async () => {
-    mockVerifyEmail.mockResolvedValue({});
+    mockVerifyEmail.mockResolvedValue({ ok: true, data: {} });
 
     render(<VerifyEmailClient token="tok_abc" />);
 
@@ -46,7 +46,7 @@ describe("VerifyEmailClient", () => {
   });
 
   it("pushes to /dashboard on success when no pendingPlan is returned", async () => {
-    mockVerifyEmail.mockResolvedValue({});
+    mockVerifyEmail.mockResolvedValue({ ok: true, data: {} });
 
     render(<VerifyEmailClient token="tok_abc" />);
 
@@ -57,8 +57,8 @@ describe("VerifyEmailClient", () => {
 
   it("pushes to the personal checkout path when pendingPlan is returned", async () => {
     mockVerifyEmail.mockResolvedValue({
-      pendingPlan: "price_pro",
-      isTeamPlan: false,
+      ok: true,
+      data: { pendingPlan: "price_pro", isTeamPlan: false },
     });
 
     render(<VerifyEmailClient token="tok_abc" />);
@@ -72,8 +72,8 @@ describe("VerifyEmailClient", () => {
 
   it("pushes to the team checkout path when pendingPlan + isTeamPlan", async () => {
     mockVerifyEmail.mockResolvedValue({
-      pendingPlan: "price_team_pro",
-      isTeamPlan: true,
+      ok: true,
+      data: { pendingPlan: "price_team_pro", isTeamPlan: true },
     });
 
     render(<VerifyEmailClient token="tok_abc" />);
@@ -85,13 +85,15 @@ describe("VerifyEmailClient", () => {
     });
   });
 
-  it("renders the error returned by verifyEmail", async () => {
-    mockVerifyEmail.mockResolvedValue({ error: "token_expired" });
+  it("renders the translated error from the envelope code", async () => {
+    mockVerifyEmail.mockResolvedValue({ ok: false, code: "token_expired" });
 
     render(<VerifyEmailClient token="tok_abc" />);
 
+    // The next-intl mock echoes the key, and useActionErrorMessage falls back
+    // to `unknown_error` when the code is not in the known messages set.
     await waitFor(() => {
-      expect(screen.getByText("token_expired")).toBeInTheDocument();
+      expect(screen.getByText("unknown_error")).toBeInTheDocument();
     });
     expect(mockRouterPush).not.toHaveBeenCalled();
   });
@@ -102,7 +104,6 @@ describe("VerifyEmailClient", () => {
     render(<VerifyEmailClient token="tok_abc" />);
 
     await waitFor(() => {
-      // Falls back to the i18n "error" key (mocked to echo the key).
       expect(screen.getByText("error")).toBeInTheDocument();
     });
   });
@@ -123,7 +124,7 @@ describe("VerifyEmailClient", () => {
   });
 
   it("renders a Back-to-login link when in error state", async () => {
-    mockVerifyEmail.mockResolvedValue({ error: "already_used" });
+    mockVerifyEmail.mockResolvedValue({ ok: false, code: "already_used" });
 
     render(<VerifyEmailClient token="tok_abc" />);
 
@@ -132,13 +133,10 @@ describe("VerifyEmailClient", () => {
   });
 
   it("fires verifyEmail only once across re-renders (StrictMode-safe guard)", async () => {
-    mockVerifyEmail.mockResolvedValue({});
+    mockVerifyEmail.mockResolvedValue({ ok: true, data: {} });
 
     const { rerender } = render(<VerifyEmailClient token="tok_abc" />);
 
-    // Re-render with the same props. In React 19 StrictMode dev, effects get
-    // replayed — the firedRef guard must prevent a second call, or Django's
-    // single-use token would always fail on the retry.
     rerender(<VerifyEmailClient token="tok_abc" />);
     rerender(<VerifyEmailClient token="tok_abc" />);
 

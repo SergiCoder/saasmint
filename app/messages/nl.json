@@ -152,6 +152,13 @@
       "success": "Uw e-mail is geverifieerd. U wordt doorgestuurd naar uw dashboard...",
       "error": "E-mailverificatie mislukt. De link is mogelijk verlopen.",
       "backToLogin": "Terug naar inloggen"
+    },
+    "passwordRequirements": {
+      "title": "Je wachtwoord moet:",
+      "minLength": "Minimaal 10 tekens lang zijn",
+      "notCommon": "Geen veelgebruikt wachtwoord zijn",
+      "notSimilar": "Niet te veel lijken op je e-mailadres of naam",
+      "notNumeric": "Niet alleen uit cijfers bestaan"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "Navigatie wisselen",
     "dismiss": "Sluiten",
     "unknownError": "Onbekende fout"
+  },
+  "actionErrors": {
+    "account_delete_failed": "Account kon niet worden verwijderd",
+    "avatar_update_failed": "Avatar kon niet worden bijgewerkt",
+    "checkout_failed": "Afrekenen kon niet worden gestart",
+    "current_password_required": "Huidig wachtwoord is vereist",
+    "email_and_password_required": "E-mailadres en wachtwoord zijn vereist",
+    "email_required": "E-mailadres is vereist",
+    "full_name_invalid": "Volledige naam moet tussen 3 en 255 tekens lang zijn",
+    "image_too_large": "Afbeelding is te groot",
+    "invalid_input": "Ongeldige invoer",
+    "invalid_reset_link": "Deze resetlink is ongeldig of verlopen. Vraag een nieuwe aan.",
+    "invalid_seat_count": "Ongeldig aantal plaatsen",
+    "network_unreachable": "Kan de server niet bereiken. Controleer je verbinding en probeer het opnieuw.",
+    "no_file": "Geen bestand opgegeven",
+    "no_subscription": "Geen actief abonnement",
+    "not_authorized": "Je bent niet bevoegd om deze actie uit te voeren",
+    "not_billing_member": "Je hebt geen rechten om facturering te beheren",
+    "passwords_do_not_match": "Wachtwoorden komen niet overeen",
+    "password_too_short": "Het wachtwoord moet minimaal 10 tekens lang zijn",
+    "profile_load_failed": "Profiel kon niet worden geladen",
+    "session_expired": "Sessie verlopen. Log opnieuw in.",
+    "unknown_error": "Er is iets misgegaan. Probeer het opnieuw.",
+    "unsupported_image": "Niet-ondersteund afbeeldingstype"
   },
   "contact": {
     "title": "Contact",

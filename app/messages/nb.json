@@ -152,6 +152,13 @@
       "success": "E-posten din er bekreftet. Omdirigerer til dashbordet ditt...",
       "error": "E-postbekreftelse mislyktes. Lenken kan ha utløpt.",
       "backToLogin": "Tilbake til innlogging"
+    },
+    "passwordRequirements": {
+      "title": "Passordet ditt må:",
+      "minLength": "Være minst 10 tegn langt",
+      "notCommon": "Ikke være et vanlig brukt passord",
+      "notSimilar": "Ikke ligne for mye på e-posten eller navnet ditt",
+      "notNumeric": "Ikke bestå bare av tall"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "Veksle navigasjon",
     "dismiss": "Lukk",
     "unknownError": "Ukjent feil"
+  },
+  "actionErrors": {
+    "account_delete_failed": "Kunne ikke slette kontoen",
+    "avatar_update_failed": "Kunne ikke oppdatere avataren",
+    "checkout_failed": "Kunne ikke starte betalingen",
+    "current_password_required": "Nåværende passord er påkrevd",
+    "email_and_password_required": "E-post og passord er påkrevd",
+    "email_required": "E-post er påkrevd",
+    "full_name_invalid": "Fullt navn må være mellom 3 og 255 tegn",
+    "image_too_large": "Bildet er for stort",
+    "invalid_input": "Ugyldig inndata",
+    "invalid_reset_link": "Denne tilbakestillingslenken er ugyldig eller har utløpt. Be om en ny.",
+    "invalid_seat_count": "Ugyldig antall plasser",
+    "network_unreachable": "Kunne ikke nå serveren. Sjekk tilkoblingen og prøv igjen.",
+    "no_file": "Ingen fil oppgitt",
+    "no_subscription": "Ingen aktivt abonnement",
+    "not_authorized": "Du har ikke tillatelse til å utføre denne handlingen",
+    "not_billing_member": "Du har ikke tillatelse til å administrere fakturering",
+    "passwords_do_not_match": "Passordene stemmer ikke overens",
+    "password_too_short": "Passordet må være minst 10 tegn",
+    "profile_load_failed": "Kunne ikke laste profilen",
+    "session_expired": "Økten er utløpt. Logg inn igjen.",
+    "unknown_error": "Noe gikk galt. Prøv igjen.",
+    "unsupported_image": "Bildetype støttes ikke"
   },
   "contact": {
     "title": "Kontakt oss",

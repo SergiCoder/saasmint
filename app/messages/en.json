@@ -76,6 +76,13 @@
     "dashActivity3Time": "1h ago"
   },
   "auth": {
+    "passwordRequirements": {
+      "title": "Your password must:",
+      "minLength": "Be at least 10 characters long",
+      "notCommon": "Not be a commonly used password",
+      "notSimilar": "Not be too similar to your email or name",
+      "notNumeric": "Not be entirely numbers"
+    },
     "login": {
       "title": "Sign in to your account",
       "pageTitle": "Log in",
@@ -344,6 +351,30 @@
     "toggleNav": "Toggle navigation",
     "dismiss": "Dismiss",
     "unknownError": "Unknown error"
+  },
+  "actionErrors": {
+    "account_delete_failed": "Failed to delete account",
+    "avatar_update_failed": "Failed to update avatar",
+    "checkout_failed": "Failed to start checkout",
+    "current_password_required": "Current password is required",
+    "email_and_password_required": "Email and password are required",
+    "email_required": "Email is required",
+    "full_name_invalid": "Full name must be between 3 and 255 characters",
+    "image_too_large": "Image too large",
+    "invalid_input": "Invalid input",
+    "invalid_reset_link": "This reset link is invalid or has expired. Please request a new one.",
+    "invalid_seat_count": "Invalid seat count",
+    "network_unreachable": "Unable to reach the server. Please check your connection and try again.",
+    "no_file": "No file provided",
+    "no_subscription": "No active subscription",
+    "not_authorized": "You are not authorized to perform this action",
+    "not_billing_member": "You do not have permission to manage billing",
+    "passwords_do_not_match": "Passwords do not match",
+    "password_too_short": "Password must be at least 10 characters",
+    "profile_load_failed": "Failed to load profile",
+    "session_expired": "Session expired. Please log in again.",
+    "unknown_error": "Something went wrong. Please try again.",
+    "unsupported_image": "Unsupported image type"
   },
   "contact": {
     "title": "Contact us",

@@ -152,6 +152,13 @@
       "success": "La tua email è stata verificata. Reindirizzamento alla dashboard...",
       "error": "Verifica email fallita. Il link potrebbe essere scaduto.",
       "backToLogin": "Torna all'accesso"
+    },
+    "passwordRequirements": {
+      "title": "La tua password deve:",
+      "minLength": "Contenere almeno 10 caratteri",
+      "notCommon": "Non essere una password comune",
+      "notSimilar": "Non essere troppo simile alla tua email o al tuo nome",
+      "notNumeric": "Non essere composta solo da numeri"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "Attiva/disattiva navigazione",
     "dismiss": "Chiudi",
     "unknownError": "Errore sconosciuto"
+  },
+  "actionErrors": {
+    "account_delete_failed": "Impossibile eliminare l'account",
+    "avatar_update_failed": "Impossibile aggiornare l'avatar",
+    "checkout_failed": "Impossibile avviare il pagamento",
+    "current_password_required": "La password attuale è obbligatoria",
+    "email_and_password_required": "Email e password sono obbligatori",
+    "email_required": "L'email è obbligatoria",
+    "full_name_invalid": "Il nome completo deve essere compreso tra 3 e 255 caratteri",
+    "image_too_large": "Immagine troppo grande",
+    "invalid_input": "Input non valido",
+    "invalid_reset_link": "Questo link di reimpostazione non è valido o è scaduto. Richiedine uno nuovo.",
+    "invalid_seat_count": "Numero di posti non valido",
+    "network_unreachable": "Impossibile raggiungere il server. Controlla la connessione e riprova.",
+    "no_file": "Nessun file fornito",
+    "no_subscription": "Nessun abbonamento attivo",
+    "not_authorized": "Non sei autorizzato a eseguire questa azione",
+    "not_billing_member": "Non hai il permesso di gestire la fatturazione",
+    "passwords_do_not_match": "Le password non corrispondono",
+    "password_too_short": "La password deve contenere almeno 10 caratteri",
+    "profile_load_failed": "Impossibile caricare il profilo",
+    "session_expired": "Sessione scaduta. Effettua di nuovo l'accesso.",
+    "unknown_error": "Qualcosa è andato storto. Riprova.",
+    "unsupported_image": "Tipo di immagine non supportato"
   },
   "contact": {
     "title": "Contattaci",

@@ -64,7 +64,6 @@ function makeUser(overrides: Partial<User> = {}): User {
     registrationMethod: "email",
     linkedProviders: [],
     updatedAt: "2025-01-01T00:00:00Z",
-    scheduledDeletionAt: null,
     ...overrides,
   };
 }

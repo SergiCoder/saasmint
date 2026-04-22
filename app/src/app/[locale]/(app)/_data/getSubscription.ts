@@ -1,5 +1,4 @@
 import { cache } from "react";
-import { GetSubscription } from "@/application/use-cases/billing/GetSubscription";
 import { subscriptionGateway } from "@/infrastructure/registry";
 import type { Subscription } from "@/domain/models/Subscription";
 
@@ -11,7 +10,5 @@ import type { Subscription } from "@/domain/models/Subscription";
 export const getSubscription = cache(async function getSubscription(
   currency?: string,
 ): Promise<Subscription | null> {
-  return new GetSubscription(subscriptionGateway)
-    .execute(currency)
-    .catch(() => null);
+  return subscriptionGateway.getSubscription(currency).catch(() => null);
 });

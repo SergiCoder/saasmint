@@ -152,6 +152,13 @@
       "success": "Din e-mail er blevet bekræftet. Omdirigerer til dit dashboard...",
       "error": "E-mailbekræftelse mislykkedes. Linket er muligvis udløbet.",
       "backToLogin": "Tilbage til login"
+    },
+    "passwordRequirements": {
+      "title": "Din adgangskode skal:",
+      "minLength": "Være mindst 10 tegn lang",
+      "notCommon": "Ikke være en ofte brugt adgangskode",
+      "notSimilar": "Ikke ligne din e-mail eller dit navn for meget",
+      "notNumeric": "Ikke kun bestå af tal"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "Skift navigation",
     "dismiss": "Luk",
     "unknownError": "Ukendt fejl"
+  },
+  "actionErrors": {
+    "account_delete_failed": "Kontoen kunne ikke slettes",
+    "avatar_update_failed": "Avataren kunne ikke opdateres",
+    "checkout_failed": "Kassen kunne ikke startes",
+    "current_password_required": "Nuværende adgangskode er påkrævet",
+    "email_and_password_required": "E-mail og adgangskode er påkrævet",
+    "email_required": "E-mail er påkrævet",
+    "full_name_invalid": "Fulde navn skal være mellem 3 og 255 tegn",
+    "image_too_large": "Billedet er for stort",
+    "invalid_input": "Ugyldigt input",
+    "invalid_reset_link": "Dette nulstillingslink er ugyldigt eller udløbet. Anmod venligst om et nyt.",
+    "invalid_seat_count": "Ugyldigt antal pladser",
+    "network_unreachable": "Kunne ikke nå serveren. Tjek din forbindelse, og prøv igen.",
+    "no_file": "Ingen fil angivet",
+    "no_subscription": "Intet aktivt abonnement",
+    "not_authorized": "Du har ikke tilladelse til at udføre denne handling",
+    "not_billing_member": "Du har ikke tilladelse til at administrere fakturering",
+    "passwords_do_not_match": "Adgangskoderne stemmer ikke overens",
+    "password_too_short": "Adgangskoden skal være mindst 10 tegn",
+    "profile_load_failed": "Profilen kunne ikke indlæses",
+    "session_expired": "Sessionen er udløbet. Log venligst ind igen.",
+    "unknown_error": "Noget gik galt. Prøv venligst igen.",
+    "unsupported_image": "Billedtypen understøttes ikke"
   },
   "contact": {
     "title": "Kontakt os",

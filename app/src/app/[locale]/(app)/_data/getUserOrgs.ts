@@ -1,5 +1,4 @@
 import { cache } from "react";
-import { ListUserOrgs } from "@/application/use-cases/org/ListUserOrgs";
 import { orgGateway } from "@/infrastructure/registry";
 import type { Org } from "@/domain/models/Org";
 
@@ -9,5 +8,5 @@ import type { Org } from "@/domain/models/Org";
  * per server render pass.
  */
 export const getUserOrgs = cache(async function getUserOrgs(): Promise<Org[]> {
-  return new ListUserOrgs(orgGateway).execute().catch(() => []);
+  return orgGateway.listUserOrgs().catch(() => []);
 });

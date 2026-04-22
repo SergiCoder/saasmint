@@ -29,7 +29,6 @@ const snakeUser = {
   linked_providers: [],
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
-  scheduled_deletion_at: null,
 };
 
 const camelUser = {
@@ -51,7 +50,6 @@ const camelUser = {
   linkedProviders: [],
   createdAt: "2024-01-01T00:00:00Z",
   updatedAt: "2024-01-01T00:00:00Z",
-  scheduledDeletionAt: null,
 };
 
 const snakeUserWithPhone = {

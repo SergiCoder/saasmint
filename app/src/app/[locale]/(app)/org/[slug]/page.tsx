@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ListInvitations } from "@/application/use-cases/invitation/ListInvitations";
 import { invitationGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../../_data/getCurrentUser";
 import { getOrgMembers } from "../../_data/getOrgMembers";
@@ -33,7 +32,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
 
   const [members, invitations, subscription] = await Promise.all([
     getOrgMembers(org.id),
-    new ListInvitations(invitationGateway).execute(org.id).catch(() => []),
+    invitationGateway.listInvitations(org.id).catch(() => []),
     getSubscription(),
   ]);
 

@@ -6,29 +6,27 @@ import { Link } from "@/lib/i18n/navigation";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Button } from "@/presentation/components/atoms/Button";
+import type { ActionResult } from "@/lib/actions/ActionResult";
+import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 
 interface ForgotPasswordFormProps {
-  action: (
-    prev: unknown,
-    fd: FormData,
-  ) => Promise<
-    { error: string; success?: never } | { success: boolean; error?: never }
-  >;
+  action: (prev: unknown, fd: FormData) => Promise<ActionResult>;
 }
 
 export function ForgotPasswordForm({ action }: ForgotPasswordFormProps) {
   const t = useTranslations("auth.forgotPassword");
+  const translateError = useActionErrorMessage();
   const [state, formAction, pending] = useActionState(action, null);
 
-  if (state && "success" in state) {
+  if (state?.ok) {
     return <AlertBanner variant="success">{t("successMessage")}</AlertBanner>;
   }
 
   return (
     <>
-      {state?.error && (
+      {state && !state.ok && (
         <AlertBanner variant="error" className="mb-4">
-          {state.error}
+          {translateError(state)}
         </AlertBanner>
       )}
       <form action={formAction} className="space-y-4">

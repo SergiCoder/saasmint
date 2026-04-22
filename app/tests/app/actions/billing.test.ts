@@ -13,52 +13,23 @@ vi.mock("next/cache", () => ({
   revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 
-const mockStartCheckoutExecute = vi.fn();
-vi.mock("@/application/use-cases/billing/StartCheckout", () => ({
-  StartCheckout: function StartCheckout() {
-    return { execute: mockStartCheckoutExecute };
-  },
-}));
+const mockGetCurrentUser = vi.fn();
+const mockGetSubscription = vi.fn();
+const mockCreateCheckoutSession = vi.fn();
+const mockCreateBillingPortalSession = vi.fn();
+const mockCancelSubscription = vi.fn();
+const mockResumeSubscription = vi.fn();
+const mockUpdateSeats = vi.fn();
 
-const mockOpenBillingPortalExecute = vi.fn();
-vi.mock("@/application/use-cases/billing/OpenBillingPortal", () => ({
-  OpenBillingPortal: function OpenBillingPortal() {
-    return { execute: mockOpenBillingPortalExecute };
-  },
-}));
-
-const mockCancelSubscriptionExecute = vi.fn();
-vi.mock("@/application/use-cases/billing/CancelSubscription", () => ({
-  CancelSubscription: function CancelSubscription() {
-    return { execute: mockCancelSubscriptionExecute };
-  },
-}));
-
-const mockResumeSubscriptionExecute = vi.fn();
-vi.mock("@/application/use-cases/billing/ResumeSubscription", () => ({
-  ResumeSubscription: function ResumeSubscription() {
-    return { execute: mockResumeSubscriptionExecute };
-  },
-}));
-
-const mockUpdateSeatsExecute = vi.fn();
-vi.mock("@/application/use-cases/billing/UpdateSeats", () => ({
-  UpdateSeats: function UpdateSeats() {
-    return { execute: mockUpdateSeatsExecute };
-  },
-}));
-
-const mockGetCurrentUserExecute = vi.fn();
-vi.mock("@/application/use-cases/auth/GetCurrentUser", () => ({
-  GetCurrentUser: function GetCurrentUser() {
-    return { execute: mockGetCurrentUserExecute };
-  },
-}));
-
-const mockGetSubscriptionExecute = vi.fn();
-vi.mock("@/application/use-cases/billing/GetSubscription", () => ({
-  GetSubscription: function GetSubscription() {
-    return { execute: mockGetSubscriptionExecute };
+vi.mock("@/infrastructure/registry", () => ({
+  authGateway: { getCurrentUser: mockGetCurrentUser },
+  subscriptionGateway: {
+    getSubscription: mockGetSubscription,
+    createCheckoutSession: mockCreateCheckoutSession,
+    createBillingPortalSession: mockCreateBillingPortalSession,
+    cancelSubscription: mockCancelSubscription,
+    resumeSubscription: mockResumeSubscription,
+    updateSeats: mockUpdateSeats,
   },
 }));
 
@@ -67,16 +38,11 @@ vi.mock("@/app/[locale]/(app)/subscription/_data/canManageBilling", () => ({
   canManageBilling: (...args: unknown[]) => mockCanManageBilling(...args),
 }));
 
-vi.mock("@/infrastructure/registry", () => ({
-  subscriptionGateway: {},
-  authGateway: {},
-}));
-
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
 
 let startCheckout: typeof import("@/app/actions/billing").startCheckout;
 let openBillingPortal: typeof import("@/app/actions/billing").openBillingPortal;
-let cancelSubscription: typeof import("@/app/actions/billing").cancelSubscription;
+let cancelRenewal: typeof import("@/app/actions/billing").cancelRenewal;
 let resumeSubscription: typeof import("@/app/actions/billing").resumeSubscription;
 let updateSeats: typeof import("@/app/actions/billing").updateSeats;
 
@@ -85,7 +51,7 @@ beforeEach(async () => {
   const mod = await import("@/app/actions/billing");
   startCheckout = mod.startCheckout;
   openBillingPortal = mod.openBillingPortal;
-  cancelSubscription = mod.cancelSubscription;
+  cancelRenewal = mod.cancelRenewal;
   resumeSubscription = mod.resumeSubscription;
   updateSeats = mod.updateSeats;
 });
@@ -93,7 +59,7 @@ beforeEach(async () => {
 describe("billing server actions", () => {
   describe("startCheckout", () => {
     it("redirects to checkout URL with successUrl and cancelUrl", async () => {
-      mockStartCheckoutExecute.mockResolvedValue({
+      mockCreateCheckoutSession.mockResolvedValue({
         url: "https://checkout.stripe.com/session_123",
       });
 
@@ -103,7 +69,7 @@ describe("billing server actions", () => {
       await expect(startCheckout(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      expect(mockStartCheckoutExecute).toHaveBeenCalledWith({
+      expect(mockCreateCheckoutSession).toHaveBeenCalledWith({
         planPriceId: "price_abc",
         successUrl: `${APP_URL}/subscription?status=success`,
         cancelUrl: `${APP_URL}/subscription`,
@@ -113,17 +79,16 @@ describe("billing server actions", () => {
       );
     });
 
-    it("returns error when planPriceId is missing", async () => {
+    it("returns invalid_input when planPriceId is missing", async () => {
       const formData = new FormData();
 
       const result = await startCheckout(undefined, formData);
-      expect(result).toEqual({ ok: false, error: "Invalid input" });
-      expect(mockStartCheckoutExecute).not.toHaveBeenCalled();
-      expect(mockRedirect).not.toHaveBeenCalled();
+      expect(result).toEqual({ ok: false, code: "invalid_input" });
+      expect(mockCreateCheckoutSession).not.toHaveBeenCalled();
     });
 
     it("forwards quantity when present and > 0", async () => {
-      mockStartCheckoutExecute.mockResolvedValue({
+      mockCreateCheckoutSession.mockResolvedValue({
         url: "https://checkout.stripe.com/sess_xyz",
       });
 
@@ -134,16 +99,13 @@ describe("billing server actions", () => {
       await expect(startCheckout(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      expect(mockStartCheckoutExecute).toHaveBeenCalledWith(
-        expect.objectContaining({
-          planPriceId: "price_team",
-          quantity: 5,
-        }),
+      expect(mockCreateCheckoutSession).toHaveBeenCalledWith(
+        expect.objectContaining({ planPriceId: "price_team", quantity: 5 }),
       );
     });
 
     it("forwards orgName when provided", async () => {
-      mockStartCheckoutExecute.mockResolvedValue({
+      mockCreateCheckoutSession.mockResolvedValue({
         url: "https://checkout.stripe.com/sess_team",
       });
 
@@ -155,7 +117,7 @@ describe("billing server actions", () => {
       await expect(startCheckout(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      expect(mockStartCheckoutExecute).toHaveBeenCalledWith(
+      expect(mockCreateCheckoutSession).toHaveBeenCalledWith(
         expect.objectContaining({
           planPriceId: "price_team",
           quantity: 3,
@@ -164,76 +126,55 @@ describe("billing server actions", () => {
       );
     });
 
-    it("omits orgName when value is empty", async () => {
-      mockStartCheckoutExecute.mockResolvedValue({
+    it("omits orgName when empty and quantity when 0 or invalid", async () => {
+      mockCreateCheckoutSession.mockResolvedValue({
         url: "https://checkout.stripe.com/sess_team",
       });
 
       const formData = new FormData();
       formData.set("planPriceId", "price_team");
       formData.set("orgName", "");
-
-      await expect(startCheckout(undefined, formData)).rejects.toThrow(
-        "NEXT_REDIRECT",
-      );
-      const callArgs = mockStartCheckoutExecute.mock.calls[0]![0];
-      expect(callArgs.orgName).toBeUndefined();
-    });
-
-    it("omits quantity when value is 0 or invalid", async () => {
-      mockStartCheckoutExecute.mockResolvedValue({
-        url: "https://checkout.stripe.com/sess_xyz",
-      });
-
-      const formData = new FormData();
-      formData.set("planPriceId", "price_team");
       formData.set("quantity", "0");
 
       await expect(startCheckout(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      const callArgs = mockStartCheckoutExecute.mock.calls[0]![0];
+      const callArgs = mockCreateCheckoutSession.mock.calls[0]![0];
+      expect(callArgs.orgName).toBeUndefined();
       expect(callArgs.quantity).toBeUndefined();
     });
 
-    it("returns error when checkout fails", async () => {
-      mockStartCheckoutExecute.mockRejectedValue(new Error("network down"));
+    it("returns checkout_failed when gateway throws", async () => {
+      mockCreateCheckoutSession.mockRejectedValue(new Error("network down"));
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const formData = new FormData();
       formData.set("planPriceId", "price_abc");
 
       const result = await startCheckout(undefined, formData);
-      expect(result).toEqual({
-        ok: false,
-        error: "Failed to start checkout",
-      });
+      expect(result).toEqual({ ok: false, code: "checkout_failed" });
       expect(mockRedirect).not.toHaveBeenCalled();
-      expect(errSpy).toHaveBeenCalled();
       errSpy.mockRestore();
     });
   });
 
   describe("openBillingPortal", () => {
     const portalUser = { id: "u1" };
-    const portalSubscription = {
-      id: "s1",
-      plan: { context: "personal" },
-    };
+    const portalSubscription = { id: "s1", plan: { context: "personal" } };
 
     beforeEach(() => {
-      mockGetCurrentUserExecute.mockResolvedValue(portalUser);
-      mockGetSubscriptionExecute.mockResolvedValue(portalSubscription);
+      mockGetCurrentUser.mockResolvedValue(portalUser);
+      mockGetSubscription.mockResolvedValue(portalSubscription);
       mockCanManageBilling.mockResolvedValue(true);
     });
 
     it("redirects to billing portal URL with returnUrl", async () => {
-      mockOpenBillingPortalExecute.mockResolvedValue({
+      mockCreateBillingPortalSession.mockResolvedValue({
         url: "https://billing.stripe.com/portal_123",
       });
 
       await expect(openBillingPortal()).rejects.toThrow("NEXT_REDIRECT");
-      expect(mockOpenBillingPortalExecute).toHaveBeenCalledWith({
+      expect(mockCreateBillingPortalSession).toHaveBeenCalledWith({
         returnUrl: `${APP_URL}/subscription`,
       });
       expect(mockRedirect).toHaveBeenCalledWith(
@@ -247,120 +188,94 @@ describe("billing server actions", () => {
 
       const result = await openBillingPortal();
       expect(result).toBeUndefined();
-      expect(mockOpenBillingPortalExecute).not.toHaveBeenCalled();
+      expect(mockCreateBillingPortalSession).not.toHaveBeenCalled();
       expect(mockRedirect).not.toHaveBeenCalled();
       errSpy.mockRestore();
     });
 
     it("swallows non-redirect errors and returns without redirecting", async () => {
-      mockOpenBillingPortalExecute.mockRejectedValue(new Error("portal down"));
+      mockCreateBillingPortalSession.mockRejectedValue(new Error("portal down"));
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await openBillingPortal();
       expect(result).toBeUndefined();
       expect(mockRedirect).not.toHaveBeenCalled();
-      expect(errSpy).toHaveBeenCalled();
       errSpy.mockRestore();
     });
   });
 
-  describe("cancelSubscription", () => {
+  describe("cancelRenewal", () => {
     const user = { id: "u1" };
-    const subscription = {
-      id: "s1",
-      plan: { context: "personal" },
-    };
+    const subscription = { id: "s1", plan: { context: "personal" } };
 
-    it("calls the use-case and revalidates the subscription page when allowed", async () => {
-      mockGetCurrentUserExecute.mockResolvedValue(user);
-      mockGetSubscriptionExecute.mockResolvedValue(subscription);
+    it("cancels the subscription and revalidates when allowed", async () => {
+      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetSubscription.mockResolvedValue(subscription);
       mockCanManageBilling.mockResolvedValue(true);
-      mockCancelSubscriptionExecute.mockResolvedValue(undefined);
+      mockCancelSubscription.mockResolvedValue(undefined);
 
-      await cancelSubscription();
+      const result = await cancelRenewal();
 
-      expect(mockCanManageBilling).toHaveBeenCalledWith(user, subscription);
-      expect(mockCancelSubscriptionExecute).toHaveBeenCalledOnce();
-      expect(mockRevalidatePath).toHaveBeenCalledWith(
-        "/subscription",
-        "layout",
-      );
+      expect(mockCancelSubscription).toHaveBeenCalledOnce();
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/subscription", "layout");
+      expect(result.ok).toBe(true);
     });
 
-    it("does not call the use-case or revalidate when the user cannot manage billing", async () => {
-      mockGetCurrentUserExecute.mockResolvedValue(user);
-      mockGetSubscriptionExecute.mockResolvedValue(subscription);
+    it("returns not_billing_member when caller cannot manage billing", async () => {
+      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetSubscription.mockResolvedValue(subscription);
       mockCanManageBilling.mockResolvedValue(false);
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      await cancelSubscription();
+      const result = await cancelRenewal();
 
-      expect(mockCancelSubscriptionExecute).not.toHaveBeenCalled();
-      expect(mockRevalidatePath).not.toHaveBeenCalled();
-      expect(errSpy).toHaveBeenCalled();
-      errSpy.mockRestore();
-    });
-
-    it("does not call the use-case when there is no active subscription", async () => {
-      mockGetCurrentUserExecute.mockResolvedValue(user);
-      mockGetSubscriptionExecute.mockResolvedValue(null);
-      const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
-      await cancelSubscription();
-
-      expect(mockCancelSubscriptionExecute).not.toHaveBeenCalled();
+      expect(result).toEqual({ ok: false, code: "not_billing_member" });
+      expect(mockCancelSubscription).not.toHaveBeenCalled();
       expect(mockRevalidatePath).not.toHaveBeenCalled();
       errSpy.mockRestore();
     });
 
-    it("swallows use-case errors without revalidating", async () => {
-      mockGetCurrentUserExecute.mockResolvedValue(user);
-      mockGetSubscriptionExecute.mockResolvedValue(subscription);
-      mockCanManageBilling.mockResolvedValue(true);
-      mockCancelSubscriptionExecute.mockRejectedValue(new Error("API 500"));
+    it("returns no_subscription when there is no active subscription", async () => {
+      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetSubscription.mockResolvedValue(null);
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      await cancelSubscription();
+      const result = await cancelRenewal();
 
+      expect(result).toEqual({ ok: false, code: "no_subscription" });
+      expect(mockCancelSubscription).not.toHaveBeenCalled();
       expect(mockRevalidatePath).not.toHaveBeenCalled();
-      expect(errSpy).toHaveBeenCalled();
       errSpy.mockRestore();
     });
   });
 
   describe("resumeSubscription", () => {
     const user = { id: "u1" };
-    const subscription = {
-      id: "s1",
-      plan: { context: "team" },
-    };
+    const subscription = { id: "s1", plan: { context: "team" } };
 
-    it("calls the use-case and revalidates when the user is the billing member", async () => {
-      mockGetCurrentUserExecute.mockResolvedValue(user);
-      mockGetSubscriptionExecute.mockResolvedValue(subscription);
+    it("resumes and revalidates when user can manage billing", async () => {
+      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetSubscription.mockResolvedValue(subscription);
       mockCanManageBilling.mockResolvedValue(true);
-      mockResumeSubscriptionExecute.mockResolvedValue(undefined);
+      mockResumeSubscription.mockResolvedValue(undefined);
 
-      await resumeSubscription();
+      const result = await resumeSubscription();
 
-      expect(mockCanManageBilling).toHaveBeenCalledWith(user, subscription);
-      expect(mockResumeSubscriptionExecute).toHaveBeenCalledOnce();
-      expect(mockRevalidatePath).toHaveBeenCalledWith(
-        "/subscription",
-        "layout",
-      );
+      expect(mockResumeSubscription).toHaveBeenCalledOnce();
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/subscription", "layout");
+      expect(result.ok).toBe(true);
     });
 
-    it("does not call the use-case when the user is not the billing member", async () => {
-      mockGetCurrentUserExecute.mockResolvedValue(user);
-      mockGetSubscriptionExecute.mockResolvedValue(subscription);
+    it("returns not_billing_member when user cannot manage billing", async () => {
+      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetSubscription.mockResolvedValue(subscription);
       mockCanManageBilling.mockResolvedValue(false);
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      await resumeSubscription();
+      const result = await resumeSubscription();
 
-      expect(mockResumeSubscriptionExecute).not.toHaveBeenCalled();
-      expect(mockRevalidatePath).not.toHaveBeenCalled();
+      expect(result).toEqual({ ok: false, code: "not_billing_member" });
+      expect(mockResumeSubscription).not.toHaveBeenCalled();
       errSpy.mockRestore();
     });
   });
@@ -370,80 +285,43 @@ describe("billing server actions", () => {
     const teamSubscription = { id: "s1", plan: { context: "team" } };
 
     beforeEach(() => {
-      mockGetCurrentUserExecute.mockResolvedValue(seatsUser);
-      mockGetSubscriptionExecute.mockResolvedValue(teamSubscription);
+      mockGetCurrentUser.mockResolvedValue(seatsUser);
+      mockGetSubscription.mockResolvedValue(teamSubscription);
       mockCanManageBilling.mockResolvedValue(true);
     });
 
     it("updates seats and revalidates the org layout on success", async () => {
-      mockUpdateSeatsExecute.mockResolvedValue(undefined);
+      mockUpdateSeats.mockResolvedValue(undefined);
 
       const formData = new FormData();
       formData.set("quantity", "5");
 
       const result = await updateSeats(undefined, formData);
-      expect(mockUpdateSeatsExecute).toHaveBeenCalledWith(5);
+      expect(mockUpdateSeats).toHaveBeenCalledWith(5);
       expect(mockRevalidatePath).toHaveBeenCalledWith("/org", "layout");
-      expect(result).toEqual({ ok: true });
+      expect(result.ok).toBe(true);
     });
 
-    it("returns 'Invalid input' when quantity is missing", async () => {
-      const formData = new FormData();
-
-      const result = await updateSeats(undefined, formData);
-      expect(result).toEqual({ ok: false, error: "Invalid input" });
-      expect(mockUpdateSeatsExecute).not.toHaveBeenCalled();
+    it("returns invalid_seat_count when quantity is missing, 0, NaN, or too large", async () => {
+      for (const raw of ["", "0", "abc", "999999"]) {
+        const fd = new FormData();
+        if (raw !== "") fd.set("quantity", raw);
+        const result = await updateSeats(undefined, fd);
+        expect(result).toEqual({ ok: false, code: "invalid_seat_count" });
+      }
+      expect(mockUpdateSeats).not.toHaveBeenCalled();
     });
 
-    it("returns 'Invalid seat count' when quantity is 0", async () => {
-      const formData = new FormData();
-      formData.set("quantity", "0");
-
-      const result = await updateSeats(undefined, formData);
-      expect(result).toEqual({ ok: false, error: "Invalid seat count" });
-      expect(mockUpdateSeatsExecute).not.toHaveBeenCalled();
-    });
-
-    it("returns 'Invalid seat count' when quantity is not a number", async () => {
-      const formData = new FormData();
-      formData.set("quantity", "abc");
-
-      const result = await updateSeats(undefined, formData);
-      expect(result).toEqual({ ok: false, error: "Invalid seat count" });
-    });
-
-    it("returns 'Invalid seat count' when quantity exceeds MAX_SEATS", async () => {
-      const formData = new FormData();
-      formData.set("quantity", "999999");
-
-      const result = await updateSeats(undefined, formData);
-      expect(result).toEqual({ ok: false, error: "Invalid seat count" });
-      expect(mockUpdateSeatsExecute).not.toHaveBeenCalled();
-    });
-
-    it("returns an error message when the caller cannot manage billing", async () => {
+    it("returns not_billing_member when caller cannot manage billing", async () => {
       mockCanManageBilling.mockResolvedValue(false);
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const formData = new FormData();
-      formData.set("quantity", "5");
+      const fd = new FormData();
+      fd.set("quantity", "5");
 
-      const result = await updateSeats(undefined, formData);
-      expect(result.ok).toBe(false);
-      expect(mockUpdateSeatsExecute).not.toHaveBeenCalled();
-      expect(mockRevalidatePath).not.toHaveBeenCalled();
-      errSpy.mockRestore();
-    });
-
-    it("returns the use-case error message when UpdateSeats throws", async () => {
-      mockUpdateSeatsExecute.mockRejectedValue(new Error("Seat limit reached"));
-      const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
-      const formData = new FormData();
-      formData.set("quantity", "5");
-
-      const result = await updateSeats(undefined, formData);
-      expect(result).toEqual({ ok: false, error: "Seat limit reached" });
+      const result = await updateSeats(undefined, fd);
+      expect(result).toEqual({ ok: false, code: "not_billing_member" });
+      expect(mockUpdateSeats).not.toHaveBeenCalled();
       expect(mockRevalidatePath).not.toHaveBeenCalled();
       errSpy.mockRestore();
     });

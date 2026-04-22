@@ -1,5 +1,4 @@
 import { cache } from "react";
-import { ListOrgMembers } from "@/application/use-cases/org-member/ListOrgMembers";
 import { orgMemberGateway } from "@/infrastructure/registry";
 import type { OrgMember } from "@/domain/models/OrgMember";
 
@@ -13,7 +12,7 @@ export const getOrgMembers = cache(async function getOrgMembers(
   orgId: string,
 ): Promise<OrgMember[]> {
   try {
-    return await new ListOrgMembers(orgMemberGateway).execute(orgId);
+    return await orgMemberGateway.listMembers(orgId);
   } catch (err) {
     console.error("Failed to list org members", err);
     return [];

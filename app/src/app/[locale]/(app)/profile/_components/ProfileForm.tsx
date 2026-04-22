@@ -12,6 +12,7 @@ import { uploadAvatar, deleteAvatar } from "@/app/actions/avatar";
 import { compressImage } from "@/lib/compressImage";
 import { updateProfile, updateAvatarUrl } from "@/app/actions/user";
 import { LOCALES } from "@/lib/i18n/locales";
+import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 import type { User } from "@/domain/models/User";
 import type { PhonePrefix } from "@/domain/models/PhonePrefix";
 
@@ -50,6 +51,7 @@ export function ProfileForm({
   timezones,
 }: ProfileFormProps) {
   const t = useTranslations("profile");
+  const translateError = useActionErrorMessage();
   const [state, formAction, pending] = useActionState(updateProfile, null);
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl);
   const [avatarUploading, setAvatarUploading] = useState(false);
@@ -62,13 +64,14 @@ export function ProfileForm({
 
   if (state !== lastActionState) {
     setLastActionState(state);
-    if (state?.success) {
+    if (state?.ok) {
       setDirty(false);
       setFormKey((k) => k + 1);
     }
   }
 
-  const saved = state?.success === true;
+  const saved = state?.ok === true;
+  const fieldErrors = state && !state.ok ? state.fieldErrors : undefined;
 
   async function handleAvatarChange(file: File | null) {
     setAvatarError(null);
@@ -79,16 +82,16 @@ export function ProfileForm({
         const formData = new FormData();
         formData.append("avatar", compressed, "avatar.webp");
         const result = await uploadAvatar(formData);
-        if (result.error || !result.avatarUrl) {
-          setAvatarError(result.error ?? "Upload failed.");
+        if (!result.ok) {
+          setAvatarError(translateError(result));
           return;
         }
-        await updateAvatarUrl(result.avatarUrl);
-        setAvatarUrl(result.avatarUrl);
+        await updateAvatarUrl(result.data.avatarUrl);
+        setAvatarUrl(result.data.avatarUrl);
       } else {
         const result = await deleteAvatar();
-        if (result.error) {
-          setAvatarError(result.error);
+        if (!result.ok) {
+          setAvatarError(translateError(result));
           return;
         }
         await updateAvatarUrl(null);
@@ -114,8 +117,8 @@ export function ProfileForm({
       }}
       className="space-y-6"
     >
-      {state?.error && !state.fieldErrors && (
-        <AlertBanner variant="error">{state.error}</AlertBanner>
+      {state && !state.ok && !state.fieldErrors && (
+        <AlertBanner variant="error">{translateError(state)}</AlertBanner>
       )}
       {saved && <AlertBanner variant="success">{t("saved")}</AlertBanner>}
 
@@ -174,7 +177,7 @@ export function ProfileForm({
                 </option>
               ))}
             </select>
-            {state?.fieldErrors?.phone === "phonePrefixRequired" && (
+            {fieldErrors?.phone === "phonePrefixRequired" && (
               <p className="mt-1 text-sm text-red-600">
                 {t("phonePrefixRequired")}
               </p>
@@ -189,10 +192,10 @@ export function ProfileForm({
               onChange={(e) => setPhone(e.target.value)}
               className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-offset-0 focus:outline-none"
             />
-            {(state?.fieldErrors?.phone === "phoneNumberRequired" ||
-              state?.fieldErrors?.phone === "phoneTooShort") && (
+            {(fieldErrors?.phone === "phoneNumberRequired" ||
+              fieldErrors?.phone === "phoneTooShort") && (
               <p className="mt-1 text-sm text-red-600">
-                {t(state.fieldErrors.phone)}
+                {t(fieldErrors.phone)}
               </p>
             )}
           </div>

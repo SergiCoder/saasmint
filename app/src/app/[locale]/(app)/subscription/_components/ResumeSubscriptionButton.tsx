@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
 import { Button } from "@/presentation/components/atoms/Button";
 import { resumeSubscription } from "@/app/actions/billing";
+import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 
 interface ResumeSubscriptionButtonProps {
   children: React.ReactNode;
@@ -12,20 +12,16 @@ interface ResumeSubscriptionButtonProps {
 export function ResumeSubscriptionButton({
   children,
 }: ResumeSubscriptionButtonProps) {
-  const tCommon = useTranslations("common");
+  const translateError = useActionErrorMessage();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   const handleClick = () => {
     setError(null);
     startTransition(async () => {
-      try {
-        const result = await resumeSubscription();
-        if (!result.ok) {
-          setError(result.error);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : tCommon("unknownError"));
+      const result = await resumeSubscription();
+      if (!result.ok) {
+        setError(translateError(result));
       }
     });
   };

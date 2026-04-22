@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { updateSeats } from "@/app/actions/billing";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Button } from "@/presentation/components/atoms/Button";
+import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 import {
   ConfirmDialog,
   type ConfirmDialogHandle,
@@ -19,6 +20,7 @@ interface SeatManagerProps {
 export function SeatManager({ currentSeats, usedSeats }: SeatManagerProps) {
   const t = useTranslations("org");
   const tCommon = useTranslations("common");
+  const translateError = useActionErrorMessage();
   const confirmRef = useRef<ConfirmDialogHandle>(null);
   const [seats, setSeats] = useState(currentSeats);
   const [state, formAction] = useActionState(updateSeats, null);
@@ -59,7 +61,7 @@ export function SeatManager({ currentSeats, usedSeats }: SeatManagerProps) {
     <>
       {state && !state.ok && (
         <AlertBanner variant="error" className="mb-4">
-          {state.error}
+          {translateError(state)}
         </AlertBanner>
       )}
       {state?.ok && (

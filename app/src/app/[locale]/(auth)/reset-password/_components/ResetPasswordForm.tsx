@@ -5,23 +5,23 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
+import { PasswordRequirements } from "@/presentation/components/molecules/PasswordRequirements";
 import { Button } from "@/presentation/components/atoms/Button";
+import type { ActionResult } from "@/lib/actions/ActionResult";
+import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
+import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
 
 interface ResetPasswordFormProps {
-  action: (
-    prev: unknown,
-    fd: FormData,
-  ) => Promise<
-    { error: string; success?: never } | { success: boolean; error?: never }
-  >;
+  action: (prev: unknown, fd: FormData) => Promise<ActionResult>;
   token?: string;
 }
 
 export function ResetPasswordForm({ action, token }: ResetPasswordFormProps) {
   const t = useTranslations("auth.resetPassword");
+  const translateError = useActionErrorMessage();
   const [state, formAction, pending] = useActionState(action, null);
 
-  if (state && "success" in state) {
+  if (state?.ok) {
     return (
       <>
         <AlertBanner variant="success">{t("successMessage")}</AlertBanner>
@@ -39,9 +39,9 @@ export function ResetPasswordForm({ action, token }: ResetPasswordFormProps) {
 
   return (
     <>
-      {state?.error && (
+      {state && !state.ok && (
         <AlertBanner variant="error" className="mb-4">
-          {state.error}
+          {translateError(state)}
         </AlertBanner>
       )}
       <form action={formAction} className="space-y-4">
@@ -51,7 +51,7 @@ export function ResetPasswordForm({ action, token }: ResetPasswordFormProps) {
           name="password"
           type="password"
           required
-          minLength={8}
+          minLength={PASSWORD_MIN_LENGTH}
           autoComplete="new-password"
         />
         <FormField
@@ -59,9 +59,10 @@ export function ResetPasswordForm({ action, token }: ResetPasswordFormProps) {
           name="confirmPassword"
           type="password"
           required
-          minLength={8}
+          minLength={PASSWORD_MIN_LENGTH}
           autoComplete="new-password"
         />
+        <PasswordRequirements />
         <Button type="submit" loading={pending} className="mt-6 w-full">
           {t("submit")}
         </Button>

@@ -4,6 +4,7 @@ import { useActionState, useRef, useState, useTransition } from "react";
 import { transferOwnership } from "@/app/actions/org";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Button } from "@/presentation/components/atoms/Button";
+import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 import {
   ConfirmDialog,
   type ConfirmDialogHandle,
@@ -35,6 +36,7 @@ export function TransferOwnershipForm({
   confirmAction,
   confirmDismiss,
 }: TransferOwnershipFormProps) {
+  const translateError = useActionErrorMessage();
   const confirmRef = useRef<ConfirmDialogHandle>(null);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [state, formAction] = useActionState(transferOwnership, null);
@@ -61,7 +63,7 @@ export function TransferOwnershipForm({
   return (
     <>
       {state && !state.ok && (
-        <AlertBanner variant="error">{state.error}</AlertBanner>
+        <AlertBanner variant="error">{translateError(state)}</AlertBanner>
       )}
       <div className="flex items-end gap-3">
         <div className="flex-1 space-y-1">

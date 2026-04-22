@@ -5,10 +5,14 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
+import { PasswordRequirements } from "@/presentation/components/molecules/PasswordRequirements";
 import { Button } from "@/presentation/components/atoms/Button";
+import type { ActionResult } from "@/lib/actions/ActionResult";
+import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
+import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
 
 interface AuthFormProps {
-  action: (prev: unknown, fd: FormData) => Promise<{ error: string } | void>;
+  action: (prev: unknown, fd: FormData) => Promise<ActionResult | undefined>;
   translationNamespace: string;
   passwordAutoComplete: string;
   showNameField?: boolean;
@@ -29,13 +33,15 @@ export function AuthForm({
   hiddenFields,
 }: AuthFormProps) {
   const t = useTranslations(translationNamespace);
+  const translateError = useActionErrorMessage();
   const [state, formAction, pending] = useActionState(action, null);
+  const errorMessage = state && !state.ok ? translateError(state) : null;
 
   return (
     <>
-      {state?.error ? (
+      {errorMessage ? (
         <AlertBanner variant="error" className="mb-4">
-          {state.error}
+          {errorMessage}
         </AlertBanner>
       ) : (
         serverAlerts
@@ -67,8 +73,10 @@ export function AuthForm({
           name="password"
           type="password"
           required
+          minLength={showNameField ? PASSWORD_MIN_LENGTH : undefined}
           autoComplete={passwordAutoComplete}
         />
+        {showNameField && <PasswordRequirements />}
         {forgotPasswordHref && (
           <div className="text-right">
             <Link

@@ -8,22 +8,14 @@ vi.mock("next/navigation", () => ({
   },
 }));
 
-const mockAcceptInvitationExecute = vi.fn();
-vi.mock("@/application/use-cases/invitation/AcceptInvitation", () => ({
-  AcceptInvitation: function AcceptInvitation() {
-    return { execute: mockAcceptInvitationExecute };
-  },
-}));
-
-const mockDeclineInvitationExecute = vi.fn();
-vi.mock("@/application/use-cases/invitation/DeclineInvitation", () => ({
-  DeclineInvitation: function DeclineInvitation() {
-    return { execute: mockDeclineInvitationExecute };
-  },
-}));
+const mockAccept = vi.fn();
+const mockDecline = vi.fn();
 
 vi.mock("@/infrastructure/registry", () => ({
-  invitationGateway: {},
+  invitationGateway: {
+    acceptInvitation: (...args: unknown[]) => mockAccept(...args),
+    declineInvitation: (...args: unknown[]) => mockDecline(...args),
+  },
 }));
 
 const mockSetAuthCookies = vi.fn();
@@ -44,10 +36,7 @@ beforeEach(async () => {
 describe("invitation server actions", () => {
   describe("acceptInvitation", () => {
     it("accepts invitation, sets cookies, and redirects to /dashboard", async () => {
-      mockAcceptInvitationExecute.mockResolvedValue({
-        accessToken: "at",
-        refreshToken: "rt",
-      });
+      mockAccept.mockResolvedValue({ accessToken: "at", refreshToken: "rt" });
 
       const formData = new FormData();
       formData.set("token", "abc123");
@@ -57,7 +46,7 @@ describe("invitation server actions", () => {
       await expect(acceptInvitation(null, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      expect(mockAcceptInvitationExecute).toHaveBeenCalledWith("abc123", {
+      expect(mockAccept).toHaveBeenCalledWith("abc123", {
         fullName: "Bob Smith",
         password: "secret123",
       });
@@ -65,17 +54,17 @@ describe("invitation server actions", () => {
       expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
     });
 
-    it("returns error when required fields are missing", async () => {
+    it("returns invalid_input when required fields are missing", async () => {
       const formData = new FormData();
       formData.set("token", "abc123");
 
       const result = await acceptInvitation(null, formData);
-      expect(result).toEqual({ error: "Missing required fields" });
-      expect(mockAcceptInvitationExecute).not.toHaveBeenCalled();
+      expect(result).toEqual({ ok: false, code: "invalid_input" });
+      expect(mockAccept).not.toHaveBeenCalled();
     });
 
-    it("returns a friendly error and does not set cookies when use-case throws", async () => {
-      mockAcceptInvitationExecute.mockRejectedValue(new Error("token expired"));
+    it("returns an envelope error and does not set cookies when gateway throws", async () => {
+      mockAccept.mockRejectedValue(new Error("token expired"));
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const formData = new FormData();
@@ -84,7 +73,7 @@ describe("invitation server actions", () => {
       formData.set("password", "secret123");
 
       const result = await acceptInvitation(null, formData);
-      expect(result).toEqual({ error: "Failed to accept invitation" });
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
       expect(mockSetAuthCookies).not.toHaveBeenCalled();
       expect(errSpy).toHaveBeenCalled();
       errSpy.mockRestore();
@@ -93,7 +82,7 @@ describe("invitation server actions", () => {
 
   describe("declineInvitation", () => {
     it("declines invitation and redirects to /dashboard", async () => {
-      mockDeclineInvitationExecute.mockResolvedValue(undefined);
+      mockDecline.mockResolvedValue(undefined);
 
       const formData = new FormData();
       formData.set("token", "abc123");
@@ -101,7 +90,7 @@ describe("invitation server actions", () => {
       await expect(declineInvitation(formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      expect(mockDeclineInvitationExecute).toHaveBeenCalledWith("abc123");
+      expect(mockDecline).toHaveBeenCalledWith("abc123");
       expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
     });
 
@@ -109,11 +98,11 @@ describe("invitation server actions", () => {
       const formData = new FormData();
 
       await declineInvitation(formData);
-      expect(mockDeclineInvitationExecute).not.toHaveBeenCalled();
+      expect(mockDecline).not.toHaveBeenCalled();
     });
 
-    it("swallows errors and does not redirect when use-case throws", async () => {
-      mockDeclineInvitationExecute.mockRejectedValue(new Error("API 500"));
+    it("swallows errors and does not redirect when gateway throws", async () => {
+      mockDecline.mockRejectedValue(new Error("API 500"));
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const formData = new FormData();

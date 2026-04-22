@@ -152,6 +152,13 @@
       "success": "O seu e-mail foi verificado. A redirecionar para o seu painel...",
       "error": "A verificação do e-mail falhou. O link pode ter expirado.",
       "backToLogin": "Voltar para o início de sessão"
+    },
+    "passwordRequirements": {
+      "title": "A sua palavra-passe tem de:",
+      "minLength": "Ter pelo menos 10 caracteres",
+      "notCommon": "Não ser uma palavra-passe comum",
+      "notSimilar": "Não ser demasiado parecida com o seu e-mail ou nome",
+      "notNumeric": "Não ser apenas números"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "Alternar navegação",
     "dismiss": "Fechar",
     "unknownError": "Erro desconhecido"
+  },
+  "actionErrors": {
+    "account_delete_failed": "Não foi possível eliminar a conta",
+    "avatar_update_failed": "Não foi possível atualizar o avatar",
+    "checkout_failed": "Não foi possível iniciar o pagamento",
+    "current_password_required": "A palavra-passe atual é obrigatória",
+    "email_and_password_required": "O e-mail e a palavra-passe são obrigatórios",
+    "email_required": "O e-mail é obrigatório",
+    "full_name_invalid": "O nome completo deve ter entre 3 e 255 caracteres",
+    "image_too_large": "Imagem demasiado grande",
+    "invalid_input": "Entrada inválida",
+    "invalid_reset_link": "Esta ligação de redefinição é inválida ou expirou. Solicite uma nova.",
+    "invalid_seat_count": "Número de lugares inválido",
+    "network_unreachable": "Não foi possível contactar o servidor. Verifique a sua ligação e tente novamente.",
+    "no_file": "Nenhum ficheiro fornecido",
+    "no_subscription": "Sem subscrição ativa",
+    "not_authorized": "Não tem autorização para realizar esta ação",
+    "not_billing_member": "Não tem permissão para gerir a faturação",
+    "passwords_do_not_match": "As palavras-passe não coincidem",
+    "password_too_short": "A palavra-passe tem de ter pelo menos 10 caracteres",
+    "profile_load_failed": "Não foi possível carregar o perfil",
+    "session_expired": "Sessão expirada. Inicie sessão novamente.",
+    "unknown_error": "Algo correu mal. Tente novamente.",
+    "unsupported_image": "Tipo de imagem não suportado"
   },
   "contact": {
     "title": "Contacte-nos",

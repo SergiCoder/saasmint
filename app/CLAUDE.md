@@ -6,14 +6,16 @@ Next.js 16 SaaS frontend template paired with `SaaSmint Core`.
 
 Strict hexagonal architecture enforced by layer isolation:
 
-| Layer          | Location                        | Can import                                             |
-| -------------- | ------------------------------- | ------------------------------------------------------ |
-| Domain         | `src/domain/`                   | nothing external                                       |
-| Application    | `src/application/`              | `domain/` only                                         |
-| Infrastructure | `src/infrastructure/`           | `domain/`, `application/ports/`                        |
-| Presentation   | `src/presentation/`, `src/app/` | `domain/`, `application/use-cases/`, `infrastructure/` |
+| Layer          | Location                        | Can import                                         |
+| -------------- | ------------------------------- | -------------------------------------------------- |
+| Domain         | `src/domain/`                   | nothing external                                   |
+| Application    | `src/application/`              | `domain/` only                                     |
+| Infrastructure | `src/infrastructure/`           | `domain/`, `application/ports/`                    |
+| Presentation   | `src/presentation/`, `src/app/` | `domain/`, `application/ports/`, `infrastructure/` |
 
 **Never** import from `infrastructure/` inside `domain/` or `application/`.
+
+`src/application/` currently contains only `ports/` — port interfaces that describe what the presentation layer needs from gateways. Server actions and `_data/` fetchers call gateways directly (via `src/infrastructure/registry.ts`) rather than through a use-case indirection layer; the port interfaces still provide the type contract and enable swapping implementations.
 
 ## Domain Models
 
@@ -37,7 +39,7 @@ Domain errors in `src/domain/errors/`:
 - `ApiError` — generic HTTP failure from the Django API (carries `status`, raw `body`, and a `detail` getter that extracts Django-style `{ detail }` or `string[]` messages)
 - `NetworkError` — fetch couldn't reach the server (DNS, connection refused, timeout); carries the original exception as `cause`
 
-All error classes carry a `code: string` field for programmatic handling (`ApiError` defaults its code to `HTTP_<status>`; `NetworkError` is `NETWORK_UNREACHABLE`). `src/lib/friendlyError.ts` turns these into a user-facing string with a fallback.
+All error classes carry a `code: string` field for programmatic handling (`ApiError` defaults its code to `HTTP_<status>`; `NetworkError` is `NETWORK_UNREACHABLE`). Server actions translate thrown domain/gateway errors into stable string codes via `toActionError()` in `src/lib/actions/ActionResult.ts`; client components resolve those codes to user-facing strings through the `actionErrors.<code>` next-intl namespace using the `useActionErrorMessage` hook (`src/lib/actions/useActionErrorMessage.ts`), which falls back to `actionErrors.unknown_error`.
 
 ## Infrastructure
 
@@ -94,7 +96,7 @@ Django issues JWTs directly — no third-party auth provider.
 Strict atomic design in `src/presentation/components/`:
 
 - `atoms/` — Button, Input, Badge, Avatar, AvatarUpload, Label, Spinner, FullPageSpinner, Logo, SectionLabel, LocaleDropdown, FormattedDate, Divider, GitHubIcon, GoogleIcon, MicrosoftIcon
-- `molecules/` — FormField, MetricCard, NavLink, PlanCard, AlertBanner, ConfirmDialog, FeatureCard, StatItem, TrustBar, OrgCard, OAuthButtons, UserMenu, PronounsPicker
+- `molecules/` — FormField, MetricCard, NavLink, PlanCard, AlertBanner, ConfirmDialog, FeatureCard, StatItem, TrustBar, OrgCard, OAuthButtons, UserMenu, PronounsPicker, PasswordRequirements
 - `organisms/` — NavBar, MobileMenuToggle, Footer, PricingSection, PricingIntervalSwitch, SubscriptionCard, OrgMemberList, InvoiceTable, CtaSection, DashboardMock, ErrorView, RouteErrorBoundary, ProductsGrid, FeaturesGrid, LogoCloud, StatsSection
 - `templates/` — MarketingLayout, AuthLayout, AppLayout, PolicyPage
 
@@ -109,7 +111,17 @@ Strict atomic design in `src/presentation/components/`:
 
 ## Server Actions
 
-Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, `avatar.ts`, `billing.ts`, `invitation.ts`, `org.ts`, `user.ts`). Each action instantiates a use-case with a gateway from the registry — never call gateways directly from actions.
+Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, `avatar.ts`, `billing.ts`, `invitation.ts`, `org.ts`, `user.ts`). Each action calls gateways directly from `src/infrastructure/registry.ts` (there is no use-case indirection layer) and returns an `ActionResult<T>` envelope from `src/lib/actions/ActionResult.ts`:
+
+- `ok()` / `ok(data)` — success, with optional payload
+- `fail(code, { message?, fieldErrors? })` — validation/domain failure with a stable string code the client translates via `actionErrors.<code>`
+- `toActionError(err)` — maps a thrown `AuthError`/`NetworkError`/`BillingError`/`ApiError` to a `fail(...)`; used inside try/catch around gateway calls
+
+Form-field parsing uses the tiny helpers in `src/lib/actions/parseFormData.ts` (`getString`, `getNonEmptyString`, `getInt`, `getFile`) — each returns the narrowed value or `undefined`, and the action decides whether to return `fail("invalid_input")`.
+
+Actions `console.error` the raw thrown error (including any `ApiError.body`) before returning `toActionError(err)` / `fail(...)`, so server logs retain the backend failure payload even though clients only see the stable error code.
+
+Co-located server-side fetchers in `_data/` directories also call gateways directly and are wrapped in `React.cache()` (e.g. `(app)/_data/getSubscription.ts`, `(app)/_data/getCurrentUser.ts`).
 
 ## Route Groups
 
@@ -120,13 +132,13 @@ Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, 
 - `(app)/` — authenticated pages (dashboard, subscription, profile, org) using `AppLayout`
 - `(public)/` — unauthenticated public pages (invitation acceptance)
 
-Route-specific client components live in co-located `_components/` directories (e.g. `(app)/subscription/_components/CheckoutButton.tsx`). Shared server-side data fetchers live in co-located `_data/` directories and are wrapped in `React.cache()` so a layout and its pages share a single API call per render (e.g. `(app)/_data/getSubscription.ts`).
+Route-specific client components live in co-located `_components/` directories (e.g. `(app)/subscription/_components/CheckoutButton.tsx`). Shared server-side data fetchers live in co-located `_data/` directories and are wrapped in `React.cache()` so a layout and its pages share a single API call per render (e.g. `(app)/_data/getSubscription.ts`). These fetchers call gateways directly from the infrastructure registry.
 
 ## Key Rules
 
 - App Router only (`src/app/`) — no `pages/` directory
 - Server Components by default — `"use client"` only when needed
-- No raw `fetch` in components — always go through use-cases
+- No raw `fetch` in components — go through a server action (`src/app/actions/`) or a `_data/` fetcher that calls a gateway from the infrastructure registry
 - Auth: Django JWT in `Authorization: Bearer <token>` header (read from HTTP-only cookie)
 - Payments: Stripe-hosted Checkout redirect only — no embedded forms
 - All user-facing strings through next-intl — never hardcoded

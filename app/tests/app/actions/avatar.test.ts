@@ -41,113 +41,120 @@ describe("uploadAvatar", () => {
     const result = await uploadAvatar(formData);
 
     expect(mockUploadAvatar).toHaveBeenCalledWith(formData);
-    expect(result).toEqual({ avatarUrl: "https://cdn/avatar.webp" });
+    expect(result).toEqual({
+      ok: true,
+      data: { avatarUrl: "https://cdn/avatar.webp" },
+    });
   });
 
   it("rejects missing file without hitting the gateway", async () => {
     const result = await uploadAvatar(new FormData());
-    expect(result).toEqual({ error: "No file provided." });
+    expect(result).toEqual({ ok: false, code: "no_file" });
     expect(mockUploadAvatar).not.toHaveBeenCalled();
   });
 
   it("rejects disallowed MIME types", async () => {
-    const formData = makeImageFormData({ type: "image/gif" });
-    const result = await uploadAvatar(formData);
-    expect(result).toEqual({ error: "Unsupported image type." });
+    const result = await uploadAvatar(makeImageFormData({ type: "image/gif" }));
+    expect(result).toEqual({ ok: false, code: "unsupported_image" });
     expect(mockUploadAvatar).not.toHaveBeenCalled();
   });
 
   it("rejects files over the size limit", async () => {
-    const formData = makeImageFormData({ size: 6 * 1024 * 1024 });
-    const result = await uploadAvatar(formData);
-    expect(result).toEqual({ error: "Image too large." });
+    const result = await uploadAvatar(
+      makeImageFormData({ size: 6 * 1024 * 1024 }),
+    );
+    expect(result).toEqual({ ok: false, code: "image_too_large" });
     expect(mockUploadAvatar).not.toHaveBeenCalled();
   });
 
-  it("maps AuthError to a session-expired message", async () => {
+  it("maps AuthError to session_expired", async () => {
     mockUploadAvatar.mockRejectedValue(
       new AuthError("No active session", "NO_SESSION"),
     );
 
     const result = await uploadAvatar(makeImageFormData());
 
-    expect(result).toEqual({
-      error: "Session expired. Please log in again.",
-    });
+    expect(result).toEqual({ ok: false, code: "session_expired" });
   });
 
-  it("extracts ApiError detail when the upstream body provides one", async () => {
+  it("extracts ApiError detail as message", async () => {
     mockUploadAvatar.mockRejectedValue(
       new ApiError(413, { detail: "File too large" }),
     );
 
     const result = await uploadAvatar(makeImageFormData());
 
-    expect(result).toEqual({ error: "File too large" });
+    expect(result).toEqual({
+      ok: false,
+      code: "HTTP_413",
+      message: "File too large",
+    });
   });
 
-  it("returns fallback message for ApiError without detail", async () => {
+  it("returns the ApiError code when no detail is present", async () => {
     mockUploadAvatar.mockRejectedValue(new ApiError(500, "boom"));
 
     const result = await uploadAvatar(makeImageFormData());
 
-    expect(result).toEqual({ error: "Upload failed." });
+    expect(result).toEqual({ ok: false, code: "HTTP_500" });
   });
 
-  it("returns fallback message for unknown errors", async () => {
+  it("falls back to unknown_error for unrecognized throwables", async () => {
     mockUploadAvatar.mockRejectedValue(new Error("unexpected"));
 
     const result = await uploadAvatar(makeImageFormData());
 
-    expect(result).toEqual({ error: "Upload failed." });
+    expect(result).toEqual({ ok: false, code: "unknown_error" });
   });
 });
 
 describe("deleteAvatar", () => {
-  it("calls the gateway and returns an empty object on success", async () => {
+  it("calls the gateway and returns ok on success", async () => {
     mockDeleteAvatar.mockResolvedValue(undefined);
 
     const result = await deleteAvatar();
 
     expect(mockDeleteAvatar).toHaveBeenCalledOnce();
-    expect(result).toEqual({});
+    expect(result).toEqual({ ok: true });
   });
 
-  it("maps AuthError to a session-expired message", async () => {
+  it("maps AuthError to session_expired", async () => {
     mockDeleteAvatar.mockRejectedValue(
       new AuthError("No active session", "NO_SESSION"),
     );
 
     const result = await deleteAvatar();
 
-    expect(result).toEqual({
-      error: "Session expired. Please log in again.",
-    });
+    expect(result).toEqual({ ok: false, code: "session_expired" });
   });
 
-  it("extracts ApiError detail when the upstream body provides one", async () => {
+  it("extracts ApiError detail as message", async () => {
     mockDeleteAvatar.mockRejectedValue(
       new ApiError(404, { detail: "Avatar not found" }),
     );
 
     const result = await deleteAvatar();
 
-    expect(result).toEqual({ error: "Avatar not found" });
+    expect(result).toEqual({
+      ok: false,
+      code: "HTTP_404",
+      message: "Avatar not found",
+    });
   });
 
-  it("returns fallback message for ApiError without detail", async () => {
+  it("returns the ApiError code when no detail is present", async () => {
     mockDeleteAvatar.mockRejectedValue(new ApiError(500, null));
 
     const result = await deleteAvatar();
 
-    expect(result).toEqual({ error: "Delete failed." });
+    expect(result).toEqual({ ok: false, code: "HTTP_500" });
   });
 
-  it("returns fallback message for unknown errors", async () => {
+  it("falls back to unknown_error for unrecognized throwables", async () => {
     mockDeleteAvatar.mockRejectedValue(new Error("unexpected"));
 
     const result = await deleteAvatar();
 
-    expect(result).toEqual({ error: "Delete failed." });
+    expect(result).toEqual({ ok: false, code: "unknown_error" });
   });
 });

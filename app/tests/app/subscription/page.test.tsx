@@ -33,25 +33,10 @@ vi.mock("@/app/[locale]/(app)/subscription/_data/canManageBilling", () => ({
 }));
 
 // Use-case stubs — return empty lists so we don't render the pricing table.
-vi.mock("@/application/use-cases/billing/ListPlans", () => ({
-  ListPlans: class {
-    execute() {
-      return Promise.resolve([]);
-    }
-  },
-}));
-
-vi.mock("@/application/use-cases/billing/ListProducts", () => ({
-  ListProducts: class {
-    execute() {
-      return Promise.resolve([]);
-    }
-  },
-}));
-
+// Gateway stubs — return empty lists so we don't render the pricing table.
 vi.mock("@/infrastructure/registry", () => ({
-  planGateway: {},
-  productGateway: {},
+  planGateway: { listPlans: () => Promise.resolve([]) },
+  productGateway: { listProducts: () => Promise.resolve([]) },
 }));
 
 // Stub presentation organisms/molecules that would otherwise pull in a full
@@ -160,7 +145,6 @@ function makeUser(overrides: Partial<User> = {}): User {
     registrationMethod: "email",
     linkedProviders: [],
     updatedAt: "2025-01-01T00:00:00Z",
-    scheduledDeletionAt: null,
     ...overrides,
   };
 }

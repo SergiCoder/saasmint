@@ -152,6 +152,13 @@
       "success": "Email Anda telah diverifikasi. Mengalihkan ke dasbor Anda...",
       "error": "Verifikasi email gagal. Tautan mungkin telah kedaluwarsa.",
       "backToLogin": "Kembali ke masuk"
+    },
+    "passwordRequirements": {
+      "title": "Kata sandi Anda harus:",
+      "minLength": "Minimal 10 karakter",
+      "notCommon": "Bukan kata sandi yang umum digunakan",
+      "notSimilar": "Tidak terlalu mirip dengan email atau nama Anda",
+      "notNumeric": "Tidak hanya berisi angka"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "Alihkan navigasi",
     "dismiss": "Tutup",
     "unknownError": "Kesalahan tidak diketahui"
+  },
+  "actionErrors": {
+    "account_delete_failed": "Gagal menghapus akun",
+    "avatar_update_failed": "Gagal memperbarui avatar",
+    "checkout_failed": "Gagal memulai pembayaran",
+    "current_password_required": "Kata sandi saat ini wajib diisi",
+    "email_and_password_required": "Email dan kata sandi wajib diisi",
+    "email_required": "Email wajib diisi",
+    "full_name_invalid": "Nama lengkap harus antara 3 dan 255 karakter",
+    "image_too_large": "Gambar terlalu besar",
+    "invalid_input": "Input tidak valid",
+    "invalid_reset_link": "Tautan pengaturan ulang ini tidak valid atau telah kedaluwarsa. Silakan minta yang baru.",
+    "invalid_seat_count": "Jumlah kursi tidak valid",
+    "network_unreachable": "Tidak dapat menjangkau server. Periksa koneksi Anda dan coba lagi.",
+    "no_file": "Tidak ada file yang diberikan",
+    "no_subscription": "Tidak ada langganan aktif",
+    "not_authorized": "Anda tidak berwenang untuk melakukan tindakan ini",
+    "not_billing_member": "Anda tidak memiliki izin untuk mengelola penagihan",
+    "passwords_do_not_match": "Kata sandi tidak cocok",
+    "password_too_short": "Kata sandi harus minimal 10 karakter",
+    "profile_load_failed": "Gagal memuat profil",
+    "session_expired": "Sesi kedaluwarsa. Silakan masuk lagi.",
+    "unknown_error": "Terjadi kesalahan. Silakan coba lagi.",
+    "unsupported_image": "Tipe gambar tidak didukung"
   },
   "contact": {
     "title": "Hubungi kami",

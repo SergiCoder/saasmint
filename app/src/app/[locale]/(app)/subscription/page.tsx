@@ -1,22 +1,13 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ListPlans } from "@/application/use-cases/billing/ListPlans";
-import { ListProducts } from "@/application/use-cases/billing/ListProducts";
-import { planGateway, productGateway } from "@/infrastructure/registry";
 import { getCurrentUser } from "../_data/getCurrentUser";
-import { getOrgMembers } from "../_data/getOrgMembers";
-import { getSubscription } from "../_data/getSubscription";
-import { getUserOrgs } from "../_data/getUserOrgs";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
-import { SubscriptionCard } from "@/presentation/components/organisms/SubscriptionCard";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
 import { ProductsGrid } from "@/presentation/components/organisms/ProductsGrid";
 import { CheckoutButton } from "./_components/CheckoutButton";
 import { TeamCheckoutButton } from "./_components/TeamCheckoutButton";
-import { BillingPortalButton } from "./_components/BillingPortalButton";
-import { CancelRenewalButton } from "./_components/CancelRenewalButton";
-import { ResumeSubscriptionButton } from "./_components/ResumeSubscriptionButton";
-import { canManageBilling } from "./_data/canManageBilling";
+import { CurrentSubscriptionCard } from "./_components/CurrentSubscriptionCard";
+import { getSubscriptionPageData } from "./_data/getSubscriptionPageData";
 import {
   buildPlanCardGroups,
   buildPlanTranslations,
@@ -28,9 +19,7 @@ import {
   SUBSCRIPTION_INTERVAL_HREFS,
 } from "@/app/[locale]/_lib/pricingInterval";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
-import type { Plan } from "@/domain/models/Plan";
 import { PLAN_TIER_PRO } from "@/domain/models/Plan";
-import type { Product } from "@/domain/models/Product";
 
 interface BillingPageProps {
   params: Promise<{ locale: string }>;
@@ -64,29 +53,16 @@ export default async function BillingPage({
     searchParams,
   ]);
 
-  const currency = user.preferredCurrency;
-
-  const [subscription, plans, products, userOrgs] = await Promise.all([
-    getSubscription(currency),
-    new ListPlans(planGateway).execute(currency).catch((err): Plan[] => {
-      console.error("Failed to fetch plans", err);
-      return [];
-    }),
-    new ListProducts(productGateway)
-      .execute(currency)
-      .catch((err): Product[] => {
-        console.error("Failed to fetch products", err);
-        return [];
-      }),
-    getUserOrgs(),
-  ]);
+  const {
+    subscription,
+    plans,
+    products,
+    userOrgs,
+    canManage,
+    teamOwnerName,
+  } = await getSubscriptionPageData(user);
 
   const hasOrg = userOrgs.length > 0;
-
-  const canManage = subscription
-    ? await canManageBilling(user, subscription)
-    : false;
-
   const currentPlan = subscription?.plan;
   const planName = currentPlan
     ? translatePlanName(tPlans, currentPlan)
@@ -96,32 +72,6 @@ export default async function BillingPage({
   const defaultInterval = currentPlan?.interval === "year" ? "year" : "month";
   const selectedInterval = parseIntervalParam(query.interval, defaultInterval);
   const isTeamSubscription = currentPlan?.context === "team";
-
-  // For team subscriptions, fetch org owner info.
-  // Uses the cached getOrgMembers so we share the request with canManageBilling
-  // and don't double-fetch the member list per render.
-  let teamOwnerName: string | null = null;
-  const firstOrg = userOrgs.at(0);
-  if (isTeamSubscription && firstOrg) {
-    try {
-      const members = await getOrgMembers(firstOrg.id);
-      const owner = members.find((m) => m.role === "owner");
-      if (owner) teamOwnerName = owner.user.fullName;
-    } catch {
-      // Owner name is a nice-to-have; proceed without it
-    }
-  }
-
-  // Detect placeholder period-end dates returned by the backend for users
-  // without a real Stripe subscription (e.g. free tier). Anything more than
-  // a few decades out is treated as "no real renewal date".
-  const periodEndDate = subscription
-    ? new Date(subscription.currentPeriodEnd)
-    : null;
-  const hasRealPeriodEnd =
-    periodEndDate !== null &&
-    !Number.isNaN(periodEndDate.getTime()) &&
-    periodEndDate.getUTCFullYear() < 9000;
 
   const { planNames, planDescriptions } = buildPlanTranslations(plans, tPlans);
 
@@ -193,86 +143,15 @@ export default async function BillingPage({
         <AlertBanner variant="error">{t("checkoutError")}</AlertBanner>
       )}
 
-      {subscription &&
-        (() => {
-          const intervalLabel =
-            currentPlan?.interval === "year"
-              ? t("billedYearly")
-              : currentPlan?.interval === "month"
-                ? t("billedMonthly")
-                : undefined;
-          const seatsLabel = isTeamSubscription
-            ? `${subscription.quantity} ${subscription.quantity === 1 ? t("seat") : t("seats")}`
-            : undefined;
-          const subtitle = [seatsLabel, intervalLabel]
-            .filter(Boolean)
-            .join(" · ");
-          const isCanceling = subscription.canceledAt !== null;
-
-          const periodEndDisplay =
-            hasRealPeriodEnd && periodEndDate
-              ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(
-                  periodEndDate,
-                )
-              : "";
-
-          const manageAction =
-            canManage && hasRealPeriodEnd ? (
-              isCanceling ? (
-                <ResumeSubscriptionButton>
-                  {t("resumeSubscription")}
-                </ResumeSubscriptionButton>
-              ) : (
-                <CancelRenewalButton
-                  label={t("cancelRenewal")}
-                  confirmTitle={t("cancelRenewalTitle")}
-                  confirmBody={t("cancelRenewalBody", {
-                    date: periodEndDisplay,
-                  })}
-                  confirmAction={t("cancelRenewal")}
-                  confirmDismiss={t("cancelRenewalKeep")}
-                />
-              )
-            ) : null;
-
-          return (
-            <SubscriptionCard
-              eyebrowLabel={t("currentPlan")}
-              planName={planName ?? t("currentPlan")}
-              status={subscription.status}
-              statusLabel={subscription.status}
-              subtitle={subtitle || undefined}
-              currentPeriodEndIso={
-                hasRealPeriodEnd && periodEndDate
-                  ? periodEndDate.toISOString()
-                  : undefined
-              }
-              periodEndLocale={locale}
-              periodEndLabel={
-                hasRealPeriodEnd
-                  ? isCanceling
-                    ? t("endsOn")
-                    : t("renewsOn")
-                  : undefined
-              }
-              cancelAtPeriodEnd={isCanceling}
-              cancelLabel={isCanceling ? t("cancel") : undefined}
-              footer={
-                isTeamSubscription && !canManage && teamOwnerName
-                  ? t("managedBy", { name: teamOwnerName })
-                  : undefined
-              }
-              actions={
-                canManage ? (
-                  <div className="flex w-full flex-wrap items-center gap-x-4 gap-y-2">
-                    <BillingPortalButton>{t("portal")}</BillingPortalButton>
-                    {manageAction}
-                  </div>
-                ) : undefined
-              }
-            />
-          );
-        })()}
+      {subscription && (
+        <CurrentSubscriptionCard
+          subscription={subscription}
+          locale={locale}
+          planName={planName ?? t("currentPlan")}
+          canManage={canManage}
+          teamOwnerName={teamOwnerName}
+        />
+      )}
 
       {isTeamSubscription && !canManage ? (
         <p className="text-sm text-gray-500">{t("teamPlanReadonly")}</p>

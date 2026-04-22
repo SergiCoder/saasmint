@@ -152,6 +152,13 @@
       "success": "メールアドレスが確認されました。ダッシュボードにリダイレクトしています...",
       "error": "メール確認に失敗しました。リンクの有効期限が切れている可能性があります。",
       "backToLogin": "ログインに戻る"
+    },
+    "passwordRequirements": {
+      "title": "パスワードの条件:",
+      "minLength": "10 文字以上であること",
+      "notCommon": "よく使われるパスワードではないこと",
+      "notSimilar": "メールアドレスや名前とあまり似ていないこと",
+      "notNumeric": "数字のみで構成されていないこと"
     }
   },
   "dashboard": {
@@ -305,6 +312,30 @@
     "toggleNav": "ナビゲーション切替",
     "dismiss": "閉じる",
     "unknownError": "不明なエラー"
+  },
+  "actionErrors": {
+    "account_delete_failed": "アカウントを削除できませんでした",
+    "avatar_update_failed": "アバターを更新できませんでした",
+    "checkout_failed": "チェックアウトを開始できませんでした",
+    "current_password_required": "現在のパスワードを入力してください",
+    "email_and_password_required": "メールアドレスとパスワードを入力してください",
+    "email_required": "メールアドレスを入力してください",
+    "full_name_invalid": "氏名は3〜255文字で入力してください",
+    "image_too_large": "画像が大きすぎます",
+    "invalid_input": "入力が無効です",
+    "invalid_reset_link": "このリセットリンクは無効か、有効期限が切れています。新しいリンクを発行してください。",
+    "invalid_seat_count": "シート数が無効です",
+    "network_unreachable": "サーバーに接続できません。接続をご確認のうえ、もう一度お試しください。",
+    "no_file": "ファイルが指定されていません",
+    "no_subscription": "有効なサブスクリプションがありません",
+    "not_authorized": "この操作を行う権限がありません",
+    "not_billing_member": "請求を管理する権限がありません",
+    "passwords_do_not_match": "パスワードが一致しません",
+    "password_too_short": "パスワードは 10 文字以上で入力してください",
+    "profile_load_failed": "プロフィールを読み込めませんでした",
+    "session_expired": "セッションの有効期限が切れました。もう一度ログインしてください。",
+    "unknown_error": "問題が発生しました。もう一度お試しください。",
+    "unsupported_image": "サポートされていない画像形式です"
   },
   "contact": {
     "title": "お問い合わせ",
