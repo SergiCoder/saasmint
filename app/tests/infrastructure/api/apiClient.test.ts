@@ -370,3 +370,63 @@ describe("apiFetchOptional", () => {
     expect(headers.authorization).toBeUndefined();
   });
 });
+
+describe("request forwarding", () => {
+  // Pins the contract that the public helpers transparently forward their
+  // RequestInit to fetch — the caller's signal, cache, credentials, custom
+  // headers must reach the network layer untouched. A regression that
+  // shallow-clones these out would silently break caller-driven aborts.
+  it("forwards an AbortSignal to fetch so callers can cancel in-flight requests", async () => {
+    const controller = new AbortController();
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({}),
+    });
+
+    await apiFetch("/account/", { signal: controller.signal });
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ signal: controller.signal }),
+    );
+  });
+
+  it("rejects with the native AbortError when the signal is already aborted", async () => {
+    const controller = new AbortController();
+    controller.abort();
+    fetchSpy.mockImplementationOnce(() =>
+      Promise.reject(
+        Object.assign(new Error("aborted"), { name: "AbortError" }),
+      ),
+    );
+
+    await expect(
+      apiFetch("/account/", { signal: controller.signal }),
+    ).rejects.toMatchObject({ name: "AbortError" });
+  });
+
+  it("preserves caller-provided headers alongside the Authorization header", async () => {
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({}),
+    });
+
+    await apiFetch("/account/", {
+      headers: { "X-Request-Id": "abc-123" },
+    });
+
+    const headers = fetchSpy.mock.calls[0]![1].headers;
+    expect(headers.authorization).toBe("Bearer tok_abc");
+    expect(headers["x-request-id"]).toBe("abc-123");
+  });
+});
+
+// Note on dedup coverage: `getAuthToken` is wrapped in React.cache() so
+// multiple concurrent apiFetch calls within the same server render share
+// one cookie read. The dedup is request-scoped — it only activates inside
+// a real React render (AsyncLocalStorage-backed). Outside one, cache()
+// falls through to a plain function call, so asserting "called once under
+// Promise.all" isn't meaningful here. Left uncovered intentionally; the
+// contract is enforced by the source code using `cache(...)` on export.

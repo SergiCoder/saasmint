@@ -1,41 +1,34 @@
 import { describe, it, expect } from "vitest";
 import { AuthError } from "@/domain/errors/AuthError";
 import { BillingError } from "@/domain/errors/BillingError";
+import type { DomainError } from "@/domain/errors/DomainError";
 
-describe("AuthError", () => {
+type DomainErrorCtor = new (
+  message: string,
+  code: string,
+  options?: ErrorOptions,
+) => DomainError;
+
+const SUBCLASSES: ReadonlyArray<[string, DomainErrorCtor]> = [
+  ["AuthError", AuthError],
+  ["BillingError", BillingError],
+];
+
+describe.each(SUBCLASSES)("%s", (name, Ctor) => {
   it("sets message, code, and name", () => {
-    const err = new AuthError("not authenticated", "UNAUTHENTICATED");
-    expect(err.message).toBe("not authenticated");
-    expect(err.code).toBe("UNAUTHENTICATED");
-    expect(err.name).toBe("AuthError");
+    const err = new Ctor("something failed", "SOMETHING_FAILED");
+    expect(err.message).toBe("something failed");
+    expect(err.code).toBe("SOMETHING_FAILED");
+    expect(err.name).toBe(name);
   });
 
   it("is an instance of Error", () => {
-    expect(new AuthError("msg", "CODE")).toBeInstanceOf(Error);
+    expect(new Ctor("msg", "CODE")).toBeInstanceOf(Error);
   });
 
   it("preserves cause when provided", () => {
     const cause = new Error("original");
-    const err = new AuthError("wrapped", "WRAPPED", { cause });
-    expect(err.cause).toBe(cause);
-  });
-});
-
-describe("BillingError", () => {
-  it("sets message, code, and name", () => {
-    const err = new BillingError("payment failed", "PAYMENT_FAILED");
-    expect(err.message).toBe("payment failed");
-    expect(err.code).toBe("PAYMENT_FAILED");
-    expect(err.name).toBe("BillingError");
-  });
-
-  it("is an instance of Error", () => {
-    expect(new BillingError("msg", "CODE")).toBeInstanceOf(Error);
-  });
-
-  it("preserves cause when provided", () => {
-    const cause = new Error("original");
-    const err = new BillingError("wrapped", "WRAPPED", { cause });
+    const err = new Ctor("wrapped", "WRAPPED", { cause });
     expect(err.cause).toBe(cause);
   });
 });

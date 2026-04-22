@@ -712,19 +712,34 @@ describe("auth server actions", () => {
       expect(mockSetAuthCookies).not.toHaveBeenCalled();
     });
 
-    it("re-validates cookie-stored next at read time (defense in depth)", async () => {
-      mockConsumeOAuthFlowCookies.mockResolvedValue({
-        inProgress: true,
-        next: "https://evil.com",
-      });
-      mockPublicApiFetch.mockResolvedValue({
-        access_token: "tok_oauth",
-        refresh_token: "ref_oauth",
-        expires_in: 900,
-      });
+    // Defense in depth for the open-redirect class of attacks: even though
+    // the attacker would already need to control the flow cookie, the
+    // `next` we return gets fed straight into a client-side router.replace
+    // by AuthCallbackClient, so any payload that slipped past cookie
+    // validation would redirect the signed-in user off-origin. These
+    // assertions pin the fall-through to the safe default.
+    it.each([
+      ["absolute off-origin URL", "https://evil.com"],
+      ["protocol-relative URL", "//evil.com"],
+      ["backslash-injection URL", "/\\evil.com"],
+      ["javascript: URI", "javascript:alert(1)"],
+      ["non-allowlisted internal path", "/admin/users"],
+    ])(
+      "re-validates cookie-stored next at read time and falls back to /dashboard for %s",
+      async (_label, storedNext) => {
+        mockConsumeOAuthFlowCookies.mockResolvedValue({
+          inProgress: true,
+          next: storedNext,
+        });
+        mockPublicApiFetch.mockResolvedValue({
+          access_token: "tok_oauth",
+          refresh_token: "ref_oauth",
+          expires_in: 900,
+        });
 
-      const result = await exchangeOAuthCode("code_abc");
-      expect(result).toEqual({ ok: true, next: "/dashboard" });
-    });
+        const result = await exchangeOAuthCode("code_abc");
+        expect(result).toEqual({ ok: true, next: "/dashboard" });
+      },
+    );
   });
 });

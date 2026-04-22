@@ -11,15 +11,7 @@ vi.mock("@/infrastructure/api/apiClient", () => ({
   apiFetch: vi.fn(),
 }));
 
-const {
-  authGateway,
-  userGateway,
-  planGateway,
-  productGateway,
-  subscriptionGateway,
-  orgGateway,
-  orgMemberGateway,
-} = await import("@/infrastructure/registry");
+const registry = await import("@/infrastructure/registry");
 
 const { DjangoApiAuthGateway } =
   await import("@/infrastructure/api/DjangoApiAuthGateway");
@@ -35,33 +27,42 @@ const { DjangoApiOrgGateway } =
   await import("@/infrastructure/api/DjangoApiOrgGateway");
 const { DjangoApiOrgMemberGateway } =
   await import("@/infrastructure/api/DjangoApiOrgMemberGateway");
+const { DjangoApiInvitationGateway } =
+  await import("@/infrastructure/api/DjangoApiInvitationGateway");
+const { DjangoApiReferenceGateway } =
+  await import("@/infrastructure/api/DjangoApiReferenceGateway");
+
+// Each row proves both "correct class instance" and "singleton identity"
+// (second import returns the same object reference) — if the registry ever
+// lazily constructs or mis-types a gateway, one of these blows up.
+const GATEWAYS = [
+  ["authGateway", registry.authGateway, DjangoApiAuthGateway],
+  ["userGateway", registry.userGateway, DjangoApiUserGateway],
+  ["planGateway", registry.planGateway, DjangoApiPlanGateway],
+  ["productGateway", registry.productGateway, DjangoApiProductGateway],
+  [
+    "subscriptionGateway",
+    registry.subscriptionGateway,
+    DjangoApiSubscriptionGateway,
+  ],
+  ["orgGateway", registry.orgGateway, DjangoApiOrgGateway],
+  ["orgMemberGateway", registry.orgMemberGateway, DjangoApiOrgMemberGateway],
+  ["invitationGateway", registry.invitationGateway, DjangoApiInvitationGateway],
+  ["referenceGateway", registry.referenceGateway, DjangoApiReferenceGateway],
+] as const;
 
 describe("registry", () => {
-  it("exports authGateway as DjangoApiAuthGateway", () => {
-    expect(authGateway).toBeInstanceOf(DjangoApiAuthGateway);
-  });
+  it.each(GATEWAYS)(
+    "exports %s as an instance of its concrete gateway class",
+    (_name, instance, Ctor) => {
+      expect(instance).toBeInstanceOf(Ctor);
+    },
+  );
 
-  it("exports userGateway as DjangoApiUserGateway", () => {
-    expect(userGateway).toBeInstanceOf(DjangoApiUserGateway);
-  });
-
-  it("exports planGateway as DjangoApiPlanGateway", () => {
-    expect(planGateway).toBeInstanceOf(DjangoApiPlanGateway);
-  });
-
-  it("exports productGateway as DjangoApiProductGateway", () => {
-    expect(productGateway).toBeInstanceOf(DjangoApiProductGateway);
-  });
-
-  it("exports subscriptionGateway as DjangoApiSubscriptionGateway", () => {
-    expect(subscriptionGateway).toBeInstanceOf(DjangoApiSubscriptionGateway);
-  });
-
-  it("exports orgGateway as DjangoApiOrgGateway", () => {
-    expect(orgGateway).toBeInstanceOf(DjangoApiOrgGateway);
-  });
-
-  it("exports orgMemberGateway as DjangoApiOrgMemberGateway", () => {
-    expect(orgMemberGateway).toBeInstanceOf(DjangoApiOrgMemberGateway);
+  it("returns the same singleton instance on repeat import", async () => {
+    const again = await import("@/infrastructure/registry");
+    for (const [name, instance] of GATEWAYS) {
+      expect(again[name as keyof typeof again]).toBe(instance);
+    }
   });
 });

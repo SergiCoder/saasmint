@@ -5,9 +5,23 @@ import { AuthForm } from "@/app/[locale]/(auth)/_components/AuthForm";
 
 const noopAction = vi.fn(async () => undefined);
 
+/**
+ * These tests query by input `name` attributes and link `href`s rather than
+ * label text or link copy — that way they stay green when i18n keys are
+ * renamed or translated to non-English locales. The `name` attribute is
+ * the real server-action contract (what `formData.get(...)` reads).
+ */
+
+function selectByName(
+  container: HTMLElement,
+  name: string,
+): HTMLInputElement | null {
+  return container.querySelector<HTMLInputElement>(`input[name="${name}"]`);
+}
+
 describe("AuthForm", () => {
   it("renders email + password fields and a submit button", () => {
-    render(
+    const { container } = render(
       <AuthForm
         action={noopAction}
         translationNamespace="login"
@@ -20,14 +34,20 @@ describe("AuthForm", () => {
       />,
     );
 
-    expect(screen.getByLabelText(/email/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/^password/)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "submit" })).toBeInTheDocument();
-    expect(screen.queryByLabelText(/fullName/)).not.toBeInTheDocument();
+    expect(selectByName(container, "email")).toHaveAttribute("type", "email");
+    expect(selectByName(container, "password")).toHaveAttribute(
+      "type",
+      "password",
+    );
+    expect(selectByName(container, "fullName")).toBeNull();
+    expect(screen.getByRole("button", { name: /.+/ })).toHaveAttribute(
+      "type",
+      "submit",
+    );
   });
 
   it("renders the full name field when showNameField is true", () => {
-    render(
+    const { container } = render(
       <AuthForm
         action={noopAction}
         translationNamespace="signup"
@@ -41,10 +61,12 @@ describe("AuthForm", () => {
       />,
     );
 
-    expect(screen.getByLabelText(/fullName/)).toBeInTheDocument();
+    const fullName = selectByName(container, "fullName");
+    expect(fullName).toBeInTheDocument();
+    expect(fullName).toBeRequired();
   });
 
-  it("renders a forgot password link when forgotPasswordHref is provided", () => {
+  it("renders a forgot-password link when forgotPasswordHref is provided", () => {
     render(
       <AuthForm
         action={noopAction}
@@ -59,11 +81,14 @@ describe("AuthForm", () => {
       />,
     );
 
-    const link = screen.getByRole("link", { name: "forgotPassword" });
-    expect(link).toHaveAttribute("href", "/forgot-password");
+    const links = screen.getAllByRole("link");
+    const forgotLink = links.find(
+      (a) => a.getAttribute("href") === "/forgot-password",
+    );
+    expect(forgotLink).toBeInTheDocument();
   });
 
-  it("does not render a forgot password link when href is not provided", () => {
+  it("does not render a forgot-password link when href is not provided", () => {
     render(
       <AuthForm
         action={noopAction}
@@ -77,12 +102,13 @@ describe("AuthForm", () => {
       />,
     );
 
+    const links = screen.getAllByRole("link");
     expect(
-      screen.queryByRole("link", { name: "forgotPassword" }),
-    ).not.toBeInTheDocument();
+      links.find((a) => a.getAttribute("href") === "/forgot-password"),
+    ).toBeUndefined();
   });
 
-  it("renders the footer link with the provided href", () => {
+  it("renders the footer link at the provided href", () => {
     render(
       <AuthForm
         action={noopAction}
@@ -96,8 +122,10 @@ describe("AuthForm", () => {
       />,
     );
 
-    const footerLink = screen.getByRole("link", { name: "signUp" });
-    expect(footerLink).toHaveAttribute("href", "/signup");
+    const links = screen.getAllByRole("link");
+    expect(
+      links.find((a) => a.getAttribute("href") === "/signup"),
+    ).toBeInTheDocument();
   });
 
   it("renders hidden inputs for every entry in hiddenFields", () => {
@@ -115,8 +143,8 @@ describe("AuthForm", () => {
       />,
     );
 
-    const plan = container.querySelector('input[name="plan"]');
-    const interval = container.querySelector('input[name="interval"]');
+    const plan = selectByName(container, "plan");
+    const interval = selectByName(container, "interval");
     expect(plan).toHaveAttribute("type", "hidden");
     expect(plan).toHaveAttribute("value", "team");
     expect(interval).toHaveAttribute("type", "hidden");

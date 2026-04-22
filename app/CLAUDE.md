@@ -166,3 +166,15 @@ pnpm test:coverage    # run tests with v8 coverage report
 ```
 
 Tests live in `tests/` mirroring the `src/` structure (e.g. `src/domain/errors/DomainError.ts` → `tests/domain/errors/DomainError.test.ts`). The test runner is Vitest; configuration is in `vitest.config.ts`.
+
+### Global test fixtures (`tests/setup.ts`)
+
+- **`next-intl` stub** — `useTranslations()` returns a translator that echoes the i18n key when called without params, and substitutes `{param}` placeholders when called with a params object (unused params are appended, space-separated). Component tests can therefore assert on interpolated values (e.g. `getByText(/Jane Doe/)`) without coupling to a specific key-name format. `useLocale()` returns `"en"` and `useMessages()` returns `{}`.
+- **`@/lib/i18n/navigation` stub** — `Link` renders a plain `<a>`; `useRouter`, `redirect`, `permanentRedirect`, `usePathname`, and `getPathname` are no-ops or identity helpers.
+- **`console.error` silencing** — a `beforeEach` hook installs `vi.spyOn(console, "error").mockImplementation(() => {})` so tests that exercise error paths don't pollute test output. Tests that want to assert on logging can still read calls via `vi.mocked(console.error)` — no ad-hoc `vi.spyOn` needed.
+- **DOM cleanup** — `afterEach(cleanup)` unmounts every React tree rendered via Testing Library.
+
+### Component testing conventions
+
+- **`Button`** exposes its `variant` and `size` as `data-variant` / `data-size` attributes. Prefer these over class-name matching when asserting visual variants (e.g. `expect(btn).toHaveAttribute("data-variant", "danger")`).
+- Prefer the i18n stub's placeholder echoing over brittle fake translation maps — assert on the interpolated values that end users would see.

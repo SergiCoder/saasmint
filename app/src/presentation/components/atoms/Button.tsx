@@ -33,6 +33,8 @@ export function Button({
 }: ButtonProps) {
   return (
     <button
+      data-variant={variant}
+      data-size={size}
       disabled={disabled || loading}
       className={`inline-flex cursor-pointer items-center justify-center rounded-md font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}

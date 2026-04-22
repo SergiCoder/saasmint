@@ -2,16 +2,12 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { User } from "@/domain/models/User";
 import type { Org } from "@/domain/models/Org";
+import { translate } from "../../_helpers/translate";
 
 // --- Mocks ---------------------------------------------------------------
 
-const mockTranslate = vi.fn((key: string, params?: Record<string, unknown>) => {
-  if (params && "name" in params) return `${key}::${params.name}`;
-  return key;
-});
-
 vi.mock("next-intl/server", () => ({
-  getTranslations: vi.fn(() => Promise.resolve(mockTranslate)),
+  getTranslations: vi.fn(() => Promise.resolve(translate)),
   setRequestLocale: vi.fn(),
 }));
 
@@ -101,12 +97,14 @@ describe("DashboardPage", () => {
     mockListUserOrgsExecute.mockResolvedValue([]);
   });
 
-  it("renders welcome message with user full name", async () => {
+  it("renders welcome heading with user full name", async () => {
     mockGetCurrentUser.mockResolvedValue(makeUser({ fullName: "Jane Doe" }));
 
     await renderPage();
 
-    expect(screen.getByText("welcome::Jane Doe")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "Jane Doe",
+    );
   });
 
   it("falls back to email when fullName is empty", async () => {
@@ -116,7 +114,9 @@ describe("DashboardPage", () => {
 
     await renderPage();
 
-    expect(screen.getByText("welcome::jane@example.com")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "jane@example.com",
+    );
   });
 
   it("renders subtitle", async () => {

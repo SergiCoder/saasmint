@@ -39,19 +39,44 @@ function makeToken(exp: number): string {
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
+/**
+ * The proxy only touches `nextUrl`, `url`, `cookies`, and `headers` on the
+ * request — declaring the mock as a full `NextRequest` would lie about the
+ * other surface (geo, ua, clone, etc.). Tests that need to assert on the
+ * forwarded tokens read `request.cookieSetSpy`. The cast to `NextRequest`
+ * happens at `proxy(request)` call sites via the declared param type.
+ */
+type ProxyTestRequest = Pick<
+  NextRequest,
+  "nextUrl" | "url" | "cookies" | "headers"
+> & {
+  readonly cookieSetSpy: ReturnType<typeof vi.fn>;
+};
+
 function createMockRequest(
   url: string,
-  cookies: { name: string; value: string }[] = [],
-): NextRequest {
+  initial: { name: string; value: string }[] = [],
+): ProxyTestRequest {
   const parsedUrl = new URL(url, APP_URL);
+  // Mutable cookie jar so the proxy's `request.cookies.set(...)` calls
+  // actually propagate to downstream `.get(...)`/`.getAll(...)` callers.
+  const jar = new Map<string, string>(initial.map((c) => [c.name, c.value]));
+  const cookieSetSpy = vi.fn((name: string, value: string) => {
+    jar.set(name, value);
+  });
   return {
     nextUrl: parsedUrl,
     url: parsedUrl.toString(),
     cookies: {
-      getAll: () => cookies,
-      get: (name: string) => cookies.find((c) => c.name === name),
+      getAll: () =>
+        Array.from(jar.entries()).map(([name, value]) => ({ name, value })),
+      get: (name: string) =>
+        jar.has(name) ? { name, value: jar.get(name)! } : undefined,
+      set: cookieSetSpy,
     },
-  } as unknown as NextRequest;
+    headers: new Headers(),
+    cookieSetSpy,
+  } as unknown as ProxyTestRequest;
 }
 
 beforeEach(() => {
@@ -63,7 +88,7 @@ describe("proxy", () => {
   describe("protected routes", () => {
     it("redirects to login when no access_token cookie on /dashboard", async () => {
       const request = createMockRequest(`${APP_URL}/en/dashboard`);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       expect(response.status).toBe(307);
       const location = response.headers.get("location");
@@ -72,7 +97,7 @@ describe("proxy", () => {
 
     it("redirects to login when no access_token cookie on /subscription", async () => {
       const request = createMockRequest(`${APP_URL}/en/subscription`);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
@@ -80,7 +105,7 @@ describe("proxy", () => {
 
     it("redirects to login when no access_token cookie on /profile", async () => {
       const request = createMockRequest(`${APP_URL}/en/profile`);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
@@ -88,7 +113,7 @@ describe("proxy", () => {
 
     it("redirects to login when no access_token cookie on /org", async () => {
       const request = createMockRequest(`${APP_URL}/en/org`);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
@@ -96,26 +121,31 @@ describe("proxy", () => {
 
     it("redirects to login when no access_token cookie on /admin", async () => {
       const request = createMockRequest(`${APP_URL}/en/admin`);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
     });
 
-    it("allows through when access_token is valid", async () => {
+    it("forwards to intl middleware when access_token is valid (no redirect, no refresh, pathname header set)", async () => {
       const futureExp = Math.floor(Date.now() / 1000) + 600; // 10 min from now
       const request = createMockRequest(`${APP_URL}/en/dashboard`, [
         { name: "access_token", value: makeToken(futureExp) },
       ]);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
-      const location = response.headers.get("location");
-      expect(location).toBeNull();
+      expect(response.headers.get("location")).toBeNull();
+      expect(mockIntlMiddleware).toHaveBeenCalledTimes(1);
+      expect(fetchSpy).not.toHaveBeenCalled();
+      // Downstream server components must receive the current pathname.
+      expect(response.headers.get("x-middleware-request-x-pathname")).toBe(
+        "/en/dashboard",
+      );
     });
 
     it("preserves locale when redirecting to login", async () => {
       const request = createMockRequest(`${APP_URL}/es/dashboard`);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       expect(response.headers.get("location")).toContain("/es/login");
     });
@@ -125,21 +155,22 @@ describe("proxy", () => {
       const request = createMockRequest(`${APP_URL}/en/dashboard`, [
         { name: "access_token", value: makeToken(pastExp) },
       ]);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
     });
 
-    it("attempts token refresh when access_token is expired", async () => {
+    it("attempts token refresh when access_token is expired and writes the new tokens to both the response (Set-Cookie) and the forwarded request", async () => {
       const pastExp = Math.floor(Date.now() / 1000) - 60;
       const futureExp = Math.floor(Date.now() / 1000) + 900;
+      const newAccess = makeToken(futureExp);
 
       fetchSpy.mockResolvedValue({
         ok: true,
         json: () =>
           Promise.resolve({
-            access_token: makeToken(futureExp),
+            access_token: newAccess,
             refresh_token: "new-refresh-tok",
             expires_in: 900,
           }),
@@ -149,7 +180,7 @@ describe("proxy", () => {
         { name: "access_token", value: makeToken(pastExp) },
         { name: "refresh_token", value: "old-refresh-tok" },
       ]);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       expect(fetchSpy).toHaveBeenCalledWith(
         `${API_URL}/api/v1/auth/refresh/`,
@@ -158,9 +189,28 @@ describe("proxy", () => {
           body: JSON.stringify({ refresh_token: "old-refresh-tok" }),
         }),
       );
-      // Should not redirect to login
-      const location = response.headers.get("location");
-      expect(location).toBeNull();
+
+      // No redirect to login — the refresh succeeded.
+      expect(response.headers.get("location")).toBeNull();
+
+      // The browser must receive both cookies on Set-Cookie so the session
+      // persists to the next navigation.
+      const responseCookies = response.cookies.getAll();
+      const access = responseCookies.find((c) => c.name === "access_token");
+      const refresh = responseCookies.find((c) => c.name === "refresh_token");
+      expect(access?.value).toBe(newAccess);
+      expect(refresh?.value).toBe("new-refresh-tok");
+
+      // And server components on THIS render must read the fresh tokens,
+      // not the stale ones — the proxy forwards them via request.cookies.set.
+      expect(request.cookieSetSpy).toHaveBeenCalledWith(
+        "access_token",
+        newAccess,
+      );
+      expect(request.cookieSetSpy).toHaveBeenCalledWith(
+        "refresh_token",
+        "new-refresh-tok",
+      );
     });
 
     it("redirects to login when token refresh fails", async () => {
@@ -175,7 +225,7 @@ describe("proxy", () => {
         { name: "access_token", value: makeToken(pastExp) },
         { name: "refresh_token", value: "expired-refresh-tok" },
       ]);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
@@ -185,14 +235,14 @@ describe("proxy", () => {
   describe("public routes", () => {
     it("passes public routes through intl middleware", async () => {
       const request = createMockRequest(`${APP_URL}/en/pricing`);
-      await proxy(request);
+      await proxy(request as unknown as NextRequest);
 
       expect(fetchSpy).not.toHaveBeenCalled();
     });
 
     it("does not require auth for marketing pages", async () => {
       const request = createMockRequest(`${APP_URL}/en/about`);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       const location = response.headers.get("location");
       expect(location).toBeNull();
@@ -215,7 +265,7 @@ describe("proxy", () => {
         { name: "access_token", value: makeToken(pastExp) },
         { name: "refresh_token", value: "old-refresh-tok" },
       ]);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       expect(fetchSpy).toHaveBeenCalledWith(
         `${API_URL}/api/v1/auth/refresh/`,
@@ -238,7 +288,7 @@ describe("proxy", () => {
         { name: "access_token", value: makeToken(pastExp) },
         { name: "refresh_token", value: "expired-refresh-tok" },
       ]);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       // Public routes should NOT redirect to login even if refresh fails
       const location = response.headers.get("location");
@@ -249,7 +299,7 @@ describe("proxy", () => {
   describe("locale handling in protected paths", () => {
     it("handles pt-BR locale prefix correctly", async () => {
       const request = createMockRequest(`${APP_URL}/pt-BR/dashboard`);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/pt-BR/login");
@@ -279,7 +329,7 @@ describe("proxy", () => {
           { name: "refresh_token", value: "valid-refresh-tok" },
         ]);
 
-        const response = await proxy(request);
+        const response = await proxy(request as unknown as NextRequest);
 
         expect(fetchSpy).not.toHaveBeenCalled();
         // Anonymous routes should also not redirect to login.
@@ -291,7 +341,7 @@ describe("proxy", () => {
           { name: "refresh_token", value: "valid-refresh-tok" },
         ]);
 
-        const response = await proxy(request);
+        const response = await proxy(request as unknown as NextRequest);
 
         expect(fetchSpy).not.toHaveBeenCalled();
         expect(response.headers.get("location")).toBeNull();
@@ -304,7 +354,7 @@ describe("proxy", () => {
         { name: "refresh_token", value: "valid-refresh-tok" },
       ]);
 
-      await proxy(request);
+      await proxy(request as unknown as NextRequest);
 
       expect(fetchSpy).not.toHaveBeenCalled();
     });
@@ -325,7 +375,7 @@ describe("proxy", () => {
         { name: "refresh_token", value: "valid-refresh-tok" },
       ]);
 
-      await proxy(request);
+      await proxy(request as unknown as NextRequest);
 
       // Sanity check — the inverse of the anonymous-skip behaviour: non-anon
       // routes still go through Django.
@@ -338,7 +388,7 @@ describe("proxy", () => {
       const request = createMockRequest(`${APP_URL}/en/dashboard`, [
         { name: "access_token", value: "only.two" },
       ]);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
     });
@@ -347,7 +397,7 @@ describe("proxy", () => {
       const request = createMockRequest(`${APP_URL}/en/dashboard`, [
         { name: "access_token", value: "header.not-base64!@#.sig" },
       ]);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
     });
@@ -359,7 +409,7 @@ describe("proxy", () => {
       const request = createMockRequest(`${APP_URL}/en/dashboard`, [
         { name: "access_token", value: token },
       ]);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
     });
@@ -371,7 +421,7 @@ describe("proxy", () => {
       const request = createMockRequest(`${APP_URL}/en/dashboard`, [
         { name: "access_token", value: token },
       ]);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
     });
@@ -383,7 +433,7 @@ describe("proxy", () => {
       const request = createMockRequest(`${APP_URL}/en/dashboard`, [
         { name: "access_token", value: token },
       ]);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/en/login");
     });
@@ -392,7 +442,7 @@ describe("proxy", () => {
   describe("withPathnameHeader", () => {
     it("sets x-pathname on the forwarded request headers", async () => {
       const request = createMockRequest(`${APP_URL}/en/pricing`);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       // NextResponse.next with request.headers serializes custom headers as
       // "x-middleware-request-<name>". We assert the downstream forwarded
@@ -409,7 +459,7 @@ describe("proxy", () => {
       mockIntlMiddleware.mockReturnValue(rewriteResponse);
 
       const request = createMockRequest(`${APP_URL}/about`);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       expect(response.headers.get("x-middleware-rewrite")).toBe(rewriteTarget);
       expect(response.headers.get("x-middleware-request-x-pathname")).toBe(
@@ -423,7 +473,7 @@ describe("proxy", () => {
       mockIntlMiddleware.mockReturnValue(intlRedirect);
 
       const request = createMockRequest(`${APP_URL}/`);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       // Redirect pass-through: location survives, no forwarded pathname header.
       expect(response.headers.get("location")).toBe(redirectTarget);
@@ -438,7 +488,7 @@ describe("proxy", () => {
       mockIntlMiddleware.mockReturnValue(intlResponse);
 
       const request = createMockRequest(`${APP_URL}/es`);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       const names = response.cookies.getAll().map((c) => c.name);
       expect(names).toContain("NEXT_LOCALE");
@@ -461,7 +511,7 @@ describe("proxy", () => {
         { name: "access_token", value: makeToken(pastExp) },
         { name: "refresh_token", value: "old-refresh-tok" },
       ]);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
 
       // Even via the refresh branch, server components must still receive
       // the forwarded pathname header.
@@ -476,7 +526,7 @@ describe("proxy", () => {
 
     it("does not leak x-middleware-next onto the final response", async () => {
       const request = createMockRequest(`${APP_URL}/en/pricing`);
-      const response = await proxy(request);
+      const response = await proxy(request as unknown as NextRequest);
       // withPathnameHeader rebuilds via NextResponse.next(), which sets its own
       // x-middleware-next. The filter strips the incoming one so only the
       // rebuilt one remains. Either way, the rebuilt response must carry the
