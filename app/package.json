@@ -29,10 +29,11 @@
     "react-dom": "19.2.5",
     "zod": "^4.3.6"
   },
-  "//": "pnpm.overrides pins vite above CVE range 8.0.0-8.0.4; drop once vitest bumps its peer range",
+  "//": "pnpm.overrides pins transitive deps above their CVE ranges: vite (8.0.0-8.0.4) and postcss (<8.5.10, pulled in by next@16.2.4). Drop entries once their parents bump.",
   "pnpm": {
     "overrides": {
-      "vite": "^8.0.7"
+      "vite": "^8.0.7",
+      "postcss": "^8.5.10"
     }
   },
   "devDependencies": {
