@@ -32,6 +32,7 @@ const ANONYMOUS_PREFIXES = [
   "/reset-password",
   "/verify-email",
   "/auth/callback",
+  "/auth/error",
   "/invitations",
 ];
 
@@ -116,6 +117,8 @@ export async function proxy(request: NextRequest) {
     (!accessToken || isTokenExpired(accessToken)) &&
     !!refreshToken;
 
+  let refreshRejected = false;
+
   if (shouldRefresh) {
     try {
       const res = await fetch(`${API_URL}/api/v1/auth/refresh/`, {
@@ -149,17 +152,35 @@ export async function proxy(request: NextRequest) {
         );
         return withPathnameHeader(request, intlResponse);
       }
+
+      // Django rejected the refresh (401/invalid/revoked/user-deleted).
+      // Clear the stale cookies so downstream gateway calls don't send a
+      // token that will trip their 401 branches.
+      refreshRejected = true;
+      accessToken = undefined;
+      request.cookies.delete(ACCESS_TOKEN_NAME);
+      request.cookies.delete(REFRESH_TOKEN_NAME);
     } catch {
-      // Refresh failed — fall through
+      // Network error (API unreachable) — leave cookies alone, fall through.
     }
   }
 
   if (isProtected && (!accessToken || isTokenExpired(accessToken))) {
-    const locale = pathname.split("/")[1] ?? routing.defaultLocale;
+    const firstSegment = pathname.split("/")[1];
+    const supportedLocales = routing.locales as readonly string[];
+    const locale =
+      firstSegment && supportedLocales.includes(firstSegment)
+        ? firstSegment
+        : routing.defaultLocale;
     return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
   }
 
-  return withPathnameHeader(request, intlMiddleware(request));
+  const intlResponse = intlMiddleware(request);
+  if (refreshRejected) {
+    intlResponse.cookies.delete(ACCESS_TOKEN_NAME);
+    intlResponse.cookies.delete(REFRESH_TOKEN_NAME);
+  }
+  return withPathnameHeader(request, intlResponse);
 }
 
 export const config = {

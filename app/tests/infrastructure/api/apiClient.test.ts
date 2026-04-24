@@ -369,6 +369,44 @@ describe("apiFetchOptional", () => {
     const headers = fetchSpy.mock.calls[0]![1].headers;
     expect(headers.authorization).toBeUndefined();
   });
+
+  it("retries anonymously when a stale token is rejected with 401", async () => {
+    mockGetAccessToken.mockResolvedValue("stale-tok");
+    fetchSpy
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        text: () => Promise.resolve('{"detail":"Invalid token"}'),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({ results: [] }),
+      });
+
+    const result = await apiFetchOptional<{ results: unknown[] }>(
+      "/billing/plans/",
+    );
+
+    expect(result).toEqual({ results: [] });
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    const firstHeaders = fetchSpy.mock.calls[0]![1].headers;
+    const secondHeaders = fetchSpy.mock.calls[1]![1].headers;
+    expect(firstHeaders.authorization).toBe("Bearer stale-tok");
+    expect(secondHeaders.authorization).toBeUndefined();
+  });
+
+  it("does not retry when no token was sent (propagates the error)", async () => {
+    mockGetAccessToken.mockResolvedValue(undefined);
+    fetchSpy.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      text: () => Promise.resolve('{"detail":"Server error"}'),
+    });
+
+    await expect(apiFetchOptional("/billing/plans/")).rejects.toThrow();
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe("request forwarding", () => {

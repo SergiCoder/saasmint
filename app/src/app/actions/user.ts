@@ -19,8 +19,8 @@ export async function updateAvatarUrl(
     await authGateway.getCurrentUser();
     await userGateway.updateProfile({ avatarUrl });
   } catch (err) {
-    if (err instanceof AuthError) return fail("session_expired");
-    return fail("avatar_update_failed");
+    console.error("Failed to update avatar", err);
+    return toActionError(err);
   }
   revalidatePath("/", "layout");
   return ok();
@@ -106,7 +106,8 @@ export async function deleteAccount(): Promise<ActionResult> {
   try {
     await authGateway.deleteAccount();
     return ok();
-  } catch {
-    return fail("account_delete_failed");
+  } catch (err) {
+    console.error("Failed to delete account", err);
+    return toActionError(err);
   }
 }

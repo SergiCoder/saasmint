@@ -19,9 +19,11 @@ const mockCancelInvitation = vi.fn();
 const mockRemoveMember = vi.fn();
 const mockUpdateMemberRole = vi.fn();
 const mockTransferOwnership = vi.fn();
+const mockDeleteOrg = vi.fn();
 
 vi.mock("@/infrastructure/registry", () => ({
   authGateway: { getCurrentUser: mockGetCurrentUser },
+  orgGateway: { deleteOrg: mockDeleteOrg },
   orgMemberGateway: {
     listMembers: mockListMembers,
     removeMember: mockRemoveMember,
@@ -44,6 +46,7 @@ let cancelInvitation: typeof import("@/app/actions/org").cancelInvitation;
 let removeMember: typeof import("@/app/actions/org").removeMember;
 let updateMemberRole: typeof import("@/app/actions/org").updateMemberRole;
 let transferOwnership: typeof import("@/app/actions/org").transferOwnership;
+let deleteOrg: typeof import("@/app/actions/org").deleteOrg;
 
 beforeEach(async () => {
   vi.clearAllMocks();
@@ -53,6 +56,7 @@ beforeEach(async () => {
   removeMember = mod.removeMember;
   updateMemberRole = mod.updateMemberRole;
   transferOwnership = mod.transferOwnership;
+  deleteOrg = mod.deleteOrg;
 });
 
 describe("org server actions", () => {
@@ -281,6 +285,52 @@ describe("org server actions", () => {
 
       const result = await transferOwnership(undefined, formData);
       expect(result).toEqual({ ok: false, code: "unknown_error" });
+    });
+  });
+
+  describe("deleteOrg", () => {
+    it("deletes org and revalidates root layout", async () => {
+      mockRole("owner");
+      mockDeleteOrg.mockResolvedValue(undefined);
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+
+      const result = await deleteOrg(undefined, formData);
+      expect(mockDeleteOrg).toHaveBeenCalledWith("org_1");
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/", "layout");
+      expect(result).toEqual({ ok: true });
+    });
+
+    it("returns invalid_input when orgId is missing", async () => {
+      const formData = new FormData();
+
+      const result = await deleteOrg(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "invalid_input" });
+      expect(mockDeleteOrg).not.toHaveBeenCalled();
+    });
+
+    it("returns not_authorized when caller is an admin", async () => {
+      mockRole("admin");
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+
+      const result = await deleteOrg(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "not_authorized" });
+      expect(mockDeleteOrg).not.toHaveBeenCalled();
+    });
+
+    it("returns an envelope error when gateway throws", async () => {
+      mockRole("owner");
+      mockDeleteOrg.mockRejectedValue(new Error("API 500"));
+
+      const formData = new FormData();
+      formData.set("orgId", "org_1");
+
+      const result = await deleteOrg(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
     });
   });
 });

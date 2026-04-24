@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { BillingError } from "@/domain/errors/BillingError";
 import { MAX_SEATS, type Subscription } from "@/domain/models/Subscription";
-import { authGateway, subscriptionGateway } from "@/infrastructure/registry";
+import {
+  authGateway,
+  productGateway,
+  subscriptionGateway,
+} from "@/infrastructure/registry";
 import { canManageBilling } from "@/app/[locale]/(app)/subscription/_data/canManageBilling";
 import {
   APP_ORIGIN,
@@ -45,6 +49,30 @@ async function assertCanManageBilling(): Promise<Subscription> {
   return subscription;
 }
 
+export async function startProductCheckout(
+  _prevState: unknown,
+  formData: FormData,
+): Promise<ActionResult> {
+  const productPriceId = getString(formData, "productPriceId");
+  if (!productPriceId) return fail("invalid_input");
+
+  let url: string;
+  try {
+    const session = await productGateway.createCheckoutSession({
+      productPriceId,
+      successUrl: `${APP_ORIGIN}/subscription?status=success`,
+      cancelUrl: `${APP_ORIGIN}/subscription`,
+    });
+    assertTrustedRedirect(session.url);
+    url = session.url;
+  } catch (err) {
+    console.error("Failed to start product checkout", err);
+    return toActionError(err);
+  }
+
+  redirect(url);
+}
+
 export async function startCheckout(
   _prevState: unknown,
   formData: FormData,
@@ -72,7 +100,7 @@ export async function startCheckout(
     url = session.url;
   } catch (err) {
     console.error("Failed to start checkout", err);
-    return fail("checkout_failed");
+    return toActionError(err);
   }
 
   redirect(url);

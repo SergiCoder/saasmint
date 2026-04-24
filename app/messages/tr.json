@@ -214,7 +214,8 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "{name} tarafından yönetiliyor",
-    "teamPlanReadonly": "Ekip aboneliğiniz kuruluş sahibi tarafından yönetilmektedir."
+    "teamPlanReadonly": "Ekip aboneliğiniz kuruluş sahibi tarafından yönetilmektedir.",
+    "checkout": "Ödeme"
   },
   "profile": {
     "title": "Ayarlar",
@@ -252,7 +253,7 @@
     "deleteDialogSubmit": "Hesabı kalıcı olarak sil",
     "deleteDialogMismatch": "E-posta adresi hesabınızla eşleşmiyor.",
     "deleteDialogError": "Hesap silinemedi. Lütfen tekrar deneyin.",
-    "deleteBlockedOwner": "Bir organizasyona sahipsiniz. Hesabınızı silmek için lütfen destek ekibimizle iletişime geçin.",
+    "deleteBlockedOwner": "Bir organizasyonun sahibisiniz. Hesabınızı silmeden önce sahipliği devredin veya organizasyonu silin.",
     "deleteBlockedMember": "Bir takıma aitsiniz. Önce çıkarılmak için lütfen takım sahibinizle iletişime geçin.",
     "pronounsHeHim": "O (erkek)",
     "pronounsSheHer": "O (kadın)",
@@ -300,7 +301,15 @@
     "seatsUpdated": "Koltuklar başarıyla güncellendi",
     "removeSeatConfirmTitle": "Koltuk kaldır",
     "removeSeatConfirmBody": "Herhangi bir iade yapılmayacaktır. Bir sonraki yenilemeniz azaltılmış koltuk sayısını yansıtacaktır.",
-    "removeSeatConfirmAction": "Kaldır"
+    "removeSeatConfirmAction": "Kaldır",
+    "deleteOrg": "Organizasyonu sil",
+    "deleteOrgDescription": "Bu organizasyonu kalıcı olarak sil. Tüm üyeler kaldırılacak, bekleyen davetler iptal edilecek ve aboneliğiniz iade yapılmadan hemen iptal edilecek.",
+    "deleteOrgDialogTitle": "Bu organizasyonu sil?",
+    "deleteOrgDialogDescription": "Bu işlem geri alınamaz. Eğer bu tek organizasyonunuzsa, hesabınız da silinecek.",
+    "deleteOrgDialogLabel": "Onaylamak için {name} yazın",
+    "deleteOrgDialogCancel": "İptal",
+    "deleteOrgDialogSubmit": "Organizasyonu kalıcı olarak sil",
+    "deleteOrgDialogMismatch": "Organizasyon adı eşleşmiyor."
   },
   "common": {
     "loading": "Yükleniyor...",
@@ -314,9 +323,6 @@
     "unknownError": "Bilinmeyen hata"
   },
   "actionErrors": {
-    "account_delete_failed": "Hesap silinemedi",
-    "avatar_update_failed": "Avatar güncellenemedi",
-    "checkout_failed": "Ödeme başlatılamadı",
     "current_password_required": "Mevcut şifre gereklidir",
     "email_and_password_required": "E-posta ve şifre gereklidir",
     "email_required": "E-posta gereklidir",

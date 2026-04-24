@@ -7,7 +7,7 @@ import type { Subscription } from "@/domain/models/Subscription";
 import { ApiError } from "@/domain/errors/ApiError";
 import { apiFetch, apiFetchVoid } from "./apiClient";
 import { applyPriceDefaults, keysToCamel, keysToSnake } from "./caseTransform";
-import { SubscriptionSchema } from "./schemas";
+import { CheckoutSessionResponseSchema, SubscriptionSchema } from "./schemas";
 
 export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
   async getSubscription(currency?: string): Promise<Subscription | null> {
@@ -30,19 +30,21 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
   async createCheckoutSession(
     input: CheckoutSessionInput,
   ): Promise<{ url: string }> {
-    return apiFetch<{ url: string }>("/billing/checkout-sessions/", {
+    const raw = await apiFetch<unknown>("/billing/checkout-sessions/", {
       method: "POST",
       body: JSON.stringify(keysToSnake(input)),
     });
+    return CheckoutSessionResponseSchema.parse(raw);
   }
 
   async createBillingPortalSession(
     input: BillingPortalInput,
   ): Promise<{ url: string }> {
-    return apiFetch<{ url: string }>("/billing/portal-sessions/", {
+    const raw = await apiFetch<unknown>("/billing/portal-sessions/", {
       method: "POST",
       body: JSON.stringify(keysToSnake(input)),
     });
+    return CheckoutSessionResponseSchema.parse(raw);
   }
 
   async cancelSubscription(): Promise<void> {

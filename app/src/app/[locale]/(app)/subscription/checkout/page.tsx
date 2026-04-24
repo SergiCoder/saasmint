@@ -1,8 +1,12 @@
 import { redirect } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
-import { subscriptionGateway } from "@/infrastructure/registry";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { planGateway } from "@/infrastructure/registry";
+import { PLAN_TIER_FREE } from "@/domain/models/Plan";
+import { formatCurrency } from "@/lib/formatCurrency";
+import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { getCurrentUser } from "../../_data/getCurrentUser";
-import { APP_ORIGIN, assertTrustedRedirect } from "../_data/trustedRedirect";
+import { CheckoutButton } from "../_components/CheckoutButton";
+import { startCheckout } from "@/app/actions/billing";
 
 interface CheckoutPageProps {
   params: Promise<{ locale: string }>;
@@ -16,32 +20,57 @@ export default async function CheckoutPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [, { plan }] = await Promise.all([getCurrentUser(), searchParams]);
+  const [t, tPlans, user, { plan: planPriceId }] = await Promise.all([
+    getTranslations("billing"),
+    getTranslations("plans"),
+    getCurrentUser(),
+    searchParams,
+  ]);
 
-  if (!plan) {
+  if (!planPriceId) {
     redirect("/subscription");
   }
 
-  let url: string | null = null;
-  try {
-    const session = await subscriptionGateway.createCheckoutSession({
-      planPriceId: plan,
-      successUrl: `${APP_ORIGIN}/subscription?status=success`,
-      cancelUrl: `${APP_ORIGIN}/subscription`,
-    });
-    assertTrustedRedirect(session.url);
-    url = session.url;
-  } catch (err) {
-    console.error("Failed to start checkout", err);
-    // Use a short, non-reflective error code the subscription page maps to
-    // a translated message — prevents an attacker-controlled ?error=... URL
-    // from displaying arbitrary text inside the authenticated app.
-    redirect(`/subscription?error=checkout_failed`);
-  }
+  const plans = await planGateway.listPlans(user.preferredCurrency);
+  const plan = plans.find((p) => p.price?.id === planPriceId);
 
-  if (!url) {
+  if (
+    !plan ||
+    !plan.price ||
+    plan.context !== "personal" ||
+    plan.tier === PLAN_TIER_FREE
+  ) {
     redirect("/subscription");
   }
 
-  redirect(url);
+  const intervalLabel =
+    plan.interval === "year" ? t("billedYearly") : t("billedMonthly");
+
+  return (
+    <div className="mx-auto max-w-md space-y-6 pb-12">
+      <h1 className="text-2xl font-bold text-gray-900">{t("checkout")}</h1>
+      <div className="space-y-4 rounded-xl border border-gray-200 p-6 shadow-sm">
+        <div>
+          <p className="text-lg font-semibold text-gray-900">
+            {translatePlanName(tPlans, plan)}
+          </p>
+          <p className="text-sm text-gray-600">
+            {formatCurrency(
+              plan.price.displayAmount,
+              plan.price.currency,
+              locale,
+            )}{" "}
+            · {intervalLabel}
+          </p>
+        </div>
+        <CheckoutButton
+          action={startCheckout}
+          field={{ name: "planPriceId", value: plan.price.id }}
+          highlighted
+        >
+          {t("upgrade")}
+        </CheckoutButton>
+      </div>
+    </div>
+  );
 }

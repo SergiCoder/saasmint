@@ -214,7 +214,8 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Управляется {name}",
-    "teamPlanReadonly": "Подписка вашей команды управляется владельцем организации."
+    "teamPlanReadonly": "Подписка вашей команды управляется владельцем организации.",
+    "checkout": "Оплата"
   },
   "profile": {
     "title": "Настройки",
@@ -252,7 +253,7 @@
     "deleteDialogSubmit": "Удалить аккаунт навсегда",
     "deleteDialogMismatch": "Электронная почта не совпадает с почтой вашего аккаунта.",
     "deleteDialogError": "Не удалось удалить аккаунт. Пожалуйста, попробуйте снова.",
-    "deleteBlockedOwner": "Вы являетесь владельцем организации. Пожалуйста, свяжитесь с нашей службой поддержки для удаления аккаунта.",
+    "deleteBlockedOwner": "Вы являетесь владельцем организации. Передайте права собственности или удалите организацию, прежде чем удалять учётную запись.",
     "deleteBlockedMember": "Вы состоите в команде. Пожалуйста, свяжитесь с владельцем команды, чтобы вас сначала удалили.",
     "pronounsHeHim": "Он/Его",
     "pronounsSheHer": "Она/Её",
@@ -300,7 +301,15 @@
     "seatsUpdated": "Места успешно обновлены",
     "removeSeatConfirmTitle": "Удалить место",
     "removeSeatConfirmBody": "Возврат средств не производится. При следующем продлении будет учтено уменьшенное количество мест.",
-    "removeSeatConfirmAction": "Удалить"
+    "removeSeatConfirmAction": "Удалить",
+    "deleteOrg": "Удалить организацию",
+    "deleteOrgDescription": "Безвозвратно удалить эту организацию. Все участники будут удалены, ожидающие приглашения отменены, а подписка немедленно отменена без возврата средств.",
+    "deleteOrgDialogTitle": "Удалить эту организацию?",
+    "deleteOrgDialogDescription": "Это действие нельзя отменить. Если это ваша единственная организация, ваша учётная запись также будет удалена.",
+    "deleteOrgDialogLabel": "Введите {name} для подтверждения",
+    "deleteOrgDialogCancel": "Отмена",
+    "deleteOrgDialogSubmit": "Удалить организацию навсегда",
+    "deleteOrgDialogMismatch": "Название организации не совпадает."
   },
   "common": {
     "loading": "Загрузка...",
@@ -314,9 +323,6 @@
     "unknownError": "Неизвестная ошибка"
   },
   "actionErrors": {
-    "account_delete_failed": "Не удалось удалить аккаунт",
-    "avatar_update_failed": "Не удалось обновить аватар",
-    "checkout_failed": "Не удалось начать оплату",
     "current_password_required": "Требуется текущий пароль",
     "email_and_password_required": "Требуются электронная почта и пароль",
     "email_required": "Требуется электронная почта",

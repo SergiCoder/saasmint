@@ -17,6 +17,29 @@ describe("ApiError", () => {
     expect(err.code).toBe("CONFLICT");
   });
 
+  it("prefers a Django-style body.code over the HTTP_<status> default", () => {
+    const err = new ApiError(400, {
+      detail: "Payment provider error. Please try again.",
+      code: "payment_provider_error",
+    });
+    expect(err.code).toBe("payment_provider_error");
+  });
+
+  it("falls back to HTTP_<status> when body.code is not a non-empty string", () => {
+    expect(new ApiError(400, { code: "" }).code).toBe("HTTP_400");
+    expect(new ApiError(400, { code: 123 }).code).toBe("HTTP_400");
+    expect(new ApiError(400, null).code).toBe("HTTP_400");
+  });
+
+  it("respects an explicit code override even when body.code is present", () => {
+    const err = new ApiError(
+      400,
+      { code: "payment_provider_error" },
+      "BILLING_FAIL",
+    );
+    expect(err.code).toBe("BILLING_FAIL");
+  });
+
   it("is an instance of DomainError and Error", () => {
     const err = new ApiError(500, null);
     expect(err).toBeInstanceOf(DomainError);

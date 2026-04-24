@@ -10,7 +10,10 @@ export function getString(fd: FormData, key: string): string | undefined {
   return typeof v === "string" ? v : undefined;
 }
 
-export function getNonEmptyString(fd: FormData, key: string): string | undefined {
+export function getNonEmptyString(
+  fd: FormData,
+  key: string,
+): string | undefined {
   const v = getString(fd, key);
   return v && v.length > 0 ? v : undefined;
 }

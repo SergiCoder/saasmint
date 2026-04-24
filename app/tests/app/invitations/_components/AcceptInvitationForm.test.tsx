@@ -9,6 +9,27 @@ vi.mock("@/app/actions/invitation", () => ({
   acceptInvitation: (...args: unknown[]) => mockAcceptInvitation(...args),
 }));
 
+// Override the global `@/lib/i18n/navigation` mock so we can assert on the
+// client-side router.push that fires after the action succeeds.
+const mockPush = vi.fn();
+vi.mock("@/lib/i18n/navigation", async () => {
+  const React = await import("react");
+  return {
+    useRouter: () => ({ push: mockPush, replace: vi.fn(), back: vi.fn() }),
+    usePathname: () => "/",
+    Link: ({
+      href,
+      children,
+      ...props
+    }: {
+      href: string;
+      children: React.ReactNode;
+      [key: string]: unknown;
+    }) => React.createElement("a", { href, ...props }, children),
+    redirect: vi.fn(),
+  };
+});
+
 import { AcceptInvitationForm } from "@/app/[locale]/(public)/invitations/[token]/_components/AcceptInvitationForm";
 
 const FULL_NAME = "Jane Doe";
@@ -35,6 +56,7 @@ async function fillAndSubmit(
 
 beforeEach(() => {
   mockAcceptInvitation.mockReset();
+  mockPush.mockReset();
 });
 
 describe("AcceptInvitationForm", () => {
@@ -47,13 +69,24 @@ describe("AcceptInvitationForm", () => {
       expect(hidden?.value).toBe("tok-abc");
     });
 
+    it("renders the password requirements list so users see the policy before submitting", () => {
+      setup();
+      // PasswordRequirements emits unique rule keys that no other part of the
+      // form uses, so the echoing i18n stub lets us detect its presence.
+      expect(screen.getByText("notCommon")).toBeInTheDocument();
+      expect(screen.getByText("notSimilar")).toBeInTheDocument();
+    });
+
     it("renders fullName + password inputs and a submit button", () => {
       const { container } = setup();
       expect(container.querySelector('input[name="fullName"]')).toBeRequired();
-      expect(container.querySelector('input[name="password"]')).toHaveAttribute(
-        "type",
-        "password",
+      const password = container.querySelector<HTMLInputElement>(
+        'input[name="password"]',
       );
+      expect(password).toHaveAttribute("type", "password");
+      // The invitation acceptance flow creates a new password, so it must
+      // match the site-wide minimum (see src/lib/passwordPolicy.ts).
+      expect(password).toHaveAttribute("minLength", "10");
       expect(screen.getByRole("button", { name: /.+/ })).toHaveAttribute(
         "type",
         "submit",
@@ -63,7 +96,10 @@ describe("AcceptInvitationForm", () => {
 
   describe("submission flow", () => {
     it("calls acceptInvitation with the submitted form data on submit", async () => {
-      mockAcceptInvitation.mockResolvedValue({ ok: true });
+      mockAcceptInvitation.mockResolvedValue({
+        ok: true,
+        data: { redirectTo: "/dashboard" },
+      });
 
       const user = userEvent.setup();
       const { container } = setup("tok-abc");
@@ -77,6 +113,38 @@ describe("AcceptInvitationForm", () => {
       expect(formData.get("token")).toBe("tok-abc");
       expect(formData.get("fullName")).toBe(FULL_NAME);
       expect(formData.get("password")).toBe(PASSWORD);
+    });
+
+    it("navigates to the server-provided redirectTo on success instead of relying on a server redirect", async () => {
+      mockAcceptInvitation.mockResolvedValue({
+        ok: true,
+        data: { redirectTo: "/dashboard" },
+      });
+
+      const user = userEvent.setup();
+      const { container } = setup();
+      await fillAndSubmit(container, user);
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith("/dashboard");
+      });
+    });
+
+    it("does not navigate when the server action returns a failure envelope", async () => {
+      mockAcceptInvitation.mockResolvedValue({
+        ok: false,
+        code: "HTTP_400",
+        message: "Invitation already used",
+      });
+
+      const user = userEvent.setup();
+      const { container } = setup();
+      await fillAndSubmit(container, user);
+
+      await waitFor(() => {
+        expect(mockAcceptInvitation).toHaveBeenCalled();
+      });
+      expect(mockPush).not.toHaveBeenCalled();
     });
 
     it("renders an error banner with the server-provided message on failure", async () => {
@@ -106,7 +174,10 @@ describe("AcceptInvitationForm", () => {
     });
 
     it("does not render an error banner on success", async () => {
-      mockAcceptInvitation.mockResolvedValue({ ok: true });
+      mockAcceptInvitation.mockResolvedValue({
+        ok: true,
+        data: { redirectTo: "/dashboard" },
+      });
 
       const user = userEvent.setup();
       const { container } = setup();

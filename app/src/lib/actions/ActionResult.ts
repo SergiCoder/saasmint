@@ -27,7 +27,9 @@ export type ActionResult<T = void> = ActionOk<T> | ActionErr;
 export function ok(): ActionResult<void>;
 export function ok<T>(data: T): ActionResult<T>;
 export function ok<T>(data?: T): ActionResult<T> {
-  return (data === undefined ? { ok: true } : { ok: true, data }) as ActionResult<T>;
+  return (
+    data === undefined ? { ok: true } : { ok: true, data }
+  ) as ActionResult<T>;
 }
 
 export function fail(

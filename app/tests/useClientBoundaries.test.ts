@@ -12,6 +12,7 @@ const SRC_ROOT = join(process.cwd(), "src");
  */
 const EXPECTED_USE_CLIENT_FILES: readonly string[] = [
   "src/app/[locale]/(app)/error.tsx",
+  "src/app/[locale]/(app)/org/[slug]/_components/DeleteOrgDialog.tsx",
   "src/app/[locale]/(app)/org/[slug]/_components/InviteByEmailForm.tsx",
   "src/app/[locale]/(app)/org/[slug]/_components/MemberActions.tsx",
   "src/app/[locale]/(app)/org/[slug]/_components/SeatManager.tsx",
@@ -42,6 +43,7 @@ const EXPECTED_USE_CLIENT_FILES: readonly string[] = [
   "src/presentation/components/molecules/NavLink.tsx",
   "src/presentation/components/molecules/OAuthButtons.tsx",
   "src/presentation/components/molecules/PronounsPicker.tsx",
+  "src/presentation/components/molecules/TypeToConfirmDialog.tsx",
   "src/presentation/components/molecules/UserMenu.tsx",
   "src/presentation/components/organisms/MobileMenuToggle.tsx",
   "src/presentation/components/organisms/RouteErrorBoundary.tsx",

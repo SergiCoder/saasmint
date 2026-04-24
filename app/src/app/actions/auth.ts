@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { apiFetch, publicApiFetch } from "@/infrastructure/api/apiClient";
+import { PLAN_TIER_FREE } from "@/domain/models/Plan";
 import { authGateway, planGateway } from "@/infrastructure/registry";
 import {
   clearAuthCookies,
@@ -52,24 +53,37 @@ function isValidPlanSlug(value: unknown): value is string {
   return typeof value === "string" && PLAN_SLUG_RE.test(value);
 }
 
+interface PlanRouting {
+  context: "personal" | "team";
+  isFree: boolean;
+}
+
 /**
- * Look up the plan by price id and return its context, or undefined when the
- * id is unknown. Treats the plan catalog — not untrusted form fields — as the
- * source of truth for whether a signup/signin flow is team-scoped.
+ * Look up the plan by price id and return its routing info, or undefined when
+ * the id is unknown. Treats the plan catalog — not untrusted form fields — as
+ * the source of truth for whether a signup/signin flow is team-scoped and
+ * whether it should route through Stripe checkout at all (free plans are
+ * auto-assigned by Django at registration, so checkout would only fail with
+ * a `payment_provider_error` on the $0 price).
  */
-async function resolvePlanContext(
+async function resolvePlanRouting(
   priceId: string,
-): Promise<"personal" | "team" | undefined> {
+): Promise<PlanRouting | undefined> {
   try {
     const plans = await planGateway.listPlans();
     for (const plan of plans) {
-      if (plan.price?.id === priceId) return plan.context;
+      if (plan.price?.id === priceId) {
+        return {
+          context: plan.context,
+          isFree: plan.tier === PLAN_TIER_FREE,
+        };
+      }
     }
   } catch (err) {
     // Swallow on a genuine outage so signup still proceeds as personal,
     // but surface the failure server-side so a misrouted team signup isn't
     // invisible to operators.
-    console.error("resolvePlanContext failed", err);
+    console.error("resolvePlanRouting failed", err);
   }
   return undefined;
 }
@@ -114,12 +128,14 @@ export async function signIn(
 
   const plan = formData.get("plan");
   if (isValidPlanSlug(plan)) {
-    const context = await resolvePlanContext(plan);
-    const checkoutPath =
-      context === "team"
-        ? "/subscription/team-checkout"
-        : "/subscription/checkout";
-    redirect(`${checkoutPath}?plan=${encodeURIComponent(plan)}`);
+    const routing = await resolvePlanRouting(plan);
+    if (routing && !routing.isFree) {
+      const checkoutPath =
+        routing.context === "team"
+          ? "/subscription/team-checkout"
+          : "/subscription/checkout";
+      redirect(`${checkoutPath}?plan=${encodeURIComponent(plan)}`);
+    }
   }
 
   redirect("/dashboard");
@@ -138,10 +154,12 @@ export async function signUp(
   }
 
   const planField = formData.get("plan");
-  const validPlan = isValidPlanSlug(planField) ? planField : undefined;
-  const isTeam = validPlan
-    ? (await resolvePlanContext(validPlan)) === "team"
-    : false;
+  const slug = isValidPlanSlug(planField) ? planField : undefined;
+  const routing = slug ? await resolvePlanRouting(slug) : undefined;
+  // Free plans are auto-assigned by Django at registration — don't forward
+  // them through the post-verify checkout flow, Stripe would 400 on the $0.
+  const paidPlan = routing && !routing.isFree ? slug : undefined;
+  const isTeam = routing?.context === "team" && !routing.isFree;
   const registerEndpoint = isTeam
     ? "/auth/register/org-owner/"
     : "/auth/register/";
@@ -160,14 +178,14 @@ export async function signUp(
     return toActionError(err);
   }
 
-  if (validPlan) {
-    await setPendingPlan(validPlan, isTeam);
+  if (paidPlan) {
+    await setPendingPlan(paidPlan, isTeam);
   }
 
   // Registration returns tokens but user must verify email first.
   const loginParams = new URLSearchParams({ registered: "true" });
-  if (validPlan) {
-    loginParams.set("plan", validPlan);
+  if (paidPlan) {
+    loginParams.set("plan", paidPlan);
   }
   if (isTeam) {
     loginParams.set("context", "team");
@@ -286,15 +304,21 @@ export async function startOAuth(
   }
 
   const safeNext = validateNext(nextPath, APP_URL);
+  const planFromNext = new URL(safeNext, APP_URL).searchParams.get("plan");
+  const routing = isValidPlanSlug(planFromNext)
+    ? await resolvePlanRouting(planFromNext)
+    : undefined;
+
+  // Free plans don't go through checkout — overwrite the flow cookie so the
+  // post-exchange redirect lands on /dashboard instead of a Stripe call that
+  // would 400 on the $0 price.
+  const effectiveNext = routing?.isFree ? "/dashboard" : safeNext;
+  const isTeam = routing?.context === "team" && !routing.isFree;
+
   // Login-fixation gate: HttpOnly flag cookie, not a nonce. Accepts a
   // seconds-wide race (victim mid-flow when they click attacker's link);
   // tradeoff debated and accepted — see project_oauth_callback_redesign memory.
-  await setOAuthFlowCookies(safeNext);
-
-  const planFromNext = new URL(safeNext, APP_URL).searchParams.get("plan");
-  const isTeam =
-    isValidPlanSlug(planFromNext) &&
-    (await resolvePlanContext(planFromNext)) === "team";
+  await setOAuthFlowCookies(effectiveNext);
 
   return { redirectUrl: getOAuthRedirectUrl(provider, { isTeam }) };
 }

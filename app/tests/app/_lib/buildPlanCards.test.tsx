@@ -66,8 +66,8 @@ describe("buildPlanCardGroups", () => {
       renderCta: () => null,
     });
     expect(groups).toHaveLength(1);
-    expect(groups[0]!.monthly?.price).toBe("$19");
-    expect(groups[0]!.yearly?.price).toBe("$190");
+    expect(groups[0]!.monthly?.price).toBe("$19.00");
+    expect(groups[0]!.yearly?.price).toBe("$190.00");
   });
 
   it("computes yearly savings percentage when yearly is cheaper than 12x monthly", () => {

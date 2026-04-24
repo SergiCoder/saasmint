@@ -5,6 +5,7 @@ import type { OrgMember } from "@/domain/models/OrgMember";
 import {
   authGateway,
   invitationGateway,
+  orgGateway,
   orgMemberGateway,
 } from "@/infrastructure/registry";
 import {
@@ -135,5 +136,28 @@ export async function transferOwnership(
   }
 
   revalidatePath("/org", "layout");
+  return ok();
+}
+
+export async function deleteOrg(
+  _prevState: unknown,
+  formData: FormData,
+): Promise<ActionResult> {
+  const orgId = getString(formData, "orgId");
+
+  if (!orgId) return fail("invalid_input");
+
+  if (!(await assertOrgRole(orgId, ["owner"]))) {
+    return fail("not_authorized");
+  }
+
+  try {
+    await orgGateway.deleteOrg(orgId);
+  } catch (err) {
+    console.error("Failed to delete org", err);
+    return toActionError(err);
+  }
+
+  revalidatePath("/", "layout");
   return ok();
 }

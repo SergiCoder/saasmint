@@ -2,9 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { Org } from "@/domain/models/Org";
 
 const mockApiFetch = vi.fn();
+const mockApiFetchVoid = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetchVoid: (...args: unknown[]) => mockApiFetchVoid(...args),
 }));
 
 const { DjangoApiOrgGateway } =
@@ -48,6 +50,26 @@ describe("DjangoApiOrgGateway", () => {
 
       await expect(gateway.listUserOrgs()).rejects.toThrow(
         "API 500: Server Error",
+      );
+    });
+  });
+
+  describe("deleteOrg", () => {
+    it("calls DELETE /orgs/{orgId}/", async () => {
+      mockApiFetchVoid.mockResolvedValue(undefined);
+
+      await gateway.deleteOrg("org_1");
+
+      expect(mockApiFetchVoid).toHaveBeenCalledWith("/orgs/org_1/", {
+        method: "DELETE",
+      });
+    });
+
+    it("propagates errors from apiFetchVoid", async () => {
+      mockApiFetchVoid.mockRejectedValue(new Error("API 403: Forbidden"));
+
+      await expect(gateway.deleteOrg("org_1")).rejects.toThrow(
+        "API 403: Forbidden",
       );
     });
   });

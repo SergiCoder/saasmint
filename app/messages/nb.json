@@ -214,7 +214,8 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Administrert av {name}",
-    "teamPlanReadonly": "Teamabonnementet ditt administreres av organisasjonseieren."
+    "teamPlanReadonly": "Teamabonnementet ditt administreres av organisasjonseieren.",
+    "checkout": "Betaling"
   },
   "profile": {
     "title": "Innstillinger",
@@ -252,7 +253,7 @@
     "deleteDialogSubmit": "Slett konto permanent",
     "deleteDialogMismatch": "E-postadressen samsvarer ikke med kontoen din.",
     "deleteDialogError": "Kunne ikke slette kontoen. Prøv igjen.",
-    "deleteBlockedOwner": "Du eier en organisasjon. Vennligst kontakt supportteamet vårt for å slette kontoen din.",
+    "deleteBlockedOwner": "Du eier en organisasjon. Overfør eierskap eller slett organisasjonen før du sletter kontoen din.",
     "deleteBlockedMember": "Du tilhører et team. Vennligst kontakt teameieren din for å bli fjernet først.",
     "pronounsHeHim": "Han/Ham",
     "pronounsSheHer": "Hun/Henne",
@@ -300,7 +301,15 @@
     "seatsUpdated": "Plasser oppdatert",
     "removeSeatConfirmTitle": "Fjern plass",
     "removeSeatConfirmBody": "Ingen refusjon vil bli utstedt. Din neste fornyelse vil gjenspeile det reduserte antallet plasser.",
-    "removeSeatConfirmAction": "Fjern"
+    "removeSeatConfirmAction": "Fjern",
+    "deleteOrg": "Slett organisasjon",
+    "deleteOrgDescription": "Slett denne organisasjonen permanent. Alle medlemmer fjernes, ventende invitasjoner kanselleres, og abonnementet ditt kanselleres umiddelbart uten refusjon.",
+    "deleteOrgDialogTitle": "Slette denne organisasjonen?",
+    "deleteOrgDialogDescription": "Denne handlingen kan ikke angres. Hvis dette er din eneste organisasjon, slettes også kontoen din.",
+    "deleteOrgDialogLabel": "Skriv {name} for å bekrefte",
+    "deleteOrgDialogCancel": "Avbryt",
+    "deleteOrgDialogSubmit": "Slett organisasjon permanent",
+    "deleteOrgDialogMismatch": "Organisasjonsnavnet stemmer ikke."
   },
   "common": {
     "loading": "Laster...",
@@ -314,9 +323,6 @@
     "unknownError": "Ukjent feil"
   },
   "actionErrors": {
-    "account_delete_failed": "Kunne ikke slette kontoen",
-    "avatar_update_failed": "Kunne ikke oppdatere avataren",
-    "checkout_failed": "Kunne ikke starte betalingen",
     "current_password_required": "Nåværende passord er påkrevd",
     "email_and_password_required": "E-post og passord er påkrevd",
     "email_required": "E-post er påkrevd",

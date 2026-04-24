@@ -214,7 +214,8 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Beheerd door {name}",
-    "teamPlanReadonly": "Het teamabonnement wordt beheerd door de eigenaar van de organisatie."
+    "teamPlanReadonly": "Het teamabonnement wordt beheerd door de eigenaar van de organisatie.",
+    "checkout": "Afrekenen"
   },
   "profile": {
     "title": "Instellingen",
@@ -252,7 +253,7 @@
     "deleteDialogSubmit": "Account permanent verwijderen",
     "deleteDialogMismatch": "Het e-mailadres komt niet overeen met uw account.",
     "deleteDialogError": "Account verwijderen mislukt. Probeer het opnieuw.",
-    "deleteBlockedOwner": "Je bent eigenaar van een organisatie. Neem contact op met ons supportteam om je account te verwijderen.",
+    "deleteBlockedOwner": "U bent eigenaar van een organisatie. Draag het eigenaarschap over of verwijder de organisatie voordat u uw account verwijdert.",
     "deleteBlockedMember": "Je behoort tot een team. Neem contact op met je teameigenaar om eerst verwijderd te worden.",
     "pronounsHeHim": "Hij/Hem",
     "pronounsSheHer": "Zij/Haar",
@@ -300,7 +301,15 @@
     "seatsUpdated": "Stoelen succesvol bijgewerkt",
     "removeSeatConfirmTitle": "Stoel verwijderen",
     "removeSeatConfirmBody": "Er wordt geen restitutie verleend. Uw volgende verlenging zal het verminderde aantal stoelen weerspiegelen.",
-    "removeSeatConfirmAction": "Verwijderen"
+    "removeSeatConfirmAction": "Verwijderen",
+    "deleteOrg": "Organisatie verwijderen",
+    "deleteOrgDescription": "Verwijder deze organisatie permanent. Alle leden worden verwijderd, openstaande uitnodigingen geannuleerd en uw abonnement direct opgezegd zonder restitutie.",
+    "deleteOrgDialogTitle": "Deze organisatie verwijderen?",
+    "deleteOrgDialogDescription": "Deze actie kan niet ongedaan worden gemaakt. Als dit uw enige organisatie is, wordt ook uw account verwijderd.",
+    "deleteOrgDialogLabel": "Typ {name} om te bevestigen",
+    "deleteOrgDialogCancel": "Annuleren",
+    "deleteOrgDialogSubmit": "Organisatie permanent verwijderen",
+    "deleteOrgDialogMismatch": "De naam van de organisatie komt niet overeen."
   },
   "common": {
     "loading": "Laden...",
@@ -314,9 +323,6 @@
     "unknownError": "Onbekende fout"
   },
   "actionErrors": {
-    "account_delete_failed": "Account kon niet worden verwijderd",
-    "avatar_update_failed": "Avatar kon niet worden bijgewerkt",
-    "checkout_failed": "Afrekenen kon niet worden gestart",
     "current_password_required": "Huidig wachtwoord is vereist",
     "email_and_password_required": "E-mailadres en wachtwoord zijn vereist",
     "email_required": "E-mailadres is vereist",

@@ -214,7 +214,8 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Zarządzane przez {name}",
-    "teamPlanReadonly": "Subskrypcja Twojego zespołu jest zarządzana przez właściciela organizacji."
+    "teamPlanReadonly": "Subskrypcja Twojego zespołu jest zarządzana przez właściciela organizacji.",
+    "checkout": "Płatność"
   },
   "profile": {
     "title": "Ustawienia",
@@ -252,7 +253,7 @@
     "deleteDialogSubmit": "Trwale usuń konto",
     "deleteDialogMismatch": "Adres e-mail nie pasuje do konta.",
     "deleteDialogError": "Nie udało się usunąć konta. Spróbuj ponownie.",
-    "deleteBlockedOwner": "Jesteś właścicielem organizacji. Skontaktuj się z naszym zespołem wsparcia, aby usunąć swoje konto.",
+    "deleteBlockedOwner": "Jesteś właścicielem organizacji. Przekaż własność lub usuń organizację przed usunięciem konta.",
     "deleteBlockedMember": "Należysz do zespołu. Skontaktuj się z właścicielem zespołu, aby najpierw zostać usuniętym.",
     "pronounsHeHim": "On/Jego",
     "pronounsSheHer": "Ona/Jej",
@@ -300,7 +301,15 @@
     "seatsUpdated": "Miejsca zostały zaktualizowane",
     "removeSeatConfirmTitle": "Usuń miejsce",
     "removeSeatConfirmBody": "Zwrot nie zostanie przyznany. Następne odnowienie będzie odzwierciedlać zmniejszoną liczbę miejsc.",
-    "removeSeatConfirmAction": "Usuń"
+    "removeSeatConfirmAction": "Usuń",
+    "deleteOrg": "Usuń organizację",
+    "deleteOrgDescription": "Trwale usuń tę organizację. Wszyscy członkowie zostaną usunięci, oczekujące zaproszenia anulowane, a Twoja subskrypcja natychmiast anulowana bez zwrotu kosztów.",
+    "deleteOrgDialogTitle": "Usunąć tę organizację?",
+    "deleteOrgDialogDescription": "Tej operacji nie można cofnąć. Jeśli to jedyna Twoja organizacja, Twoje konto również zostanie usunięte.",
+    "deleteOrgDialogLabel": "Wpisz {name}, aby potwierdzić",
+    "deleteOrgDialogCancel": "Anuluj",
+    "deleteOrgDialogSubmit": "Trwale usuń organizację",
+    "deleteOrgDialogMismatch": "Nazwa organizacji nie zgadza się."
   },
   "common": {
     "loading": "Ładowanie...",
@@ -314,9 +323,6 @@
     "unknownError": "Nieznany błąd"
   },
   "actionErrors": {
-    "account_delete_failed": "Nie udało się usunąć konta",
-    "avatar_update_failed": "Nie udało się zaktualizować awatara",
-    "checkout_failed": "Nie udało się rozpocząć płatności",
     "current_password_required": "Aktualne hasło jest wymagane",
     "email_and_password_required": "E-mail i hasło są wymagane",
     "email_required": "Adres e-mail jest wymagany",

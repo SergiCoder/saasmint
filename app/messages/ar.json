@@ -214,7 +214,8 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "تتم الإدارة بواسطة {name}",
-    "teamPlanReadonly": "يتم إدارة اشتراك فريقك بواسطة مالك المؤسسة."
+    "teamPlanReadonly": "يتم إدارة اشتراك فريقك بواسطة مالك المؤسسة.",
+    "checkout": "الدفع"
   },
   "profile": {
     "title": "الإعدادات",
@@ -252,7 +253,7 @@
     "deleteDialogSubmit": "حذف الحساب نهائيًا",
     "deleteDialogMismatch": "البريد الإلكتروني لا يتطابق مع بريد حسابك.",
     "deleteDialogError": "فشل حذف الحساب. يرجى المحاولة مرة أخرى.",
-    "deleteBlockedOwner": "أنت تملك مؤسسة. يرجى التواصل مع فريق الدعم لحذف حسابك.",
+    "deleteBlockedOwner": "أنت مالك منظمة. قم بنقل الملكية أو حذف المنظمة قبل حذف حسابك.",
     "deleteBlockedMember": "أنت عضو في فريق. يرجى التواصل مع مالك الفريق لإزالتك أولاً.",
     "pronounsHeHim": "هو/له",
     "pronounsSheHer": "هي/لها",
@@ -300,7 +301,15 @@
     "seatsUpdated": "تم تحديث المقاعد بنجاح",
     "removeSeatConfirmTitle": "إزالة مقعد",
     "removeSeatConfirmBody": "لن يتم إصدار أي استرداد. سيعكس التجديد القادم عدد المقاعد المخفض.",
-    "removeSeatConfirmAction": "إزالة"
+    "removeSeatConfirmAction": "إزالة",
+    "deleteOrg": "حذف المنظمة",
+    "deleteOrgDescription": "حذف هذه المنظمة نهائيًا. سيتم إزالة جميع الأعضاء، وإلغاء الدعوات المعلقة، وإلغاء اشتراكك على الفور دون استرداد.",
+    "deleteOrgDialogTitle": "حذف هذه المنظمة؟",
+    "deleteOrgDialogDescription": "لا يمكن التراجع عن هذا الإجراء. إذا كانت هذه منظمتك الوحيدة، فسيتم حذف حسابك أيضًا.",
+    "deleteOrgDialogLabel": "اكتب {name} للتأكيد",
+    "deleteOrgDialogCancel": "إلغاء",
+    "deleteOrgDialogSubmit": "حذف المنظمة نهائيًا",
+    "deleteOrgDialogMismatch": "اسم المنظمة غير متطابق."
   },
   "common": {
     "loading": "جارٍ التحميل...",
@@ -314,9 +323,6 @@
     "unknownError": "خطأ غير معروف"
   },
   "actionErrors": {
-    "account_delete_failed": "تعذّر حذف الحساب",
-    "avatar_update_failed": "تعذّر تحديث الصورة الرمزية",
-    "checkout_failed": "تعذّر بدء عملية الدفع",
     "current_password_required": "كلمة المرور الحالية مطلوبة",
     "email_and_password_required": "البريد الإلكتروني وكلمة المرور مطلوبان",
     "email_required": "البريد الإلكتروني مطلوب",

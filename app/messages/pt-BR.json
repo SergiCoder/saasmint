@@ -214,7 +214,8 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Gerenciado por {name}",
-    "teamPlanReadonly": "A assinatura da sua equipe é gerenciada pelo proprietário da organização."
+    "teamPlanReadonly": "A assinatura da sua equipe é gerenciada pelo proprietário da organização.",
+    "checkout": "Pagamento"
   },
   "profile": {
     "title": "Configurações",
@@ -252,7 +253,7 @@
     "deleteDialogSubmit": "Excluir conta permanentemente",
     "deleteDialogMismatch": "O e-mail não corresponde ao da sua conta.",
     "deleteDialogError": "Falha ao excluir a conta. Tente novamente.",
-    "deleteBlockedOwner": "Você é proprietário de uma organização. Entre em contato com nossa equipe de suporte para excluir sua conta.",
+    "deleteBlockedOwner": "Você é proprietário de uma organização. Transfira a propriedade ou exclua a organização antes de excluir sua conta.",
     "deleteBlockedMember": "Você pertence a uma equipe. Entre em contato com o proprietário da equipe para ser removido primeiro.",
     "pronounsHeHim": "Ele/Dele",
     "pronounsSheHer": "Ela/Dela",
@@ -300,7 +301,15 @@
     "seatsUpdated": "Assentos atualizados com sucesso",
     "removeSeatConfirmTitle": "Remover assento",
     "removeSeatConfirmBody": "Nenhum reembolso será emitido. Sua próxima renovação refletirá o número reduzido de assentos.",
-    "removeSeatConfirmAction": "Remover"
+    "removeSeatConfirmAction": "Remover",
+    "deleteOrg": "Excluir organização",
+    "deleteOrgDescription": "Excluir permanentemente esta organização. Todos os membros serão removidos, os convites pendentes cancelados e sua assinatura cancelada imediatamente sem reembolso.",
+    "deleteOrgDialogTitle": "Excluir esta organização?",
+    "deleteOrgDialogDescription": "Esta ação não pode ser desfeita. Se esta for sua única organização, sua conta também será excluída.",
+    "deleteOrgDialogLabel": "Digite {name} para confirmar",
+    "deleteOrgDialogCancel": "Cancelar",
+    "deleteOrgDialogSubmit": "Excluir organização permanentemente",
+    "deleteOrgDialogMismatch": "O nome da organização não coincide."
   },
   "common": {
     "loading": "Carregando...",
@@ -314,9 +323,6 @@
     "unknownError": "Erro desconhecido"
   },
   "actionErrors": {
-    "account_delete_failed": "Não foi possível excluir a conta",
-    "avatar_update_failed": "Não foi possível atualizar o avatar",
-    "checkout_failed": "Não foi possível iniciar o pagamento",
     "current_password_required": "A senha atual é obrigatória",
     "email_and_password_required": "E-mail e senha são obrigatórios",
     "email_required": "O e-mail é obrigatório",

@@ -1,0 +1,188 @@
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { User } from "@/domain/models/User";
+import type { Plan } from "@/domain/models/Plan";
+
+// --- Mocks ---------------------------------------------------------------
+
+const setRequestLocaleMock = vi.fn();
+const mockTranslate = vi.fn((key: string) => key);
+vi.mock("next-intl/server", () => ({
+  getTranslations: vi.fn(() => Promise.resolve(mockTranslate)),
+  setRequestLocale: (locale: string) => setRequestLocaleMock(locale),
+}));
+
+const mockRedirect = vi.fn((path: string) => {
+  throw new Error(`NEXT_REDIRECT:${path}`);
+});
+vi.mock("next/navigation", () => ({
+  redirect: (path: string) => mockRedirect(path),
+}));
+
+const mockGetCurrentUser = vi.fn<() => Promise<User>>();
+vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
+  getCurrentUser: () => mockGetCurrentUser(),
+}));
+
+const mockListPlans = vi.fn<(currency: string) => Promise<Plan[]>>();
+vi.mock("@/infrastructure/registry", () => ({
+  planGateway: { listPlans: (c: string) => mockListPlans(c) },
+}));
+
+// Stub the client form so we don't drag its React state + child atoms into
+// this server-page test. We only need to verify the page mounts it with the
+// right props.
+vi.mock(
+  "@/app/[locale]/(app)/subscription/team-checkout/_components/TeamCheckoutForm",
+  () => ({
+    TeamCheckoutForm: (props: Record<string, unknown>) =>
+      React.createElement("div", {
+        "data-testid": "team-checkout-form",
+        "data-plan-price-id": props.planPriceId as string,
+        "data-plan-name": props.planName as string,
+        "data-display-amount": String(props.displayAmount),
+        "data-currency": props.currency as string,
+        "data-interval": props.interval as string,
+      }),
+  }),
+);
+
+// --- Import under test (after mocks) -------------------------------------
+
+const { default: TeamCheckoutPage } =
+  await import("@/app/[locale]/(app)/subscription/team-checkout/page");
+
+// --- Helpers -------------------------------------------------------------
+
+function makeUser(overrides: Partial<User> = {}): User {
+  return {
+    id: "u1",
+    email: "test@example.com",
+    fullName: "Test User",
+    avatarUrl: null,
+    accountType: "personal",
+    preferredLocale: "en",
+    preferredCurrency: "usd",
+    phonePrefix: null,
+    phone: null,
+    timezone: null,
+    jobTitle: null,
+    pronouns: null,
+    bio: null,
+    isVerified: true,
+    createdAt: "2025-01-01T00:00:00Z",
+    registrationMethod: "email",
+    linkedProviders: [],
+    updatedAt: "2025-01-01T00:00:00Z",
+    ...overrides,
+  };
+}
+
+function makeTeamPlan(overrides: Partial<Plan> = {}): Plan {
+  return {
+    id: "plan_team_pro_year",
+    name: "Team Pro",
+    description: "For growing teams",
+    context: "team",
+    tier: 3,
+    interval: "year",
+    price: {
+      id: "price_team_pro_year",
+      amount: 48000,
+      displayAmount: 480,
+      currency: "usd",
+    },
+    ...overrides,
+  };
+}
+
+async function renderPage(searchParams: { plan?: string }) {
+  const jsx = await TeamCheckoutPage({
+    params: Promise.resolve({ locale: "en" }),
+    searchParams: Promise.resolve(searchParams),
+  });
+  return render(jsx as React.ReactElement);
+}
+
+// --- Tests ---------------------------------------------------------------
+
+describe("TeamCheckoutPage", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetCurrentUser.mockResolvedValue(makeUser());
+    mockListPlans.mockResolvedValue([makeTeamPlan()]);
+  });
+
+  it("redirects to /subscription when the plan query param is missing", async () => {
+    await expect(renderPage({})).rejects.toThrow(/NEXT_REDIRECT/);
+    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+    // Don't hit the API for plans until we know the plan id is present.
+    expect(mockListPlans).not.toHaveBeenCalled();
+  });
+
+  it("redirects to /subscription when no plan matches the given planPriceId", async () => {
+    mockListPlans.mockResolvedValue([makeTeamPlan()]);
+
+    await expect(renderPage({ plan: "price_does_not_exist" })).rejects.toThrow(
+      /NEXT_REDIRECT/,
+    );
+    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+  });
+
+  it("redirects to /subscription when the matched plan has personal context", async () => {
+    const personal = makeTeamPlan({
+      context: "personal",
+      price: {
+        id: "price_personal_pro_month",
+        amount: 1900,
+        displayAmount: 19,
+        currency: "usd",
+      },
+    });
+    mockListPlans.mockResolvedValue([personal]);
+
+    await expect(
+      renderPage({ plan: "price_personal_pro_month" }),
+    ).rejects.toThrow(/NEXT_REDIRECT/);
+    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+  });
+
+  it("passes the user's preferred currency through to planGateway.listPlans", async () => {
+    mockGetCurrentUser.mockResolvedValue(
+      makeUser({ preferredCurrency: "eur" }),
+    );
+
+    await renderPage({ plan: "price_team_pro_year" });
+
+    expect(mockListPlans).toHaveBeenCalledWith("eur");
+  });
+
+  it("calls setRequestLocale with the locale from params", async () => {
+    await renderPage({ plan: "price_team_pro_year" });
+
+    expect(setRequestLocaleMock).toHaveBeenCalledWith("en");
+  });
+
+  it("renders TeamCheckoutForm with the matched plan's data when the plan is a valid team plan", async () => {
+    await renderPage({ plan: "price_team_pro_year" });
+
+    const form = screen.getByTestId("team-checkout-form");
+    expect(form).toHaveAttribute("data-plan-price-id", "price_team_pro_year");
+    expect(form).toHaveAttribute("data-display-amount", "480");
+    expect(form).toHaveAttribute("data-currency", "usd");
+    expect(form).toHaveAttribute("data-interval", "year");
+    // planName comes from translatePlanName which feeds into the stub translator
+    // as the literal key; the echoing i18n stub returns it unchanged.
+    expect(form).toHaveAttribute("data-plan-name", "team.3.name");
+    expect(mockRedirect).not.toHaveBeenCalled();
+  });
+
+  it("renders the teamCheckout heading from the billing namespace", async () => {
+    await renderPage({ plan: "price_team_pro_year" });
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "teamCheckout",
+    );
+  });
+});

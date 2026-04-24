@@ -88,7 +88,7 @@ describe("DeleteAccountDialog", () => {
   it("displays an error and does not redirect when deleteAccount fails", async () => {
     mockDeleteAccount.mockResolvedValueOnce({
       ok: false,
-      code: "account_delete_failed",
+      code: "unknown_error",
     });
     const user = userEvent.setup();
     render(<DeleteAccountDialog userEmail="me@example.com" />);

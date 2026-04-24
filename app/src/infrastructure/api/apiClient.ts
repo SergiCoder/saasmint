@@ -99,17 +99,27 @@ export async function apiFetch<T>(
 
 /**
  * Fetch that sends the access token when present but silently falls through
- * to an unauthenticated request when no token exists. Use for endpoints that
- * personalize the response for logged-in users but work anonymously too
- * (e.g. plans list, where pricing adjusts to the user's preferred currency).
+ * to an unauthenticated request when the token is missing OR rejected. Use
+ * for endpoints that personalize the response for logged-in users but work
+ * anonymously too (e.g. plans list, where pricing adjusts to the user's
+ * preferred currency). A stale/invalid token that makes it past the proxy
+ * refresh must not crash the anonymous render path.
  */
 export async function apiFetchOptional<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
   const token = await getAccessToken();
-  const res = await raw(path, options, token ?? null);
-  return (await res.json()) as T;
+  try {
+    const res = await raw(path, options, token ?? null);
+    return (await res.json()) as T;
+  } catch (err) {
+    if (token && err instanceof AuthError) {
+      const res = await raw(path, options, null);
+      return (await res.json()) as T;
+    }
+    throw err;
+  }
 }
 
 export async function apiFetchVoid(

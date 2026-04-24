@@ -1,13 +1,20 @@
 import { isRecord } from "@/lib/typeGuards";
 import { DomainError } from "./DomainError";
 
+function extractBodyCode(body: unknown): string | null {
+  if (isRecord(body) && typeof body.code === "string" && body.code.length > 0) {
+    return body.code;
+  }
+  return null;
+}
+
 export class ApiError extends DomainError {
   constructor(
     public readonly status: number,
     public readonly body: unknown,
-    code = `HTTP_${status}`,
+    code?: string,
   ) {
-    super(`API ${status}`, code);
+    super(`API ${status}`, code ?? extractBodyCode(body) ?? `HTTP_${status}`);
   }
 
   /**

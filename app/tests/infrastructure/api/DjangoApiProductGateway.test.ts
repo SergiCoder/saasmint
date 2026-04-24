@@ -67,4 +67,41 @@ describe("DjangoApiProductGateway", () => {
       );
     });
   });
+
+  describe("createCheckoutSession", () => {
+    it("posts snake_case body to /billing/product-checkout-sessions/ and returns the url", async () => {
+      mockApiFetch.mockResolvedValue({ url: "https://checkout.stripe.com/x" });
+
+      const result = await gateway.createCheckoutSession({
+        productPriceId: "pp1",
+        successUrl: "https://app.example.com/subscription?status=success",
+        cancelUrl: "https://app.example.com/subscription",
+      });
+
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        "/billing/product-checkout-sessions/",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            product_price_id: "pp1",
+            success_url: "https://app.example.com/subscription?status=success",
+            cancel_url: "https://app.example.com/subscription",
+          }),
+        },
+      );
+      expect(result).toEqual({ url: "https://checkout.stripe.com/x" });
+    });
+
+    it("propagates errors from apiFetch (e.g. 403 for non-owner team members)", async () => {
+      mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
+
+      await expect(
+        gateway.createCheckoutSession({
+          productPriceId: "pp1",
+          successUrl: "https://app.example.com/subscription?status=success",
+          cancelUrl: "https://app.example.com/subscription",
+        }),
+      ).rejects.toThrow("API 403: Forbidden");
+    });
+  });
 });

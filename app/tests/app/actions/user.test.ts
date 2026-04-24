@@ -224,11 +224,28 @@ describe("user server actions", () => {
       expect(result).toEqual({ ok: false, code: "session_expired" });
     });
 
-    it("returns avatar_update_failed on non-auth failure", async () => {
+    it("returns unknown_error for a generic non-auth failure", async () => {
       mockUpdateProfile.mockRejectedValue(new Error("Server error"));
 
       const result = await updateAvatarUrl("https://example.com/avatar.webp");
-      expect(result).toEqual({ ok: false, code: "avatar_update_failed" });
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
+    });
+
+    it("forwards ApiError code and Django detail from the gateway", async () => {
+      const { ApiError } = await import("@/domain/errors/ApiError");
+      mockUpdateProfile.mockRejectedValue(
+        new ApiError(413, {
+          detail: "Image too large.",
+          code: "image_too_large",
+        }),
+      );
+
+      const result = await updateAvatarUrl("https://example.com/avatar.webp");
+      expect(result).toEqual({
+        ok: false,
+        code: "image_too_large",
+        message: "Image too large.",
+      });
     });
   });
 
@@ -258,12 +275,41 @@ describe("user server actions", () => {
       expect(result).toEqual({ ok: true });
     });
 
-    it("returns account_delete_failed on failure", async () => {
+    it("returns unknown_error for a generic failure", async () => {
       mockDeleteAccount.mockRejectedValue(new Error("Server error"));
 
       const result = await deleteAccount();
 
-      expect(result).toEqual({ ok: false, code: "account_delete_failed" });
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
+    });
+
+    it("forwards ApiError code and Django detail from the gateway", async () => {
+      const { ApiError } = await import("@/domain/errors/ApiError");
+      mockDeleteAccount.mockRejectedValue(
+        new ApiError(409, {
+          detail: "Cannot delete: you are the sole owner of an active org.",
+          code: "sole_owner",
+        }),
+      );
+
+      const result = await deleteAccount();
+
+      expect(result).toEqual({
+        ok: false,
+        code: "sole_owner",
+        message: "Cannot delete: you are the sole owner of an active org.",
+      });
+    });
+
+    it("returns session_expired when the gateway throws AuthError", async () => {
+      const { AuthError } = await import("@/domain/errors/AuthError");
+      mockDeleteAccount.mockRejectedValue(
+        new AuthError("No active session", "NO_SESSION"),
+      );
+
+      const result = await deleteAccount();
+
+      expect(result).toEqual({ ok: false, code: "session_expired" });
     });
   });
 });

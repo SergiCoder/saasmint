@@ -214,7 +214,8 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "由 {name} 管理",
-    "teamPlanReadonly": "您的團隊訂閱由組織擁有者管理。"
+    "teamPlanReadonly": "您的團隊訂閱由組織擁有者管理。",
+    "checkout": "結帳"
   },
   "profile": {
     "title": "設定",
@@ -252,7 +253,7 @@
     "deleteDialogSubmit": "永久刪除帳戶",
     "deleteDialogMismatch": "電子郵件與您的帳戶信箱不符。",
     "deleteDialogError": "刪除帳戶失敗，請重試。",
-    "deleteBlockedOwner": "您擁有一個組織。請聯繫我們的支援團隊以刪除您的帳戶。",
+    "deleteBlockedOwner": "您是組織的擁有者。刪除帳號前，請轉移所有權或刪除組織。",
     "deleteBlockedMember": "您屬於一個團隊。請先聯繫您的團隊擁有者將您移除。",
     "pronounsHeHim": "他/Him",
     "pronounsSheHer": "她/Her",
@@ -300,7 +301,15 @@
     "seatsUpdated": "席位更新成功",
     "removeSeatConfirmTitle": "移除席位",
     "removeSeatConfirmBody": "不會進行退款。您的下次續約將反映減少後的席位數量。",
-    "removeSeatConfirmAction": "移除"
+    "removeSeatConfirmAction": "移除",
+    "deleteOrg": "刪除組織",
+    "deleteOrgDescription": "永久刪除此組織。所有成員將被移除，待處理的邀請將被取消，您的訂閱將立即取消且不退款。",
+    "deleteOrgDialogTitle": "刪除此組織？",
+    "deleteOrgDialogDescription": "此操作無法復原。如果這是您唯一的組織，您的帳號也將被刪除。",
+    "deleteOrgDialogLabel": "輸入 {name} 以確認",
+    "deleteOrgDialogCancel": "取消",
+    "deleteOrgDialogSubmit": "永久刪除組織",
+    "deleteOrgDialogMismatch": "組織名稱不相符。"
   },
   "common": {
     "loading": "載入中...",
@@ -314,9 +323,6 @@
     "unknownError": "未知錯誤"
   },
   "actionErrors": {
-    "account_delete_failed": "帳號刪除失敗",
-    "avatar_update_failed": "頭像更新失敗",
-    "checkout_failed": "無法開始結帳",
     "current_password_required": "請輸入目前的密碼",
     "email_and_password_required": "請輸入電子郵件與密碼",
     "email_required": "請輸入電子郵件",

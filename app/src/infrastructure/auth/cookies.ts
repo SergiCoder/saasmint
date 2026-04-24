@@ -13,7 +13,10 @@ export const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 7;
 export const accessTokenCookieOptions = {
   httpOnly: true,
   secure: true,
-  sameSite: "strict" as const,
+  // `lax` so the cookie is still sent on top-level GET navigations from
+  // external redirects (Stripe checkout return, OAuth provider callback).
+  // `strict` would block those and force the user to re-login mid-flow.
+  sameSite: "lax" as const,
   maxAge: ACCESS_TOKEN_MAX_AGE,
   path: "/",
 };
@@ -22,7 +25,10 @@ export const accessTokenCookieOptions = {
 export const refreshTokenCookieOptions = {
   httpOnly: true,
   secure: true,
-  sameSite: "strict" as const,
+  // `lax` so the cookie is still sent on top-level GET navigations from
+  // external redirects (Stripe checkout return, OAuth provider callback).
+  // `strict` would block those and force the user to re-login mid-flow.
+  sameSite: "lax" as const,
   maxAge: REFRESH_TOKEN_MAX_AGE,
   path: "/",
 };

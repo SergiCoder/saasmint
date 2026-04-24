@@ -53,13 +53,21 @@ let exchangeOAuthCode: typeof import("@/app/actions/auth").exchangeOAuthCode;
 function mockPlans(): void {
   mockListPlans.mockResolvedValue([
     {
+      id: "plan_free",
+      context: "personal",
+      tier: 1,
+      price: { id: "price_free" },
+    },
+    {
       id: "plan_pro",
       context: "personal",
+      tier: 3,
       price: { id: "price_pro_monthly" },
     },
     {
       id: "plan_team_pro",
       context: "team",
+      tier: 3,
       price: { id: "price_team_pro" },
     },
   ]);
@@ -121,7 +129,7 @@ describe("auth server actions", () => {
       const result = await signIn(undefined, formData);
       expect(result).toEqual({
         ok: false,
-        code: "HTTP_401",
+        code: "invalid_credentials",
         message: "Invalid credentials.",
       });
       expect(mockRedirect).not.toHaveBeenCalled();
@@ -155,6 +163,23 @@ describe("auth server actions", () => {
       expect(mockRedirect).toHaveBeenCalledWith(
         "/subscription/checkout?plan=price_pro_monthly",
       );
+    });
+
+    it("redirects to /dashboard (not Stripe checkout) when plan is free", async () => {
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_abc",
+        refresh_token: "ref_abc",
+      });
+
+      const formData = new FormData();
+      formData.set("email", "user@example.com");
+      formData.set("password", "secret123");
+      formData.set("plan", "price_free");
+
+      await expect(signIn(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
     });
 
     it("redirects to team checkout when plan resolves to a team plan", async () => {
@@ -250,6 +275,28 @@ describe("auth server actions", () => {
 
       const result = await signUp(undefined, formData);
       expect(result).toEqual({ ok: false, code: "unknown_error" });
+    });
+
+    it("does not carry a free plan through the verify-email flow", async () => {
+      mockPublicApiFetch.mockResolvedValue({});
+
+      const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
+      formData.set("email", "new@example.com");
+      formData.set("password", "secret123");
+      formData.set("plan", "price_free");
+
+      await expect(signUp(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      // Free plans are auto-assigned by Django — no pending-plan cookie, no
+      // ?plan query param on the post-register login redirect.
+      expect(mockSetPendingPlan).not.toHaveBeenCalled();
+      expect(mockPublicApiFetch).toHaveBeenCalledWith(
+        "/auth/register/",
+        expect.objectContaining({ method: "POST" }),
+      );
+      expect(mockRedirect).toHaveBeenCalledWith("/login?registered=true");
     });
 
     it("uses org-owner endpoint when plan resolves to a team plan", async () => {
@@ -634,6 +681,18 @@ describe("auth server actions", () => {
         "/subscription/checkout?plan=price_pro_monthly",
       );
 
+      expect(new URL(result.redirectUrl).searchParams.get("account_type")).toBe(
+        null,
+      );
+    });
+
+    it("overrides next to /dashboard when plan in next is free (skips Stripe checkout)", async () => {
+      const result = await startOAuth(
+        "google",
+        "/subscription/checkout?plan=price_free",
+      );
+
+      expect(mockSetOAuthFlowCookies).toHaveBeenCalledWith("/dashboard");
       expect(new URL(result.redirectUrl).searchParams.get("account_type")).toBe(
         null,
       );

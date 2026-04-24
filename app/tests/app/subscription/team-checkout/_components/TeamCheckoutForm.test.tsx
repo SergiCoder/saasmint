@@ -28,7 +28,7 @@ describe("TeamCheckoutForm", () => {
   it("renders the plan name and per-seat price", () => {
     render(<TeamCheckoutForm {...defaultProps} />);
     expect(screen.getByText("Pro")).toBeInTheDocument();
-    expect(screen.getByText("$10/seat/month")).toBeInTheDocument();
+    expect(screen.getByText("$10.00/seat/month")).toBeInTheDocument();
   });
 
   it("renders the org name field as required", () => {
@@ -43,7 +43,7 @@ describe("TeamCheckoutForm", () => {
       'input[type="number"]',
     ) as HTMLInputElement;
     expect(quantityInput.value).toBe("2");
-    expect(screen.getByText("Total: $20/month")).toBeInTheDocument();
+    expect(screen.getByText("Total: $20.00/month")).toBeInTheDocument();
   });
 
   it("recomputes the total when the seat count changes", () => {
@@ -55,7 +55,7 @@ describe("TeamCheckoutForm", () => {
     fireEvent.change(quantityInput, { target: { value: "5" } });
 
     expect(quantityInput.value).toBe("5");
-    expect(screen.getByText("Total: $50/month")).toBeInTheDocument();
+    expect(screen.getByText("Total: $50.00/month")).toBeInTheDocument();
   });
 
   it("clamps the quantity to minSeats when a smaller value is entered", () => {

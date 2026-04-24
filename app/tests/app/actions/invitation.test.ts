@@ -35,23 +35,25 @@ beforeEach(async () => {
 
 describe("invitation server actions", () => {
   describe("acceptInvitation", () => {
-    it("accepts invitation, sets cookies, and redirects to /dashboard", async () => {
+    it("accepts invitation, sets cookies, and returns a client-side redirect target", async () => {
       mockAccept.mockResolvedValue({ accessToken: "at", refreshToken: "rt" });
 
       const formData = new FormData();
       formData.set("token", "abc123");
       formData.set("fullName", "Bob Smith");
-      formData.set("password", "secret123");
+      formData.set("password", "secret1234");
 
-      await expect(acceptInvitation(null, formData)).rejects.toThrow(
-        "NEXT_REDIRECT",
-      );
+      const result = await acceptInvitation(null, formData);
       expect(mockAccept).toHaveBeenCalledWith("abc123", {
         fullName: "Bob Smith",
-        password: "secret123",
+        password: "secret1234",
       });
       expect(mockSetAuthCookies).toHaveBeenCalledWith("at", "rt");
-      expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
+      expect(result).toEqual({ ok: true, data: { redirectTo: "/dashboard" } });
+      // Server-side redirect would race with Set-Cookie propagation during
+      // Next.js's RSC prefetch; the action deliberately lets the client
+      // navigate instead.
+      expect(mockRedirect).not.toHaveBeenCalled();
     });
 
     it("returns invalid_input when required fields are missing", async () => {
@@ -63,6 +65,39 @@ describe("invitation server actions", () => {
       expect(mockAccept).not.toHaveBeenCalled();
     });
 
+    it("returns full_name_invalid when fullName is shorter than 3 characters", async () => {
+      const formData = new FormData();
+      formData.set("token", "abc123");
+      formData.set("fullName", "Bo");
+      formData.set("password", "secret1234");
+
+      const result = await acceptInvitation(null, formData);
+      expect(result).toEqual({ ok: false, code: "full_name_invalid" });
+      expect(mockAccept).not.toHaveBeenCalled();
+    });
+
+    it("returns full_name_invalid when fullName exceeds 255 characters", async () => {
+      const formData = new FormData();
+      formData.set("token", "abc123");
+      formData.set("fullName", "a".repeat(256));
+      formData.set("password", "secret1234");
+
+      const result = await acceptInvitation(null, formData);
+      expect(result).toEqual({ ok: false, code: "full_name_invalid" });
+      expect(mockAccept).not.toHaveBeenCalled();
+    });
+
+    it("returns password_too_short when the password is below PASSWORD_MIN_LENGTH", async () => {
+      const formData = new FormData();
+      formData.set("token", "abc123");
+      formData.set("fullName", "Bob Smith");
+      formData.set("password", "short1"); // 6 chars, below the 10-char minimum
+
+      const result = await acceptInvitation(null, formData);
+      expect(result).toEqual({ ok: false, code: "password_too_short" });
+      expect(mockAccept).not.toHaveBeenCalled();
+    });
+
     it("returns an envelope error and does not set cookies when gateway throws", async () => {
       mockAccept.mockRejectedValue(new Error("token expired"));
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -70,7 +105,7 @@ describe("invitation server actions", () => {
       const formData = new FormData();
       formData.set("token", "abc123");
       formData.set("fullName", "Bob Smith");
-      formData.set("password", "secret123");
+      formData.set("password", "secret1234");
 
       const result = await acceptInvitation(null, formData);
       expect(result).toEqual({ ok: false, code: "unknown_error" });

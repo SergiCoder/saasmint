@@ -20,6 +20,7 @@ const mockCreateBillingPortalSession = vi.fn();
 const mockCancelSubscription = vi.fn();
 const mockResumeSubscription = vi.fn();
 const mockUpdateSeats = vi.fn();
+const mockCreateProductCheckoutSession = vi.fn();
 
 vi.mock("@/infrastructure/registry", () => ({
   authGateway: { getCurrentUser: mockGetCurrentUser },
@@ -31,6 +32,9 @@ vi.mock("@/infrastructure/registry", () => ({
     resumeSubscription: mockResumeSubscription,
     updateSeats: mockUpdateSeats,
   },
+  productGateway: {
+    createCheckoutSession: mockCreateProductCheckoutSession,
+  },
 }));
 
 const mockCanManageBilling = vi.fn();
@@ -41,6 +45,7 @@ vi.mock("@/app/[locale]/(app)/subscription/_data/canManageBilling", () => ({
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
 
 let startCheckout: typeof import("@/app/actions/billing").startCheckout;
+let startProductCheckout: typeof import("@/app/actions/billing").startProductCheckout;
 let openBillingPortal: typeof import("@/app/actions/billing").openBillingPortal;
 let cancelRenewal: typeof import("@/app/actions/billing").cancelRenewal;
 let resumeSubscription: typeof import("@/app/actions/billing").resumeSubscription;
@@ -50,6 +55,7 @@ beforeEach(async () => {
   vi.clearAllMocks();
   const mod = await import("@/app/actions/billing");
   startCheckout = mod.startCheckout;
+  startProductCheckout = mod.startProductCheckout;
   openBillingPortal = mod.openBillingPortal;
   cancelRenewal = mod.cancelRenewal;
   resumeSubscription = mod.resumeSubscription;
@@ -144,17 +150,82 @@ describe("billing server actions", () => {
       expect(callArgs.quantity).toBeUndefined();
     });
 
-    it("returns checkout_failed when gateway throws", async () => {
+    it("returns unknown_error when gateway throws a generic error", async () => {
       mockCreateCheckoutSession.mockRejectedValue(new Error("network down"));
-      const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const formData = new FormData();
       formData.set("planPriceId", "price_abc");
 
       const result = await startCheckout(undefined, formData);
-      expect(result).toEqual({ ok: false, code: "checkout_failed" });
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
       expect(mockRedirect).not.toHaveBeenCalled();
-      errSpy.mockRestore();
+    });
+
+    it("forwards the ApiError code and Django detail to the client", async () => {
+      const { ApiError } = await import("@/domain/errors/ApiError");
+      mockCreateCheckoutSession.mockRejectedValue(
+        new ApiError(400, {
+          detail: "Payment provider error. Please try again.",
+          code: "payment_provider_error",
+        }),
+      );
+
+      const formData = new FormData();
+      formData.set("planPriceId", "price_abc");
+
+      const result = await startCheckout(undefined, formData);
+      expect(result).toEqual({
+        ok: false,
+        code: "payment_provider_error",
+        message: "Payment provider error. Please try again.",
+      });
+      expect(mockRedirect).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("startProductCheckout", () => {
+    it("redirects to the Stripe URL with productPriceId forwarded to productGateway", async () => {
+      mockCreateProductCheckoutSession.mockResolvedValue({
+        url: "https://checkout.stripe.com/product_123",
+      });
+
+      const formData = new FormData();
+      formData.set("productPriceId", "price_credits_200");
+
+      await expect(startProductCheckout(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockCreateProductCheckoutSession).toHaveBeenCalledWith({
+        productPriceId: "price_credits_200",
+        successUrl: `${APP_URL}/subscription?status=success`,
+        cancelUrl: `${APP_URL}/subscription`,
+      });
+      expect(mockRedirect).toHaveBeenCalledWith(
+        "https://checkout.stripe.com/product_123",
+      );
+      // Must not route product purchases through the plan-checkout endpoint.
+      expect(mockCreateCheckoutSession).not.toHaveBeenCalled();
+    });
+
+    it("returns invalid_input when productPriceId is missing", async () => {
+      const formData = new FormData();
+
+      const result = await startProductCheckout(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "invalid_input" });
+      expect(mockCreateProductCheckoutSession).not.toHaveBeenCalled();
+    });
+
+    it("returns an envelope error and does not redirect when the gateway throws", async () => {
+      mockCreateProductCheckoutSession.mockRejectedValue(
+        new Error("API 500: Server Error"),
+      );
+
+      const formData = new FormData();
+      formData.set("productPriceId", "price_credits_200");
+
+      const result = await startProductCheckout(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
+      expect(mockRedirect).not.toHaveBeenCalled();
     });
   });
 
@@ -194,7 +265,9 @@ describe("billing server actions", () => {
     });
 
     it("swallows non-redirect errors and returns without redirecting", async () => {
-      mockCreateBillingPortalSession.mockRejectedValue(new Error("portal down"));
+      mockCreateBillingPortalSession.mockRejectedValue(
+        new Error("portal down"),
+      );
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await openBillingPortal();
@@ -217,7 +290,10 @@ describe("billing server actions", () => {
       const result = await cancelRenewal();
 
       expect(mockCancelSubscription).toHaveBeenCalledOnce();
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/subscription", "layout");
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        "/subscription",
+        "layout",
+      );
       expect(result.ok).toBe(true);
     });
 
@@ -262,7 +338,10 @@ describe("billing server actions", () => {
       const result = await resumeSubscription();
 
       expect(mockResumeSubscription).toHaveBeenCalledOnce();
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/subscription", "layout");
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        "/subscription",
+        "layout",
+      );
       expect(result.ok).toBe(true);
     });
 

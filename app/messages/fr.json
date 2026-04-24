@@ -214,7 +214,8 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Géré par {name}",
-    "teamPlanReadonly": "L'abonnement de votre équipe est géré par le propriétaire de l'organisation."
+    "teamPlanReadonly": "L'abonnement de votre équipe est géré par le propriétaire de l'organisation.",
+    "checkout": "Paiement"
   },
   "profile": {
     "title": "Paramètres",
@@ -252,7 +253,7 @@
     "deleteDialogSubmit": "Supprimer définitivement le compte",
     "deleteDialogMismatch": "L'adresse e-mail ne correspond pas à celle de votre compte.",
     "deleteDialogError": "Échec de la suppression du compte. Veuillez réessayer.",
-    "deleteBlockedOwner": "Vous êtes propriétaire d'une organisation. Veuillez contacter notre équipe d'assistance pour supprimer votre compte.",
+    "deleteBlockedOwner": "Vous êtes propriétaire d'une organisation. Transférez la propriété ou supprimez l'organisation avant de supprimer votre compte.",
     "deleteBlockedMember": "Vous appartenez à une équipe. Veuillez contacter le propriétaire de votre équipe pour être retiré(e) d'abord.",
     "pronounsHeHim": "Il/Lui",
     "pronounsSheHer": "Elle",
@@ -300,7 +301,15 @@
     "seatsUpdated": "Sièges mis à jour avec succès",
     "removeSeatConfirmTitle": "Supprimer un siège",
     "removeSeatConfirmBody": "Aucun remboursement ne sera effectué. Votre prochain renouvellement reflétera le nombre réduit de sièges.",
-    "removeSeatConfirmAction": "Supprimer"
+    "removeSeatConfirmAction": "Supprimer",
+    "deleteOrg": "Supprimer l'organisation",
+    "deleteOrgDescription": "Supprimer définitivement cette organisation. Tous les membres seront retirés, les invitations en attente annulées, et votre abonnement annulé immédiatement sans remboursement.",
+    "deleteOrgDialogTitle": "Supprimer cette organisation ?",
+    "deleteOrgDialogDescription": "Cette action est irréversible. Si c'est votre seule organisation, votre compte sera également supprimé.",
+    "deleteOrgDialogLabel": "Tapez {name} pour confirmer",
+    "deleteOrgDialogCancel": "Annuler",
+    "deleteOrgDialogSubmit": "Supprimer l'organisation définitivement",
+    "deleteOrgDialogMismatch": "Le nom de l'organisation ne correspond pas."
   },
   "common": {
     "loading": "Chargement...",
@@ -314,9 +323,6 @@
     "unknownError": "Erreur inconnue"
   },
   "actionErrors": {
-    "account_delete_failed": "Échec de la suppression du compte",
-    "avatar_update_failed": "Échec de la mise à jour de l'avatar",
-    "checkout_failed": "Impossible de démarrer le paiement",
     "current_password_required": "Le mot de passe actuel est requis",
     "email_and_password_required": "L'e-mail et le mot de passe sont requis",
     "email_required": "L'e-mail est requis",

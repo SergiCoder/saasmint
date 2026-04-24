@@ -44,11 +44,11 @@ describe("ProductsGrid", () => {
     );
     expect(screen.getByText("Starter Pack")).toBeInTheDocument();
     expect(screen.getByText("100 credits")).toBeInTheDocument();
-    expect(screen.getByText("$10")).toBeInTheDocument();
+    expect(screen.getByText("$10.00")).toBeInTheDocument();
 
     expect(screen.getByText("Pro Pack")).toBeInTheDocument();
     expect(screen.getByText("500 credits")).toBeInTheDocument();
-    expect(screen.getByText("$50")).toBeInTheDocument();
+    expect(screen.getByText("$50.00")).toBeInTheDocument();
   });
 
   it("invokes renderCta for each priced product", () => {

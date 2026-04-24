@@ -149,7 +149,7 @@ describe("ProfileForm", () => {
   it("renders an error banner when the avatar upload action fails", async () => {
     mockUploadAvatar.mockResolvedValue({
       ok: false,
-      code: "avatar_update_failed",
+      code: "unknown_error",
       message: "boom",
     });
 
@@ -240,7 +240,7 @@ describe("ProfileForm", () => {
   it("renders an error banner when avatar deletion fails and leaves avatarUrl untouched", async () => {
     mockDeleteAvatar.mockResolvedValue({
       ok: false,
-      code: "avatar_update_failed",
+      code: "unknown_error",
       message: "delete failed",
     });
 

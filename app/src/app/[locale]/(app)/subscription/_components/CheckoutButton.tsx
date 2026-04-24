@@ -2,26 +2,40 @@
 
 import { useActionState } from "react";
 import { Button } from "@/presentation/components/atoms/Button";
-import { startCheckout } from "@/app/actions/billing";
+import type { ActionResult } from "@/lib/actions/ActionResult";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 
+export type CheckoutAction = (
+  prevState: ActionResult | undefined,
+  formData: FormData,
+) => Promise<ActionResult>;
+
 interface CheckoutButtonProps {
-  planPriceId: string;
+  /** Server action to invoke — plan checkout, product checkout, etc. */
+  action: CheckoutAction;
+  /**
+   * Hidden form field forwarded to the action. Distinct `name` per action
+   * (`planPriceId` for subscription checkout, `productPriceId` for one-time
+   * product purchase) so a product purchase can't silently route through
+   * the plan-checkout endpoint.
+   */
+  field: { name: string; value: string };
   children: React.ReactNode;
   highlighted?: boolean;
 }
 
 export function CheckoutButton({
-  planPriceId,
+  action,
+  field,
   children,
   highlighted = false,
 }: CheckoutButtonProps) {
   const translateError = useActionErrorMessage();
-  const [state, action, isPending] = useActionState(startCheckout, undefined);
+  const [state, formAction, isPending] = useActionState(action, undefined);
 
   return (
-    <form action={action}>
-      <input type="hidden" name="planPriceId" value={planPriceId} />
+    <form action={formAction}>
+      <input type="hidden" name={field.name} value={field.value} />
       {state && !state.ok && (
         <p className="mb-2 text-sm text-red-600">{translateError(state)}</p>
       )}

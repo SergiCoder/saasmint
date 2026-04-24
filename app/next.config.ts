@@ -48,7 +48,9 @@ const config: NextConfig = {
         ? [{ protocol: apiProtocol, hostname: apiHostname }]
         : []),
       ...(isDev ? [{ hostname: "localhost" }] : []),
+      // OAuth provider avatars — one entry per provider we support.
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      { protocol: "https", hostname: "avatars.githubusercontent.com" },
     ],
     ...(isDev && { dangerouslyAllowLocalIP: true }),
   },

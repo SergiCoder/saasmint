@@ -1,6 +1,6 @@
 import type { IOrgGateway } from "@/application/ports/IOrgGateway";
 import type { Org } from "@/domain/models/Org";
-import { apiFetch } from "./apiClient";
+import { apiFetch, apiFetchVoid } from "./apiClient";
 import { keysToCamel } from "./caseTransform";
 import { OrgSchema } from "./schemas";
 
@@ -14,5 +14,9 @@ export class DjangoApiOrgGateway implements IOrgGateway {
       "/orgs/",
     );
     return data.results.map(parseOrg);
+  }
+
+  async deleteOrg(orgId: string): Promise<void> {
+    await apiFetchVoid(`/orgs/${orgId}/`, { method: "DELETE" });
   }
 }

@@ -140,4 +140,89 @@ describe("compressImage", () => {
 
     await expect(compressImage(file)).rejects.toThrow(/Failed to load image/);
   });
+
+  it("scales images larger than MAX_SIZE (256) preserving aspect ratio", async () => {
+    mockImageLoad(1024, 512);
+    const drawImage = vi.fn();
+    HTMLCanvasElement.prototype.getContext = (() =>
+      ({ drawImage }) as unknown as CanvasRenderingContext2D) as never;
+
+    const captured: Array<[number, number]> = [];
+    HTMLCanvasElement.prototype.toBlob = function toBlob(
+      this: HTMLCanvasElement,
+      cb: BlobCallback,
+    ) {
+      captured.push([this.width, this.height]);
+      cb(new Blob(["x"], { type: "image/webp" }));
+    };
+
+    const file = new File(["x"], "pic.png", { type: "image/png" });
+    await compressImage(file);
+
+    // 256/1024 = 0.25 → 256×128
+    expect(captured).toEqual([[256, 128]]);
+    expect(drawImage).toHaveBeenCalledWith(expect.anything(), 0, 0, 256, 128);
+  });
+
+  it("does not upscale when the image is already smaller than MAX_SIZE", async () => {
+    mockImageLoad(100, 80);
+    const captured: Array<[number, number]> = [];
+    HTMLCanvasElement.prototype.toBlob = function toBlob(
+      this: HTMLCanvasElement,
+      cb: BlobCallback,
+    ) {
+      captured.push([this.width, this.height]);
+      cb(new Blob(["x"], { type: "image/webp" }));
+    };
+
+    const file = new File(["x"], "pic.png", { type: "image/png" });
+    await compressImage(file);
+
+    expect(captured).toEqual([[100, 80]]);
+  });
+
+  it("encodes the output as image/webp with quality 0.8", async () => {
+    mockImageLoad(200, 200);
+    const toBlobSpy =
+      vi.fn<(cb: BlobCallback, type?: string, quality?: number) => void>();
+    HTMLCanvasElement.prototype.toBlob = function toBlob(
+      this: HTMLCanvasElement,
+      cb: BlobCallback,
+      type?: string,
+      quality?: number,
+    ) {
+      toBlobSpy(cb, type, quality);
+      cb(new Blob(["x"], { type: "image/webp" }));
+    };
+
+    const file = new File(["x"], "pic.jpeg", { type: "image/jpeg" });
+    await compressImage(file);
+
+    const [, type, quality] = toBlobSpy.mock.calls[0]!;
+    expect(type).toBe("image/webp");
+    expect(quality).toBe(0.8);
+  });
+
+  it("rejects when the canvas 2D context is unavailable", async () => {
+    mockImageLoad(100, 100);
+    HTMLCanvasElement.prototype.getContext = (() =>
+      null) as unknown as typeof HTMLCanvasElement.prototype.getContext;
+
+    const file = new File(["x"], "pic.png", { type: "image/png" });
+    await expect(compressImage(file)).rejects.toThrow(
+      /Canvas 2D context unavailable/,
+    );
+  });
+
+  it("rejects when toBlob yields null", async () => {
+    mockImageLoad(100, 100);
+    HTMLCanvasElement.prototype.toBlob = function toBlob(cb: BlobCallback) {
+      cb(null);
+    };
+
+    const file = new File(["x"], "pic.png", { type: "image/png" });
+    await expect(compressImage(file)).rejects.toThrow(
+      /Canvas toBlob returned null/,
+    );
+  });
 });

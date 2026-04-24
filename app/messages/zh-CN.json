@@ -214,7 +214,8 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "由 {name} 管理",
-    "teamPlanReadonly": "您的团队订阅由组织所有者管理。"
+    "teamPlanReadonly": "您的团队订阅由组织所有者管理。",
+    "checkout": "结账"
   },
   "profile": {
     "title": "设置",
@@ -252,7 +253,7 @@
     "deleteDialogSubmit": "永久删除账户",
     "deleteDialogMismatch": "电子邮件与您的账户邮箱不匹配。",
     "deleteDialogError": "删除账户失败，请重试。",
-    "deleteBlockedOwner": "您拥有一个组织。请联系我们的支持团队以删除您的账户。",
+    "deleteBlockedOwner": "您是一个组织的所有者。删除账户前，请转移所有权或删除组织。",
     "deleteBlockedMember": "您属于一个团队。请先联系您的团队所有者将您移除。",
     "pronounsHeHim": "他/Him",
     "pronounsSheHer": "她/Her",
@@ -300,7 +301,15 @@
     "seatsUpdated": "席位更新成功",
     "removeSeatConfirmTitle": "移除席位",
     "removeSeatConfirmBody": "不会进行退款。您的下次续费将反映减少后的席位数量。",
-    "removeSeatConfirmAction": "移除"
+    "removeSeatConfirmAction": "移除",
+    "deleteOrg": "删除组织",
+    "deleteOrgDescription": "永久删除此组织。所有成员将被移除，待处理的邀请将被取消，您的订阅将立即取消且不退款。",
+    "deleteOrgDialogTitle": "删除此组织？",
+    "deleteOrgDialogDescription": "此操作无法撤销。如果这是您唯一的组织，您的账户也将被删除。",
+    "deleteOrgDialogLabel": "输入 {name} 以确认",
+    "deleteOrgDialogCancel": "取消",
+    "deleteOrgDialogSubmit": "永久删除组织",
+    "deleteOrgDialogMismatch": "组织名称不匹配。"
   },
   "common": {
     "loading": "加载中...",
@@ -314,9 +323,6 @@
     "unknownError": "未知错误"
   },
   "actionErrors": {
-    "account_delete_failed": "账号删除失败",
-    "avatar_update_failed": "头像更新失败",
-    "checkout_failed": "无法开始结账",
     "current_password_required": "请输入当前密码",
     "email_and_password_required": "请输入邮箱和密码",
     "email_required": "请输入邮箱",

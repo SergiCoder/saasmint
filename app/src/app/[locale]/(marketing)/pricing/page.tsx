@@ -11,6 +11,7 @@ import { ProductsGrid } from "@/presentation/components/organisms/ProductsGrid";
 import { GetStartedButton } from "./_components/GetStartedButton";
 import { CheckoutButton } from "@/app/[locale]/(app)/subscription/_components/CheckoutButton";
 import { TeamCheckoutButton } from "@/app/[locale]/(app)/subscription/_components/TeamCheckoutButton";
+import { startCheckout, startProductCheckout } from "@/app/actions/billing";
 import { getOptionalUser } from "../_data/getOptionalUser";
 import {
   buildPlanCardGroups,
@@ -118,7 +119,11 @@ export default async function PricingPage({ params, searchParams }: Props) {
         );
       }
       return (
-        <CheckoutButton planPriceId={plan.price.id} highlighted={highlighted}>
+        <CheckoutButton
+          action={startCheckout}
+          field={{ name: "planPriceId", value: plan.price.id }}
+          highlighted={highlighted}
+        >
           {ctaLabel}
         </CheckoutButton>
       );
@@ -191,7 +196,10 @@ export default async function PricingPage({ params, searchParams }: Props) {
         locale={locale}
         renderCta={(product) =>
           product.price && (
-            <CheckoutButton planPriceId={product.price.id}>
+            <CheckoutButton
+              action={startProductCheckout}
+              field={{ name: "productPriceId", value: product.price.id }}
+            >
               {t("buy")}
             </CheckoutButton>
           )

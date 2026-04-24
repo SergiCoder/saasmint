@@ -214,7 +214,8 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Verwaltet von {name}",
-    "teamPlanReadonly": "Ihr Team-Abonnement wird vom Organisationsinhaber verwaltet."
+    "teamPlanReadonly": "Ihr Team-Abonnement wird vom Organisationsinhaber verwaltet.",
+    "checkout": "Bezahlen"
   },
   "profile": {
     "title": "Einstellungen",
@@ -252,7 +253,7 @@
     "deleteDialogSubmit": "Konto dauerhaft löschen",
     "deleteDialogMismatch": "Die E-Mail-Adresse stimmt nicht mit Ihrem Konto überein.",
     "deleteDialogError": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
-    "deleteBlockedOwner": "Sie sind Inhaber einer Organisation. Bitte kontaktieren Sie unser Support-Team, um Ihr Konto zu löschen.",
+    "deleteBlockedOwner": "Sie sind Inhaber einer Organisation. Übertragen Sie die Inhaberschaft oder löschen Sie die Organisation, bevor Sie Ihr Konto löschen.",
     "deleteBlockedMember": "Sie gehören einem Team an. Bitte kontaktieren Sie Ihren Teaminhaber, um zuerst entfernt zu werden.",
     "pronounsHeHim": "Er/Ihm",
     "pronounsSheHer": "Sie/Ihr",
@@ -300,7 +301,15 @@
     "seatsUpdated": "Plätze erfolgreich aktualisiert",
     "removeSeatConfirmTitle": "Platz entfernen",
     "removeSeatConfirmBody": "Es erfolgt keine Rückerstattung. Ihre nächste Verlängerung wird die reduzierte Platzanzahl widerspiegeln.",
-    "removeSeatConfirmAction": "Entfernen"
+    "removeSeatConfirmAction": "Entfernen",
+    "deleteOrg": "Organisation löschen",
+    "deleteOrgDescription": "Diese Organisation dauerhaft löschen. Alle Mitglieder werden entfernt, ausstehende Einladungen storniert und Ihr Abonnement sofort ohne Rückerstattung gekündigt.",
+    "deleteOrgDialogTitle": "Diese Organisation löschen?",
+    "deleteOrgDialogDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Wenn dies Ihre einzige Organisation ist, wird auch Ihr Konto gelöscht.",
+    "deleteOrgDialogLabel": "Geben Sie {name} ein, um zu bestätigen",
+    "deleteOrgDialogCancel": "Abbrechen",
+    "deleteOrgDialogSubmit": "Organisation dauerhaft löschen",
+    "deleteOrgDialogMismatch": "Der Name der Organisation stimmt nicht überein."
   },
   "common": {
     "loading": "Wird geladen...",
@@ -314,9 +323,6 @@
     "unknownError": "Unbekannter Fehler"
   },
   "actionErrors": {
-    "account_delete_failed": "Konto konnte nicht gelöscht werden",
-    "avatar_update_failed": "Avatar konnte nicht aktualisiert werden",
-    "checkout_failed": "Bezahlvorgang konnte nicht gestartet werden",
     "current_password_required": "Aktuelles Passwort ist erforderlich",
     "email_and_password_required": "E-Mail und Passwort sind erforderlich",
     "email_required": "E-Mail ist erforderlich",

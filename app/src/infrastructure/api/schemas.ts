@@ -134,3 +134,13 @@ export const PhonePrefixSchema = z.object({
   prefix: z.string(),
   label: z.string(),
 }) satisfies z.ZodType<PhonePrefix>;
+
+/**
+ * Envelope returned by Stripe-session-creating endpoints (plan checkout,
+ * product checkout, billing portal). Validates that `url` is a well-formed
+ * URL at the boundary so gateway callers never hand a malformed string to
+ * `redirect(...)` or `assertTrustedRedirect(...)`.
+ */
+export const CheckoutSessionResponseSchema = z.object({
+  url: z.string().url(),
+});
