@@ -4,15 +4,25 @@ import type {
   ISubscriptionGateway,
 } from "@/application/ports/ISubscriptionGateway";
 import type { Subscription } from "@/domain/models/Subscription";
-import { apiFetch } from "./apiClient";
+import { ApiError } from "@/domain/errors/ApiError";
+import { apiFetch, apiFetchVoid } from "./apiClient";
+import { applyPriceDefaults, keysToCamel, keysToSnake } from "./caseTransform";
+import { CheckoutSessionResponseSchema, SubscriptionSchema } from "./schemas";
 
 export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
-  async getSubscription(_orgId: string): Promise<Subscription | null> {
+  async getSubscription(currency?: string): Promise<Subscription | null> {
     try {
-      return await apiFetch<Subscription>("/billing/subscription/");
+      const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
+      const raw = await apiFetch<Record<string, unknown>>(
+        `/billing/subscriptions/me/${query}`,
+      );
+      const camel = keysToCamel(raw) as Record<string, unknown>;
+      if (camel.plan && typeof camel.plan === "object") {
+        applyPriceDefaults(camel.plan as Record<string, unknown>, currency);
+      }
+      return SubscriptionSchema.parse(camel);
     } catch (err) {
-      if (err instanceof Error && err.message.startsWith("API 404"))
-        return null;
+      if (err instanceof ApiError && err.status === 404) return null;
       throw err;
     }
   }
@@ -20,18 +30,38 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
   async createCheckoutSession(
     input: CheckoutSessionInput,
   ): Promise<{ url: string }> {
-    return apiFetch<{ url: string }>("/billing/checkout/", {
+    const raw = await apiFetch<unknown>("/billing/checkout-sessions/", {
       method: "POST",
-      body: JSON.stringify(input),
+      body: JSON.stringify(keysToSnake(input)),
     });
+    return CheckoutSessionResponseSchema.parse(raw);
   }
 
   async createBillingPortalSession(
     input: BillingPortalInput,
   ): Promise<{ url: string }> {
-    return apiFetch<{ url: string }>("/billing/portal/", {
+    const raw = await apiFetch<unknown>("/billing/portal-sessions/", {
       method: "POST",
-      body: JSON.stringify(input),
+      body: JSON.stringify(keysToSnake(input)),
+    });
+    return CheckoutSessionResponseSchema.parse(raw);
+  }
+
+  async cancelSubscription(): Promise<void> {
+    await apiFetchVoid("/billing/subscriptions/me/", { method: "DELETE" });
+  }
+
+  async resumeSubscription(): Promise<void> {
+    await apiFetchVoid("/billing/subscriptions/me/", {
+      method: "PATCH",
+      body: JSON.stringify({ cancel_at_period_end: false }),
+    });
+  }
+
+  async updateSeats(quantity: number): Promise<void> {
+    await apiFetchVoid("/billing/subscriptions/me/", {
+      method: "PATCH",
+      body: JSON.stringify({ quantity }),
     });
   }
 }

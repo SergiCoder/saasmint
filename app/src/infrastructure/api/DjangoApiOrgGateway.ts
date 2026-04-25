@@ -1,32 +1,22 @@
-import type {
-  CreateOrgInput,
-  IOrgGateway,
-  UpdateOrgInput,
-} from "@/application/ports/IOrgGateway";
+import type { IOrgGateway } from "@/application/ports/IOrgGateway";
 import type { Org } from "@/domain/models/Org";
-import { apiFetch } from "./apiClient";
+import { apiFetch, apiFetchVoid } from "./apiClient";
+import { keysToCamel } from "./caseTransform";
+import { OrgSchema } from "./schemas";
+
+function parseOrg(raw: Record<string, unknown>): Org {
+  return OrgSchema.parse(keysToCamel(raw));
+}
 
 export class DjangoApiOrgGateway implements IOrgGateway {
-  async createOrg(input: CreateOrgInput): Promise<Org> {
-    return apiFetch<Org>("/orgs/", {
-      method: "POST",
-      body: JSON.stringify(input),
-    });
+  async listUserOrgs(): Promise<Org[]> {
+    const data = await apiFetch<{ results: Record<string, unknown>[] }>(
+      "/orgs/",
+    );
+    return data.results.map(parseOrg);
   }
 
-  async getOrg(orgId: string): Promise<Org> {
-    return apiFetch<Org>(`/orgs/${orgId}/`);
-  }
-
-  async updateOrg(orgId: string, input: UpdateOrgInput): Promise<Org> {
-    return apiFetch<Org>(`/orgs/${orgId}/`, {
-      method: "PATCH",
-      body: JSON.stringify(input),
-    });
-  }
-
-  async listUserOrgs(_userId: string): Promise<Org[]> {
-    const data = await apiFetch<{ results: Org[] }>("/orgs/");
-    return data.results;
+  async deleteOrg(orgId: string): Promise<void> {
+    await apiFetchVoid(`/orgs/${orgId}/`, { method: "DELETE" });
   }
 }

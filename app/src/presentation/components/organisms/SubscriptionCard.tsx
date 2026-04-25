@@ -1,4 +1,5 @@
 import { Badge } from "../atoms/Badge";
+import { FormattedDate } from "../atoms/FormattedDate";
 
 const statusVariant = {
   active: "success",
@@ -7,32 +8,38 @@ const statusVariant = {
   canceled: "error",
   unpaid: "error",
   incomplete: "warning",
+  incomplete_expired: "error",
+  paused: "warning",
 } as const;
 
 export interface SubscriptionCardProps {
+  eyebrowLabel?: string;
   planName: string;
   status: keyof typeof statusVariant;
   statusLabel: string;
-  interval: string;
-  price: string;
-  currentPeriodEnd: string;
-  periodEndLabel: string;
+  subtitle?: string;
+  currentPeriodEndIso?: string;
+  periodEndLocale?: string;
+  periodEndLabel?: string;
   cancelAtPeriodEnd: boolean;
   cancelLabel?: string;
+  footer?: string;
   actions?: React.ReactNode;
   className?: string;
 }
 
 export function SubscriptionCard({
+  eyebrowLabel,
   planName,
   status,
   statusLabel,
-  interval,
-  price,
-  currentPeriodEnd,
+  subtitle,
+  currentPeriodEndIso,
+  periodEndLocale,
   periodEndLabel,
   cancelAtPeriodEnd,
   cancelLabel,
+  footer,
   actions,
   className = "",
 }: SubscriptionCardProps) {
@@ -42,24 +49,38 @@ export function SubscriptionCard({
     >
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">{planName}</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            {price}/{interval}
-          </p>
+          {eyebrowLabel && (
+            <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
+              {eyebrowLabel}
+            </p>
+          )}
+          <h3 className="mt-1 text-lg font-semibold text-gray-900">
+            {planName}
+          </h3>
+          {subtitle && <p className="mt-1 text-sm text-gray-500">{subtitle}</p>}
         </div>
         <Badge variant={statusVariant[status]}>{statusLabel}</Badge>
       </div>
 
-      <dl className="mt-6 space-y-3 text-sm">
-        <div className="flex justify-between">
-          <dt className="text-gray-500">{periodEndLabel}</dt>
-          <dd className="font-medium text-gray-900">{currentPeriodEnd}</dd>
-        </div>
-      </dl>
+      {currentPeriodEndIso && periodEndLabel && periodEndLocale && (
+        <dl className="mt-6 space-y-3 text-sm">
+          <div className="flex justify-between">
+            <dt className="text-gray-500">{periodEndLabel}</dt>
+            <dd className="font-medium text-gray-900">
+              <FormattedDate
+                iso={currentPeriodEndIso}
+                locale={periodEndLocale}
+              />
+            </dd>
+          </div>
+        </dl>
+      )}
 
       {cancelAtPeriodEnd && cancelLabel && (
         <p className="mt-4 text-sm text-yellow-700">{cancelLabel}</p>
       )}
+
+      {footer && <p className="mt-4 text-sm text-gray-500">{footer}</p>}
 
       {actions && <div className="mt-6 flex gap-3">{actions}</div>}
     </div>

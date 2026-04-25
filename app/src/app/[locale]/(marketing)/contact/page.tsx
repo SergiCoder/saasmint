@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ContactForm } from "./_components/ContactForm";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("contact");
+interface Props {
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "contact" });
   return { title: t("title") };
 }
 
-export default async function ContactPage() {
+export default async function ContactPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const t = await getTranslations("contact");
 
   return (
@@ -19,7 +27,11 @@ export default async function ContactPage() {
         {t("description")}
       </p>
       <div className="mt-8">
-        <ContactForm placeholder={t("placeholder")} submitLabel={t("submit")} />
+        <ContactForm
+          placeholder={t("placeholder")}
+          messagePlaceholder={t("messagePlaceholder")}
+          submitLabel={t("submit")}
+        />
       </div>
     </section>
   );

@@ -70,8 +70,8 @@ describe("DashboardMock", () => {
     const barContainer = container.querySelector("[style*='height: 48px']")!;
     const bars = Array.from(barContainer.children) as HTMLElement[];
     // chartBars = [20, 45, 30, 60, 80, 55, 90] -> max is 90 at index 6
-    expect(bars[6].style.opacity).toBe("1");
-    expect(bars[0].style.opacity).toBe("0.4");
+    expect(bars[6]!.style.opacity).toBe("1");
+    expect(bars[0]!.style.opacity).toBe("0.4");
   });
 
   it("renders the tallest bar at 100% height", () => {
@@ -79,7 +79,7 @@ describe("DashboardMock", () => {
     const barContainer = container.querySelector("[style*='height: 48px']")!;
     const bars = Array.from(barContainer.children) as HTMLElement[];
     // Max bar (90) should be 100% height
-    expect(bars[6].style.height).toBe("100%");
+    expect(bars[6]!.style.height).toBe("100%");
   });
 
   it("renders with empty chartBars array", () => {

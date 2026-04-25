@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { MarketingLayout } from "@/presentation/components/templates/MarketingLayout";
 import { getOptionalUser } from "./_data/getOptionalUser";
@@ -9,11 +9,16 @@ const primaryLinkClass =
 
 interface MarketingLayoutRouteProps {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }
 
 export default async function MarketingLayoutRoute({
   children,
+  params,
 }: MarketingLayoutRouteProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const [t, tCommon, tFooter, user] = await Promise.all([
     getTranslations("nav"),
     getTranslations("common"),
@@ -22,10 +27,10 @@ export default async function MarketingLayoutRoute({
   ]);
 
   const navLinks = [
-    { href: "/#features", label: t("features") },
+    { href: "/", label: t("home") },
     { href: "/pricing", label: t("pricing") },
-    { href: "/contact", label: t("contactUs") },
     { href: "/blog", label: t("blog") },
+    { href: "/contact", label: t("contactUs") },
   ];
 
   const footerSections = [
@@ -41,17 +46,14 @@ export default async function MarketingLayoutRoute({
   ];
 
   const navUser = user
-    ? { fullName: user.fullName ?? user.email, avatarUrl: user.avatarUrl }
+    ? {
+        fullName: user.fullName ?? user.email,
+        pronouns: user.pronouns,
+        avatarUrl: user.avatarUrl,
+      }
     : undefined;
 
-  const navActions = user ? (
-    <>
-      <Link href="/dashboard" className={primaryLinkClass}>
-        {t("dashboard")}
-      </Link>
-      <SignOutButton label={t("signOut")} />
-    </>
-  ) : (
+  const navActions = user ? undefined : (
     <>
       <Link
         href="/login"
@@ -59,11 +61,19 @@ export default async function MarketingLayoutRoute({
       >
         {t("signIn")}
       </Link>
-      <Link href="/signup" className={primaryLinkClass}>
+      <Link href="/pricing" className={primaryLinkClass}>
         {t("getStarted")}
       </Link>
     </>
   );
+
+  const userMenuItems = user
+    ? [
+        { href: "/dashboard", label: t("dashboard") },
+        { href: "/profile", label: t("profile") },
+        { href: "/subscription", label: t("subscription") },
+      ]
+    : undefined;
 
   return (
     <MarketingLayout
@@ -71,6 +81,10 @@ export default async function MarketingLayoutRoute({
       navLinks={navLinks}
       navUser={navUser}
       navActions={navActions}
+      userMenuItems={userMenuItems}
+      userMenuSignOut={
+        user ? <SignOutButton label={t("signOut")} /> : undefined
+      }
       toggleNavLabel={tCommon("toggleNav")}
       footerSections={footerSections}
       copyright={tFooter("copyright")}

@@ -1,73 +1,163 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { CreateOrg } from "@/application/use-cases/org/CreateOrg";
-import { InviteOrgMember } from "@/application/use-cases/org-member/InviteOrgMember";
-import { RemoveOrgMember } from "@/application/use-cases/org-member/RemoveOrgMember";
-import { orgGateway, orgMemberGateway } from "@/infrastructure/registry";
+import type { OrgMember } from "@/domain/models/OrgMember";
+import {
+  authGateway,
+  invitationGateway,
+  orgGateway,
+  orgMemberGateway,
+} from "@/infrastructure/registry";
+import {
+  ok,
+  fail,
+  toActionError,
+  type ActionResult,
+} from "@/lib/actions/ActionResult";
+import { getString } from "@/lib/actions/parseFormData";
 
-export async function createOrg(_prevState: unknown, formData: FormData) {
-  const name = formData.get("name");
-  const slug = formData.get("slug");
+const assignableRoles = ["admin", "member"] as const;
+type AssignableRole = (typeof assignableRoles)[number];
 
-  if (typeof name !== "string" || typeof slug !== "string") {
-    return { error: "Name and slug are required" };
-  }
-
-  let org;
-  try {
-    org = await new CreateOrg(orgGateway).execute({ name, slug });
-  } catch {
-    return { error: "Failed to create organization" };
-  }
-  redirect(`/org/${org.slug}`);
+function isAssignableRole(value: unknown): value is AssignableRole {
+  return (
+    typeof value === "string" &&
+    (assignableRoles as readonly string[]).includes(value)
+  );
 }
 
-const validRoles = ["owner", "admin", "member"] as const;
-type OrgRole = (typeof validRoles)[number];
+type OrgRole = OrgMember["role"];
 
-export async function inviteMember(_prevState: unknown, formData: FormData) {
-  const orgId = formData.get("orgId");
-  const email = formData.get("email");
+async function assertOrgRole(
+  orgId: string,
+  allowed: readonly OrgRole[],
+): Promise<boolean> {
+  try {
+    const [user, members] = await Promise.all([
+      authGateway.getCurrentUser(),
+      orgMemberGateway.listMembers(orgId),
+    ]);
+    const me = members.find((m) => m.user.id === user.id);
+    return me ? allowed.includes(me.role) : false;
+  } catch {
+    return false;
+  }
+}
+
+export async function inviteMember(
+  _prevState: unknown,
+  formData: FormData,
+): Promise<ActionResult> {
+  const orgId = getString(formData, "orgId");
+  const email = getString(formData, "email");
   const role = formData.get("role");
 
-  if (
-    typeof orgId !== "string" ||
-    typeof email !== "string" ||
-    typeof role !== "string" ||
-    !(validRoles as readonly string[]).includes(role)
-  ) {
-    return { error: "Invalid input" };
+  if (!orgId || !email || !isAssignableRole(role)) {
+    return fail("invalid_input");
+  }
+
+  if (!(await assertOrgRole(orgId, ["owner", "admin"]))) {
+    return fail("not_authorized");
   }
 
   try {
-    await new InviteOrgMember(orgMemberGateway).execute(
-      orgId,
-      email,
-      role as (typeof validRoles)[number],
-    );
-  } catch {
-    return { error: "Failed to invite member" };
+    await invitationGateway.createInvitation(orgId, { email, role });
+  } catch (err) {
+    return toActionError(err);
   }
 
-  revalidatePath(`/org`);
-  return { success: true };
+  revalidatePath("/org", "layout");
+  return ok();
 }
 
-export async function removeMember(formData: FormData) {
-  const orgId = formData.get("orgId");
-  const userId = formData.get("userId");
-
-  if (typeof orgId !== "string" || typeof userId !== "string") {
+// Fire-and-forget variants: consumed via `<form action={fn}>` which requires
+// `Promise<void>`. Errors are logged server-side and the page re-renders via
+// `revalidatePath`; there's no UI surface to show per-action envelopes here.
+export async function cancelInvitation(formData: FormData): Promise<void> {
+  const orgId = getString(formData, "orgId");
+  const invitationId = getString(formData, "invitationId");
+  if (!orgId || !invitationId) return;
+  if (!(await assertOrgRole(orgId, ["owner", "admin"]))) return;
+  try {
+    await invitationGateway.cancelInvitation(orgId, invitationId);
+  } catch (err) {
+    console.error("Failed to cancel invitation", err);
     return;
   }
+  revalidatePath("/org", "layout");
+}
 
+export async function removeMember(formData: FormData): Promise<void> {
+  const orgId = getString(formData, "orgId");
+  const userId = getString(formData, "userId");
+  if (!orgId || !userId) return;
+  if (!(await assertOrgRole(orgId, ["owner", "admin"]))) return;
   try {
-    await new RemoveOrgMember(orgMemberGateway).execute(orgId, userId);
+    await orgMemberGateway.removeMember(orgId, userId);
   } catch (err) {
     console.error("Failed to remove member", err);
     return;
   }
-  revalidatePath(`/org`);
+  revalidatePath("/org", "layout");
+}
+
+export async function updateMemberRole(formData: FormData): Promise<void> {
+  const orgId = getString(formData, "orgId");
+  const userId = getString(formData, "userId");
+  const role = formData.get("role");
+  if (!orgId || !userId || !isAssignableRole(role)) return;
+  if (!(await assertOrgRole(orgId, ["owner", "admin"]))) return;
+  try {
+    await orgMemberGateway.updateMemberRole(orgId, userId, role);
+  } catch (err) {
+    console.error("Failed to update member role", err);
+    return;
+  }
+  revalidatePath("/org", "layout");
+}
+
+export async function transferOwnership(
+  _prevState: unknown,
+  formData: FormData,
+): Promise<ActionResult> {
+  const orgId = getString(formData, "orgId");
+  const userId = getString(formData, "userId");
+
+  if (!orgId || !userId) return fail("invalid_input");
+
+  if (!(await assertOrgRole(orgId, ["owner"]))) {
+    return fail("not_authorized");
+  }
+
+  try {
+    await orgMemberGateway.transferOwnership(orgId, userId);
+  } catch (err) {
+    return toActionError(err);
+  }
+
+  revalidatePath("/org", "layout");
+  return ok();
+}
+
+export async function deleteOrg(
+  _prevState: unknown,
+  formData: FormData,
+): Promise<ActionResult> {
+  const orgId = getString(formData, "orgId");
+
+  if (!orgId) return fail("invalid_input");
+
+  if (!(await assertOrgRole(orgId, ["owner"]))) {
+    return fail("not_authorized");
+  }
+
+  try {
+    await orgGateway.deleteOrg(orgId);
+  } catch (err) {
+    console.error("Failed to delete org", err);
+    return toActionError(err);
+  }
+
+  revalidatePath("/", "layout");
+  return ok();
 }

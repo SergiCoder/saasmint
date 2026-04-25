@@ -1,23 +1,33 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { OrgMember } from "@/domain/models/OrgMember";
 
 const mockApiFetch = vi.fn();
+const mockApiFetchVoid = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetchVoid: (...args: unknown[]) => mockApiFetchVoid(...args),
 }));
+
+vi.mock("@/infrastructure/api/caseTransform", async () => {
+  const actual = await vi.importActual("@/infrastructure/api/caseTransform");
+  return actual;
+});
 
 const { DjangoApiOrgMemberGateway } =
   await import("@/infrastructure/api/DjangoApiOrgMemberGateway");
 
-const member: OrgMember = {
+const rawMember = {
   id: "m1",
-  userId: "u1",
-  email: "alice@example.com",
-  fullName: "Alice",
+  org: "org-1",
+  user: {
+    id: "u1",
+    email: "alice@example.com",
+    full_name: "Alice",
+    avatar_url: null,
+  },
   role: "admin",
-  isBilling: false,
-  joinedAt: "2024-01-01T00:00:00Z",
+  is_billing: false,
+  joined_at: "2024-01-01T00:00:00Z",
 };
 
 beforeEach(() => {
@@ -28,18 +38,31 @@ describe("DjangoApiOrgMemberGateway", () => {
   const gateway = new DjangoApiOrgMemberGateway();
 
   describe("listMembers", () => {
-    it("fetches GET /orgs/:orgId/members/ and unwraps results", async () => {
-      const members = [member, { ...member, id: "m2", userId: "u2" }];
-      mockApiFetch.mockResolvedValue({ results: members });
+    it("fetches GET /orgs/:orgId/members/ and maps paginated results", async () => {
+      mockApiFetch.mockResolvedValue({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [rawMember],
+      });
 
       const result = await gateway.listMembers("o1");
 
       expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/members/");
-      expect(result).toEqual(members);
+      expect(result).toHaveLength(1);
+      expect(result[0]!.user.id).toBe("u1");
+      expect(result[0]!.user.email).toBe("alice@example.com");
+      expect(result[0]!.user.fullName).toBe("Alice");
+      expect(result[0]!.role).toBe("admin");
     });
 
     it("returns an empty array when no members exist", async () => {
-      mockApiFetch.mockResolvedValue({ results: [] });
+      mockApiFetch.mockResolvedValue({
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      });
 
       const result = await gateway.listMembers("o1");
       expect(result).toEqual([]);
@@ -54,40 +77,19 @@ describe("DjangoApiOrgMemberGateway", () => {
     });
   });
 
-  describe("inviteMember", () => {
-    it("sends POST /orgs/:orgId/members/ with email and role", async () => {
-      mockApiFetch.mockResolvedValue(member);
-
-      await gateway.inviteMember("o1", "bob@example.com", "member");
-
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/members/", {
-        method: "POST",
-        body: JSON.stringify({ email: "bob@example.com", role: "member" }),
-      });
-    });
-
-    it("propagates errors from apiFetch", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 409: Already a member"));
-
-      await expect(
-        gateway.inviteMember("o1", "bob@example.com", "member"),
-      ).rejects.toThrow("API 409: Already a member");
-    });
-  });
-
   describe("removeMember", () => {
     it("sends DELETE /orgs/:orgId/members/:userId/", async () => {
-      mockApiFetch.mockResolvedValue(undefined);
+      mockApiFetchVoid.mockResolvedValue(undefined);
 
       await gateway.removeMember("o1", "u2");
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/members/u2/", {
+      expect(mockApiFetchVoid).toHaveBeenCalledWith("/orgs/o1/members/u2/", {
         method: "DELETE",
       });
     });
 
     it("propagates errors from apiFetch", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
+      mockApiFetchVoid.mockRejectedValue(new Error("API 403: Forbidden"));
 
       await expect(gateway.removeMember("o1", "u2")).rejects.toThrow(
         "API 403: Forbidden",
@@ -97,7 +99,7 @@ describe("DjangoApiOrgMemberGateway", () => {
 
   describe("updateMemberRole", () => {
     it("sends PATCH /orgs/:orgId/members/:userId/ with role", async () => {
-      mockApiFetch.mockResolvedValue({ ...member, role: "owner" });
+      mockApiFetch.mockResolvedValue({ ...rawMember, role: "owner" });
 
       await gateway.updateMemberRole("o1", "u1", "owner");
 
@@ -113,6 +115,27 @@ describe("DjangoApiOrgMemberGateway", () => {
       await expect(
         gateway.updateMemberRole("o1", "u1", "admin"),
       ).rejects.toThrow("API 403: Forbidden");
+    });
+  });
+
+  describe("transferOwnership", () => {
+    it("sends PUT /orgs/:orgId/owner/ with user_id", async () => {
+      mockApiFetchVoid.mockResolvedValue(undefined);
+
+      await gateway.transferOwnership("o1", "u2");
+
+      expect(mockApiFetchVoid).toHaveBeenCalledWith("/orgs/o1/owner/", {
+        method: "PUT",
+        body: JSON.stringify({ user_id: "u2" }),
+      });
+    });
+
+    it("propagates errors from apiFetch", async () => {
+      mockApiFetchVoid.mockRejectedValue(new Error("API 403: Forbidden"));
+
+      await expect(gateway.transferOwnership("o1", "u2")).rejects.toThrow(
+        "API 403: Forbidden",
+      );
     });
   });
 });

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { Badge } from "@/presentation/components/atoms/Badge";
 import { TrustBar } from "@/presentation/components/molecules/TrustBar";
@@ -13,60 +13,42 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: "SaaSmint" };
 }
 
-const TRUST_USERS = [
-  { name: "JK" },
-  { name: "SM" },
-  { name: "RL" },
-  { name: "TP" },
-];
-
 const LOGOS = [
+  "Next.js",
   "Stripe",
-  "Vercel",
-  "Notion",
-  "Linear",
-  "Loom",
-  "Figma",
-  "Retool",
+  "Django",
+  "Tailwind CSS",
+  "TypeScript",
+  "Vitest",
+  "next-intl",
 ];
 
 const CHART_BARS = [35, 55, 45, 70, 60, 80, 95, 75, 88, 65, 72, 58];
 
-export default async function LandingPage() {
+const FEATURE_ITEMS = [
+  { key: "featureDeploys", icon: "🔐" },
+  { key: "featureAi", icon: "💳" },
+  { key: "featureEdge", icon: "👥" },
+  { key: "featureObs", icon: "🌐" },
+  { key: "featureSec", icon: "⚙️" },
+  { key: "featureInt", icon: "🎨" },
+] as const;
+
+interface Props {
+  params: Promise<{ locale: string }>;
+}
+
+export default async function LandingPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const t = await getTranslations("landing");
 
-  const features = [
-    {
-      icon: <span>⚡</span>,
-      title: t("featureDeploysTitle"),
-      description: t("featureDeploysDesc"),
-    },
-    {
-      icon: <span>🧠</span>,
-      title: t("featureAiTitle"),
-      description: t("featureAiDesc"),
-    },
-    {
-      icon: <span>🌐</span>,
-      title: t("featureEdgeTitle"),
-      description: t("featureEdgeDesc"),
-    },
-    {
-      icon: <span>📊</span>,
-      title: t("featureObsTitle"),
-      description: t("featureObsDesc"),
-    },
-    {
-      icon: <span>🔐</span>,
-      title: t("featureSecTitle"),
-      description: t("featureSecDesc"),
-    },
-    {
-      icon: <span>🔌</span>,
-      title: t("featureIntTitle"),
-      description: t("featureIntDesc"),
-    },
-  ];
+  const features = FEATURE_ITEMS.map(({ key, icon }) => ({
+    icon: <span>{icon}</span>,
+    title: t(`${key}Title`),
+    description: t(`${key}Desc`),
+  }));
 
   const stats = [
     { value: t("statDevs"), label: t("statDevsLabel") },
@@ -95,12 +77,12 @@ export default async function LandingPage() {
       time: t("dashActivity1Time"),
     },
     {
-      icon: <span>⚡</span>,
+      icon: <span>💳</span>,
       text: t("dashActivity2"),
       time: t("dashActivity2Time"),
     },
     {
-      icon: <span>🔍</span>,
+      icon: <span>👥</span>,
       text: t("dashActivity3"),
       time: t("dashActivity3Time"),
     },
@@ -126,7 +108,7 @@ export default async function LandingPage() {
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-2.5">
             <Link
-              href="/signup"
+              href="/pricing"
               className="bg-primary-600 hover:bg-primary-700 focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-lg px-6 py-3 text-base font-medium text-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               {t("cta")}
@@ -148,11 +130,7 @@ export default async function LandingPage() {
               {t("ctaSecondary")}
             </a>
           </div>
-          <TrustBar
-            users={TRUST_USERS}
-            text={t("trustText", { count: "12,400" })}
-            className="mt-11"
-          />
+          <TrustBar text={t("trustText")} className="mt-11" />
         </div>
         <div>
           <DashboardMock

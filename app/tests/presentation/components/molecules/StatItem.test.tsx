@@ -12,8 +12,8 @@ describe("StatItem", () => {
   it("renders value before label in DOM order", () => {
     const { container } = render(<StatItem value="500+" label="Customers" />);
     const paragraphs = container.querySelectorAll("p");
-    expect(paragraphs[0].textContent).toBe("500+");
-    expect(paragraphs[1].textContent).toBe("Customers");
+    expect(paragraphs[0]!.textContent).toBe("500+");
+    expect(paragraphs[1]!.textContent).toBe("Customers");
   });
 
   it("applies custom className", () => {

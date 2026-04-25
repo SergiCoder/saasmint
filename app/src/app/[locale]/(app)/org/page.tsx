@@ -1,43 +1,43 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
-import { ListUserOrgs } from "@/application/use-cases/org/ListUserOrgs";
-import { orgGateway } from "@/infrastructure/registry";
-import { getCurrentUser } from "../_data/getCurrentUser";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { redirect } from "next/navigation";
+import { getUserOrgs } from "../_data/getUserOrgs";
 import { OrgCard } from "@/presentation/components/molecules/OrgCard";
-import { CreateOrgForm } from "./_components/CreateOrgForm";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("org");
+interface Props {
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "org" });
   return { title: t("title") };
 }
 
-export default async function OrgListPage() {
-  const [t, user] = await Promise.all([
-    getTranslations("org"),
-    getCurrentUser(),
-  ]);
-  const orgs = await new ListUserOrgs(orgGateway).execute(user.id);
+export default async function OrgListPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const [t, orgs] = await Promise.all([getTranslations("org"), getUserOrgs()]);
+
+  if (orgs.length === 0) {
+    redirect("/subscription");
+  }
+
+  if (orgs.length === 1 && orgs[0]) {
+    redirect(`/org/${orgs[0].slug}`);
+  }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8">
+    <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
-
-      {orgs.length > 0 && (
-        <ul className="space-y-3">
-          {orgs.map((org) => (
-            <li key={org.id}>
-              <OrgCard slug={org.slug} name={org.name} />
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          {t("create")}
-        </h2>
-        <CreateOrgForm />
-      </section>
+      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {orgs.map((org) => (
+          <li key={org.id}>
+            <OrgCard slug={org.slug} name={org.name} />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

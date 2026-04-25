@@ -6,16 +6,21 @@ export type SubscriptionStatus =
   | "past_due"
   | "canceled"
   | "unpaid"
-  | "incomplete";
+  | "incomplete"
+  | "incomplete_expired"
+  | "paused";
+
+/** Maximum number of seats allowed on a team subscription. */
+export const MAX_SEATS = 100;
 
 export interface Subscription {
-  id: string;
-  stripeId: string;
-  status: SubscriptionStatus;
-  plan: Pick<Plan, "id" | "name" | "context" | "interval">;
-  quantity: number;
-  currentPeriodStart: string;
-  currentPeriodEnd: string;
-  cancelAtPeriodEnd: boolean;
-  trialEnd: string | null;
+  readonly id: string;
+  readonly status: SubscriptionStatus;
+  readonly plan: Plan;
+  readonly quantity: number;
+  readonly trialEndsAt: string | null;
+  readonly currentPeriodStart: string;
+  readonly currentPeriodEnd: string;
+  readonly canceledAt: string | null;
+  readonly createdAt: string;
 }

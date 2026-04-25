@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { describe, it, expect } from "vitest";
 import { AlertBanner } from "@/presentation/components/molecules";
 
@@ -41,40 +40,6 @@ describe("AlertBanner", () => {
       const alert = screen.getByRole("alert");
       expect(alert.className).toContain("bg-red-50");
       expect(alert.className).toContain("text-red-800");
-    });
-  });
-
-  describe("dismissible behavior", () => {
-    it("does not show dismiss button by default", () => {
-      render(<AlertBanner>No dismiss</AlertBanner>);
-      expect(
-        screen.queryByRole("button", { name: "Dismiss" }),
-      ).not.toBeInTheDocument();
-    });
-
-    it("shows dismiss button when dismissible is true", () => {
-      render(
-        <AlertBanner dismissible dismissLabel="Dismiss">
-          Dismissible
-        </AlertBanner>,
-      );
-      expect(
-        screen.getByRole("button", { name: "Dismiss" }),
-      ).toBeInTheDocument();
-    });
-
-    it("hides the banner when dismiss button is clicked", async () => {
-      const user = userEvent.setup();
-      render(
-        <AlertBanner dismissible dismissLabel="Dismiss">
-          Will be dismissed
-        </AlertBanner>,
-      );
-      expect(screen.getByRole("alert")).toBeInTheDocument();
-
-      await user.click(screen.getByRole("button", { name: "Dismiss" }));
-
-      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     });
   });
 

@@ -1,10 +1,12 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
-import { afterEach, vi } from "vitest";
+import { afterEach, beforeEach, vi } from "vitest";
+import { translate } from "./_helpers/translate";
 
 vi.mock("next-intl", () => ({
   useLocale: () => "en",
-  useTranslations: () => (key: string) => key,
+  useTranslations: () => translate,
+  useMessages: () => ({}),
 }));
 
 vi.mock("@/lib/i18n/navigation", async () => {
@@ -23,6 +25,15 @@ vi.mock("@/lib/i18n/navigation", async () => {
     useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
     redirect: vi.fn(),
   };
+});
+
+/**
+ * Silence `console.error` by default. Tests that need to assert on it can
+ * still do so via `vi.mocked(console.error)` — they just don't need to
+ * re-stub it. Restored after every test so the spy count stays clean.
+ */
+beforeEach(() => {
+  vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
 afterEach(() => {

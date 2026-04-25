@@ -1,0 +1,210 @@
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { User } from "@/domain/models/User";
+import type { Org } from "@/domain/models/Org";
+import { translate } from "../../_helpers/translate";
+
+// --- Mocks ---------------------------------------------------------------
+
+vi.mock("next-intl/server", () => ({
+  getTranslations: vi.fn(() => Promise.resolve(translate)),
+  setRequestLocale: vi.fn(),
+}));
+
+vi.mock("next", () => ({
+  default: {},
+}));
+
+const mockGetCurrentUser = vi.fn<() => Promise<User>>();
+vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
+  getCurrentUser: () => mockGetCurrentUser(),
+}));
+
+const mockListUserOrgsExecute = vi.fn<() => Promise<Org[]>>();
+const mockListOrgMembersExecute = vi.fn(() => Promise.resolve([]));
+const mockGetSubscriptionExecute = vi.fn(() => Promise.resolve(null));
+
+vi.mock("@/infrastructure/registry", () => ({
+  orgGateway: { listUserOrgs: () => mockListUserOrgsExecute() },
+  orgMemberGateway: { listMembers: () => mockListOrgMembersExecute() },
+  subscriptionGateway: { getSubscription: () => mockGetSubscriptionExecute() },
+}));
+
+vi.mock("@/presentation/components/molecules/OrgCard", async () => {
+  const React = await import("react");
+  return {
+    OrgCard: ({ slug, name }: { slug: string; name: string }) =>
+      React.createElement("div", { "data-testid": `org-card-${slug}` }, name),
+  };
+});
+
+// --- Import under test (after mocks) -------------------------------------
+
+const { default: DashboardPage } =
+  await import("@/app/[locale]/(app)/dashboard/page");
+
+// --- Helpers --------------------------------------------------------------
+
+function makeUser(overrides: Partial<User> = {}): User {
+  return {
+    id: "u1",
+
+    email: "test@example.com",
+    fullName: "Test User",
+    avatarUrl: null,
+    accountType: "personal",
+    preferredLocale: "en",
+    preferredCurrency: "usd",
+    phonePrefix: null,
+    phone: null,
+    timezone: null,
+    jobTitle: null,
+    pronouns: null,
+    bio: null,
+    isVerified: true,
+    createdAt: "2025-01-01T00:00:00Z",
+    registrationMethod: "email",
+    linkedProviders: [],
+    updatedAt: "2025-01-01T00:00:00Z",
+    ...overrides,
+  };
+}
+
+function makeOrg(overrides: Partial<Org> = {}): Org {
+  return {
+    id: "org-1",
+    name: "Acme Corp",
+    slug: "acme",
+    logoUrl: null,
+    createdAt: "2025-01-01T00:00:00Z",
+    ...overrides,
+  };
+}
+
+async function renderPage() {
+  const jsx = await DashboardPage({
+    params: Promise.resolve({ locale: "en" }),
+  });
+  return render(jsx);
+}
+
+// --- Tests ----------------------------------------------------------------
+
+describe("DashboardPage", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetCurrentUser.mockResolvedValue(makeUser());
+    mockListUserOrgsExecute.mockResolvedValue([]);
+  });
+
+  it("renders welcome heading with user full name", async () => {
+    mockGetCurrentUser.mockResolvedValue(makeUser({ fullName: "Jane Doe" }));
+
+    await renderPage();
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "Jane Doe",
+    );
+  });
+
+  it("falls back to email when fullName is empty", async () => {
+    mockGetCurrentUser.mockResolvedValue(
+      makeUser({ fullName: "", email: "jane@example.com" }),
+    );
+
+    await renderPage();
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "jane@example.com",
+    );
+  });
+
+  it("renders subtitle", async () => {
+    await renderPage();
+
+    expect(screen.getByText("subtitle")).toBeInTheDocument();
+  });
+
+  it("renders quick-start section heading", async () => {
+    await renderPage();
+
+    expect(screen.getByText("quickStart")).toBeInTheDocument();
+  });
+
+  it("renders all four quick-start action cards", async () => {
+    await renderPage();
+
+    const links = screen
+      .getAllByRole("link")
+      .filter((a) =>
+        ["/subscription", "/profile", "/org", "#"].includes(
+          a.getAttribute("href") ?? "",
+        ),
+      );
+    expect(links).toHaveLength(4);
+  });
+
+  it("renders correct hrefs for action cards", async () => {
+    await renderPage();
+
+    expect(screen.getByText("actionBillingTitle").closest("a")).toHaveAttribute(
+      "href",
+      "/subscription",
+    );
+    expect(screen.getByText("actionProfileTitle").closest("a")).toHaveAttribute(
+      "href",
+      "/profile",
+    );
+    expect(screen.getByText("actionOrgTitle").closest("a")).toHaveAttribute(
+      "href",
+      "/org",
+    );
+    expect(
+      screen.getByText("actionCustomizeTitle").closest("a"),
+    ).toHaveAttribute("href", "#");
+  });
+
+  it("renders title and description for each action card", async () => {
+    await renderPage();
+
+    for (const key of [
+      "actionBilling",
+      "actionProfile",
+      "actionOrg",
+      "actionCustomize",
+    ]) {
+      expect(screen.getByText(`${key}Title`)).toBeInTheDocument();
+      expect(screen.getByText(`${key}Desc`)).toBeInTheDocument();
+    }
+  });
+
+  it("does not render org section when user has no orgs", async () => {
+    mockListUserOrgsExecute.mockResolvedValue([]);
+
+    await renderPage();
+
+    expect(screen.queryByTestId("org-card-acme")).not.toBeInTheDocument();
+  });
+
+  it("renders org cards when user has orgs", async () => {
+    mockListUserOrgsExecute.mockResolvedValue([
+      makeOrg({ id: "o1", slug: "acme", name: "Acme Corp" }),
+      makeOrg({ id: "o2", slug: "globex", name: "Globex Inc" }),
+    ]);
+
+    await renderPage();
+
+    expect(screen.getByTestId("org-card-acme")).toHaveTextContent("Acme Corp");
+    expect(screen.getByTestId("org-card-globex")).toHaveTextContent(
+      "Globex Inc",
+    );
+  });
+
+  it("calls ListUserOrgs without arguments (current user resolved from auth)", async () => {
+    mockGetCurrentUser.mockResolvedValue(makeUser({ id: "user-42" }));
+
+    await renderPage();
+
+    expect(mockListUserOrgsExecute).toHaveBeenCalledWith();
+  });
+});

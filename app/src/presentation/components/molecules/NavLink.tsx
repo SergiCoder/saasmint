@@ -8,14 +8,21 @@ export interface NavLinkProps {
   className?: string;
 }
 
+function isActiveFor(href: string, pathname: string): boolean {
+  if (href === "#" || href.startsWith("#")) return false;
+  const hashIdx = href.indexOf("#");
+  const target = hashIdx >= 0 ? href.slice(0, hashIdx) : href;
+  if (!target) return false;
+  return pathname === target || pathname.startsWith(`${target}/`);
+}
+
 export function NavLink({ href, children, className = "" }: NavLinkProps) {
   const pathname = usePathname();
   const isHash = href === "#" || href.startsWith("#");
-  const isActive =
-    !isHash && (pathname === href || pathname.startsWith(`${href}/`));
+  const active = isActiveFor(href, pathname);
 
   const linkClassName = `text-sm font-medium transition-colors ${
-    isActive ? "text-primary-600" : "text-gray-600 hover:text-gray-900"
+    active ? "text-primary-600" : "text-gray-600 hover:text-gray-900"
   } ${className}`;
 
   if (isHash) {
@@ -39,7 +46,7 @@ export function NavLink({ href, children, className = "" }: NavLinkProps) {
     <Link
       href={linkHref}
       className={linkClassName}
-      aria-current={isActive ? "page" : undefined}
+      aria-current={active ? "page" : undefined}
     >
       {children}
     </Link>

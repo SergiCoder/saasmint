@@ -7,6 +7,10 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["./tests/setup.ts"],
+    env: {
+      NEXT_PUBLIC_APP_URL: "https://localhost:3000",
+      NEXT_PUBLIC_API_URL: "https://localhost:8443",
+    },
     coverage: {
       provider: "v8",
     },

@@ -1,6 +1,6 @@
 export interface PlanPrice {
-  id: string;
-  stripePriceId: string;
-  currency: string;
-  amount: number;
+  readonly id: string;
+  readonly amount: number;
+  readonly displayAmount: number;
+  readonly currency: string;
 }

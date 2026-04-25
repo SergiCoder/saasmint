@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { ApiError } from "@/domain/errors/ApiError";
 
 const mockRedirect = vi.fn();
 vi.mock("next/navigation", () => ({
@@ -8,46 +9,92 @@ vi.mock("next/navigation", () => ({
   },
 }));
 
-const mockSignInWithPassword = vi.fn();
-const mockSignUp = vi.fn();
-vi.mock("@/infrastructure/supabase/server", () => ({
-  createClient: vi.fn().mockResolvedValue({
-    auth: {
-      signInWithPassword: (...args: unknown[]) =>
-        mockSignInWithPassword(...args),
-      signUp: (...args: unknown[]) => mockSignUp(...args),
-    },
-  }),
+const mockPublicApiFetch = vi.fn();
+const mockApiFetch = vi.fn();
+vi.mock("@/infrastructure/api/apiClient", () => ({
+  publicApiFetch: (...args: unknown[]) => mockPublicApiFetch(...args),
+  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
 }));
 
-const mockSignOutExecute = vi.fn();
-vi.mock("@/application/use-cases/auth/SignOut", () => ({
-  SignOut: function SignOut() {
-    return { execute: mockSignOutExecute };
-  },
+const mockSetAuthCookies = vi.fn();
+const mockClearAuthCookies = vi.fn();
+const mockSetPendingPlan = vi.fn();
+const mockConsumePendingPlan = vi.fn();
+const mockSetOAuthFlowCookies = vi.fn();
+const mockConsumeOAuthFlowCookies = vi.fn();
+vi.mock("@/infrastructure/auth/cookies", () => ({
+  setAuthCookies: (...args: unknown[]) => mockSetAuthCookies(...args),
+  clearAuthCookies: (...args: unknown[]) => mockClearAuthCookies(...args),
+  setPendingPlan: (...args: unknown[]) => mockSetPendingPlan(...args),
+  consumePendingPlan: (...args: unknown[]) => mockConsumePendingPlan(...args),
+  setOAuthFlowCookies: (...args: unknown[]) => mockSetOAuthFlowCookies(...args),
+  consumeOAuthFlowCookies: (...args: unknown[]) =>
+    mockConsumeOAuthFlowCookies(...args),
 }));
+
+const mockSignOut = vi.fn();
+const mockListPlans = vi.fn();
 
 vi.mock("@/infrastructure/registry", () => ({
-  authGateway: {},
+  authGateway: { signOut: mockSignOut },
+  planGateway: { listPlans: mockListPlans },
 }));
 
-// Force fresh module for each test
 let signIn: typeof import("@/app/actions/auth").signIn;
 let signUp: typeof import("@/app/actions/auth").signUp;
 let signOut: typeof import("@/app/actions/auth").signOut;
+let resetPassword: typeof import("@/app/actions/auth").resetPassword;
+let resetPasswordWithToken: typeof import("@/app/actions/auth").resetPasswordWithToken;
+let changePassword: typeof import("@/app/actions/auth").changePassword;
+let verifyEmail: typeof import("@/app/actions/auth").verifyEmail;
+let startOAuth: typeof import("@/app/actions/auth").startOAuth;
+let exchangeOAuthCode: typeof import("@/app/actions/auth").exchangeOAuthCode;
+
+function mockPlans(): void {
+  mockListPlans.mockResolvedValue([
+    {
+      id: "plan_free",
+      context: "personal",
+      tier: 1,
+      price: { id: "price_free" },
+    },
+    {
+      id: "plan_pro",
+      context: "personal",
+      tier: 3,
+      price: { id: "price_pro_monthly" },
+    },
+    {
+      id: "plan_team_pro",
+      context: "team",
+      tier: 3,
+      price: { id: "price_team_pro" },
+    },
+  ]);
+}
 
 beforeEach(async () => {
   vi.clearAllMocks();
+  mockPlans();
   const mod = await import("@/app/actions/auth");
   signIn = mod.signIn;
   signUp = mod.signUp;
   signOut = mod.signOut;
+  resetPassword = mod.resetPassword;
+  resetPasswordWithToken = mod.resetPasswordWithToken;
+  changePassword = mod.changePassword;
+  verifyEmail = mod.verifyEmail;
+  startOAuth = mod.startOAuth;
+  exchangeOAuthCode = mod.exchangeOAuthCode;
 });
 
 describe("auth server actions", () => {
   describe("signIn", () => {
-    it("redirects to /dashboard on success", async () => {
-      mockSignInWithPassword.mockResolvedValue({ error: null });
+    it("calls Django login and redirects to /dashboard on success", async () => {
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_abc",
+        refresh_token: "ref_abc",
+      });
 
       const formData = new FormData();
       formData.set("email", "user@example.com");
@@ -56,97 +103,702 @@ describe("auth server actions", () => {
       await expect(signIn(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      expect(mockSignInWithPassword).toHaveBeenCalledWith({
-        email: "user@example.com",
-        password: "secret123",
+      expect(mockPublicApiFetch).toHaveBeenCalledWith("/auth/login/", {
+        method: "POST",
+        body: JSON.stringify({
+          email: "user@example.com",
+          password: "secret123",
+        }),
       });
+      expect(mockSetAuthCookies).toHaveBeenCalledWith("tok_abc", "ref_abc");
       expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
     });
 
-    it("returns error message on failure", async () => {
-      mockSignInWithPassword.mockResolvedValue({
-        error: { message: "Invalid credentials" },
-      });
+    it("returns ApiError envelope with detail when login fails", async () => {
+      mockPublicApiFetch.mockRejectedValue(
+        new ApiError(401, {
+          detail: "Invalid credentials.",
+          code: "invalid_credentials",
+        }),
+      );
 
       const formData = new FormData();
       formData.set("email", "user@example.com");
       formData.set("password", "wrong");
 
       const result = await signIn(undefined, formData);
-      expect(result).toEqual({ error: "Invalid credentials" });
+      expect(result).toEqual({
+        ok: false,
+        code: "invalid_credentials",
+        message: "Invalid credentials.",
+      });
       expect(mockRedirect).not.toHaveBeenCalled();
+    });
+
+    it("returns unknown_error for non-ApiError throwables", async () => {
+      mockPublicApiFetch.mockRejectedValue(new Error("API 500: Internal"));
+
+      const formData = new FormData();
+      formData.set("email", "user@example.com");
+      formData.set("password", "wrong");
+
+      const result = await signIn(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
+    });
+
+    it("redirects to billing checkout when plan is supplied", async () => {
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_abc",
+        refresh_token: "ref_abc",
+      });
+
+      const formData = new FormData();
+      formData.set("email", "user@example.com");
+      formData.set("password", "secret123");
+      formData.set("plan", "price_pro_monthly");
+
+      await expect(signIn(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockRedirect).toHaveBeenCalledWith(
+        "/subscription/checkout?plan=price_pro_monthly",
+      );
+    });
+
+    it("redirects to /dashboard (not Stripe checkout) when plan is free", async () => {
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_abc",
+        refresh_token: "ref_abc",
+      });
+
+      const formData = new FormData();
+      formData.set("email", "user@example.com");
+      formData.set("password", "secret123");
+      formData.set("plan", "price_free");
+
+      await expect(signIn(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
+    });
+
+    it("redirects to team checkout when plan resolves to a team plan", async () => {
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_abc",
+        refresh_token: "ref_abc",
+      });
+
+      const formData = new FormData();
+      formData.set("email", "user@example.com");
+      formData.set("password", "secret123");
+      formData.set("plan", "price_team_pro");
+
+      await expect(signIn(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockRedirect).toHaveBeenCalledWith(
+        "/subscription/team-checkout?plan=price_team_pro",
+      );
+    });
+
+    it("normalizes the email to lowercase and trims whitespace before calling Django", async () => {
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_abc",
+        refresh_token: "ref_abc",
+      });
+
+      const formData = new FormData();
+      formData.set("email", "  User@Example.COM  ");
+      formData.set("password", "secret123");
+
+      await expect(signIn(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockPublicApiFetch).toHaveBeenCalledWith("/auth/login/", {
+        method: "POST",
+        body: JSON.stringify({
+          email: "user@example.com",
+          password: "secret123",
+        }),
+      });
     });
   });
 
   describe("signUp", () => {
-    it("redirects to /login on success", async () => {
-      mockSignUp.mockResolvedValue({ error: null });
+    it("calls Django register and redirects to /login on success", async () => {
+      mockPublicApiFetch.mockResolvedValue({});
 
       const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
       formData.set("email", "new@example.com");
       formData.set("password", "secret123");
 
       await expect(signUp(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      expect(mockSignUp).toHaveBeenCalledWith(
-        expect.objectContaining({
+      expect(mockPublicApiFetch).toHaveBeenCalledWith("/auth/register/", {
+        method: "POST",
+        body: JSON.stringify({
           email: "new@example.com",
           password: "secret123",
-          options: { emailRedirectTo: "http://localhost:3000/auth/callback" },
+          full_name: "Jane Doe",
         }),
-      );
+      });
       expect(mockRedirect).toHaveBeenCalledWith("/login?registered=true");
     });
 
-    it("returns error message on failure", async () => {
-      mockSignUp.mockResolvedValue({
-        error: { message: "Email already in use" },
-      });
+    it("returns ApiError envelope with detail when registration fails", async () => {
+      mockPublicApiFetch.mockRejectedValue(
+        new ApiError(400, { detail: "Email already in use." }),
+      );
 
       const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
       formData.set("email", "existing@example.com");
       formData.set("password", "secret123");
 
       const result = await signUp(undefined, formData);
-      expect(result).toEqual({ error: "Email already in use" });
+      expect(result).toEqual({
+        ok: false,
+        code: "HTTP_400",
+        message: "Email already in use.",
+      });
+    });
+
+    it("returns unknown_error on non-ApiError throwables", async () => {
+      mockPublicApiFetch.mockRejectedValue(new Error("API 500: Internal"));
+
+      const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
+      formData.set("email", "existing@example.com");
+      formData.set("password", "secret123");
+
+      const result = await signUp(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
+    });
+
+    it("does not carry a free plan through the verify-email flow", async () => {
+      mockPublicApiFetch.mockResolvedValue({});
+
+      const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
+      formData.set("email", "new@example.com");
+      formData.set("password", "secret123");
+      formData.set("plan", "price_free");
+
+      await expect(signUp(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      // Free plans are auto-assigned by Django — no pending-plan cookie, no
+      // ?plan query param on the post-register login redirect.
+      expect(mockSetPendingPlan).not.toHaveBeenCalled();
+      expect(mockPublicApiFetch).toHaveBeenCalledWith(
+        "/auth/register/",
+        expect.objectContaining({ method: "POST" }),
+      );
+      expect(mockRedirect).toHaveBeenCalledWith("/login?registered=true");
+    });
+
+    it("uses org-owner endpoint when plan resolves to a team plan", async () => {
+      mockPublicApiFetch.mockResolvedValue({});
+
+      const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
+      formData.set("email", "new@example.com");
+      formData.set("password", "secret123");
+      formData.set("plan", "price_team_pro");
+
+      await expect(signUp(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockPublicApiFetch).toHaveBeenCalledWith(
+        "/auth/register/org-owner/",
+        expect.objectContaining({ method: "POST" }),
+      );
+      expect(mockSetPendingPlan).toHaveBeenCalledWith("price_team_pro", true);
+      expect(mockRedirect).toHaveBeenCalledWith(
+        "/login?registered=true&plan=price_team_pro&context=team",
+      );
+    });
+
+    it("normalizes the email to lowercase and trims whitespace before calling Django", async () => {
+      mockPublicApiFetch.mockResolvedValue({});
+
+      const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
+      formData.set("email", "  New.User@Example.COM  ");
+      formData.set("password", "secret123");
+
+      await expect(signUp(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockPublicApiFetch).toHaveBeenCalledWith("/auth/register/", {
+        method: "POST",
+        body: JSON.stringify({
+          email: "new.user@example.com",
+          password: "secret123",
+          full_name: "Jane Doe",
+        }),
+      });
+    });
+
+    it("returns full_name_invalid for short or missing fullName", async () => {
+      for (const name of [undefined, "Ab"]) {
+        const formData = new FormData();
+        if (name !== undefined) formData.set("fullName", name);
+        formData.set("email", "new@example.com");
+        formData.set("password", "secret123");
+        const result = await signUp(undefined, formData);
+        expect(result).toEqual({ ok: false, code: "full_name_invalid" });
+      }
+      expect(mockPublicApiFetch).not.toHaveBeenCalled();
     });
   });
 
   describe("signIn — validation", () => {
-    it("returns error when email is missing", async () => {
-      const formData = new FormData();
-      formData.set("password", "secret123");
-
-      const result = await signIn(undefined, formData);
-      expect(result).toEqual({ error: "Email and password are required" });
-      expect(mockSignInWithPassword).not.toHaveBeenCalled();
+    it("returns email_and_password_required when fields are missing", async () => {
+      const cases: [string, string][][] = [
+        [],
+        [["email", "user@example.com"]],
+        [["password", "secret123"]],
+      ];
+      for (const pairs of cases) {
+        const formData = new FormData();
+        for (const [k, v] of pairs) formData.set(k, v);
+        const result = await signIn(undefined, formData);
+        expect(result).toEqual({
+          ok: false,
+          code: "email_and_password_required",
+        });
+      }
+      expect(mockPublicApiFetch).not.toHaveBeenCalled();
     });
+  });
 
-    it("returns error when password is missing", async () => {
+  describe("resetPassword", () => {
+    it("returns ok when reset email is sent", async () => {
+      mockPublicApiFetch.mockResolvedValue({});
+
       const formData = new FormData();
       formData.set("email", "user@example.com");
 
-      const result = await signIn(undefined, formData);
-      expect(result).toEqual({ error: "Email and password are required" });
-      expect(mockSignInWithPassword).not.toHaveBeenCalled();
+      const result = await resetPassword(undefined, formData);
+      expect(result).toEqual({ ok: true });
+      expect(mockPublicApiFetch).toHaveBeenCalledWith(
+        "/auth/forgot-password/",
+        {
+          method: "POST",
+          body: JSON.stringify({ email: "user@example.com" }),
+        },
+      );
     });
 
-    it("returns error when both fields are missing", async () => {
+    it("returns email_required when email is missing", async () => {
       const formData = new FormData();
 
-      const result = await signIn(undefined, formData);
-      expect(result).toEqual({ error: "Email and password are required" });
+      const result = await resetPassword(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "email_required" });
+      expect(mockPublicApiFetch).not.toHaveBeenCalled();
+    });
+
+    it("returns ok even on API failure to avoid email enumeration", async () => {
+      mockPublicApiFetch.mockRejectedValue(
+        new Error("API 429: Rate limit exceeded"),
+      );
+
+      const formData = new FormData();
+      formData.set("email", "user@example.com");
+
+      const result = await resetPassword(undefined, formData);
+      expect(result).toEqual({ ok: true });
+    });
+  });
+
+  describe("resetPasswordWithToken", () => {
+    it("returns ok when password is updated", async () => {
+      mockPublicApiFetch.mockResolvedValue({});
+
+      const formData = new FormData();
+      formData.set("password", "newpassword123");
+      formData.set("confirmPassword", "newpassword123");
+      formData.set("token", "reset-token-123");
+
+      const result = await resetPasswordWithToken(undefined, formData);
+      expect(result).toEqual({ ok: true });
+    });
+
+    it("returns invalid_reset_link when token is missing", async () => {
+      const formData = new FormData();
+      formData.set("password", "newpassword123");
+      formData.set("confirmPassword", "newpassword123");
+
+      const result = await resetPasswordWithToken(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "invalid_reset_link" });
+      expect(mockPublicApiFetch).not.toHaveBeenCalled();
+    });
+
+    it("returns password_too_short when password is short or missing", async () => {
+      for (const [field, val] of [
+        ["password", "short"],
+        [null, null],
+      ] as const) {
+        const formData = new FormData();
+        if (field === "password") formData.set(field, val!);
+        formData.set("confirmPassword", val ?? "");
+        formData.set("token", "reset-token-123");
+        const result = await resetPasswordWithToken(undefined, formData);
+        expect(result).toEqual({ ok: false, code: "password_too_short" });
+      }
+      expect(mockPublicApiFetch).not.toHaveBeenCalled();
+    });
+
+    it("returns passwords_do_not_match when confirm differs", async () => {
+      const formData = new FormData();
+      formData.set("password", "newpassword123");
+      formData.set("confirmPassword", "differentpassword");
+      formData.set("token", "reset-token-123");
+
+      const result = await resetPasswordWithToken(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "passwords_do_not_match" });
+    });
+
+    it("returns invalid_reset_link on API failure", async () => {
+      mockPublicApiFetch.mockRejectedValue(new Error("API 400"));
+
+      const formData = new FormData();
+      formData.set("password", "newpassword123");
+      formData.set("confirmPassword", "newpassword123");
+      formData.set("token", "expired-token");
+
+      const result = await resetPasswordWithToken(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "invalid_reset_link" });
+    });
+  });
+
+  describe("changePassword", () => {
+    it("changes password and sets new auth cookies on success", async () => {
+      mockApiFetch.mockResolvedValue({
+        access_token: "new_tok",
+        refresh_token: "new_ref",
+      });
+
+      const formData = new FormData();
+      formData.set("currentPassword", "oldpass123");
+      formData.set("password", "newpass123");
+      formData.set("confirmPassword", "newpass123");
+
+      const result = await changePassword(undefined, formData);
+      expect(mockApiFetch).toHaveBeenCalledWith("/auth/change-password/", {
+        method: "POST",
+        body: JSON.stringify({
+          current_password: "oldpass123",
+          new_password: "newpass123",
+        }),
+      });
+      expect(mockSetAuthCookies).toHaveBeenCalledWith("new_tok", "new_ref");
+      expect(result).toEqual({ ok: true });
+    });
+
+    it("returns current_password_required when current password is missing", async () => {
+      const formData = new FormData();
+      formData.set("password", "newpass123");
+      formData.set("confirmPassword", "newpass123");
+
+      const result = await changePassword(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "current_password_required" });
+    });
+
+    it("returns password_too_short when new password is short", async () => {
+      const formData = new FormData();
+      formData.set("currentPassword", "oldpass123");
+      formData.set("password", "short");
+      formData.set("confirmPassword", "short");
+
+      const result = await changePassword(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "password_too_short" });
+    });
+
+    it("returns passwords_do_not_match when confirm differs", async () => {
+      const formData = new FormData();
+      formData.set("currentPassword", "oldpass123");
+      formData.set("password", "newpass123");
+      formData.set("confirmPassword", "differentpass");
+
+      const result = await changePassword(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "passwords_do_not_match" });
+    });
+
+    it("returns ApiError envelope with detail when change fails", async () => {
+      mockApiFetch.mockRejectedValue(
+        new ApiError(400, { detail: "Current password is incorrect." }),
+      );
+
+      const formData = new FormData();
+      formData.set("currentPassword", "wrongpass");
+      formData.set("password", "newpass123");
+      formData.set("confirmPassword", "newpass123");
+
+      const result = await changePassword(undefined, formData);
+      expect(result).toEqual({
+        ok: false,
+        code: "HTTP_400",
+        message: "Current password is incorrect.",
+      });
+    });
+
+    it("returns unknown_error on non-ApiError throwables", async () => {
+      mockApiFetch.mockRejectedValue(new Error("API 500: Internal"));
+
+      const formData = new FormData();
+      formData.set("currentPassword", "oldpass123");
+      formData.set("password", "newpass123");
+      formData.set("confirmPassword", "newpass123");
+
+      const result = await changePassword(undefined, formData);
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
+    });
+  });
+
+  describe("verifyEmail", () => {
+    it("verifies email, sets cookies, and returns ok on success", async () => {
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_verified",
+        refresh_token: "ref_verified",
+      });
+      mockConsumePendingPlan.mockResolvedValue(undefined);
+
+      const result = await verifyEmail("verify-token-123");
+      expect(mockPublicApiFetch).toHaveBeenCalledWith("/auth/verify-email/", {
+        method: "POST",
+        body: JSON.stringify({ token: "verify-token-123" }),
+      });
+      expect(mockSetAuthCookies).toHaveBeenCalledWith(
+        "tok_verified",
+        "ref_verified",
+      );
+      expect(result).toEqual({ ok: true, data: {} });
+    });
+
+    it("returns pendingPlan when a plan cookie was set during signup", async () => {
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_verified",
+        refresh_token: "ref_verified",
+      });
+      mockConsumePendingPlan.mockResolvedValue({
+        plan: "price_team_pro",
+        isTeam: false,
+      });
+
+      const result = await verifyEmail("verify-token-123");
+      expect(result).toEqual({
+        ok: true,
+        data: { pendingPlan: "price_team_pro", isTeamPlan: false },
+      });
+      expect(mockConsumePendingPlan).toHaveBeenCalledOnce();
+    });
+
+    it("returns isTeamPlan=true when team plan cookie was set during signup", async () => {
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_verified",
+        refresh_token: "ref_verified",
+      });
+      mockConsumePendingPlan.mockResolvedValue({
+        plan: "price_team_pro",
+        isTeam: true,
+      });
+
+      const result = await verifyEmail("verify-token-123");
+      expect(result).toEqual({
+        ok: true,
+        data: { pendingPlan: "price_team_pro", isTeamPlan: true },
+      });
+    });
+
+    it("returns ApiError envelope with detail when verification fails", async () => {
+      mockPublicApiFetch.mockRejectedValue(
+        new ApiError(400, { detail: "Token has expired." }),
+      );
+
+      const result = await verifyEmail("expired-token");
+      expect(result).toEqual({
+        ok: false,
+        code: "HTTP_400",
+        message: "Token has expired.",
+      });
+    });
+
+    it("returns unknown_error on non-ApiError throwables", async () => {
+      mockPublicApiFetch.mockRejectedValue(new Error("API 500: Internal"));
+
+      const result = await verifyEmail("some-token");
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
     });
   });
 
   describe("signOut", () => {
-    it("executes SignOut use case and redirects to /login", async () => {
-      mockSignOutExecute.mockResolvedValue(undefined);
+    it("calls authGateway.signOut and redirects to /login", async () => {
+      mockSignOut.mockResolvedValue(undefined);
 
       await expect(signOut()).rejects.toThrow("NEXT_REDIRECT");
-      expect(mockSignOutExecute).toHaveBeenCalledOnce();
+      expect(mockSignOut).toHaveBeenCalledOnce();
       expect(mockRedirect).toHaveBeenCalledWith("/login");
     });
+
+    it("clears cookies and redirects when gateway throws", async () => {
+      mockSignOut.mockRejectedValue(new Error("Session expired"));
+
+      await expect(signOut()).rejects.toThrow("NEXT_REDIRECT");
+      expect(mockClearAuthCookies).toHaveBeenCalledOnce();
+      expect(mockRedirect).toHaveBeenCalledWith("/login");
+    });
+  });
+
+  describe("startOAuth", () => {
+    it("writes validated next to flow cookies and returns Django authorize URL", async () => {
+      const result = await startOAuth("google", "/dashboard");
+
+      expect(mockSetOAuthFlowCookies).toHaveBeenCalledWith("/dashboard");
+      expect(result.redirectUrl).toMatch(/\/api\/v1\/auth\/oauth\/google\/$/);
+    });
+
+    it("appends account_type=org_owner when plan in next resolves to a team plan", async () => {
+      const result = await startOAuth(
+        "github",
+        "/subscription/team-checkout?plan=price_team_pro",
+      );
+
+      expect(mockSetOAuthFlowCookies).toHaveBeenCalledWith(
+        "/subscription/team-checkout?plan=price_team_pro",
+      );
+      expect(new URL(result.redirectUrl).searchParams.get("account_type")).toBe(
+        "org_owner",
+      );
+    });
+
+    it("does not append account_type when plan resolves to a personal plan", async () => {
+      const result = await startOAuth(
+        "github",
+        "/subscription/checkout?plan=price_pro_monthly",
+      );
+
+      expect(new URL(result.redirectUrl).searchParams.get("account_type")).toBe(
+        null,
+      );
+    });
+
+    it("overrides next to /dashboard when plan in next is free (skips Stripe checkout)", async () => {
+      const result = await startOAuth(
+        "google",
+        "/subscription/checkout?plan=price_free",
+      );
+
+      expect(mockSetOAuthFlowCookies).toHaveBeenCalledWith("/dashboard");
+      expect(new URL(result.redirectUrl).searchParams.get("account_type")).toBe(
+        null,
+      );
+    });
+
+    it("writes fallback /dashboard when next is untrusted", async () => {
+      await startOAuth("google", "https://evil.com");
+      expect(mockSetOAuthFlowCookies).toHaveBeenCalledWith("/dashboard");
+    });
+
+    it("writes fallback /dashboard when next is a non-allowlisted path", async () => {
+      await startOAuth("google", "/admin/users");
+      expect(mockSetOAuthFlowCookies).toHaveBeenCalledWith("/dashboard");
+    });
+
+    it("rejects unknown providers", async () => {
+      await expect(
+        startOAuth("linkedin" as never, "/dashboard"),
+      ).rejects.toThrow("Invalid OAuth provider");
+      expect(mockSetOAuthFlowCookies).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("exchangeOAuthCode", () => {
+    it("returns oauth_no_flow when code is empty", async () => {
+      const result = await exchangeOAuthCode("");
+      expect(result).toEqual({ ok: false, error: "oauth_no_flow" });
+      expect(mockPublicApiFetch).not.toHaveBeenCalled();
+    });
+
+    it("returns oauth_no_flow when gate cookie is missing", async () => {
+      mockConsumeOAuthFlowCookies.mockResolvedValue({
+        inProgress: false,
+        next: undefined,
+      });
+
+      const result = await exchangeOAuthCode("code_abc");
+      expect(result).toEqual({ ok: false, error: "oauth_no_flow" });
+      expect(mockPublicApiFetch).not.toHaveBeenCalled();
+    });
+
+    it("exchanges code and sets cookies with expires_in on success", async () => {
+      mockConsumeOAuthFlowCookies.mockResolvedValue({
+        inProgress: true,
+        next: "/dashboard",
+      });
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_oauth",
+        refresh_token: "ref_oauth",
+        expires_in: 900,
+      });
+
+      const result = await exchangeOAuthCode("code_abc");
+
+      expect(mockPublicApiFetch).toHaveBeenCalledWith("/auth/oauth/exchange/", {
+        method: "POST",
+        body: JSON.stringify({ code: "code_abc" }),
+      });
+      expect(mockSetAuthCookies).toHaveBeenCalledWith(
+        "tok_oauth",
+        "ref_oauth",
+        900,
+      );
+      expect(result).toEqual({ ok: true, next: "/dashboard" });
+    });
+
+    it("returns oauth_error when exchange fails", async () => {
+      mockConsumeOAuthFlowCookies.mockResolvedValue({
+        inProgress: true,
+        next: "/dashboard",
+      });
+      mockPublicApiFetch.mockRejectedValue(new Error("API 401: bad code"));
+
+      const result = await exchangeOAuthCode("code_abc");
+      expect(result).toEqual({ ok: false, error: "oauth_error" });
+      expect(mockSetAuthCookies).not.toHaveBeenCalled();
+    });
+
+    // Defense in depth for the open-redirect class of attacks: even though
+    // the attacker would already need to control the flow cookie, the
+    // `next` we return gets fed straight into a client-side router.replace
+    // by AuthCallbackClient, so any payload that slipped past cookie
+    // validation would redirect the signed-in user off-origin. These
+    // assertions pin the fall-through to the safe default.
+    it.each([
+      ["absolute off-origin URL", "https://evil.com"],
+      ["protocol-relative URL", "//evil.com"],
+      ["backslash-injection URL", "/\\evil.com"],
+      ["javascript: URI", "javascript:alert(1)"],
+      ["non-allowlisted internal path", "/admin/users"],
+    ])(
+      "re-validates cookie-stored next at read time and falls back to /dashboard for %s",
+      async (_label, storedNext) => {
+        mockConsumeOAuthFlowCookies.mockResolvedValue({
+          inProgress: true,
+          next: storedNext,
+        });
+        mockPublicApiFetch.mockResolvedValue({
+          access_token: "tok_oauth",
+          refresh_token: "ref_oauth",
+          expires_in: 900,
+        });
+
+        const result = await exchangeOAuthCode("code_abc");
+        expect(result).toEqual({ ok: true, next: "/dashboard" });
+      },
+    );
   });
 });

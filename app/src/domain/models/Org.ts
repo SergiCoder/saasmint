@@ -1,7 +1,7 @@
 export interface Org {
-  id: string;
-  name: string;
-  slug: string;
-  logoUrl: string | null;
-  createdAt: string;
+  readonly id: string;
+  readonly name: string;
+  readonly slug: string;
+  readonly logoUrl: string | null;
+  readonly createdAt: string;
 }

@@ -3,8 +3,13 @@
   "version": "0.4.0",
   "private": true,
   "license": "MIT",
+  "engines": {
+    "node": ">=20.11",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@10.32.1",
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "NODE_EXTRA_CA_CERTS=../saasmint-core/infra/certs/rootCA.pem NODE_OPTIONS='--no-warnings' next dev --turbo --experimental-https --experimental-https-key ../saasmint-core/infra/certs/localhost-key.pem --experimental-https-cert ../saasmint-core/infra/certs/localhost.pem --experimental-https-ca ../saasmint-core/infra/certs/rootCA.pem",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -15,35 +20,41 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@stripe/stripe-js": "^9.0.1",
-    "@supabase/ssr": "^0.10.0",
-    "@supabase/supabase-js": "^2.101.1",
+    "@stripe/stripe-js": "^9.3.1",
     "@tailwindcss/forms": "^0.5.11",
     "gray-matter": "^4.0.3",
-    "next": "16.2.2",
-    "next-intl": "^4.8.4",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "next": "^16.2.4",
+    "next-intl": "^4.9.1",
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
+    "zod": "^4.3.6"
+  },
+  "//": "pnpm.overrides pins transitive deps above their CVE ranges: vite (8.0.0-8.0.4) and postcss (<8.5.10, pulled in by next@16.2.4). Drop entries once their parents bump.",
+  "pnpm": {
+    "overrides": {
+      "vite": "^8.0.7",
+      "postcss": "^8.5.10"
+    }
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.2.2",
+    "@tailwindcss/postcss": "^4.2.4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "@vitest/coverage-v8": "^4.1.2",
-    "autoprefixer": "^10.4.27",
+    "@vitest/coverage-v8": "^4.1.5",
+    "autoprefixer": "^10.5.0",
     "eslint": "^9.39.4",
-    "eslint-config-next": "16.2.2",
-    "jsdom": "^29.0.1",
-    "postcss": "^8.5.8",
-    "prettier": "^3.8.1",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "tailwindcss": "^4.2.2",
-    "typescript": "^6.0.2",
-    "vitest": "^4.1.2"
+    "eslint-config-next": "^16.2.4",
+    "jsdom": "^29.0.2",
+    "postcss": "^8.5.10",
+    "prettier": "^3.8.3",
+    "prettier-plugin-tailwindcss": "^0.7.3",
+    "tailwindcss": "^4.2.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5"
   }
 }

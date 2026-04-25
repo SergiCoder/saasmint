@@ -78,6 +78,35 @@ describe("PlanCard", () => {
     });
   });
 
+  describe("description and features optional", () => {
+    it("renders description when provided", () => {
+      render(<PlanCard {...defaultProps} description="Best for small teams" />);
+      expect(screen.getByText("Best for small teams")).toBeInTheDocument();
+    });
+
+    it("does not render a description paragraph when omitted", () => {
+      render(<PlanCard {...defaultProps} />);
+      expect(
+        screen.queryByText("Best for small teams"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("renders without features when features prop is omitted", () => {
+      const { features: _features, ...withoutFeatures } = defaultProps;
+      const { container } = render(<PlanCard {...withoutFeatures} />);
+      // No <ul> should be present when features are omitted
+      expect(container.querySelector("ul")).toBeNull();
+      expect(screen.getByText("Pro")).toBeInTheDocument();
+    });
+
+    it("renders without features when features array is empty", () => {
+      const { container } = render(
+        <PlanCard {...defaultProps} features={[]} />,
+      );
+      expect(container.querySelector("ul")).toBeNull();
+    });
+  });
+
   it("applies custom className", () => {
     const { container } = render(
       <PlanCard {...defaultProps} className="col-span-2" />,

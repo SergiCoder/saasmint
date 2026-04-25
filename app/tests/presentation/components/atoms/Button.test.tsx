@@ -11,53 +11,39 @@ describe("Button", () => {
     ).toBeInTheDocument();
   });
 
+  // Variant and size are exposed via data-* attributes rather than asserted
+  // through Tailwind class substrings — styling tokens can evolve without
+  // rewriting these tests.
   describe("variants", () => {
     it("defaults to primary variant", () => {
       render(<Button>Primary</Button>);
-      const btn = screen.getByRole("button");
-      expect(btn.className).toContain("bg-primary-600");
+      expect(screen.getByRole("button")).toHaveAttribute(
+        "data-variant",
+        "primary",
+      );
     });
 
-    it("applies secondary variant", () => {
-      render(<Button variant="secondary">Secondary</Button>);
-      const btn = screen.getByRole("button");
-      expect(btn.className).toContain("bg-white");
-      expect(btn.className).toContain("border-gray-300");
-    });
-
-    it("applies ghost variant", () => {
-      render(<Button variant="ghost">Ghost</Button>);
-      const btn = screen.getByRole("button");
-      expect(btn.className).toContain("text-gray-700");
-    });
-
-    it("applies danger variant", () => {
-      render(<Button variant="danger">Delete</Button>);
-      const btn = screen.getByRole("button");
-      expect(btn.className).toContain("bg-red-600");
-    });
+    it.each(["secondary", "ghost", "danger"] as const)(
+      "applies %s variant",
+      (variant) => {
+        render(<Button variant={variant}>{variant}</Button>);
+        expect(screen.getByRole("button")).toHaveAttribute(
+          "data-variant",
+          variant,
+        );
+      },
+    );
   });
 
   describe("sizes", () => {
     it("defaults to md size", () => {
       render(<Button>Medium</Button>);
-      const btn = screen.getByRole("button");
-      expect(btn.className).toContain("px-4");
-      expect(btn.className).toContain("py-2");
+      expect(screen.getByRole("button")).toHaveAttribute("data-size", "md");
     });
 
-    it("applies sm size", () => {
-      render(<Button size="sm">Small</Button>);
-      const btn = screen.getByRole("button");
-      expect(btn.className).toContain("px-3");
-      expect(btn.className).toContain("py-1.5");
-    });
-
-    it("applies lg size", () => {
-      render(<Button size="lg">Large</Button>);
-      const btn = screen.getByRole("button");
-      expect(btn.className).toContain("px-6");
-      expect(btn.className).toContain("py-3");
+    it.each(["sm", "lg"] as const)("applies %s size", (size) => {
+      render(<Button size={size}>{size}</Button>);
+      expect(screen.getByRole("button")).toHaveAttribute("data-size", size);
     });
   });
 

@@ -1,5 +1,3 @@
-"use client";
-
 import type { ButtonHTMLAttributes } from "react";
 import { Spinner } from "./Spinner";
 
@@ -35,8 +33,10 @@ export function Button({
 }: ButtonProps) {
   return (
     <button
+      data-variant={variant}
+      data-size={size}
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`inline-flex cursor-pointer items-center justify-center rounded-md font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
       {loading && <Spinner size="sm" className="mr-2" />}

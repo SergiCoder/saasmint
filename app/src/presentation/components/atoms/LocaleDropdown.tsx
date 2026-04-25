@@ -4,29 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/lib/i18n/navigation";
 import type { Locale } from "@/lib/i18n/routing";
-
-const LOCALE_LABELS: Record<Locale, string> = {
-  en: "English",
-  es: "Español",
-  fr: "Français",
-  de: "Deutsch",
-  "pt-BR": "Português (BR)",
-  it: "Italiano",
-  ja: "日本語",
-  "zh-CN": "简体中文",
-  nl: "Nederlands",
-  ar: "العربية",
-  ko: "한국어",
-  ru: "Русский",
-  pl: "Polski",
-  tr: "Türkçe",
-  sv: "Svenska",
-  id: "Bahasa Indonesia",
-  "zh-TW": "繁體中文",
-  da: "Dansk",
-  nb: "Norsk bokmål",
-  "pt-PT": "Português (PT)",
-};
+import { LOCALES } from "@/lib/i18n/locales";
+import { updatePreferredLocale } from "@/app/actions/user";
 
 export function LocaleDropdown() {
   const locale = useLocale();
@@ -48,6 +27,13 @@ export function LocaleDropdown() {
   function switchLocale(next: Locale) {
     setOpen(false);
     router.replace(pathname, { locale: next });
+    // Fire-and-forget: saving the preference should not block the visual
+    // locale swap. The action itself already swallows server errors, so
+    // this catch only guards against transport failures (offline, aborted
+    // RSC request) that would otherwise surface as an unhandled rejection.
+    updatePreferredLocale(next).catch((err) => {
+      console.error("Failed to save preferred locale", err);
+    });
   }
 
   return (
@@ -55,7 +41,7 @@ export function LocaleDropdown() {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+        className="inline-flex cursor-pointer items-center gap-1 rounded-md px-2 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
         aria-expanded={open}
         aria-haspopup="listbox"
       >
@@ -81,14 +67,14 @@ export function LocaleDropdown() {
           role="listbox"
           className="absolute right-0 z-50 mt-1 max-h-60 w-48 overflow-auto rounded-md border border-gray-200 bg-white py-1 shadow-lg"
         >
-          {Object.entries(LOCALE_LABELS).map(([code, label]) => (
+          {LOCALES.map(({ code, label }) => (
             <li key={code}>
               <button
                 type="button"
                 role="option"
                 aria-selected={code === locale}
-                onClick={() => switchLocale(code as Locale)}
-                className={`w-full px-3 py-1.5 text-left text-sm transition-colors hover:bg-gray-100 ${
+                onClick={() => switchLocale(code)}
+                className={`w-full cursor-pointer px-3 py-1.5 text-left text-sm transition-colors hover:bg-gray-100 ${
                   code === locale
                     ? "text-primary-600 font-medium"
                     : "text-gray-700"
