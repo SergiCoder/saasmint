@@ -145,6 +145,10 @@ Route-specific client components live in co-located `_components/` directories (
 - Brand color: teal `#0D9488` (`primary-600`)
 - TypeScript runs with `strict`, `noUncheckedIndexedAccess`, `noImplicitReturns`, and `noFallthroughCasesInSwitch` — array/tuple indexing yields `T | undefined`, so narrow before use instead of reaching for `!`
 
+## Versioning
+
+Bump `package.json` `version` on every PR — the bump is part of the PR, not a separate commit later. Frontend (`saasmint-app`) and backend (`saasmint-core` + `saasmint-core-lib`) ship in lockstep: a `v<X.Y.Z>` tag in either repo is only valid if the matching tag exists in the other. Pick the next semver in coordination with whatever the backend PR is targeting; never let the two drift.
+
 ## Committing
 
 Always use `/commit`. Never commit manually.
