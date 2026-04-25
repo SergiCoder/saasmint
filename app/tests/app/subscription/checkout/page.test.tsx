@@ -148,25 +148,6 @@ describe("CheckoutPage", () => {
     expect(mockRedirect).toHaveBeenCalledWith("/subscription");
   });
 
-  it("redirects to /subscription when the matched plan is the free tier (defense in depth)", async () => {
-    const free = makePersonalPlan({
-      id: "plan_free",
-      tier: 1,
-      price: {
-        id: "price_free",
-        amount: 0,
-        displayAmount: 0,
-        currency: "usd",
-      },
-    });
-    mockListPlans.mockResolvedValue([free]);
-
-    await expect(renderPage({ plan: "price_free" })).rejects.toThrow(
-      /NEXT_REDIRECT/,
-    );
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
-  });
-
   it("does NOT create a Stripe session on GET — no subscription gateway is imported", async () => {
     // The page must not perform a side-effect on GET (the pre-fix behaviour).
     // Rendering with a valid plan should only look up the plan catalog and

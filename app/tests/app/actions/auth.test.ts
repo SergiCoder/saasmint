@@ -51,13 +51,11 @@ let startOAuth: typeof import("@/app/actions/auth").startOAuth;
 let exchangeOAuthCode: typeof import("@/app/actions/auth").exchangeOAuthCode;
 
 function mockPlans(): void {
+  // Backend v0.7.0 dropped the personal-free plan row; the catalog now only
+  // contains paid (basic / pro × personal / team) plans. Stale links pointing
+  // at the former free price id resolve to undefined and fall through to the
+  // /dashboard / personal-signup path.
   mockListPlans.mockResolvedValue([
-    {
-      id: "plan_free",
-      context: "personal",
-      tier: 1,
-      price: { id: "price_free" },
-    },
     {
       id: "plan_pro",
       context: "personal",
@@ -165,7 +163,10 @@ describe("auth server actions", () => {
       );
     });
 
-    it("redirects to /dashboard (not Stripe checkout) when plan is free", async () => {
+    it("redirects to /dashboard when the plan slug is unknown to the catalog", async () => {
+      // Stale links (e.g. the pre-v0.7.0 personal-free price id) resolve to
+      // undefined and should land on the dashboard rather than a Stripe call
+      // that would 400 on a missing price.
       mockPublicApiFetch.mockResolvedValue({
         access_token: "tok_abc",
         refresh_token: "ref_abc",
@@ -174,7 +175,7 @@ describe("auth server actions", () => {
       const formData = new FormData();
       formData.set("email", "user@example.com");
       formData.set("password", "secret123");
-      formData.set("plan", "price_free");
+      formData.set("plan", "price_unknown");
 
       await expect(signIn(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
@@ -277,20 +278,21 @@ describe("auth server actions", () => {
       expect(result).toEqual({ ok: false, code: "unknown_error" });
     });
 
-    it("does not carry a free plan through the verify-email flow", async () => {
+    it("does not carry an unknown plan slug through the verify-email flow", async () => {
+      // Stale slug (e.g. the pre-v0.7.0 personal-free price id) is not in the
+      // catalog — registration proceeds as personal and no pending-plan cookie
+      // is set, so verify-email won't try to redirect into a Stripe call.
       mockPublicApiFetch.mockResolvedValue({});
 
       const formData = new FormData();
       formData.set("fullName", "Jane Doe");
       formData.set("email", "new@example.com");
       formData.set("password", "secret123");
-      formData.set("plan", "price_free");
+      formData.set("plan", "price_unknown");
 
       await expect(signUp(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      // Free plans are auto-assigned by Django — no pending-plan cookie, no
-      // ?plan query param on the post-register login redirect.
       expect(mockSetPendingPlan).not.toHaveBeenCalled();
       expect(mockPublicApiFetch).toHaveBeenCalledWith(
         "/auth/register/",
@@ -686,13 +688,19 @@ describe("auth server actions", () => {
       );
     });
 
-    it("overrides next to /dashboard when plan in next is free (skips Stripe checkout)", async () => {
+    it("preserves next and omits account_type when plan in next is unknown to the catalog", async () => {
+      // Backend v0.7.0 dropped the personal-free row; a stale link with the
+      // former free price id resolves to undefined and is treated as a
+      // non-team flow. The next is preserved as-is so the eventual checkout
+      // page can redirect the user back to /subscription cleanly.
       const result = await startOAuth(
         "google",
-        "/subscription/checkout?plan=price_free",
+        "/subscription/checkout?plan=price_unknown",
       );
 
-      expect(mockSetOAuthFlowCookies).toHaveBeenCalledWith("/dashboard");
+      expect(mockSetOAuthFlowCookies).toHaveBeenCalledWith(
+        "/subscription/checkout?plan=price_unknown",
+      );
       expect(new URL(result.redirectUrl).searchParams.get("account_type")).toBe(
         null,
       );

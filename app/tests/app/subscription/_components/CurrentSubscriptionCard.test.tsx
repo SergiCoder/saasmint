@@ -197,24 +197,6 @@ describe("CurrentSubscriptionCard", () => {
     expect(screen.queryByTestId("cancel-renewal")).not.toBeInTheDocument();
   });
 
-  it("omits period-end details and manage actions when period end is a placeholder far-future date (>= year 9000)", async () => {
-    await renderCard({
-      subscription: makeSub({ currentPeriodEnd: "9999-12-31T00:00:00Z" }),
-      locale: "en",
-      planName: "Free",
-      canManage: true,
-      teamOwnerName: null,
-    });
-
-    expect(screen.getByTestId("period-end-iso")).toHaveTextContent("");
-    expect(screen.getByTestId("period-end-label")).toHaveTextContent("");
-    // Billing portal still renders (canManage is true), but neither
-    // cancel nor resume (gated behind hasRealPeriodEnd).
-    expect(screen.getByTestId("billing-portal")).toBeInTheDocument();
-    expect(screen.queryByTestId("cancel-renewal")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("resume")).not.toBeInTheDocument();
-  });
-
   it("omits period-end details when currentPeriodEnd is an unparseable string", async () => {
     await renderCard({
       subscription: makeSub({ currentPeriodEnd: "not-a-date" }),

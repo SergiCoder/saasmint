@@ -25,11 +25,11 @@ Core types in `src/domain/models/`. All model fields are declared `readonly` (in
 - `Org` — organisation record (id, name, slug, logoUrl)
 - `OrgMember` — org membership (nested `user: OrgMemberUser`, role: `owner | admin | member`, isBilling flag)
 - `Invitation` — org invite (id, org, email, role: `admin | member`, status: `pending | accepted | expired | cancelled | declined`, invitedBy, dates)
-- `Plan` — billing plan (id, name, description, context: `personal | team`, tier: `PlanTier` (1=free, 2=basic, 3=pro), interval: `month | year`, single `price`)
+- `Plan` — billing plan (id, name, description, context: `personal | team`, tier: `PlanTier` (1=free, 2=basic, 3=pro), interval: `month | year`, single `price`). The backend catalog only returns paid plans; the personal-free tier is the absence of a `Subscription` and is synthesised client-side where a Free card needs to be rendered (e.g. marketing pricing page).
 - `PlanPrice` — individual plan price point (id, amount, displayAmount, currency)
 - `Product` — one-time purchase product (id, name, type: `one_time`, credits, `price`)
 - `ProductPrice` — individual product price point (id, amount, displayAmount, currency)
-- `Subscription` — active Stripe subscription (status, plan snapshot, seat `quantity`, period dates, trial); team seat count is capped by `MAX_SEATS`
+- `Subscription` — real Stripe subscription row (status, plan snapshot, seat `quantity`, period dates, trial); team seat count is capped by `MAX_SEATS`. Users on the free tier have no row — the backend returns 404 and `(app)/_data/getSubscription.ts` resolves to `null`.
 - `PhonePrefix` — reference entry for phone-number country prefixes (prefix, label)
 
 Domain errors in `src/domain/errors/`:
@@ -144,6 +144,10 @@ Route-specific client components live in co-located `_components/` directories (
 - All user-facing strings through next-intl — never hardcoded
 - Brand color: teal `#0D9488` (`primary-600`)
 - TypeScript runs with `strict`, `noUncheckedIndexedAccess`, `noImplicitReturns`, and `noFallthroughCasesInSwitch` — array/tuple indexing yields `T | undefined`, so narrow before use instead of reaching for `!`
+
+## Versioning
+
+Bump `package.json` `version` on every PR — the bump is part of the PR, not a separate commit later. Frontend (`saasmint-app`) and backend (`saasmint-core` + `saasmint-core-lib`) ship in lockstep: a `v<X.Y.Z>` tag in either repo is only valid if the matching tag exists in the other. Pick the next semver in coordination with whatever the backend PR is targeting; never let the two drift.
 
 ## Committing
 

@@ -24,8 +24,27 @@ import {
   PRICING_INTERVAL_HREFS,
 } from "@/app/[locale]/_lib/pricingInterval";
 import type { Plan } from "@/domain/models/Plan";
-import { PLAN_TIER_PRO } from "@/domain/models/Plan";
+import { PLAN_TIER_FREE, PLAN_TIER_PRO } from "@/domain/models/Plan";
 import type { Product } from "@/domain/models/Product";
+
+/**
+ * Backend v0.7.0 stopped exposing the personal-free plan row (free = absence
+ * of a Subscription). To keep the entry-tier card visible alongside paid
+ * tiers on the marketing pricing page, we synthesize personal-free entries
+ * for both billing intervals so the Free card appears in both monthly and
+ * yearly tabs.
+ */
+const SYNTHETIC_FREE_PLANS: Plan[] = (["month", "year"] as const).map<Plan>(
+  (interval) => ({
+    id: `synthetic:free:personal:${interval}`,
+    name: "Free",
+    description: "",
+    context: "personal",
+    tier: PLAN_TIER_FREE,
+    interval,
+    price: null,
+  }),
+);
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -71,10 +90,14 @@ export default async function PricingPage({ params, searchParams }: Props) {
   const hasOrg = userOrgs.length > 0;
   const currentPlanId = subscription?.plan?.id;
 
-  const { planNames, planDescriptions } = buildPlanTranslations(plans, tPlans);
+  const allPlans = [...SYNTHETIC_FREE_PLANS, ...plans];
+  const { planNames, planDescriptions } = buildPlanTranslations(
+    allPlans,
+    tPlans,
+  );
 
   const groups = buildPlanCardGroups({
-    plans,
+    plans: allPlans,
     currentPlanId,
     locale,
     labels: {
@@ -92,6 +115,13 @@ export default async function PricingPage({ params, searchParams }: Props) {
       currency,
       ctaLabel,
     }) => {
+      if (plan.tier === PLAN_TIER_FREE) {
+        // Free is the entry tier: signed-out visitors get a "select" CTA to
+        // /signup; signed-in users would be downgrading and per the marketing
+        // pricing convention we suppress downgrade CTAs entirely.
+        if (user) return null;
+        return <GetStartedButton>{t("select")}</GetStartedButton>;
+      }
       if (!plan.price) return null;
       const highlighted = plan.tier === PLAN_TIER_PRO;
       if (!user) {

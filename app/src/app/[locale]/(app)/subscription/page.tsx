@@ -7,6 +7,7 @@ import { ProductsGrid } from "@/presentation/components/organisms/ProductsGrid";
 import { CheckoutButton } from "./_components/CheckoutButton";
 import { TeamCheckoutButton } from "./_components/TeamCheckoutButton";
 import { CurrentSubscriptionCard } from "./_components/CurrentSubscriptionCard";
+import { FreePlanCard } from "./_components/FreePlanCard";
 import { startCheckout, startProductCheckout } from "@/app/actions/billing";
 import { getSubscriptionPageData } from "./_data/getSubscriptionPageData";
 import {
@@ -142,13 +143,20 @@ export default async function BillingPage({
         <AlertBanner variant="error">{t("checkoutError")}</AlertBanner>
       )}
 
-      {subscription && (
+      {subscription ? (
         <CurrentSubscriptionCard
           subscription={subscription}
           locale={locale}
           planName={planName ?? t("currentPlan")}
           canManage={canManage}
           teamOwnerName={teamOwnerName}
+        />
+      ) : (
+        <FreePlanCard
+          eyebrowLabel={t("currentPlan")}
+          planName={tPlans("personal.1.name")}
+          description={tPlans("personal.1.description")}
+          badgeLabel={tPlans("personal.1.name")}
         />
       )}
 

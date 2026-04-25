@@ -16,9 +16,9 @@ interface CurrentSubscriptionCardProps {
 /**
  * Server-rendered card summarising the user's active subscription, with
  * Billing-Portal / Cancel-Renewal / Resume actions when the caller is the
- * billing member. Placeholder period-end dates returned by the backend for
- * free-tier users (e.g. year 9999) are detected and rendered as "no renewal
- * date" rather than a real formatted date.
+ * billing member. The period end is always a real Stripe date — backend
+ * v0.7.0 dropped the free-tier placeholder row, so this component only ever
+ * renders for users with a real paid subscription.
  */
 export async function CurrentSubscriptionCard({
   subscription,
@@ -30,9 +30,7 @@ export async function CurrentSubscriptionCard({
   const t = await getTranslations("billing");
 
   const periodEndDate = new Date(subscription.currentPeriodEnd);
-  const hasRealPeriodEnd =
-    !Number.isNaN(periodEndDate.getTime()) &&
-    periodEndDate.getUTCFullYear() < 9000;
+  const hasRealPeriodEnd = !Number.isNaN(periodEndDate.getTime());
 
   const plan = subscription.plan;
   const isTeam = plan.context === "team";
