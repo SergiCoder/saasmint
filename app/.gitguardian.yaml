@@ -1,0 +1,16 @@
+# GitGuardian secret-scanning config.
+#
+# The Generic Password detector flags i18n message files because they
+# contain entries like `"password": "Hasło"` (Polish for "Password" — a
+# user-facing form label, not a credential). Every messages/*.json file
+# has 18+ such labels in 20 locales, so the false-positive volume from
+# this one folder dominates the scan output.
+#
+# Scope the exclusion to `*.json` so any non-translation file we might
+# add to the directory later (READMEs, scripts, lockfiles) still gets
+# scanned. Real secrets live in env files (already git-ignored) or in
+# shared `infra/` configs covered by the default scan path.
+version: 2
+secret:
+  ignored_paths:
+    - "messages/*.json"
