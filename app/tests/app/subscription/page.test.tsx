@@ -189,4 +189,18 @@ describe("BillingPage (subscription/page)", () => {
 
     expect(screen.queryByText("checkoutError")).not.toBeInTheDocument();
   });
+
+  it("renders the FreePlanCard when the user has no active subscription", async () => {
+    // getSubscription is mocked to resolve null at the top of this file. The
+    // page falls back to FreePlanCard, which pulls the personal-free plan
+    // name + description from the `plans` next-intl namespace.
+    await renderPage({});
+
+    // The mocked translator echoes the key back, so both the heading and
+    // the badge surface as the literal "personal.1.name".
+    const namedNodes = screen.getAllByText("personal.1.name");
+    expect(namedNodes.length).toBeGreaterThanOrEqual(2); // heading + badge
+    expect(screen.getByText("personal.1.description")).toBeInTheDocument();
+    expect(screen.getByText("currentPlan")).toBeInTheDocument();
+  });
 });

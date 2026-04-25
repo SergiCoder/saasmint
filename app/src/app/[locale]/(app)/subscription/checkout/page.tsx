@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { planGateway } from "@/infrastructure/registry";
-import { PLAN_TIER_FREE } from "@/domain/models/Plan";
 import { formatCurrency } from "@/lib/formatCurrency";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { getCurrentUser } from "../../_data/getCurrentUser";
@@ -34,12 +33,7 @@ export default async function CheckoutPage({
   const plans = await planGateway.listPlans(user.preferredCurrency);
   const plan = plans.find((p) => p.price?.id === planPriceId);
 
-  if (
-    !plan ||
-    !plan.price ||
-    plan.context !== "personal" ||
-    plan.tier === PLAN_TIER_FREE
-  ) {
+  if (!plan || !plan.price || plan.context !== "personal") {
     redirect("/subscription");
   }
 

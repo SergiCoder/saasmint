@@ -1,7 +1,11 @@
 import { Link } from "@/lib/i18n/navigation";
 
 interface GetStartedButtonProps {
-  planPriceId: string;
+  /**
+   * Plan price id forwarded to /signup as `?plan=`. Omit for the free tier
+   * (no Stripe price exists post-v0.7.0) — the CTA links to plain /signup.
+   */
+  planPriceId?: string;
   children: React.ReactNode;
   highlighted?: boolean;
   context?: "personal" | "team";
@@ -23,13 +27,15 @@ export function GetStartedButton({
   highlighted = false,
   context,
 }: GetStartedButtonProps) {
-  const params = new URLSearchParams({ plan: planPriceId });
+  const params = new URLSearchParams();
+  if (planPriceId) params.set("plan", planPriceId);
   if (context === "team") params.set("context", "team");
   const variant = highlighted ? variants.primary : variants.secondary;
+  const query = params.toString();
 
   return (
     <Link
-      href={`/signup?${params.toString()}`}
+      href={query ? `/signup?${query}` : "/signup"}
       className={`${base} ${variant}`}
     >
       {children}

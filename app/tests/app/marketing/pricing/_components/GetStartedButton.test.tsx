@@ -47,4 +47,10 @@ describe("GetStartedButton", () => {
     const link = screen.getByRole("link", { name: "Get started" });
     expect(link).toHaveAttribute("href", "/signup?plan=price_123&context=team");
   });
+
+  it("links to plain /signup when no planPriceId is supplied (free tier)", () => {
+    render(<GetStartedButton>Sign up free</GetStartedButton>);
+    const link = screen.getByRole("link", { name: "Sign up free" });
+    expect(link).toHaveAttribute("href", "/signup");
+  });
 });
