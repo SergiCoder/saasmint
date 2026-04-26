@@ -7,8 +7,10 @@ import { ProductsGrid } from "@/presentation/components/organisms/ProductsGrid";
 import { CheckoutButton } from "./_components/CheckoutButton";
 import { TeamCheckoutButton } from "./_components/TeamCheckoutButton";
 import { CurrentSubscriptionCard } from "./_components/CurrentSubscriptionCard";
+import { CreditBalanceCard } from "./_components/CreditBalanceCard";
 import { FreePlanCard } from "./_components/FreePlanCard";
 import { startCheckout, startProductCheckout } from "@/app/actions/billing";
+import { getCreditBalance } from "../_data/getCreditBalance";
 import { getSubscriptionPageData } from "./_data/getSubscriptionPageData";
 import {
   buildPlanCardGroups,
@@ -55,8 +57,10 @@ export default async function BillingPage({
     searchParams,
   ]);
 
-  const { subscription, plans, products, userOrgs, canManage, teamOwnerName } =
-    await getSubscriptionPageData(user);
+  const [
+    { subscription, plans, products, userOrgs, canManage, teamOwnerName },
+    creditBalance,
+  ] = await Promise.all([getSubscriptionPageData(user), getCreditBalance()]);
 
   const hasOrg = userOrgs.length > 0;
   const currentPlan = subscription?.plan;
@@ -157,6 +161,25 @@ export default async function BillingPage({
           planName={tPlans("personal.1.name")}
           description={tPlans("personal.1.description")}
           badgeLabel={tPlans("personal.1.name")}
+        />
+      )}
+
+      {creditBalance && (
+        <CreditBalanceCard
+          eyebrowLabel={t("creditBalanceLabel")}
+          balance={creditBalance.balance}
+          unitLabel={t("credits")}
+          description={t(
+            creditBalance.scope === "org"
+              ? "creditBalanceOrgDescription"
+              : "creditBalancePersonalDescription",
+          )}
+          scopeBadge={t(
+            creditBalance.scope === "org"
+              ? "creditBalanceOrgBadge"
+              : "creditBalancePersonalBadge",
+          )}
+          locale={locale}
         />
       )}
 

@@ -1,4 +1,5 @@
 import { DjangoApiAuthGateway } from "./api/DjangoApiAuthGateway";
+import { DjangoApiCreditsGateway } from "./api/DjangoApiCreditsGateway";
 import { DjangoApiInquiryGateway } from "./api/DjangoApiInquiryGateway";
 import { DjangoApiInvitationGateway } from "./api/DjangoApiInvitationGateway";
 import { DjangoApiOrgGateway } from "./api/DjangoApiOrgGateway";
@@ -19,3 +20,4 @@ export const orgMemberGateway = new DjangoApiOrgMemberGateway();
 export const invitationGateway = new DjangoApiInvitationGateway();
 export const referenceGateway = new DjangoApiReferenceGateway();
 export const inquiryGateway = new DjangoApiInquiryGateway();
+export const creditsGateway = new DjangoApiCreditsGateway();

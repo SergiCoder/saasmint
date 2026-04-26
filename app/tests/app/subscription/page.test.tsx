@@ -24,6 +24,14 @@ vi.mock("@/app/[locale]/(app)/_data/getSubscription", () => ({
   getSubscription: vi.fn(() => Promise.resolve(null)),
 }));
 
+const mockGetCreditBalance =
+  vi.fn<() => Promise<{ balance: number; scope: "user" | "org" } | null>>(
+    () => Promise.resolve(null),
+  );
+vi.mock("@/app/[locale]/(app)/_data/getCreditBalance", () => ({
+  getCreditBalance: () => mockGetCreditBalance(),
+}));
+
 vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
   getUserOrgs: vi.fn(() => Promise.resolve([])),
 }));
@@ -202,5 +210,34 @@ describe("BillingPage (subscription/page)", () => {
     expect(namedNodes.length).toBeGreaterThanOrEqual(2); // heading + badge
     expect(screen.getByText("personal.1.description")).toBeInTheDocument();
     expect(screen.getByText("currentPlan")).toBeInTheDocument();
+  });
+
+  it("does not render a credit-balance card when getCreditBalance returns null", async () => {
+    mockGetCreditBalance.mockResolvedValueOnce(null);
+    await renderPage({});
+
+    // The eyebrow label key only appears when the card renders.
+    expect(screen.queryByText("creditBalanceLabel")).not.toBeInTheDocument();
+  });
+
+  it("renders the CreditBalanceCard above the upgrade options when a balance is returned", async () => {
+    mockGetCreditBalance.mockResolvedValueOnce({ balance: 250, scope: "user" });
+    await renderPage({});
+
+    expect(screen.getByText("creditBalanceLabel")).toBeInTheDocument();
+    expect(screen.getByText("250")).toBeInTheDocument();
+    expect(screen.getByText("creditBalancePersonalBadge")).toBeInTheDocument();
+    expect(
+      screen.getByText("creditBalancePersonalDescription"),
+    ).toBeInTheDocument();
+  });
+
+  it("uses the org-scope wording when the balance scope is 'org'", async () => {
+    mockGetCreditBalance.mockResolvedValueOnce({ balance: 9000, scope: "org" });
+    await renderPage({});
+
+    expect(screen.getByText("9,000")).toBeInTheDocument();
+    expect(screen.getByText("creditBalanceOrgBadge")).toBeInTheDocument();
+    expect(screen.getByText("creditBalanceOrgDescription")).toBeInTheDocument();
   });
 });

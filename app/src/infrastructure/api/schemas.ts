@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { CreditBalance } from "@/domain/models/CreditBalance";
 import type { Invitation } from "@/domain/models/Invitation";
 import type { Org } from "@/domain/models/Org";
 import type { OrgMember } from "@/domain/models/OrgMember";
@@ -134,6 +135,11 @@ export const PhonePrefixSchema = z.object({
   prefix: z.string(),
   label: z.string(),
 }) satisfies z.ZodType<PhonePrefix>;
+
+export const CreditBalanceSchema = z.object({
+  balance: z.number().int().nonnegative(),
+  scope: z.enum(["user", "org"]),
+}) satisfies z.ZodType<CreditBalance>;
 
 /**
  * Envelope returned by Stripe-session-creating endpoints (plan checkout,
