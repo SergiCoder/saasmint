@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "انسخ المستودع، خصّص العلامة التجارية، وأطلق. مجاني ومفتوح المصدر.",
     "ctaSectionPlaceholder": "you@company.com",
     "ctaSectionButton": "ابدأ البناء ←",
+    "ctaSectionSuccessTitle": "شكراً لتسجيلك!",
+    "ctaSectionSuccessBody": "سنتواصل معك قريباً.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "المستخدمون",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "تعذّر تحميل الملف الشخصي",
     "session_expired": "انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى.",
     "unknown_error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
-    "unsupported_image": "نوع الصورة غير مدعوم"
+    "unsupported_image": "نوع الصورة غير مدعوم",
+    "message_required": "يرجى تضمين رسالة.",
+    "message_too_long": "الرسالة طويلة جداً (حد أقصى 5000 حرف).",
+    "HTTP_429": "طلبات كثيرة جداً. يرجى المحاولة مرة أخرى لاحقاً."
   },
   "contact": {
     "title": "اتصل بنا",
     "description": "هل لديك سؤال أو تحتاج مساعدة؟ يسعدنا سماعك.",
     "placeholder": "عنوان بريدك الإلكتروني",
     "submit": "إرسال",
-    "messagePlaceholder": "رسالتك"
+    "messagePlaceholder": "رسالتك",
+    "successTitle": "تم إرسال الرسالة",
+    "successBody": "شكراً لتواصلك معنا. سنرد عليك في أقرب وقت ممكن."
   },
   "about": {
     "title": "حول هذا المشروع",

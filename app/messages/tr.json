@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Repoyu fork'layın, markayı özelleştirin ve yayınlayın. Ücretsiz ve açık kaynak.",
     "ctaSectionPlaceholder": "sen@sirket.com.tr",
     "ctaSectionButton": "İnşa etmeye başla →",
+    "ctaSectionSuccessTitle": "Kaydolduğunuz için teşekkürler!",
+    "ctaSectionSuccessBody": "Yakında sizinle iletişime geçeceğiz.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Kullanıcılar",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "Profil yüklenemedi",
     "session_expired": "Oturumun süresi doldu. Lütfen tekrar giriş yapın.",
     "unknown_error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
-    "unsupported_image": "Desteklenmeyen görsel türü"
+    "unsupported_image": "Desteklenmeyen görsel türü",
+    "message_required": "Lütfen bir mesaj ekleyin.",
+    "message_too_long": "Mesaj çok uzun (maks. 5000 karakter).",
+    "HTTP_429": "Çok fazla istek. Lütfen daha sonra tekrar deneyin."
   },
   "contact": {
     "title": "Bize ulaşın",
     "description": "Bir sorunuz mu var veya yardıma mı ihtiyacınız var? Sizden haber almak isteriz.",
     "placeholder": "E-posta adresiniz",
     "submit": "Gönder",
-    "messagePlaceholder": "Mesajınız"
+    "messagePlaceholder": "Mesajınız",
+    "successTitle": "Mesaj gönderildi",
+    "successBody": "Bize ulaştığınız için teşekkürler. En kısa sürede yanıtlayacağız."
   },
   "about": {
     "title": "Bu proje hakkında",

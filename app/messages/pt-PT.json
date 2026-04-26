@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Faça fork do repositório, personalize a marca e lance. Gratuito e open-source.",
     "ctaSectionPlaceholder": "voce@empresa.pt",
     "ctaSectionButton": "Comece a construir →",
+    "ctaSectionSuccessTitle": "Obrigado por se inscrever!",
+    "ctaSectionSuccessBody": "Entraremos em contacto em breve.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Utilizadores",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "Não foi possível carregar o perfil",
     "session_expired": "Sessão expirada. Inicie sessão novamente.",
     "unknown_error": "Algo correu mal. Tente novamente.",
-    "unsupported_image": "Tipo de imagem não suportado"
+    "unsupported_image": "Tipo de imagem não suportado",
+    "message_required": "Por favor, inclua uma mensagem.",
+    "message_too_long": "A mensagem é demasiado longa (máx. 5000 caracteres).",
+    "HTTP_429": "Demasiadas tentativas. Tente novamente mais tarde."
   },
   "contact": {
     "title": "Contacte-nos",
     "description": "Tem alguma questão ou precisa de ajuda? Gostaríamos de o ouvir.",
     "placeholder": "O seu endereço de e-mail",
     "submit": "Enviar",
-    "messagePlaceholder": "A sua mensagem"
+    "messagePlaceholder": "A sua mensagem",
+    "successTitle": "Mensagem enviada",
+    "successBody": "Obrigado pelo contacto. Responderemos o mais rapidamente possível."
   },
   "about": {
     "title": "Sobre este projeto",

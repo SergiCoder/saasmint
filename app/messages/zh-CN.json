@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Fork 仓库，自定义品牌，然后发布。免费且开源。",
     "ctaSectionPlaceholder": "you@company.cn",
     "ctaSectionButton": "开始构建 →",
+    "ctaSectionSuccessTitle": "感谢您的注册！",
+    "ctaSectionSuccessBody": "我们将尽快与您联系。",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "用户",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "加载个人资料失败",
     "session_expired": "会话已过期,请重新登录。",
     "unknown_error": "出了点问题,请重试。",
-    "unsupported_image": "不支持的图片类型"
+    "unsupported_image": "不支持的图片类型",
+    "message_required": "请输入消息内容。",
+    "message_too_long": "消息过长（最多 5000 个字符）。",
+    "HTTP_429": "请求过多，请稍后再试。"
   },
   "contact": {
     "title": "联系我们",
     "description": "有问题或需要帮助？我们很乐意听取您的反馈。",
     "placeholder": "您的电子邮件地址",
     "submit": "发送",
-    "messagePlaceholder": "您的留言"
+    "messagePlaceholder": "您的留言",
+    "successTitle": "消息已发送",
+    "successBody": "感谢您的联系。我们将尽快回复您。"
   },
   "about": {
     "title": "关于本项目",

@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Fork the repo, customize the branding, and launch. Free and open-source.",
     "ctaSectionPlaceholder": "you@company.com",
     "ctaSectionButton": "Start building →",
+    "ctaSectionSuccessTitle": "Thanks for signing up!",
+    "ctaSectionSuccessBody": "We'll be in touch shortly.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Users",
     "dashUptimeVal": "1,248",
@@ -380,14 +382,19 @@
     "profile_load_failed": "Failed to load profile",
     "session_expired": "Session expired. Please log in again.",
     "unknown_error": "Something went wrong. Please try again.",
-    "unsupported_image": "Unsupported image type"
+    "unsupported_image": "Unsupported image type",
+    "message_required": "Please include a message.",
+    "message_too_long": "Message is too long (max 5000 characters).",
+    "HTTP_429": "Too many requests. Please try again later."
   },
   "contact": {
     "title": "Contact us",
     "description": "Have a question or need help? We'd love to hear from you.",
     "placeholder": "Your email address",
     "submit": "Send",
-    "messagePlaceholder": "Your message"
+    "messagePlaceholder": "Your message",
+    "successTitle": "Message sent",
+    "successBody": "Thanks for reaching out — we'll reply as soon as we can."
   },
   "about": {
     "title": "About this project",

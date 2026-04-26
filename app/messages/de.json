@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Forken Sie das Repository, passen Sie das Branding an und starten Sie. Kostenlos und open-source.",
     "ctaSectionPlaceholder": "sie@unternehmen.de",
     "ctaSectionButton": "Jetzt starten →",
+    "ctaSectionSuccessTitle": "Danke für Ihre Anmeldung!",
+    "ctaSectionSuccessBody": "Wir melden uns in Kürze bei Ihnen.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Benutzer",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "Profil konnte nicht geladen werden",
     "session_expired": "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
     "unknown_error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
-    "unsupported_image": "Nicht unterstützter Bildtyp"
+    "unsupported_image": "Nicht unterstützter Bildtyp",
+    "message_required": "Bitte fügen Sie eine Nachricht hinzu.",
+    "message_too_long": "Die Nachricht ist zu lang (max. 5000 Zeichen).",
+    "HTTP_429": "Zu viele Anfragen. Bitte versuchen Sie es später erneut."
   },
   "contact": {
     "title": "Kontakt",
     "description": "Haben Sie eine Frage oder brauchen Sie Hilfe? Wir freuen uns auf Ihre Nachricht.",
     "placeholder": "Ihre E-Mail-Adresse",
     "submit": "Senden",
-    "messagePlaceholder": "Ihre Nachricht"
+    "messagePlaceholder": "Ihre Nachricht",
+    "successTitle": "Nachricht gesendet",
+    "successBody": "Vielen Dank für Ihre Nachricht. Wir antworten so schnell wie möglich."
   },
   "about": {
     "title": "Über dieses Projekt",

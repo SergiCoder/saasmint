@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Форкните репозиторий, настройте брендинг и запускайте. Бесплатно и с открытым исходным кодом.",
     "ctaSectionPlaceholder": "you@company.ru",
     "ctaSectionButton": "Начать строить →",
+    "ctaSectionSuccessTitle": "Спасибо за регистрацию!",
+    "ctaSectionSuccessBody": "Мы скоро свяжемся с вами.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Пользователи",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "Не удалось загрузить профиль",
     "session_expired": "Сеанс истёк. Войдите снова.",
     "unknown_error": "Что-то пошло не так. Повторите попытку.",
-    "unsupported_image": "Неподдерживаемый тип изображения"
+    "unsupported_image": "Неподдерживаемый тип изображения",
+    "message_required": "Пожалуйста, добавьте сообщение.",
+    "message_too_long": "Сообщение слишком длинное (макс. 5000 символов).",
+    "HTTP_429": "Слишком много запросов. Попробуйте позже."
   },
   "contact": {
     "title": "Связаться с нами",
     "description": "Есть вопрос или нужна помощь? Мы будем рады вас выслушать.",
     "placeholder": "Ваш адрес электронной почты",
     "submit": "Отправить",
-    "messagePlaceholder": "Ваше сообщение"
+    "messagePlaceholder": "Ваше сообщение",
+    "successTitle": "Сообщение отправлено",
+    "successBody": "Спасибо за обращение. Мы ответим как можно скорее."
   },
   "about": {
     "title": "Об этом проекте",

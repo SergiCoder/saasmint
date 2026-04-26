@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Fork repoen, tilpas dit brand og lancér. Gratis og open source.",
     "ctaSectionPlaceholder": "you@company.com",
     "ctaSectionButton": "Start building →",
+    "ctaSectionSuccessTitle": "Tak for tilmeldingen!",
+    "ctaSectionSuccessBody": "Vi kontakter dig snart.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Brugere",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "Profilen kunne ikke indlæses",
     "session_expired": "Sessionen er udløbet. Log venligst ind igen.",
     "unknown_error": "Noget gik galt. Prøv venligst igen.",
-    "unsupported_image": "Billedtypen understøttes ikke"
+    "unsupported_image": "Billedtypen understøttes ikke",
+    "message_required": "Tilføj venligst en besked.",
+    "message_too_long": "Beskeden er for lang (maks. 5000 tegn).",
+    "HTTP_429": "For mange forespørgsler. Prøv igen senere."
   },
   "contact": {
     "title": "Kontakt os",
     "description": "Har du et spørgsmål eller brug for hjælp? Vi hører gerne fra dig.",
     "placeholder": "Din e-mailadresse",
     "submit": "Send",
-    "messagePlaceholder": "Din besked"
+    "messagePlaceholder": "Din besked",
+    "successTitle": "Beskeden er sendt",
+    "successBody": "Tak for din henvendelse. Vi svarer hurtigst muligt."
   },
   "about": {
     "title": "Om dette projekt",

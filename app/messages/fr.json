@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Forkez le dépôt, personnalisez l'image de marque et lancez. Gratuit et open-source.",
     "ctaSectionPlaceholder": "vous@entreprise.com",
     "ctaSectionButton": "Commencer à construire →",
+    "ctaSectionSuccessTitle": "Merci pour votre inscription !",
+    "ctaSectionSuccessBody": "Nous vous contacterons bientôt.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Utilisateurs",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "Échec du chargement du profil",
     "session_expired": "Session expirée. Veuillez vous reconnecter.",
     "unknown_error": "Une erreur est survenue. Veuillez réessayer.",
-    "unsupported_image": "Type d'image non pris en charge"
+    "unsupported_image": "Type d'image non pris en charge",
+    "message_required": "Veuillez inclure un message.",
+    "message_too_long": "Le message est trop long (5000 caractères maximum).",
+    "HTTP_429": "Trop de requêtes. Veuillez réessayer plus tard."
   },
   "contact": {
     "title": "Contactez-nous",
     "description": "Une question ou besoin d'aide ? Nous serions ravis de vous entendre.",
     "placeholder": "Votre adresse e-mail",
     "submit": "Envoyer",
-    "messagePlaceholder": "Votre message"
+    "messagePlaceholder": "Votre message",
+    "successTitle": "Message envoyé",
+    "successBody": "Merci de nous avoir contactés. Nous vous répondrons dès que possible."
   },
   "about": {
     "title": "À propos de ce projet",

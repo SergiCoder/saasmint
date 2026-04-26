@@ -45,7 +45,7 @@ All error classes carry a `code: string` field for programmatic handling. `ApiEr
 
 Gateway implementations in `src/infrastructure/`, organised by provider:
 
-- `api/` — `DjangoApi*Gateway` classes that call `SaaSmint Core` via `apiFetch` (auth, user, org, org-member, invitation, plan, product, subscription, reference)
+- `api/` — `DjangoApi*Gateway` classes that call `SaaSmint Core` via `apiFetch` (auth, user, org, org-member, invitation, plan, product, subscription, reference, inquiry)
 - `auth/` — `cookies.ts` for JWT cookie management (set, clear, read access/refresh tokens)
 
 Reference data (currencies, locales, timezones, phone prefixes) is served via `DjangoApiReferenceGateway` behind `IReferenceGateway`.
@@ -111,7 +111,7 @@ Strict atomic design in `src/presentation/components/`:
 
 ## Server Actions
 
-Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, `avatar.ts`, `billing.ts`, `invitation.ts`, `org.ts`, `user.ts`). Each action calls gateways directly from `src/infrastructure/registry.ts` (there is no use-case indirection layer) and returns an `ActionResult<T>` envelope from `src/lib/actions/ActionResult.ts`:
+Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, `avatar.ts`, `billing.ts`, `invitation.ts`, `marketing.ts`, `org.ts`, `user.ts`). Each action calls gateways directly from `src/infrastructure/registry.ts` (there is no use-case indirection layer) and returns an `ActionResult<T>` envelope from `src/lib/actions/ActionResult.ts`:
 
 - `ok()` / `ok(data)` — success, with optional payload
 - `fail(code, { message?, fieldErrors? })` — validation/domain failure with a stable string code the client translates via `actionErrors.<code>`

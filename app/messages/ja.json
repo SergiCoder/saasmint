@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "リポジトリをフォークし、ブランドをカスタマイズして、ローンチ。無料でオープンソース。",
     "ctaSectionPlaceholder": "you@company.jp",
     "ctaSectionButton": "構築を始める →",
+    "ctaSectionSuccessTitle": "ご登録ありがとうございます！",
+    "ctaSectionSuccessBody": "後ほどご連絡いたします。",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "ユーザー",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "プロフィールを読み込めませんでした",
     "session_expired": "セッションの有効期限が切れました。もう一度ログインしてください。",
     "unknown_error": "問題が発生しました。もう一度お試しください。",
-    "unsupported_image": "サポートされていない画像形式です"
+    "unsupported_image": "サポートされていない画像形式です",
+    "message_required": "メッセージを入力してください。",
+    "message_too_long": "メッセージが長すぎます（最大5000文字）。",
+    "HTTP_429": "リクエストが多すぎます。しばらくしてから再度お試しください。"
   },
   "contact": {
     "title": "お問い合わせ",
     "description": "ご質問やお困りのことがありますか？お気軽にご連絡ください。",
     "placeholder": "メールアドレス",
     "submit": "送信",
-    "messagePlaceholder": "メッセージ"
+    "messagePlaceholder": "メッセージ",
+    "successTitle": "メッセージを送信しました",
+    "successBody": "お問い合わせいただきありがとうございます。できるだけ早くご返信いたします。"
   },
   "about": {
     "title": "このプロジェクトについて",

@@ -165,6 +165,8 @@ export default async function LandingPage({ params }: Props) {
         subtitle={t("ctaSectionSubtitle")}
         inputPlaceholder={t("ctaSectionPlaceholder")}
         buttonText={t("ctaSectionButton")}
+        successTitle={t("ctaSectionSuccessTitle")}
+        successBody={t("ctaSectionSuccessBody")}
       />
     </>
   );

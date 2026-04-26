@@ -45,6 +45,7 @@ const EXPECTED_USE_CLIENT_FILES: readonly string[] = [
   "src/presentation/components/molecules/PronounsPicker.tsx",
   "src/presentation/components/molecules/TypeToConfirmDialog.tsx",
   "src/presentation/components/molecules/UserMenu.tsx",
+  "src/presentation/components/organisms/CtaSection.tsx",
   "src/presentation/components/organisms/MobileMenuToggle.tsx",
   "src/presentation/components/organisms/RouteErrorBoundary.tsx",
 ];

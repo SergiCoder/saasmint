@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Fork de repo, pas de branding aan en lanceer. Gratis en open-source.",
     "ctaSectionPlaceholder": "u@bedrijf.nl",
     "ctaSectionButton": "Begin met bouwen →",
+    "ctaSectionSuccessTitle": "Bedankt voor je aanmelding!",
+    "ctaSectionSuccessBody": "We nemen binnenkort contact met je op.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Gebruikers",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "Profiel kon niet worden geladen",
     "session_expired": "Sessie verlopen. Log opnieuw in.",
     "unknown_error": "Er is iets misgegaan. Probeer het opnieuw.",
-    "unsupported_image": "Niet-ondersteund afbeeldingstype"
+    "unsupported_image": "Niet-ondersteund afbeeldingstype",
+    "message_required": "Voeg een bericht toe.",
+    "message_too_long": "Bericht is te lang (max. 5000 tekens).",
+    "HTTP_429": "Te veel verzoeken. Probeer het later opnieuw."
   },
   "contact": {
     "title": "Contact",
     "description": "Heeft u een vraag of hulp nodig? We horen graag van u.",
     "placeholder": "Uw e-mailadres",
     "submit": "Verzenden",
-    "messagePlaceholder": "Uw bericht"
+    "messagePlaceholder": "Uw bericht",
+    "successTitle": "Bericht verzonden",
+    "successBody": "Bedankt voor je bericht. We reageren zo snel mogelijk."
   },
   "about": {
     "title": "Over dit project",

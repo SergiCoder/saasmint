@@ -1,6 +1,6 @@
 {
   "name": "saasmint-app",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "license": "MIT",
   "engines": {
@@ -33,7 +33,7 @@
   "pnpm": {
     "overrides": {
       "vite": "^8.0.7",
-      "postcss": "^8.5.10"
+      "postcss": "^8.5.12"
     }
   },
   "devDependencies": {
@@ -50,7 +50,7 @@
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.4",
     "jsdom": "^29.0.2",
-    "postcss": "^8.5.10",
+    "postcss": "^8.5.12",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.7.3",
     "tailwindcss": "^4.2.4",

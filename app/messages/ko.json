@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "리포지토리를 포크하고, 브랜딩을 커스터마이즈하고, 런칭하세요. 무료 오픈소스.",
     "ctaSectionPlaceholder": "you@company.kr",
     "ctaSectionButton": "구축 시작 →",
+    "ctaSectionSuccessTitle": "가입해 주셔서 감사합니다!",
+    "ctaSectionSuccessBody": "곧 연락드리겠습니다.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "사용자",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "프로필을 불러오지 못했습니다",
     "session_expired": "세션이 만료되었습니다. 다시 로그인해 주세요.",
     "unknown_error": "문제가 발생했습니다. 다시 시도해 주세요.",
-    "unsupported_image": "지원되지 않는 이미지 형식입니다"
+    "unsupported_image": "지원되지 않는 이미지 형식입니다",
+    "message_required": "메시지를 입력해 주세요.",
+    "message_too_long": "메시지가 너무 깁니다 (최대 5000자).",
+    "HTTP_429": "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요."
   },
   "contact": {
     "title": "문의하기",
     "description": "질문이 있거나 도움이 필요하신가요? 연락을 기다립니다.",
     "placeholder": "이메일 주소",
     "submit": "보내기",
-    "messagePlaceholder": "메시지"
+    "messagePlaceholder": "메시지",
+    "successTitle": "메시지가 전송되었습니다",
+    "successBody": "문의해 주셔서 감사합니다. 최대한 빨리 답변드리겠습니다."
   },
   "about": {
     "title": "이 프로젝트 소개",

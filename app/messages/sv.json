@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Forka repot, anpassa varumärket och lansera. Gratis och öppen källkod.",
     "ctaSectionPlaceholder": "you@company.com",
     "ctaSectionButton": "Start building →",
+    "ctaSectionSuccessTitle": "Tack för din registrering!",
+    "ctaSectionSuccessBody": "Vi hör av oss snart.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Användare",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "Det gick inte att ladda profilen",
     "session_expired": "Sessionen har gått ut. Logga in igen.",
     "unknown_error": "Något gick fel. Försök igen.",
-    "unsupported_image": "Bildtypen stöds inte"
+    "unsupported_image": "Bildtypen stöds inte",
+    "message_required": "Inkludera ett meddelande.",
+    "message_too_long": "Meddelandet är för långt (max 5000 tecken).",
+    "HTTP_429": "För många förfrågningar. Försök igen senare."
   },
   "contact": {
     "title": "Kontakta oss",
     "description": "Har du en fråga eller behöver hjälp? Vi vill gärna höra från dig.",
     "placeholder": "Din e-postadress",
     "submit": "Skicka",
-    "messagePlaceholder": "Ditt meddelande"
+    "messagePlaceholder": "Ditt meddelande",
+    "successTitle": "Meddelandet har skickats",
+    "successBody": "Tack för att du hörde av dig. Vi svarar så snart vi kan."
   },
   "about": {
     "title": "Om det här projektet",

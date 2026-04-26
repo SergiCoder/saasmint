@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Fork repoet, tilpass merkevaren og lanser. Gratis og apen kildekode.",
     "ctaSectionPlaceholder": "you@company.com",
     "ctaSectionButton": "Start building →",
+    "ctaSectionSuccessTitle": "Takk for at du meldte deg på!",
+    "ctaSectionSuccessBody": "Vi tar kontakt snart.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Brukere",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "Kunne ikke laste profilen",
     "session_expired": "Økten er utløpt. Logg inn igjen.",
     "unknown_error": "Noe gikk galt. Prøv igjen.",
-    "unsupported_image": "Bildetype støttes ikke"
+    "unsupported_image": "Bildetype støttes ikke",
+    "message_required": "Vennligst legg ved en melding.",
+    "message_too_long": "Meldingen er for lang (maks. 5000 tegn).",
+    "HTTP_429": "For mange forespørsler. Prøv igjen senere."
   },
   "contact": {
     "title": "Kontakt oss",
     "description": "Har du et spørsmål eller trenger hjelp? Vi hører gjerne fra deg.",
     "placeholder": "E-postadressen din",
     "submit": "Send",
-    "messagePlaceholder": "Din melding"
+    "messagePlaceholder": "Din melding",
+    "successTitle": "Meldingen er sendt",
+    "successBody": "Takk for at du tok kontakt. Vi svarer så snart vi kan."
   },
   "about": {
     "title": "Om dette prosjektet",

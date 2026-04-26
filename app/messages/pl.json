@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Sforkuj repozytorium, dostosuj branding i uruchom. Darmowe i open-source.",
     "ctaSectionPlaceholder": "ty@firma.pl",
     "ctaSectionButton": "Zacznij budować →",
+    "ctaSectionSuccessTitle": "Dziękujemy za rejestrację!",
+    "ctaSectionSuccessBody": "Wkrótce się odezwiemy.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Użytkownicy",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "Nie udało się wczytać profilu",
     "session_expired": "Sesja wygasła. Zaloguj się ponownie.",
     "unknown_error": "Coś poszło nie tak. Spróbuj ponownie.",
-    "unsupported_image": "Nieobsługiwany typ obrazu"
+    "unsupported_image": "Nieobsługiwany typ obrazu",
+    "message_required": "Dołącz wiadomość.",
+    "message_too_long": "Wiadomość jest za długa (maks. 5000 znaków).",
+    "HTTP_429": "Zbyt wiele żądań. Spróbuj ponownie później."
   },
   "contact": {
     "title": "Kontakt",
     "description": "Masz pytanie lub potrzebujesz pomocy? Chętnie Cię wysłuchamy.",
     "placeholder": "Twój adres e-mail",
     "submit": "Wyślij",
-    "messagePlaceholder": "Twoja wiadomość"
+    "messagePlaceholder": "Twoja wiadomość",
+    "successTitle": "Wiadomość wysłana",
+    "successBody": "Dziękujemy za kontakt. Odpowiemy najszybciej, jak to możliwe."
   },
   "about": {
     "title": "O tym projekcie",

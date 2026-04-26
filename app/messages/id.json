@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Fork repo, sesuaikan branding, dan luncurkan. Gratis dan open-source.",
     "ctaSectionPlaceholder": "you@company.com",
     "ctaSectionButton": "Start building →",
+    "ctaSectionSuccessTitle": "Terima kasih telah mendaftar!",
+    "ctaSectionSuccessBody": "Kami akan menghubungi Anda segera.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Pengguna",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "Gagal memuat profil",
     "session_expired": "Sesi kedaluwarsa. Silakan masuk lagi.",
     "unknown_error": "Terjadi kesalahan. Silakan coba lagi.",
-    "unsupported_image": "Tipe gambar tidak didukung"
+    "unsupported_image": "Tipe gambar tidak didukung",
+    "message_required": "Mohon sertakan pesan.",
+    "message_too_long": "Pesan terlalu panjang (maks. 5000 karakter).",
+    "HTTP_429": "Terlalu banyak permintaan. Silakan coba lagi nanti."
   },
   "contact": {
     "title": "Hubungi kami",
     "description": "Punya pertanyaan atau butuh bantuan? Kami senang mendengar dari Anda.",
     "placeholder": "Alamat email Anda",
     "submit": "Kirim",
-    "messagePlaceholder": "Pesan Anda"
+    "messagePlaceholder": "Pesan Anda",
+    "successTitle": "Pesan terkirim",
+    "successBody": "Terima kasih telah menghubungi kami. Kami akan membalas secepatnya."
   },
   "about": {
     "title": "Tentang proyek ini",

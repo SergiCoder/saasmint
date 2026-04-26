@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Fork 儲存庫，自訂品牌，然後發布。免費且開源。",
     "ctaSectionPlaceholder": "you@company.tw",
     "ctaSectionButton": "開始建構 →",
+    "ctaSectionSuccessTitle": "感謝您的註冊！",
+    "ctaSectionSuccessBody": "我們將盡快與您聯絡。",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "使用者",
     "dashUptimeVal": "1,248",
@@ -341,14 +343,19 @@
     "profile_load_failed": "載入個人資料失敗",
     "session_expired": "工作階段已過期,請重新登入。",
     "unknown_error": "發生錯誤,請再試一次。",
-    "unsupported_image": "不支援的圖片類型"
+    "unsupported_image": "不支援的圖片類型",
+    "message_required": "請輸入訊息內容。",
+    "message_too_long": "訊息過長（最多 5000 個字元）。",
+    "HTTP_429": "請求過多，請稍後再試。"
   },
   "contact": {
     "title": "聯絡我們",
     "description": "有問題或需要幫助？我們很樂意聽取您的意見。",
     "placeholder": "您的電子郵件地址",
     "submit": "傳送",
-    "messagePlaceholder": "您的留言"
+    "messagePlaceholder": "您的留言",
+    "successTitle": "訊息已發送",
+    "successBody": "感謝您的聯絡。我們將盡快回覆您。"
   },
   "about": {
     "title": "關於本專案",
