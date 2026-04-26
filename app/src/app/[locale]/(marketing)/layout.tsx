@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { MarketingLayout } from "@/presentation/components/templates/MarketingLayout";
+import { APP_VERSION, getReleaseUrl } from "@/lib/appVersion";
 import { getOptionalUser } from "./_data/getOptionalUser";
 import { SignOutButton } from "../_components/SignOutButton";
 
@@ -88,6 +89,10 @@ export default async function MarketingLayoutRoute({
       toggleNavLabel={tCommon("toggleNav")}
       footerSections={footerSections}
       copyright={tFooter("copyright")}
+      footerVersion={{
+        label: `v${APP_VERSION}`,
+        href: getReleaseUrl(APP_VERSION),
+      }}
     >
       {children}
     </MarketingLayout>
