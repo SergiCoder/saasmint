@@ -326,7 +326,8 @@
     "fullName": "Full name",
     "password": "Password",
     "accept": "Accept invitation",
-    "decline": "Decline invitation"
+    "decline": "Decline invitation",
+    "concurrentSubscriptionNotice": "You currently have a personal subscription. It will continue to bill alongside your team membership. Cancel it from your subscription page if you no longer need it."
   },
   "plans": {
     "personal": {

@@ -417,7 +417,8 @@
     "fullName": "Ad soyad",
     "password": "Şifre",
     "accept": "Daveti kabul et",
-    "decline": "Daveti reddet"
+    "decline": "Daveti reddet",
+    "concurrentSubscriptionNotice": "Şu anda kişisel bir aboneliğiniz var. Takım üyeliğinizle birlikte faturalandırılmaya devam edecek. Artık ihtiyacınız yoksa abonelik sayfanızdan iptal edin."
   },
   "plans": {
     "personal": {

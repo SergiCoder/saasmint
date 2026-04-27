@@ -417,7 +417,8 @@
     "fullName": "Nama lengkap",
     "password": "Kata sandi",
     "accept": "Terima undangan",
-    "decline": "Tolak undangan"
+    "decline": "Tolak undangan",
+    "concurrentSubscriptionNotice": "Anda saat ini memiliki langganan pribadi. Itu akan terus ditagih bersama keanggotaan tim Anda. Batalkan dari halaman langganan Anda jika Anda tidak membutuhkannya lagi."
   },
   "plans": {
     "personal": {

@@ -417,7 +417,8 @@
     "fullName": "氏名",
     "password": "パスワード",
     "accept": "招待を承諾",
-    "decline": "招待を辞退"
+    "decline": "招待を辞退",
+    "concurrentSubscriptionNotice": "現在、個人サブスクリプションをお持ちです。チームメンバーシップと並行して引き続き請求されます。不要になった場合は、サブスクリプションページから解約してください。"
   },
   "plans": {
     "personal": {

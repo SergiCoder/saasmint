@@ -417,7 +417,8 @@
     "fullName": "Imię i nazwisko",
     "password": "Hasło",
     "accept": "Zaakceptuj zaproszenie",
-    "decline": "Odrzuć zaproszenie"
+    "decline": "Odrzuć zaproszenie",
+    "concurrentSubscriptionNotice": "Masz obecnie subskrypcję osobistą. Będzie nadal naliczana wraz z członkostwem w zespole. Anuluj ją na stronie subskrypcji, jeśli już jej nie potrzebujesz."
   },
   "plans": {
     "personal": {

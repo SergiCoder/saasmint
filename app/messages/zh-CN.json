@@ -417,7 +417,8 @@
     "fullName": "全名",
     "password": "密码",
     "accept": "接受邀请",
-    "decline": "拒绝邀请"
+    "decline": "拒绝邀请",
+    "concurrentSubscriptionNotice": "您目前拥有个人订阅。它将与您的团队成员资格并行计费。如果您不再需要，请在订阅页面取消。"
   },
   "plans": {
     "personal": {

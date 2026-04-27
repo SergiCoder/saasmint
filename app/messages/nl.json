@@ -417,7 +417,8 @@
     "fullName": "Volledige naam",
     "password": "Wachtwoord",
     "accept": "Uitnodiging accepteren",
-    "decline": "Uitnodiging weigeren"
+    "decline": "Uitnodiging weigeren",
+    "concurrentSubscriptionNotice": "U heeft momenteel een persoonlijk abonnement. Het wordt naast uw teamlidmaatschap doorgefactureerd. Zeg het op via uw abonnementenpagina als u het niet meer nodig heeft."
   },
   "plans": {
     "personal": {

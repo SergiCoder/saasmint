@@ -417,7 +417,8 @@
     "fullName": "Nom complet",
     "password": "Mot de passe",
     "accept": "Accepter l'invitation",
-    "decline": "Décliner l'invitation"
+    "decline": "Décliner l'invitation",
+    "concurrentSubscriptionNotice": "Vous avez actuellement un abonnement personnel. Il continuera d'être facturé parallèlement à votre adhésion à l'équipe. Annulez-le depuis votre page d'abonnement si vous n'en avez plus besoin."
   },
   "plans": {
     "personal": {

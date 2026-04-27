@@ -417,7 +417,8 @@
     "fullName": "Fulde navn",
     "password": "Adgangskode",
     "accept": "Acceptér invitation",
-    "decline": "Afvis invitation"
+    "decline": "Afvis invitation",
+    "concurrentSubscriptionNotice": "Du har i øjeblikket et personligt abonnement. Det vil fortsat blive faktureret sammen med dit teammedlemskab. Annullér det fra din abonnementsside, hvis du ikke længere har brug for det."
   },
   "plans": {
     "personal": {

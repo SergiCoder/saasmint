@@ -417,7 +417,8 @@
     "fullName": "Vollständiger Name",
     "password": "Passwort",
     "accept": "Einladung annehmen",
-    "decline": "Einladung ablehnen"
+    "decline": "Einladung ablehnen",
+    "concurrentSubscriptionNotice": "Sie haben derzeit ein persönliches Abonnement. Es wird weiterhin parallel zu Ihrer Team-Mitgliedschaft abgerechnet. Kündigen Sie es auf Ihrer Abonnement-Seite, wenn Sie es nicht mehr benötigen."
   },
   "plans": {
     "personal": {

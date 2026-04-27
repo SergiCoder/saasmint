@@ -417,7 +417,8 @@
     "fullName": "Nombre completo",
     "password": "Contraseña",
     "accept": "Aceptar invitación",
-    "decline": "Rechazar invitación"
+    "decline": "Rechazar invitación",
+    "concurrentSubscriptionNotice": "Actualmente tienes una suscripción personal. Continuará facturándose junto con tu membresía de equipo. Cancélala desde tu página de suscripción si ya no la necesitas."
   },
   "plans": {
     "personal": {

@@ -417,7 +417,8 @@
     "fullName": "Fullständigt namn",
     "password": "Lösenord",
     "accept": "Acceptera inbjudan",
-    "decline": "Avböj inbjudan"
+    "decline": "Avböj inbjudan",
+    "concurrentSubscriptionNotice": "Du har för närvarande en personlig prenumeration. Den kommer att fortsätta faktureras parallellt med ditt teammedlemskap. Avsluta den från din prenumerationssida om du inte längre behöver den."
   },
   "plans": {
     "personal": {

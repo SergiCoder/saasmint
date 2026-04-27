@@ -417,7 +417,8 @@
     "fullName": "전체 이름",
     "password": "비밀번호",
     "accept": "초대 수락",
-    "decline": "초대 거절"
+    "decline": "초대 거절",
+    "concurrentSubscriptionNotice": "현재 개인 구독이 있습니다. 팀 멤버십과 함께 계속 청구됩니다. 더 이상 필요하지 않으면 구독 페이지에서 취소하세요."
   },
   "plans": {
     "personal": {

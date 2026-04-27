@@ -417,7 +417,8 @@
     "fullName": "Nome completo",
     "password": "Senha",
     "accept": "Aceitar convite",
-    "decline": "Recusar convite"
+    "decline": "Recusar convite",
+    "concurrentSubscriptionNotice": "Você tem atualmente uma assinatura pessoal. Ela continuará sendo cobrada junto com sua participação na equipe. Cancele-a na página de assinatura se não precisar mais dela."
   },
   "plans": {
     "personal": {

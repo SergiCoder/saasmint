@@ -417,7 +417,8 @@
     "fullName": "Nome completo",
     "password": "Password",
     "accept": "Accetta invito",
-    "decline": "Rifiuta invito"
+    "decline": "Rifiuta invito",
+    "concurrentSubscriptionNotice": "Hai attualmente un abbonamento personale. Continuerà a essere addebitato insieme alla tua iscrizione al team. Annullalo dalla pagina del tuo abbonamento se non ne hai più bisogno."
   },
   "plans": {
     "personal": {
