@@ -59,6 +59,14 @@ export async function CurrentSubscriptionCard({
         <ResumeSubscriptionButton>
           {t("resumeSubscription")}
         </ResumeSubscriptionButton>
+      ) : isTeam ? (
+        <CancelRenewalButton
+          label={t("cancelRenewal")}
+          confirmTitle={t("cancelRenewalTeamTitle")}
+          confirmBody={t("cancelRenewalTeamBody", { date: periodEndDisplay })}
+          confirmAction={t("cancelRenewalTeam")}
+          confirmDismiss={t("cancelRenewalKeep")}
+        />
       ) : (
         <CancelRenewalButton
           label={t("cancelRenewal")}

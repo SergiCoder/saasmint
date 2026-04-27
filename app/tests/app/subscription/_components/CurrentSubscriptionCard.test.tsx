@@ -38,10 +38,26 @@ vi.mock(
   async () => {
     const React = await import("react");
     return {
-      CancelRenewalButton: ({ label }: { label: string }) =>
+      CancelRenewalButton: ({
+        label,
+        confirmTitle,
+        confirmBody,
+        confirmAction,
+      }: {
+        label: string;
+        confirmTitle: string;
+        confirmBody: string;
+        confirmAction: string;
+      }) =>
         React.createElement(
           "button",
-          { type: "button", "data-testid": "cancel-renewal" },
+          {
+            type: "button",
+            "data-testid": "cancel-renewal",
+            "data-confirm-title": confirmTitle,
+            "data-confirm-body": confirmBody,
+            "data-confirm-action": confirmAction,
+          },
           label,
         ),
     };
@@ -309,6 +325,64 @@ describe("CurrentSubscriptionCard", () => {
     });
 
     expect(screen.getByTestId("footer")).toHaveTextContent("");
+  });
+
+  it("uses team-flavored cancel copy with org-archival warning when an owner cancels a team sub", async () => {
+    await renderCard({
+      subscription: makeSub({
+        plan: {
+          id: "plan_team",
+          name: "Team Pro",
+          description: "",
+          context: "team",
+          tier: 3,
+          interval: "month",
+          price: null,
+        },
+        quantity: 3,
+      }),
+      locale: "en",
+      planName: "Team Pro",
+      canManage: true,
+      teamOwnerName: "Alice",
+    });
+
+    const cancelButton = screen.getByTestId("cancel-renewal");
+    expect(cancelButton).toHaveTextContent("cancelRenewal");
+    expect(cancelButton).toHaveAttribute(
+      "data-confirm-title",
+      "cancelRenewalTeamTitle",
+    );
+    expect(cancelButton.getAttribute("data-confirm-body")).toContain(
+      "cancelRenewalTeamBody",
+    );
+    expect(cancelButton).toHaveAttribute(
+      "data-confirm-action",
+      "cancelRenewalTeam",
+    );
+  });
+
+  it("uses standard personal cancel copy for a personal sub", async () => {
+    await renderCard({
+      subscription: makeSub(),
+      locale: "en",
+      planName: "Pro",
+      canManage: true,
+      teamOwnerName: null,
+    });
+
+    const cancelButton = screen.getByTestId("cancel-renewal");
+    expect(cancelButton).toHaveAttribute(
+      "data-confirm-title",
+      "cancelRenewalTitle",
+    );
+    expect(cancelButton.getAttribute("data-confirm-body")).toContain(
+      "cancelRenewalBody",
+    );
+    expect(cancelButton).toHaveAttribute(
+      "data-confirm-action",
+      "cancelRenewal",
+    );
   });
 
   it("shows no actions for a personal sub the caller can't manage", async () => {
