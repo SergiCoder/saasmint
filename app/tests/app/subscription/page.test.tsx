@@ -24,10 +24,9 @@ vi.mock("@/app/[locale]/(app)/_data/getSubscription", () => ({
   getSubscription: vi.fn(() => Promise.resolve(null)),
 }));
 
-const mockGetCreditBalance =
-  vi.fn<() => Promise<{ balance: number; scope: "user" | "org" } | null>>(
-    () => Promise.resolve(null),
-  );
+const mockGetCreditBalance = vi.fn<
+  () => Promise<{ balance: number; scope: "user" | "org" } | null>
+>(() => Promise.resolve(null));
 vi.mock("@/app/[locale]/(app)/_data/getCreditBalance", () => ({
   getCreditBalance: () => mockGetCreditBalance(),
 }));

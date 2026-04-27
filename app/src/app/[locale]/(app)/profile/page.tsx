@@ -30,8 +30,8 @@ export default async function ProfilePage({ params }: Props) {
     getMyOrgRole(),
   ]);
 
-  const deleteRestriction: "owner" | "member" | undefined =
-    myOrgRole === null ? undefined : myOrgRole === "owner" ? "owner" : "member";
+  const deleteRestriction: "owner" | undefined =
+    myOrgRole === "owner" ? "owner" : undefined;
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">

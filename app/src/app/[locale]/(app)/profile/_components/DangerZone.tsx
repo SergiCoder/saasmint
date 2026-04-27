@@ -6,7 +6,7 @@ import { DeleteAccountDialog } from "./DeleteAccountDialog";
 
 interface DangerZoneProps {
   userEmail: string;
-  deleteRestriction?: "owner" | "member";
+  deleteRestriction?: "owner";
 }
 
 export function DangerZone({ userEmail, deleteRestriction }: DangerZoneProps) {
@@ -29,11 +29,7 @@ export function DangerZone({ userEmail, deleteRestriction }: DangerZoneProps) {
     <section className="rounded-lg border border-red-200 bg-white p-6 shadow-sm">
       <h2 className="mb-2 text-lg font-semibold text-red-600">{t("danger")}</h2>
       {deleteRestriction ? (
-        <p className="text-sm text-gray-600">
-          {deleteRestriction === "owner"
-            ? t("deleteBlockedOwner")
-            : t("deleteBlockedMember")}
-        </p>
+        <p className="text-sm text-gray-600">{t("deleteBlockedOwner")}</p>
       ) : (
         <>
           <p className="text-sm text-gray-600">{t("deleteConfirm")}</p>
