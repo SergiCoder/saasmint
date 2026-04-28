@@ -94,6 +94,7 @@
       "errorAccountDeactivated": "此账户已被停用。",
       "errorBackendRejected": "身份验证失败。请重新登录。",
       "errorOAuth": "社交登录失败。请重试。",
+      "errorOAuthEmailUnverifiedCollision": "您的社交账户使用的电子邮件地址在此已有密码账户。请先使用密码登录，之后可以关联社交账户。",
       "forgotPassword": "忘记密码？"
     },
     "forgotPassword": {

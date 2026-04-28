@@ -141,6 +141,22 @@ describe("AuthCallbackClient", () => {
     });
   });
 
+  it("redirects to /login with oauth_email_unverified_collision when backend signals an email collision the provider didn't verify", async () => {
+    mockExchangeOAuthCode.mockResolvedValue({
+      ok: false,
+      error: "oauth_email_unverified_collision",
+    });
+    setHash("#code=opaque_abc");
+
+    render(<AuthCallbackClient {...LABELS} />);
+
+    await waitFor(() => {
+      expect(mockRouterReplace).toHaveBeenCalledWith(
+        "/login?error=oauth_email_unverified_collision",
+      );
+    });
+  });
+
   it("shows the fallback UI when the exchange call itself throws", async () => {
     mockExchangeOAuthCode.mockRejectedValue(new Error("network down"));
     setHash("#code=opaque_abc");

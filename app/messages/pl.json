@@ -94,6 +94,7 @@
       "errorAccountDeactivated": "To konto zostało dezaktywowane.",
       "errorBackendRejected": "Uwierzytelnianie nie powiodło się. Spróbuj ponownie.",
       "errorOAuth": "Logowanie społecznościowe nie powiodło się. Spróbuj ponownie.",
+      "errorOAuthEmailUnverifiedCollision": "Twoje konto społecznościowe jest zarejestrowane na adres e-mail, który ma już tutaj konto z hasłem. Zaloguj się najpierw przy użyciu hasła; możesz powiązać dostawcę społecznościowego później.",
       "forgotPassword": "Nie pamiętasz hasła?"
     },
     "forgotPassword": {

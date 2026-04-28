@@ -94,6 +94,7 @@
       "errorAccountDeactivated": "此帳戶已被停用。",
       "errorBackendRejected": "驗證失敗。請重新登入。",
       "errorOAuth": "社群登入失敗。請重試。",
+      "errorOAuthEmailUnverifiedCollision": "您的社交帳戶使用的電子郵件地址在此已有密碼帳戶。請先使用密碼登入，之後可以關聯社交帳戶。",
       "forgotPassword": "忘記密碼？"
     },
     "forgotPassword": {

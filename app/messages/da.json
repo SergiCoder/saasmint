@@ -94,6 +94,7 @@
       "errorAccountDeactivated": "Denne konto er deaktiveret.",
       "errorBackendRejected": "Godkendelse mislykkedes. Prøv at logge ind igen.",
       "errorOAuth": "Socialt login mislykkedes. Prøv venligst igen.",
+      "errorOAuthEmailUnverifiedCollision": "Din sociale konto er registreret med en e-mailadresse, der allerede har en adgangskode-konto her. Log venligst ind med din adgangskode først; du kan tilknytte den sociale udbyder bagefter.",
       "forgotPassword": "Glemt adgangskode?"
     },
     "forgotPassword": {

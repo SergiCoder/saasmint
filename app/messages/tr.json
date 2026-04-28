@@ -94,6 +94,7 @@
       "errorAccountDeactivated": "Bu hesap devre dışı bırakılmıştır.",
       "errorBackendRejected": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin.",
       "errorOAuth": "Sosyal giriş başarısız oldu. Lütfen tekrar deneyin.",
+      "errorOAuthEmailUnverifiedCollision": "Sosyal hesabınız burada zaten şifreli bir hesabı olan bir e-posta adresiyle kayıtlı. Önce şifrenizle giriş yapın; sosyal sağlayıcıyı daha sonra bağlayabilirsiniz.",
       "forgotPassword": "Şifrenizi mi unuttunuz?"
     },
     "forgotPassword": {

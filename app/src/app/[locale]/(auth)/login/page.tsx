@@ -24,6 +24,7 @@ const ERROR_KEYS: Record<string, string> = {
   BACKEND_REJECTED: "errorBackendRejected",
   account_deleted: "accountDeleted",
   oauth_error: "errorOAuth",
+  oauth_email_unverified_collision: "errorOAuthEmailUnverifiedCollision",
 };
 
 interface Props {

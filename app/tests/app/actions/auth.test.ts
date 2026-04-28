@@ -779,6 +779,24 @@ describe("auth server actions", () => {
       expect(mockSetAuthCookies).not.toHaveBeenCalled();
     });
 
+    it("returns oauth_email_unverified_collision when backend rejects with that code", async () => {
+      const { ApiError } = await import("@/domain/errors/ApiError");
+      mockConsumeOAuthFlowCookies.mockResolvedValue({
+        inProgress: true,
+        next: "/dashboard",
+      });
+      mockPublicApiFetch.mockRejectedValue(
+        new ApiError(409, { code: "oauth_email_unverified_collision" }),
+      );
+
+      const result = await exchangeOAuthCode("code_abc");
+      expect(result).toEqual({
+        ok: false,
+        error: "oauth_email_unverified_collision",
+      });
+      expect(mockSetAuthCookies).not.toHaveBeenCalled();
+    });
+
     // Defense in depth for the open-redirect class of attacks: even though
     // the attacker would already need to control the flow cookie, the
     // `next` we return gets fed straight into a client-side router.replace

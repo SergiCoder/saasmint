@@ -94,6 +94,7 @@
       "errorAccountDeactivated": "Akun ini telah dinonaktifkan.",
       "errorBackendRejected": "Autentikasi gagal. Silakan coba masuk kembali.",
       "errorOAuth": "Login sosial gagal. Silakan coba lagi.",
+      "errorOAuthEmailUnverifiedCollision": "Akun sosial Anda terdaftar dengan alamat email yang sudah memiliki akun dengan kata sandi di sini. Harap masuk dengan kata sandi Anda terlebih dahulu; Anda dapat menautkan penyedia sosial setelahnya.",
       "forgotPassword": "Lupa kata sandi?"
     },
     "forgotPassword": {

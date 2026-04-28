@@ -101,6 +101,7 @@
       "errorAccountDeactivated": "This account has been deactivated.",
       "errorBackendRejected": "Authentication failed. Please try signing in again.",
       "errorOAuth": "Social login failed. Please try again.",
+      "errorOAuthEmailUnverifiedCollision": "Your social account is registered with an email address that already has a password account here. Please sign in with your password first; you can link the social provider afterwards.",
       "forgotPassword": "Forgot password?"
     },
     "forgotPassword": {

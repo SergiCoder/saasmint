@@ -94,6 +94,7 @@
       "errorAccountDeactivated": "Dit account is gedeactiveerd.",
       "errorBackendRejected": "Authenticatie mislukt. Probeer opnieuw in te loggen.",
       "errorOAuth": "Sociale login mislukt. Probeer het opnieuw.",
+      "errorOAuthEmailUnverifiedCollision": "Uw sociale account is geregistreerd met een e-mailadres dat hier al een wachtwoordaccount heeft. Log eerst in met uw wachtwoord; u kunt de sociale provider daarna koppelen.",
       "forgotPassword": "Wachtwoord vergeten?"
     },
     "forgotPassword": {

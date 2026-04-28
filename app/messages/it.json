@@ -94,6 +94,7 @@
       "errorAccountDeactivated": "Questo account è stato disattivato.",
       "errorBackendRejected": "Autenticazione fallita. Riprova ad accedere.",
       "errorOAuth": "Accesso social non riuscito. Riprova.",
+      "errorOAuthEmailUnverifiedCollision": "Il tuo account social è registrato con un indirizzo email che ha già un account con password qui. Accedi prima con la tua password; potrai collegare il provider social in seguito.",
       "forgotPassword": "Password dimenticata?"
     },
     "forgotPassword": {

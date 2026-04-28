@@ -94,6 +94,7 @@
       "errorAccountDeactivated": "このアカウントは無効化されています。",
       "errorBackendRejected": "認証に失敗しました。再度ログインしてください。",
       "errorOAuth": "ソーシャルログインに失敗しました。もう一度お試しください。",
+      "errorOAuthEmailUnverifiedCollision": "ソーシャルアカウントは、こちらで既にパスワードアカウントを持っているメールアドレスで登録されています。最初にパスワードでサインインしてください。その後でソーシャルプロバイダーを連携できます。",
       "forgotPassword": "パスワードを忘れましたか？"
     },
     "forgotPassword": {

@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { apiFetch, publicApiFetch } from "@/infrastructure/api/apiClient";
+import { ApiError } from "@/domain/errors/ApiError";
 import { authGateway, planGateway } from "@/infrastructure/registry";
 import {
   clearAuthCookies,
@@ -44,7 +45,13 @@ export type StartOAuthResult = { redirectUrl: string };
 
 export type ExchangeOAuthResult =
   | { ok: true; next: string }
-  | { ok: false; error: "oauth_no_flow" | "oauth_error" };
+  | {
+      ok: false;
+      error:
+        | "oauth_no_flow"
+        | "oauth_error"
+        | "oauth_email_unverified_collision";
+    };
 
 const PLAN_SLUG_RE = /^[A-Za-z0-9_-]{1,64}$/;
 
@@ -332,6 +339,12 @@ export async function exchangeOAuthCode(
     );
   } catch (err) {
     console.error("OAuth exchange failed", err);
+    if (
+      err instanceof ApiError &&
+      err.code === "oauth_email_unverified_collision"
+    ) {
+      return { ok: false, error: "oauth_email_unverified_collision" };
+    }
     return { ok: false, error: "oauth_error" };
   }
 

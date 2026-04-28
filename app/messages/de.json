@@ -94,6 +94,7 @@
       "errorAccountDeactivated": "Dieses Konto wurde deaktiviert.",
       "errorBackendRejected": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
       "errorOAuth": "Social-Login fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "errorOAuthEmailUnverifiedCollision": "Ihr Social-Konto ist mit einer E-Mail-Adresse registriert, die hier bereits ein Passwort-Konto hat. Bitte melden Sie sich zuerst mit Ihrem Passwort an; danach können Sie den Social-Anbieter verknüpfen.",
       "forgotPassword": "Passwort vergessen?"
     },
     "forgotPassword": {

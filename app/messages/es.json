@@ -94,6 +94,7 @@
       "errorAccountDeactivated": "Esta cuenta ha sido desactivada.",
       "errorBackendRejected": "Error de autenticación. Intenta iniciar sesión de nuevo.",
       "errorOAuth": "El inicio de sesión social falló. Por favor, inténtalo de nuevo.",
+      "errorOAuthEmailUnverifiedCollision": "Tu cuenta social está registrada con una dirección de correo electrónico que ya tiene una cuenta con contraseña aquí. Inicia sesión con tu contraseña primero; podrás vincular el proveedor social después.",
       "forgotPassword": "¿Olvidaste tu contraseña?"
     },
     "forgotPassword": {
