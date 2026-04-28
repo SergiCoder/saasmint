@@ -237,6 +237,7 @@
     "email": "E-mail",
     "preferredLocale": "Taal",
     "preferredCurrency": "Valuta",
+    "currencyLockedNote": "Uw factureringsvaluta wordt ingesteld bij uw eerste abonnement en kan daarna niet meer worden gewijzigd.",
     "phonePrefix": "Landcode",
     "phone": "Telefoon",
     "phoneNumberRequired": "Voer een telefoonnummer in",

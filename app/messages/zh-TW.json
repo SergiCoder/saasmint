@@ -237,6 +237,7 @@
     "email": "電子郵件",
     "preferredLocale": "語言",
     "preferredCurrency": "貨幣",
+    "currencyLockedNote": "您的結算貨幣在首次訂閱時設定，之後無法變更。",
     "phonePrefix": "國碼",
     "phone": "電話號碼",
     "phoneNumberRequired": "請輸入電話號碼",

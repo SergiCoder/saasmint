@@ -237,6 +237,7 @@
     "email": "Эл. почта",
     "preferredLocale": "Язык",
     "preferredCurrency": "Валюта",
+    "currencyLockedNote": "Валюта оплаты устанавливается при первой подписке и не может быть изменена впоследствии.",
     "phonePrefix": "Код страны",
     "phone": "Телефон",
     "phoneNumberRequired": "Введите номер телефона",

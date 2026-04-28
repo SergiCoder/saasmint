@@ -237,6 +237,7 @@
     "email": "E-post",
     "preferredLocale": "Språk",
     "preferredCurrency": "Valuta",
+    "currencyLockedNote": "Din faktureringsvaluta anges när du tecknar prenumeration första gången och kan inte ändras efteråt.",
     "phonePrefix": "Landskod",
     "phone": "Telefon",
     "phoneNumberRequired": "Ange ett telefonnummer",

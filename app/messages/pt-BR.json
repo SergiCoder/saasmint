@@ -237,6 +237,7 @@
     "email": "E-mail",
     "preferredLocale": "Idioma",
     "preferredCurrency": "Moeda",
+    "currencyLockedNote": "A moeda de cobrança é definida ao assinar pela primeira vez e não pode ser alterada depois.",
     "phonePrefix": "Código do país",
     "phone": "Telefone",
     "phoneNumberRequired": "Informe um número de telefone",

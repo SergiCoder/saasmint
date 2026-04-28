@@ -236,6 +236,7 @@
     "email": "Email",
     "preferredLocale": "Language",
     "preferredCurrency": "Currency",
+    "currencyLockedNote": "Your billing currency is set when you first subscribe and can't be changed afterwards.",
     "phonePrefix": "Country code",
     "phone": "Phone number",
     "phoneNumberRequired": "Please enter a phone number",

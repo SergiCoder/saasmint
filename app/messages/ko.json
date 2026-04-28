@@ -237,6 +237,7 @@
     "email": "이메일",
     "preferredLocale": "언어",
     "preferredCurrency": "통화",
+    "currencyLockedNote": "결제 통화는 처음 구독할 때 설정되며 이후에는 변경할 수 없습니다.",
     "phonePrefix": "국가 코드",
     "phone": "전화번호",
     "phoneNumberRequired": "전화번호를 입력해 주세요",

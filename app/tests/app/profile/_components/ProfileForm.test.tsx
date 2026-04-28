@@ -70,12 +70,16 @@ const phonePrefixes: PhonePrefix[] = [
   { prefix: "+34", label: "ES" },
 ];
 
-function renderForm(userOverrides: Partial<User> = {}) {
+function renderForm(
+  userOverrides: Partial<User> = {},
+  extra: { currencyLocked?: boolean } = {},
+) {
   return render(
     <ProfileForm
       user={makeUser(userOverrides)}
       phonePrefixes={phonePrefixes}
       timezones={["UTC", "Europe/Madrid"]}
+      currencyLocked={extra.currencyLocked}
     />,
   );
 }
@@ -87,6 +91,18 @@ beforeEach(() => {
 // --- Tests ----------------------------------------------------------------
 
 describe("ProfileForm", () => {
+  it("hides the currency-locked note by default (no Stripe customer)", () => {
+    renderForm();
+
+    expect(screen.queryByText("currencyLockedNote")).not.toBeInTheDocument();
+  });
+
+  it("renders the currency-locked note under the picker when currencyLocked is true", () => {
+    renderForm({}, { currencyLocked: true });
+
+    expect(screen.getByText("currencyLockedNote")).toBeInTheDocument();
+  });
+
   it("renders the user's email as a disabled input (server-owned field)", () => {
     renderForm({ email: "alice@example.com" });
 

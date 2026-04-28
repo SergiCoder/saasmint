@@ -237,6 +237,7 @@
     "email": "البريد الإلكتروني",
     "preferredLocale": "اللغة",
     "preferredCurrency": "العملة",
+    "currencyLockedNote": "تُحدد عملة الفوترة عند الاشتراك لأول مرة ولا يمكن تغييرها بعد ذلك.",
     "phonePrefix": "رمز الدولة",
     "phone": "رقم الهاتف",
     "phoneNumberRequired": "يرجى إدخال رقم الهاتف",
