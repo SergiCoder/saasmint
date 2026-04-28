@@ -225,7 +225,9 @@
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Managed by {name}",
     "teamPlanReadonly": "Your team subscription is managed by the organization owner.",
-    "checkout": "Checkout"
+    "checkout": "Checkout",
+    "personalSubAutoCancelNotice": "Your personal subscription will end on {date} when this team plan starts billing. You'll keep personal features until then.",
+    "keepPersonalSubscription": "Keep my personal subscription running alongside the team plan."
   },
   "profile": {
     "title": "Profile",

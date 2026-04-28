@@ -4,6 +4,12 @@ export interface CheckoutSessionInput {
   planPriceId: string;
   quantity?: number;
   orgName?: string;
+  /**
+   * Team-context only: when the caller has an active personal subscription,
+   * `true` keeps it running concurrently; `false` (default) auto-sets it to
+   * cancel at period end once the team checkout completes.
+   */
+  keepPersonalSubscription?: boolean;
   successUrl: string;
   cancelUrl: string;
 }

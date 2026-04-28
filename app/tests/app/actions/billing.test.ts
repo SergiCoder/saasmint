@@ -181,6 +181,86 @@ describe("billing server actions", () => {
       });
       expect(mockRedirect).not.toHaveBeenCalled();
     });
+
+    it("forwards keepPersonalSubscription=true when the checkbox is checked alongside orgName", async () => {
+      mockCreateCheckoutSession.mockResolvedValue({
+        url: "https://checkout.stripe.com/sess_team",
+      });
+
+      const formData = new FormData();
+      formData.set("planPriceId", "price_team");
+      formData.set("quantity", "3");
+      formData.set("orgName", "Acme Corp");
+      formData.set("keepPersonalSubscription", "on");
+
+      await expect(startCheckout(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockCreateCheckoutSession).toHaveBeenCalledWith(
+        expect.objectContaining({
+          planPriceId: "price_team",
+          quantity: 3,
+          orgName: "Acme Corp",
+          keepPersonalSubscription: true,
+        }),
+      );
+    });
+
+    it("forwards keepPersonalSubscription=false (default) when the checkbox is absent but orgName is provided", async () => {
+      mockCreateCheckoutSession.mockResolvedValue({
+        url: "https://checkout.stripe.com/sess_team",
+      });
+
+      const formData = new FormData();
+      formData.set("planPriceId", "price_team");
+      formData.set("quantity", "3");
+      formData.set("orgName", "Acme Corp");
+      // keepPersonalSubscription is intentionally not set — unchecked checkboxes
+      // are absent from FormData.
+
+      await expect(startCheckout(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      const callArgs = mockCreateCheckoutSession.mock.calls[0]![0];
+      expect(callArgs.keepPersonalSubscription).toBe(false);
+      expect(callArgs.orgName).toBe("Acme Corp");
+    });
+
+    it("omits keepPersonalSubscription entirely when orgName is missing (personal-context checkout)", async () => {
+      mockCreateCheckoutSession.mockResolvedValue({
+        url: "https://checkout.stripe.com/sess_personal",
+      });
+
+      const formData = new FormData();
+      formData.set("planPriceId", "price_personal");
+      // No orgName — this is a personal-context checkout. The keep-personal
+      // flag is team-context only and must NOT leak through.
+      formData.set("keepPersonalSubscription", "on");
+
+      await expect(startCheckout(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      const callArgs = mockCreateCheckoutSession.mock.calls[0]![0];
+      expect(callArgs.orgName).toBeUndefined();
+      expect("keepPersonalSubscription" in callArgs).toBe(false);
+    });
+
+    it("treats checkbox values other than 'on' as unchecked (false)", async () => {
+      mockCreateCheckoutSession.mockResolvedValue({
+        url: "https://checkout.stripe.com/sess_team",
+      });
+
+      const formData = new FormData();
+      formData.set("planPriceId", "price_team");
+      formData.set("orgName", "Acme Corp");
+      formData.set("keepPersonalSubscription", "true"); // not "on"
+
+      await expect(startCheckout(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      const callArgs = mockCreateCheckoutSession.mock.calls[0]![0];
+      expect(callArgs.keepPersonalSubscription).toBe(false);
+    });
   });
 
   describe("startProductCheckout", () => {

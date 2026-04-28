@@ -225,7 +225,9 @@
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "{name} が管理",
     "teamPlanReadonly": "チームのサブスクリプションは組織オーナーが管理しています。",
-    "checkout": "お支払い"
+    "checkout": "お支払い",
+    "personalSubAutoCancelNotice": "個人サブスクリプションは、このチームプランの請求が開始される {date} に終了します。それまで個人機能はご利用いただけます。",
+    "keepPersonalSubscription": "チームプランと並行して個人サブスクリプションを継続する。"
   },
   "profile": {
     "title": "設定",

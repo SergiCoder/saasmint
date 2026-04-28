@@ -225,7 +225,9 @@
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Administreret af {name}",
     "teamPlanReadonly": "Dit teamabonnement administreres af organisationens ejer.",
-    "checkout": "Betaling"
+    "checkout": "Betaling",
+    "personalSubAutoCancelNotice": "Dit personlige abonnement slutter den {date}, når dette team-abonnement begynder at blive faktureret. Du beholder de personlige funktioner indtil da.",
+    "keepPersonalSubscription": "Behold mit personlige abonnement sideløbende med team-abonnementet."
   },
   "profile": {
     "title": "Indstillinger",

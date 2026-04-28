@@ -225,7 +225,9 @@
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Gerenciado por {name}",
     "teamPlanReadonly": "A assinatura da sua equipe é gerenciada pelo proprietário da organização.",
-    "checkout": "Pagamento"
+    "checkout": "Pagamento",
+    "personalSubAutoCancelNotice": "Sua assinatura pessoal terminará em {date} quando este plano de equipe começar a ser cobrado. Você manterá os recursos pessoais até lá.",
+    "keepPersonalSubscription": "Manter minha assinatura pessoal ativa junto com o plano de equipe."
   },
   "profile": {
     "title": "Configurações",

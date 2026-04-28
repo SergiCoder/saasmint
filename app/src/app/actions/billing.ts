@@ -86,13 +86,15 @@ export async function startCheckout(
       ? Math.min(rawQuantity, MAX_SEATS)
       : undefined;
   const orgName = getNonEmptyString(formData, "orgName");
+  const keepPersonalSubscription =
+    formData.get("keepPersonalSubscription") === "on";
 
   let url: string;
   try {
     const session = await subscriptionGateway.createCheckoutSession({
       planPriceId,
       ...(quantity ? { quantity } : {}),
-      ...(orgName ? { orgName } : {}),
+      ...(orgName ? { orgName, keepPersonalSubscription } : {}),
       successUrl: `${APP_ORIGIN}/subscription?status=success`,
       cancelUrl: `${APP_ORIGIN}/subscription`,
     });

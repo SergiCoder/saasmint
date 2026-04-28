@@ -225,7 +225,9 @@
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "由 {name} 管理",
     "teamPlanReadonly": "您的團隊訂閱由組織擁有者管理。",
-    "checkout": "結帳"
+    "checkout": "結帳",
+    "personalSubAutoCancelNotice": "您的個人訂閱將於 {date} 結束，屆時此團隊方案開始計費。在此之前您將保留個人功能。",
+    "keepPersonalSubscription": "保留我的個人訂閱與團隊方案並行。"
   },
   "profile": {
     "title": "設定",

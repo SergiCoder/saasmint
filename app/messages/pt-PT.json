@@ -225,7 +225,9 @@
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Gerido por {name}",
     "teamPlanReadonly": "A subscrição da sua equipa é gerida pelo proprietário da organização.",
-    "checkout": "Pagamento"
+    "checkout": "Pagamento",
+    "personalSubAutoCancelNotice": "A sua subscrição pessoal terminará a {date} quando este plano de equipa começar a ser cobrado. Manterá as funcionalidades pessoais até essa data.",
+    "keepPersonalSubscription": "Manter a minha subscrição pessoal ativa juntamente com o plano de equipa."
   },
   "profile": {
     "title": "Definições",

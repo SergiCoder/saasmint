@@ -225,7 +225,9 @@
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Управляется {name}",
     "teamPlanReadonly": "Подписка вашей команды управляется владельцем организации.",
-    "checkout": "Оплата"
+    "checkout": "Оплата",
+    "personalSubAutoCancelNotice": "Ваша личная подписка завершится {date}, когда начнётся оплата этого тарифа для команды. До этого момента вы сохраните личные возможности.",
+    "keepPersonalSubscription": "Сохранить мою личную подписку параллельно с тарифом для команды."
   },
   "profile": {
     "title": "Настройки",

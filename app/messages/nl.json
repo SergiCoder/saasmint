@@ -225,7 +225,9 @@
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Beheerd door {name}",
     "teamPlanReadonly": "Het teamabonnement wordt beheerd door de eigenaar van de organisatie.",
-    "checkout": "Afrekenen"
+    "checkout": "Afrekenen",
+    "personalSubAutoCancelNotice": "Uw persoonlijke abonnement eindigt op {date} wanneer dit teamplan in rekening wordt gebracht. Tot die tijd behoudt u de persoonlijke functies.",
+    "keepPersonalSubscription": "Mijn persoonlijke abonnement naast het teamplan laten doorlopen."
   },
   "profile": {
     "title": "Instellingen",

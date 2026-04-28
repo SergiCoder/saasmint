@@ -225,7 +225,9 @@
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Géré par {name}",
     "teamPlanReadonly": "L'abonnement de votre équipe est géré par le propriétaire de l'organisation.",
-    "checkout": "Paiement"
+    "checkout": "Paiement",
+    "personalSubAutoCancelNotice": "Votre abonnement personnel prendra fin le {date} lorsque ce plan d'équipe commencera à être facturé. Vous conserverez les fonctionnalités personnelles jusque-là.",
+    "keepPersonalSubscription": "Conserver mon abonnement personnel actif avec le plan d'équipe."
   },
   "profile": {
     "title": "Paramètres",

@@ -225,7 +225,9 @@
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Dikelola oleh {name}",
     "teamPlanReadonly": "Langganan tim Anda dikelola oleh pemilik organisasi.",
-    "checkout": "Pembayaran"
+    "checkout": "Pembayaran",
+    "personalSubAutoCancelNotice": "Langganan pribadi Anda akan berakhir pada {date} saat paket tim ini mulai ditagih. Anda akan tetap memiliki fitur pribadi hingga saat itu.",
+    "keepPersonalSubscription": "Pertahankan langganan pribadi saya berjalan bersama paket tim."
   },
   "profile": {
     "title": "Pengaturan",

@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { planGateway } from "@/infrastructure/registry";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { getCurrentUser } from "../../_data/getCurrentUser";
+import { getSubscription } from "../../_data/getSubscription";
 import { TeamCheckoutForm } from "./_components/TeamCheckoutForm";
 
 interface TeamCheckoutPageProps {
@@ -17,12 +18,14 @@ export default async function TeamCheckoutPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, tPlans, user, { plan: planPriceId }] = await Promise.all([
-    getTranslations("billing"),
-    getTranslations("plans"),
-    getCurrentUser(),
-    searchParams,
-  ]);
+  const [t, tPlans, user, subscription, { plan: planPriceId }] =
+    await Promise.all([
+      getTranslations("billing"),
+      getTranslations("plans"),
+      getCurrentUser(),
+      getSubscription(),
+      searchParams,
+    ]);
 
   if (!planPriceId) {
     redirect("/subscription");
@@ -36,6 +39,25 @@ export default async function TeamCheckoutPage({
     redirect("/subscription");
   }
 
+  // Show the auto-cancel notice + opt-out checkbox only when the user has a
+  // currently-active personal subscription that isn't already scheduled to
+  // cancel. Anything else (no sub, team sub, already-canceling) skips the UI.
+  const showPersonalSubNotice =
+    subscription !== null &&
+    subscription.plan.context === "personal" &&
+    subscription.status === "active" &&
+    subscription.canceledAt === null;
+
+  const personalSubEndDate = showPersonalSubNotice
+    ? new Date(subscription.currentPeriodEnd)
+    : null;
+  const personalSubEndDateDisplay =
+    personalSubEndDate && !Number.isNaN(personalSubEndDate.getTime())
+      ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(
+          personalSubEndDate,
+        )
+      : undefined;
+
   return (
     <div className="mx-auto max-w-md space-y-6 pb-12">
       <h1 className="text-2xl font-bold text-gray-900">{t("teamCheckout")}</h1>
@@ -47,6 +69,13 @@ export default async function TeamCheckoutPage({
           currency={plan.price.currency}
           locale={locale}
           interval={plan.interval}
+          personalSubAutoCancelNotice={
+            personalSubEndDateDisplay
+              ? t("personalSubAutoCancelNotice", {
+                  date: personalSubEndDateDisplay,
+                })
+              : undefined
+          }
           labels={{
             orgName: t("orgName"),
             seat: t("seat"),
@@ -54,6 +83,7 @@ export default async function TeamCheckoutPage({
             total: t("total"),
             checkout: t("upgrade"),
             error: t("checkoutError"),
+            keepPersonalSubscription: t("keepPersonalSubscription"),
           }}
         />
       </div>
