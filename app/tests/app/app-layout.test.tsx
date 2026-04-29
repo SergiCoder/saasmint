@@ -43,9 +43,9 @@ vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
 
-const mockGetSubscription = vi.fn<() => Promise<Subscription | null>>();
-vi.mock("@/app/[locale]/(app)/_data/getSubscription", () => ({
-  getSubscription: () => mockGetSubscription(),
+const mockGetSubscriptions = vi.fn<() => Promise<Subscription[]>>();
+vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
+  getSubscriptions: () => mockGetSubscriptions(),
 }));
 
 const mockGetUserOrgs = vi.fn<() => Promise<Org[]>>();
@@ -187,7 +187,7 @@ describe("(app)/layout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetCurrentUser.mockResolvedValue(makeUser());
-    mockGetSubscription.mockResolvedValue(null);
+    mockGetSubscriptions.mockResolvedValue([]);
     mockGetUserOrgs.mockResolvedValue([]);
     mockGetPathnameWithoutLocale.mockResolvedValue("/dashboard");
   });
@@ -209,7 +209,7 @@ describe("(app)/layout", () => {
   });
 
   it("adds /org nav link when the user has a team subscription", async () => {
-    mockGetSubscription.mockResolvedValue(makeTeamSubscription());
+    mockGetSubscriptions.mockResolvedValue([makeTeamSubscription()]);
 
     await renderLayout("en");
 

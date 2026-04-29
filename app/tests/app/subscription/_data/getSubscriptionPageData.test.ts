@@ -5,7 +5,7 @@ import type { User } from "@/domain/models/User";
 
 const mockListPlans = vi.fn();
 const mockListProducts = vi.fn();
-const mockGetSubscription = vi.fn();
+const mockGetSubscriptions = vi.fn();
 const mockGetUserOrgs = vi.fn();
 const mockGetOrgMembers = vi.fn();
 const mockCanManageBilling = vi.fn();
@@ -19,8 +19,8 @@ vi.mock("@/infrastructure/registry", () => ({
   },
 }));
 
-vi.mock("@/app/[locale]/(app)/_data/getSubscription", () => ({
-  getSubscription: (...args: unknown[]) => mockGetSubscription(...args),
+vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
+  getSubscriptions: (...args: unknown[]) => mockGetSubscriptions(...args),
 }));
 
 vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
@@ -73,23 +73,23 @@ const personalPlan = { id: "p1", context: "personal" };
 const teamPlan = { id: "p2", context: "team" };
 
 describe("getSubscriptionPageData", () => {
-  it("forwards the user's preferred currency to plans, products, and subscription", async () => {
+  it("forwards the user's preferred currency to plans, products, and subscriptions", async () => {
     const user = makeUser({ preferredCurrency: "eur" });
-    mockGetSubscription.mockResolvedValue(null);
+    mockGetSubscriptions.mockResolvedValue([]);
     mockListPlans.mockResolvedValue([]);
     mockListProducts.mockResolvedValue([]);
     mockGetUserOrgs.mockResolvedValue([]);
 
     await getSubscriptionPageData(user);
 
-    expect(mockGetSubscription).toHaveBeenCalledWith("eur");
+    expect(mockGetSubscriptions).toHaveBeenCalledWith("eur");
     expect(mockListPlans).toHaveBeenCalledWith("eur");
     expect(mockListProducts).toHaveBeenCalledWith("eur");
     expect(mockGetUserOrgs).toHaveBeenCalledWith();
   });
 
-  it("returns an empty page shape when nothing is resolved (no sub, no orgs)", async () => {
-    mockGetSubscription.mockResolvedValue(null);
+  it("returns an empty page shape when nothing is resolved (no subs, no orgs)", async () => {
+    mockGetSubscriptions.mockResolvedValue([]);
     mockListPlans.mockResolvedValue([]);
     mockListProducts.mockResolvedValue([]);
     mockGetUserOrgs.mockResolvedValue([]);
@@ -97,11 +97,11 @@ describe("getSubscriptionPageData", () => {
     const data = await getSubscriptionPageData(makeUser());
 
     expect(data).toEqual({
-      subscription: null,
+      subscriptions: [],
       plans: [],
       products: [],
       userOrgs: [],
-      canManage: false,
+      canManageById: {},
       teamOwnerName: null,
     });
     expect(mockCanManageBilling).not.toHaveBeenCalled();
@@ -110,7 +110,7 @@ describe("getSubscriptionPageData", () => {
 
   it("returns plans=[] and logs when planGateway.listPlans rejects", async () => {
     const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    mockGetSubscription.mockResolvedValue(null);
+    mockGetSubscriptions.mockResolvedValue([]);
     mockListPlans.mockRejectedValue(new Error("boom"));
     mockListProducts.mockResolvedValue([{ id: "prod_1" }]);
     mockGetUserOrgs.mockResolvedValue([]);
@@ -128,7 +128,7 @@ describe("getSubscriptionPageData", () => {
 
   it("returns products=[] and logs when productGateway.listProducts rejects", async () => {
     const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    mockGetSubscription.mockResolvedValue(null);
+    mockGetSubscriptions.mockResolvedValue([]);
     mockListPlans.mockResolvedValue([{ id: "plan_1" }]);
     mockListProducts.mockRejectedValue(new Error("boom"));
     mockGetUserOrgs.mockResolvedValue([]);
@@ -144,24 +144,29 @@ describe("getSubscriptionPageData", () => {
     errSpy.mockRestore();
   });
 
-  it("resolves canManage via canManageBilling when a subscription exists", async () => {
-    const subscription = { id: "sub_1", plan: personalPlan };
-    mockGetSubscription.mockResolvedValue(subscription);
+  it("populates canManageById per subscription via canManageBilling", async () => {
+    const personalSub = { id: "sub_p", plan: personalPlan };
+    const teamSub = { id: "sub_t", plan: teamPlan };
+    mockGetSubscriptions.mockResolvedValue([personalSub, teamSub]);
     mockListPlans.mockResolvedValue([]);
     mockListProducts.mockResolvedValue([]);
     mockGetUserOrgs.mockResolvedValue([]);
-    mockCanManageBilling.mockResolvedValue(true);
+    mockCanManageBilling.mockImplementation(
+      async (_user, sub) => sub.id === "sub_p",
+    );
 
     const user = makeUser();
     const data = await getSubscriptionPageData(user);
 
-    expect(mockCanManageBilling).toHaveBeenCalledWith(user, subscription);
-    expect(data.canManage).toBe(true);
-    expect(data.subscription).toBe(subscription);
+    expect(mockCanManageBilling).toHaveBeenCalledWith(user, personalSub);
+    expect(mockCanManageBilling).toHaveBeenCalledWith(user, teamSub);
+    expect(data.canManageById).toEqual({ sub_p: true, sub_t: false });
+    // Stable order: personal first, then team.
+    expect(data.subscriptions.map((s) => s.id)).toEqual(["sub_p", "sub_t"]);
   });
 
-  it("does not call canManageBilling when there is no subscription", async () => {
-    mockGetSubscription.mockResolvedValue(null);
+  it("does not call canManageBilling when there are no subscriptions", async () => {
+    mockGetSubscriptions.mockResolvedValue([]);
     mockListPlans.mockResolvedValue([]);
     mockListProducts.mockResolvedValue([]);
     mockGetUserOrgs.mockResolvedValue([]);
@@ -169,12 +174,12 @@ describe("getSubscriptionPageData", () => {
     const data = await getSubscriptionPageData(makeUser());
 
     expect(mockCanManageBilling).not.toHaveBeenCalled();
-    expect(data.canManage).toBe(false);
+    expect(data.canManageById).toEqual({});
   });
 
-  it("resolves teamOwnerName from the first org's owner when the sub is a team sub", async () => {
+  it("resolves teamOwnerName from the first org's owner when a team sub is present", async () => {
     const subscription = { id: "sub_t", plan: teamPlan };
-    mockGetSubscription.mockResolvedValue(subscription);
+    mockGetSubscriptions.mockResolvedValue([subscription]);
     mockListPlans.mockResolvedValue([]);
     mockListProducts.mockResolvedValue([]);
     mockGetUserOrgs.mockResolvedValue([{ id: "org_1" }, { id: "org_2" }]);
@@ -192,7 +197,7 @@ describe("getSubscriptionPageData", () => {
 
   it("leaves teamOwnerName null when the first org has no owner member", async () => {
     const subscription = { id: "sub_t", plan: teamPlan };
-    mockGetSubscription.mockResolvedValue(subscription);
+    mockGetSubscriptions.mockResolvedValue([subscription]);
     mockListPlans.mockResolvedValue([]);
     mockListProducts.mockResolvedValue([]);
     mockGetUserOrgs.mockResolvedValue([{ id: "org_1" }]);
@@ -206,9 +211,9 @@ describe("getSubscriptionPageData", () => {
     expect(data.teamOwnerName).toBeNull();
   });
 
-  it("does not look up org members when the sub context is personal", async () => {
+  it("does not look up org members when only a personal sub is present", async () => {
     const subscription = { id: "sub_p", plan: personalPlan };
-    mockGetSubscription.mockResolvedValue(subscription);
+    mockGetSubscriptions.mockResolvedValue([subscription]);
     mockListPlans.mockResolvedValue([]);
     mockListProducts.mockResolvedValue([]);
     mockGetUserOrgs.mockResolvedValue([{ id: "org_1" }]);
@@ -222,7 +227,7 @@ describe("getSubscriptionPageData", () => {
 
   it("does not look up org members when the user has no orgs (even on a team sub)", async () => {
     const subscription = { id: "sub_t", plan: teamPlan };
-    mockGetSubscription.mockResolvedValue(subscription);
+    mockGetSubscriptions.mockResolvedValue([subscription]);
     mockListPlans.mockResolvedValue([]);
     mockListProducts.mockResolvedValue([]);
     mockGetUserOrgs.mockResolvedValue([]);
@@ -232,5 +237,23 @@ describe("getSubscriptionPageData", () => {
 
     expect(mockGetOrgMembers).not.toHaveBeenCalled();
     expect(data.teamOwnerName).toBeNull();
+  });
+
+  it("orders subscriptions personal-first, team-second when both are present", async () => {
+    // Backend may return them in any order; the loader should normalize.
+    const personalSub = { id: "sub_p", plan: personalPlan };
+    const teamSub = { id: "sub_t", plan: teamPlan };
+    mockGetSubscriptions.mockResolvedValue([teamSub, personalSub]);
+    mockListPlans.mockResolvedValue([]);
+    mockListProducts.mockResolvedValue([]);
+    mockGetUserOrgs.mockResolvedValue([]);
+    mockCanManageBilling.mockResolvedValue(false);
+
+    const data = await getSubscriptionPageData(makeUser());
+
+    expect(data.subscriptions.map((s) => s.plan.context)).toEqual([
+      "personal",
+      "team",
+    ]);
   });
 });

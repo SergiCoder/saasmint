@@ -19,12 +19,12 @@ vi.mock("@/app/[locale]/(marketing)/_data/getOptionalUser", () => ({
 }));
 
 const mockListPlans = vi.fn<(currency?: string) => Promise<Plan[]>>();
-const mockGetSubscription = vi.fn(() => Promise.resolve(null));
+const mockListSubscriptions = vi.fn(() => Promise.resolve([] as unknown[]));
 const mockListProducts = vi.fn(() => Promise.resolve([]));
 const mockListUserOrgs = vi.fn(() => Promise.resolve([]));
 vi.mock("@/infrastructure/registry", () => ({
   planGateway: { listPlans: (c?: string) => mockListPlans(c) },
-  subscriptionGateway: { getSubscription: () => mockGetSubscription() },
+  subscriptionGateway: { listSubscriptions: () => mockListSubscriptions() },
   productGateway: { listProducts: () => mockListProducts() },
   orgGateway: { listUserOrgs: () => mockListUserOrgs() },
 }));
@@ -198,5 +198,31 @@ describe("Marketing PricingPage — synthetic free plan", () => {
     expect(freeGroup).toHaveAttribute("data-has-monthly-cta", "false");
     expect(freeGroup).toHaveAttribute("data-has-yearly-cta", "false");
     expect(freeGroup.querySelector("a")).toBeNull();
+  });
+
+  it("calls subscriptionGateway.listSubscriptions for signed-in users (envelope-based fetch)", async () => {
+    mockGetOptionalUser.mockResolvedValue(makeUser());
+
+    await renderPage();
+
+    expect(mockListSubscriptions).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not call subscriptionGateway.listSubscriptions for anonymous visitors", async () => {
+    mockGetOptionalUser.mockResolvedValue(null);
+
+    await renderPage();
+
+    expect(mockListSubscriptions).not.toHaveBeenCalled();
+  });
+
+  it("recovers to an empty subscription list when the subscription gateway throws", async () => {
+    mockGetOptionalUser.mockResolvedValue(makeUser());
+    mockListSubscriptions.mockRejectedValueOnce(new Error("API 500"));
+
+    // The .catch(() => []) on the gateway call must keep the page renderable.
+    await renderPage();
+
+    expect(screen.getByTestId("group-personal-1")).toBeInTheDocument();
   });
 });

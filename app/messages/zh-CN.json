@@ -181,6 +181,8 @@
   "billing": {
     "title": "账单",
     "currentPlan": "当前方案",
+    "currentPersonalPlan": "当前个人计划",
+    "currentTeamPlan": "当前团队计划",
     "upgrade": "升级",
     "cancel": "订阅将在当前周期结束时取消",
     "cancelRenewal": "取消续订",
@@ -336,6 +338,7 @@
     "unknownError": "未知错误"
   },
   "actionErrors": {
+    "context_required": "请指定要管理的订阅。",
     "current_password_required": "请输入当前密码",
     "email_and_password_required": "请输入邮箱和密码",
     "email_required": "请输入邮箱",

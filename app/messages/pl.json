@@ -181,6 +181,8 @@
   "billing": {
     "title": "Płatności",
     "currentPlan": "Aktualny plan",
+    "currentPersonalPlan": "Aktualny plan osobisty",
+    "currentTeamPlan": "Aktualny plan zespołowy",
     "upgrade": "Uaktualnij",
     "cancel": "Subskrypcja zostanie anulowana na koniec okresu",
     "cancelRenewal": "Anuluj odnowienie",
@@ -336,6 +338,7 @@
     "unknownError": "Nieznany błąd"
   },
   "actionErrors": {
+    "context_required": "Wskaż, którą subskrypcją chcesz zarządzać.",
     "current_password_required": "Aktualne hasło jest wymagane",
     "email_and_password_required": "E-mail i hasło są wymagane",
     "email_required": "Adres e-mail jest wymagany",

@@ -181,6 +181,8 @@
   "billing": {
     "title": "Facturación",
     "currentPlan": "Plan actual",
+    "currentPersonalPlan": "Plan personal actual",
+    "currentTeamPlan": "Plan de equipo actual",
     "upgrade": "Mejorar",
     "cancel": "La suscripción se cancelará al final del período",
     "cancelRenewal": "Cancelar renovación",
@@ -336,6 +338,7 @@
     "unknownError": "Error desconocido"
   },
   "actionErrors": {
+    "context_required": "Indica qué suscripción quieres gestionar.",
     "current_password_required": "La contraseña actual es obligatoria",
     "email_and_password_required": "El correo y la contraseña son obligatorios",
     "email_required": "El correo electrónico es obligatorio",

@@ -292,9 +292,10 @@ describe("buildPlanCardGroups", () => {
       isUpgrade: boolean;
       label: string;
     }> = [];
+    const basicMPlan = plans.find((p) => p.id === "basic-m")!;
     buildPlanCardGroups({
       plans,
-      currentPlanId: "basic-m",
+      currentPlans: [basicMPlan],
       locale: "en-US",
       labels,
       planNames: {
@@ -329,7 +330,11 @@ describe("buildPlanCardGroups", () => {
     expect(pro?.label).toBe("Upgrade");
   });
 
-  it("treats personal → team as an upgrade even when the team plan is cheaper", () => {
+  it("treats a candidate from a context the user has no sub in as a net-new upgrade", () => {
+    // Concurrent personal+team is allowed (rule 5), so a personal-only user
+    // looking at a team plan is *adding* a sub, not switching — comparison
+    // is against the matching-context current plan (none here), so any
+    // priced team option counts as an upgrade.
     const plans: Plan[] = [
       makePlan({
         id: "personal-pro",
@@ -346,10 +351,11 @@ describe("buildPlanCardGroups", () => {
         price: { id: "tb", amount: 1000, displayAmount: 10, currency: "usd" },
       }),
     ];
+    const personalProPlan = plans.find((p) => p.id === "personal-pro")!;
     const ctaCalls: Array<{ id: string; isUpgrade: boolean }> = [];
     buildPlanCardGroups({
       plans,
-      currentPlanId: "personal-pro",
+      currentPlans: [personalProPlan],
       locale: "en-US",
       labels,
       planNames: {
@@ -375,7 +381,10 @@ describe("buildPlanCardGroups", () => {
     expect(team?.isUpgrade).toBe(true);
   });
 
-  it("treats team → personal as a downgrade even when the personal plan is more expensive", () => {
+  it("compares within the same context only — team current does not block a personal upgrade", () => {
+    // Symmetric to the prior test: a team-only user looking at a personal
+    // plan is *adding* a sub, not switching. With no personal current plan
+    // to compare against, any priced personal option is an upgrade.
     const plans: Plan[] = [
       makePlan({
         id: "team-basic",
@@ -392,10 +401,11 @@ describe("buildPlanCardGroups", () => {
         price: { id: "pp", amount: 5000, displayAmount: 50, currency: "usd" },
       }),
     ];
+    const teamBasicPlan = plans.find((p) => p.id === "team-basic")!;
     const ctaCalls: Array<{ id: string; isUpgrade: boolean }> = [];
     buildPlanCardGroups({
       plans,
-      currentPlanId: "team-basic",
+      currentPlans: [teamBasicPlan],
       locale: "en-US",
       labels,
       planNames: {
@@ -418,6 +428,52 @@ describe("buildPlanCardGroups", () => {
       },
     });
     const personal = ctaCalls.find((c) => c.id === "personal-pro");
-    expect(personal?.isUpgrade).toBe(false);
+    expect(personal?.isUpgrade).toBe(true);
+  });
+
+  it("flags both rows as current when concurrent personal+team subs are passed", () => {
+    const plans: Plan[] = [
+      makePlan({
+        id: "personal-pro",
+        context: "personal",
+        tier: 3,
+        interval: "month",
+        price: { id: "pp", amount: 5000, displayAmount: 50, currency: "usd" },
+      }),
+      makePlan({
+        id: "team-pro",
+        context: "team",
+        tier: 3,
+        interval: "month",
+        price: { id: "tp", amount: 8000, displayAmount: 80, currency: "usd" },
+      }),
+    ];
+    const ctaCalls: Array<{ id: string; isCurrent: boolean }> = [];
+    buildPlanCardGroups({
+      plans,
+      currentPlans: plans,
+      locale: "en-US",
+      labels,
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
+      renderCta: ({ plan, isCurrent }) => {
+        ctaCalls.push({ id: plan.id, isCurrent });
+        return null;
+      },
+    });
+    expect(ctaCalls.find((c) => c.id === "personal-pro")?.isCurrent).toBe(true);
+    expect(ctaCalls.find((c) => c.id === "team-pro")?.isCurrent).toBe(true);
   });
 });

@@ -181,6 +181,8 @@
   "billing": {
     "title": "Tagihan",
     "currentPlan": "Paket saat ini",
+    "currentPersonalPlan": "Paket pribadi saat ini",
+    "currentTeamPlan": "Paket tim saat ini",
     "upgrade": "Tingkatkan",
     "cancel": "Langganan akan dibatalkan pada akhir periode",
     "cancelRenewal": "Batalkan perpanjangan",
@@ -336,6 +338,7 @@
     "unknownError": "Kesalahan tidak diketahui"
   },
   "actionErrors": {
+    "context_required": "Silakan tentukan langganan yang ingin dikelola.",
     "current_password_required": "Kata sandi saat ini wajib diisi",
     "email_and_password_required": "Email dan kata sandi wajib diisi",
     "email_required": "Email wajib diisi",

@@ -26,6 +26,7 @@ import {
 import type { Plan } from "@/domain/models/Plan";
 import { PLAN_TIER_FREE, PLAN_TIER_PRO } from "@/domain/models/Plan";
 import type { Product } from "@/domain/models/Product";
+import type { Subscription } from "@/domain/models/Subscription";
 
 /**
  * Backend v0.7.0 stopped exposing the personal-free plan row (free = absence
@@ -73,14 +74,14 @@ export default async function PricingPage({ params, searchParams }: Props) {
 
   const currency = user?.preferredCurrency;
 
-  const [plans, subscription, products, userOrgs] = await Promise.all([
+  const [plans, subscriptions, products, userOrgs] = await Promise.all([
     planGateway.listPlans(currency).catch((err: unknown): Plan[] => {
       console.error("Failed to fetch plans", err);
       return [];
     }),
     user
-      ? subscriptionGateway.getSubscription(currency).catch(() => null)
-      : Promise.resolve(null),
+      ? subscriptionGateway.listSubscriptions(currency).catch(() => [])
+      : Promise.resolve([] as Subscription[]),
     user
       ? productGateway.listProducts(currency).catch((): Product[] => [])
       : Promise.resolve([] as Product[]),
@@ -88,7 +89,7 @@ export default async function PricingPage({ params, searchParams }: Props) {
   ]);
 
   const hasOrg = userOrgs.length > 0;
-  const currentPlanId = subscription?.plan?.id;
+  const currentPlans = subscriptions.map((s) => s.plan);
 
   const allPlans = [...SYNTHETIC_FREE_PLANS, ...plans];
   const { planNames, planDescriptions } = buildPlanTranslations(
@@ -98,7 +99,7 @@ export default async function PricingPage({ params, searchParams }: Props) {
 
   const groups = buildPlanCardGroups({
     plans: allPlans,
-    currentPlanId,
+    currentPlans,
     locale,
     labels: {
       upgrade: t("upgrade"),

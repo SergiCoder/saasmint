@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { User } from "@/domain/models/User";
+import type { Subscription } from "@/domain/models/Subscription";
 
 // --- Mocks ---------------------------------------------------------------
 
@@ -20,8 +21,11 @@ vi.mock("@/app/[locale]/(app)/_data/getOrgMembers", () => ({
   getOrgMembers: vi.fn(() => Promise.resolve([])),
 }));
 
-vi.mock("@/app/[locale]/(app)/_data/getSubscription", () => ({
-  getSubscription: vi.fn(() => Promise.resolve(null)),
+const mockGetSubscriptions = vi.fn<() => Promise<Subscription[]>>(() =>
+  Promise.resolve([]),
+);
+vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
+  getSubscriptions: () => mockGetSubscriptions(),
 }));
 
 const mockGetCreditBalance = vi.fn<
@@ -35,8 +39,18 @@ vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
   getUserOrgs: vi.fn(() => Promise.resolve([])),
 }));
 
+const mockCanManageBilling = vi.fn<
+  (
+    user: unknown,
+    sub: { plan: { context: "personal" | "team" } },
+  ) => Promise<boolean>
+>(() => Promise.resolve(false));
 vi.mock("@/app/[locale]/(app)/subscription/_data/canManageBilling", () => ({
-  canManageBilling: vi.fn(() => Promise.resolve(false)),
+  canManageBilling: (user: unknown, sub: unknown) =>
+    mockCanManageBilling(
+      user,
+      sub as { plan: { context: "personal" | "team" } },
+    ),
 }));
 
 // Use-case stubs — return empty lists so we don't render the pricing table.
@@ -65,10 +79,53 @@ vi.mock("@/presentation/components/organisms/ProductsGrid", async () => {
 vi.mock("@/presentation/components/organisms/SubscriptionCard", async () => {
   const React = await import("react");
   return {
-    SubscriptionCard: () =>
-      React.createElement("div", null, "subscription-card"),
+    SubscriptionCard: (props: { eyebrowLabel?: string; planName?: string }) =>
+      React.createElement(
+        "div",
+        { "data-testid": "subscription-card" },
+        React.createElement(
+          "span",
+          { "data-testid": "sub-card-eyebrow" },
+          props.eyebrowLabel ?? "",
+        ),
+        React.createElement(
+          "span",
+          { "data-testid": "sub-card-plan-name" },
+          props.planName ?? "",
+        ),
+      ),
   };
 });
+
+// CurrentSubscriptionCard is an async Server Component; React Testing Library
+// cannot unwrap async children rendered through a parent tree, so swap it for
+// a sync stub that exposes the props the page hands down.
+vi.mock(
+  "@/app/[locale]/(app)/subscription/_components/CurrentSubscriptionCard",
+  async () => {
+    const React = await import("react");
+    return {
+      CurrentSubscriptionCard: (props: {
+        subscription: { id: string; plan: { context: "personal" | "team" } };
+        planName: string;
+        isConcurrent?: boolean;
+      }) =>
+        React.createElement(
+          "div",
+          {
+            "data-testid": "subscription-card",
+            "data-context": props.subscription.plan.context,
+            "data-is-concurrent": props.isConcurrent ? "true" : "false",
+          },
+          React.createElement(
+            "span",
+            { "data-testid": "sub-card-plan-name" },
+            props.planName,
+          ),
+        ),
+    };
+  },
+);
 
 vi.mock(
   "@/app/[locale]/(app)/subscription/_components/CheckoutButton",
@@ -198,7 +255,7 @@ describe("BillingPage (subscription/page)", () => {
   });
 
   it("renders the FreePlanCard when the user has no active subscription", async () => {
-    // getSubscription is mocked to resolve null at the top of this file. The
+    // getSubscriptions is mocked to resolve [] at the top of this file. The
     // page falls back to FreePlanCard, which pulls the personal-free plan
     // name + description from the `plans` next-intl namespace.
     await renderPage({});
@@ -238,5 +295,142 @@ describe("BillingPage (subscription/page)", () => {
     expect(screen.getByText("9,000")).toBeInTheDocument();
     expect(screen.getByText("creditBalanceOrgBadge")).toBeInTheDocument();
     expect(screen.getByText("creditBalanceOrgDescription")).toBeInTheDocument();
+  });
+
+  describe("concurrent personal+team rendering (rule 5)", () => {
+    function makeSub(
+      id: string,
+      context: "personal" | "team",
+      tier: 2 | 3 = 3,
+    ): Subscription {
+      return {
+        id,
+        status: "active",
+        plan: {
+          id: `${id}-plan`,
+          name: "Pro",
+          description: "",
+          context,
+          tier,
+          interval: "month",
+          price: null,
+        },
+        quantity: 1,
+        trialEndsAt: null,
+        currentPeriodStart: "2026-01-01T00:00:00Z",
+        currentPeriodEnd: "2026-02-01T00:00:00Z",
+        canceledAt: null,
+        createdAt: "2026-01-01T00:00:00Z",
+      };
+    }
+
+    it("renders two CurrentSubscriptionCards in personal-first order with isConcurrent=true", async () => {
+      // Backend may return them in any order — verify the page sorts personal
+      // before team (via getSubscriptionPageData -> findPersonal/findTeam).
+      mockGetSubscriptions.mockResolvedValueOnce([
+        makeSub("sub_team", "team"),
+        makeSub("sub_personal", "personal"),
+      ]);
+
+      await renderPage({});
+
+      const cards = screen.getAllByTestId("subscription-card");
+      expect(cards).toHaveLength(2);
+      expect(cards[0]).toHaveAttribute("data-context", "personal");
+      expect(cards[1]).toHaveAttribute("data-context", "team");
+      expect(cards[0]).toHaveAttribute("data-is-concurrent", "true");
+      expect(cards[1]).toHaveAttribute("data-is-concurrent", "true");
+
+      // FreePlanCard is suppressed when there are subs to render.
+      expect(
+        screen.queryByText("personal.1.description"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("renders a single card with isConcurrent=false when only one sub exists", async () => {
+      mockGetSubscriptions.mockResolvedValueOnce([
+        makeSub("sub_personal", "personal"),
+      ]);
+
+      await renderPage({});
+
+      const cards = screen.getAllByTestId("subscription-card");
+      expect(cards).toHaveLength(1);
+      expect(cards[0]).toHaveAttribute("data-context", "personal");
+      expect(cards[0]).toHaveAttribute("data-is-concurrent", "false");
+    });
+  });
+
+  describe("teamPlanReadonly notice (org members on a team-only sub they can't manage)", () => {
+    function makeSub(id: string, context: "personal" | "team"): Subscription {
+      return {
+        id,
+        status: "active",
+        plan: {
+          id: `${id}-plan`,
+          name: "Pro",
+          description: "",
+          context,
+          tier: 3,
+          interval: "month",
+          price: null,
+        },
+        quantity: 1,
+        trialEndsAt: null,
+        currentPeriodStart: "2026-01-01T00:00:00Z",
+        currentPeriodEnd: "2026-02-01T00:00:00Z",
+        canceledAt: null,
+        createdAt: "2026-01-01T00:00:00Z",
+      };
+    }
+
+    it("renders the teamPlanReadonly notice when the only sub is team and the caller can't manage it", async () => {
+      // Org member viewing the page: team sub exists, they can't manage it,
+      // and they have no personal sub of their own. Plan options are
+      // suppressed — the team owner controls billing.
+      mockGetSubscriptions.mockResolvedValueOnce([makeSub("sub_t", "team")]);
+      mockCanManageBilling.mockResolvedValue(false);
+
+      await renderPage({});
+
+      expect(screen.getByText("teamPlanReadonly")).toBeInTheDocument();
+    });
+
+    it("does NOT render the teamPlanReadonly notice when the caller has a personal sub alongside an unmanageable team sub", async () => {
+      // Concurrent personal+team — even if the team sub is owner-managed
+      // (caller can't), the caller can still upgrade/downgrade their own
+      // personal plan, so plan options must remain visible.
+      mockGetSubscriptions.mockResolvedValueOnce([
+        makeSub("sub_p", "personal"),
+        makeSub("sub_t", "team"),
+      ]);
+      mockCanManageBilling.mockImplementation(
+        async (_user, sub) => sub.plan.context === "personal",
+      );
+
+      await renderPage({});
+
+      expect(screen.queryByText("teamPlanReadonly")).not.toBeInTheDocument();
+    });
+
+    it("does NOT render the teamPlanReadonly notice when the caller CAN manage the team sub", async () => {
+      mockGetSubscriptions.mockResolvedValueOnce([makeSub("sub_t", "team")]);
+      mockCanManageBilling.mockResolvedValue(true);
+
+      await renderPage({});
+
+      expect(screen.queryByText("teamPlanReadonly")).not.toBeInTheDocument();
+    });
+
+    it("does NOT render the teamPlanReadonly notice when the only sub is personal", async () => {
+      mockGetSubscriptions.mockResolvedValueOnce([
+        makeSub("sub_p", "personal"),
+      ]);
+      mockCanManageBilling.mockResolvedValue(false);
+
+      await renderPage({});
+
+      expect(screen.queryByText("teamPlanReadonly")).not.toBeInTheDocument();
+    });
   });
 });

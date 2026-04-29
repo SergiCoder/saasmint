@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { User } from "@/domain/models/User";
 import type { Org } from "@/domain/models/Org";
+import type { Subscription } from "@/domain/models/Subscription";
 import { translate } from "../../_helpers/translate";
 
 // --- Mocks ---------------------------------------------------------------
@@ -21,20 +22,38 @@ vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
 }));
 
 const mockListUserOrgsExecute = vi.fn<() => Promise<Org[]>>();
-const mockListOrgMembersExecute = vi.fn(() => Promise.resolve([]));
-const mockGetSubscriptionExecute = vi.fn(() => Promise.resolve(null));
+const mockListOrgMembersExecute =
+  vi.fn<() => Promise<{ user: { id: string } }[]>>();
+const mockListSubscriptionsExecute = vi.fn<() => Promise<Subscription[]>>();
 
 vi.mock("@/infrastructure/registry", () => ({
   orgGateway: { listUserOrgs: () => mockListUserOrgsExecute() },
   orgMemberGateway: { listMembers: () => mockListOrgMembersExecute() },
-  subscriptionGateway: { getSubscription: () => mockGetSubscriptionExecute() },
+  subscriptionGateway: {
+    listSubscriptions: () => mockListSubscriptionsExecute(),
+  },
 }));
 
 vi.mock("@/presentation/components/molecules/OrgCard", async () => {
   const React = await import("react");
   return {
-    OrgCard: ({ slug, name }: { slug: string; name: string }) =>
-      React.createElement("div", { "data-testid": `org-card-${slug}` }, name),
+    OrgCard: ({
+      slug,
+      name,
+      spotsLabel,
+    }: {
+      slug: string;
+      name: string;
+      spotsLabel?: string;
+    }) =>
+      React.createElement(
+        "div",
+        {
+          "data-testid": `org-card-${slug}`,
+          "data-spots-label": spotsLabel ?? "",
+        },
+        name,
+      ),
   };
 });
 
@@ -95,6 +114,8 @@ describe("DashboardPage", () => {
     vi.clearAllMocks();
     mockGetCurrentUser.mockResolvedValue(makeUser());
     mockListUserOrgsExecute.mockResolvedValue([]);
+    mockListOrgMembersExecute.mockResolvedValue([]);
+    mockListSubscriptionsExecute.mockResolvedValue([]);
   });
 
   it("renders welcome heading with user full name", async () => {
@@ -206,5 +227,111 @@ describe("DashboardPage", () => {
     await renderPage();
 
     expect(mockListUserOrgsExecute).toHaveBeenCalledWith();
+  });
+
+  describe("team-subscription spots label", () => {
+    function makeSub(
+      context: "personal" | "team",
+      quantity: number,
+    ): Subscription {
+      return {
+        id: `sub_${context}`,
+        status: "active",
+        plan: {
+          id: `plan_${context}`,
+          name: "Pro",
+          description: "",
+          context,
+          tier: 3,
+          interval: "month",
+          price: null,
+        },
+        quantity,
+        trialEndsAt: null,
+        currentPeriodStart: "2026-01-01T00:00:00Z",
+        currentPeriodEnd: "2026-02-01T00:00:00Z",
+        canceledAt: null,
+        createdAt: "2026-01-01T00:00:00Z",
+      };
+    }
+
+    it("does not render a spotsLabel when the user has no subscription", async () => {
+      mockListUserOrgsExecute.mockResolvedValue([
+        makeOrg({ id: "o1", slug: "acme", name: "Acme Corp" }),
+      ]);
+      mockListSubscriptionsExecute.mockResolvedValue([]);
+
+      await renderPage();
+
+      expect(screen.getByTestId("org-card-acme")).toHaveAttribute(
+        "data-spots-label",
+        "",
+      );
+      // Member-count fan-out skipped when there are no team seats to show.
+      expect(mockListOrgMembersExecute).not.toHaveBeenCalled();
+    });
+
+    it("does not render a spotsLabel when the only sub is personal", async () => {
+      mockListUserOrgsExecute.mockResolvedValue([
+        makeOrg({ id: "o1", slug: "acme", name: "Acme Corp" }),
+      ]);
+      mockListSubscriptionsExecute.mockResolvedValue([makeSub("personal", 1)]);
+
+      await renderPage();
+
+      expect(screen.getByTestId("org-card-acme")).toHaveAttribute(
+        "data-spots-label",
+        "",
+      );
+      expect(mockListOrgMembersExecute).not.toHaveBeenCalled();
+    });
+
+    it("renders the spotsLabel using the team sub's quantity (single-sub team case)", async () => {
+      mockListUserOrgsExecute.mockResolvedValue([
+        makeOrg({ id: "o1", slug: "acme", name: "Acme Corp" }),
+      ]);
+      mockListSubscriptionsExecute.mockResolvedValue([makeSub("team", 5)]);
+      // OrgCard renders spotsUsed when totalSpots is provided. The translation
+      // stub echoes the key with interpolated params (used/total).
+      mockListOrgMembersExecute.mockResolvedValue([
+        { user: { id: "u1" } },
+        { user: { id: "u2" } },
+        { user: { id: "u3" } },
+      ]);
+
+      await renderPage();
+
+      const label = screen
+        .getByTestId("org-card-acme")
+        .getAttribute("data-spots-label");
+      expect(label).toContain("3");
+      expect(label).toContain("5");
+      expect(mockListOrgMembersExecute).toHaveBeenCalledTimes(1);
+    });
+
+    it("picks the team sub for spotsLabel when the user has both personal and team subs (rule 5)", async () => {
+      // Concurrent personal+team — totalSpots must come from the team row,
+      // not the personal one (which has quantity=1 by default).
+      mockListUserOrgsExecute.mockResolvedValue([
+        makeOrg({ id: "o1", slug: "acme", name: "Acme Corp" }),
+      ]);
+      mockListSubscriptionsExecute.mockResolvedValue([
+        makeSub("personal", 1),
+        makeSub("team", 8),
+      ]);
+      mockListOrgMembersExecute.mockResolvedValue([
+        { user: { id: "u1" } },
+        { user: { id: "u2" } },
+      ]);
+
+      await renderPage();
+
+      const label = screen
+        .getByTestId("org-card-acme")
+        .getAttribute("data-spots-label");
+      // total comes from the team sub (quantity=8), not the personal one (1).
+      expect(label).toContain("8");
+      expect(label).toContain("2");
+    });
   });
 });

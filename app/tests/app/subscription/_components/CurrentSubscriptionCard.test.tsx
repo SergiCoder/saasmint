@@ -43,11 +43,13 @@ vi.mock(
         confirmTitle,
         confirmBody,
         confirmAction,
+        context,
       }: {
         label: string;
         confirmTitle: string;
         confirmBody: string;
         confirmAction: string;
+        context?: "personal" | "team";
       }) =>
         React.createElement(
           "button",
@@ -57,6 +59,7 @@ vi.mock(
             "data-confirm-title": confirmTitle,
             "data-confirm-body": confirmBody,
             "data-confirm-action": confirmAction,
+            "data-context": context ?? "",
           },
           label,
         ),
@@ -69,10 +72,20 @@ vi.mock(
   async () => {
     const React = await import("react");
     return {
-      ResumeSubscriptionButton: ({ children }: { children: React.ReactNode }) =>
+      ResumeSubscriptionButton: ({
+        children,
+        context,
+      }: {
+        children: React.ReactNode;
+        context?: "personal" | "team";
+      }) =>
         React.createElement(
           "button",
-          { type: "button", "data-testid": "resume" },
+          {
+            type: "button",
+            "data-testid": "resume",
+            "data-context": context ?? "",
+          },
           children,
         ),
     };
@@ -88,6 +101,11 @@ vi.mock("@/presentation/components/organisms/SubscriptionCard", async () => {
       React.createElement(
         "div",
         { "data-testid": "subscription-card" },
+        React.createElement(
+          "span",
+          { "data-testid": "eyebrow-label" },
+          String(props.eyebrowLabel ?? ""),
+        ),
         React.createElement(
           "span",
           { "data-testid": "plan-name" },
@@ -399,5 +417,147 @@ describe("CurrentSubscriptionCard", () => {
     expect(screen.queryByTestId("resume")).not.toBeInTheDocument();
     // Personal + !canManage => no footer either.
     expect(screen.getByTestId("footer")).toHaveTextContent("");
+  });
+
+  describe("isConcurrent (rule 5 — concurrent personal+team billing)", () => {
+    it("uses the generic currentPlan eyebrow when not concurrent", async () => {
+      await renderCard({
+        subscription: makeSub(),
+        locale: "en",
+        planName: "Pro",
+        canManage: true,
+        teamOwnerName: null,
+      });
+
+      expect(screen.getByTestId("eyebrow-label")).toHaveTextContent(
+        "currentPlan",
+      );
+    });
+
+    it("uses the currentPersonalPlan eyebrow for the personal card when concurrent", async () => {
+      await renderCard({
+        subscription: makeSub(),
+        locale: "en",
+        planName: "Pro",
+        canManage: true,
+        teamOwnerName: null,
+        isConcurrent: true,
+      });
+
+      expect(screen.getByTestId("eyebrow-label")).toHaveTextContent(
+        "currentPersonalPlan",
+      );
+    });
+
+    it("uses the currentTeamPlan eyebrow for the team card when concurrent", async () => {
+      await renderCard({
+        subscription: makeSub({
+          plan: {
+            id: "plan_team",
+            name: "Team Pro",
+            description: "",
+            context: "team",
+            tier: 3,
+            interval: "month",
+            price: null,
+          },
+          quantity: 3,
+        }),
+        locale: "en",
+        planName: "Team Pro",
+        canManage: true,
+        teamOwnerName: "Alice",
+        isConcurrent: true,
+      });
+
+      expect(screen.getByTestId("eyebrow-label")).toHaveTextContent(
+        "currentTeamPlan",
+      );
+    });
+
+    it("pins context=personal on the cancel button for the personal card when concurrent", async () => {
+      await renderCard({
+        subscription: makeSub(),
+        locale: "en",
+        planName: "Pro",
+        canManage: true,
+        teamOwnerName: null,
+        isConcurrent: true,
+      });
+
+      expect(screen.getByTestId("cancel-renewal")).toHaveAttribute(
+        "data-context",
+        "personal",
+      );
+    });
+
+    it("pins context=team on the cancel button for the team card when concurrent", async () => {
+      await renderCard({
+        subscription: makeSub({
+          plan: {
+            id: "plan_team",
+            name: "Team Pro",
+            description: "",
+            context: "team",
+            tier: 3,
+            interval: "month",
+            price: null,
+          },
+          quantity: 3,
+        }),
+        locale: "en",
+        planName: "Team Pro",
+        canManage: true,
+        teamOwnerName: "Alice",
+        isConcurrent: true,
+      });
+
+      expect(screen.getByTestId("cancel-renewal")).toHaveAttribute(
+        "data-context",
+        "team",
+      );
+    });
+
+    it("pins context on the resume button when concurrent and canceling", async () => {
+      await renderCard({
+        subscription: makeSub({
+          plan: {
+            id: "plan_team",
+            name: "Team Pro",
+            description: "",
+            context: "team",
+            tier: 3,
+            interval: "month",
+            price: null,
+          },
+          canceledAt: "2026-01-15T00:00:00Z",
+        }),
+        locale: "en",
+        planName: "Team Pro",
+        canManage: true,
+        teamOwnerName: null,
+        isConcurrent: true,
+      });
+
+      expect(screen.getByTestId("resume")).toHaveAttribute(
+        "data-context",
+        "team",
+      );
+    });
+
+    it("leaves context unset on cancel/resume buttons when not concurrent (single-sub default)", async () => {
+      await renderCard({
+        subscription: makeSub(),
+        locale: "en",
+        planName: "Pro",
+        canManage: true,
+        teamOwnerName: null,
+      });
+
+      expect(screen.getByTestId("cancel-renewal")).toHaveAttribute(
+        "data-context",
+        "",
+      );
+    });
   });
 });

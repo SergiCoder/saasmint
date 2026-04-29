@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
+import { findTeamSubscription } from "@/domain/models/Subscription";
 import { getCurrentUser } from "../_data/getCurrentUser";
 import { getOrgMembers } from "../_data/getOrgMembers";
-import { getSubscription } from "../_data/getSubscription";
+import { getSubscriptions } from "../_data/getSubscriptions";
 import { getUserOrgs } from "../_data/getUserOrgs";
 import { OrgCard } from "@/presentation/components/molecules/OrgCard";
 
@@ -28,18 +29,20 @@ export default async function DashboardPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  // Fetch subscription alongside translations and the user — it has no
-  // dependency on user, so there's no reason to wait for user to load first.
-  const [t, tOrg, user, subscription] = await Promise.all([
+  // Independent calls run fully in parallel; only `getSubscriptions` chains
+  // off the user fetch so it can pass `user.preferredCurrency` and share
+  // the (app) layout's React.cache key for the subscription roundtrip.
+  const userPromise = getCurrentUser();
+  const [t, tOrg, user, subscriptions, orgs] = await Promise.all([
     getTranslations("dashboard"),
     getTranslations("org"),
-    getCurrentUser(),
-    getSubscription(),
+    userPromise,
+    userPromise.then((u) => getSubscriptions(u.preferredCurrency)),
+    getUserOrgs(),
   ]);
-  const orgs = await getUserOrgs();
 
-  const totalSpots =
-    subscription?.plan.context === "team" ? subscription.quantity : null;
+  const teamSubscription = findTeamSubscription(subscriptions);
+  const totalSpots = teamSubscription?.quantity ?? null;
 
   // Only fetch per-org member counts when we actually render a spotsLabel
   // (team subscriptions). Otherwise we pay for N roundtrips we never display.

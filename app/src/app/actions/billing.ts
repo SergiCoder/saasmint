@@ -3,7 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { BillingError } from "@/domain/errors/BillingError";
-import { MAX_SEATS, type Subscription } from "@/domain/models/Subscription";
+import {
+  findPersonalSubscription,
+  findTeamSubscription,
+  MAX_SEATS,
+  type Subscription,
+} from "@/domain/models/Subscription";
+import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
 import {
   authGateway,
   productGateway,
@@ -27,16 +33,39 @@ import {
 } from "@/lib/actions/parseFormData";
 
 /**
- * Ensures the current user is allowed to manage billing on the active
- * subscription. Throws a BillingError otherwise. Used as defense-in-depth
- * for the cancel/resume server actions — the UI already hides the buttons
+ * Ensures the current user is allowed to manage billing on the subscription
+ * matching `context` (or the only one when context is omitted). Throws a
+ * BillingError otherwise. Defense-in-depth — the UI already hides the buttons
  * for non-billing members, and the Django API also enforces the rule.
+ *
+ * When the caller has BOTH a personal and a team subscription (rule 5
+ * concurrent billing), `context` is required: otherwise the frontend gate
+ * would authorize an arbitrary row while the backend dispatches on its own
+ * default ("team" for org members, "personal" otherwise), letting the gate
+ * silently authorize a different sub than the one being mutated.
  */
-async function assertCanManageBilling(): Promise<Subscription> {
-  const [user, subscription] = await Promise.all([
+async function assertCanManageBilling(
+  context?: SubscriptionContext,
+): Promise<Subscription> {
+  const [user, subscriptions] = await Promise.all([
     authGateway.getCurrentUser(),
-    subscriptionGateway.getSubscription(),
+    subscriptionGateway.listSubscriptions(),
   ]);
+  let subscription: Subscription | null;
+  if (context === "personal") {
+    subscription = findPersonalSubscription(subscriptions);
+  } else if (context === "team") {
+    subscription = findTeamSubscription(subscriptions);
+  } else if (subscriptions.length > 1) {
+    // Concurrent personal+team billing: caller must disambiguate so the
+    // authorization check operates on the same row the backend will mutate.
+    throw new BillingError(
+      "Subscription context is required when multiple subscriptions exist",
+      "context_required",
+    );
+  } else {
+    subscription = subscriptions[0] ?? null;
+  }
   if (!subscription) {
     throw new BillingError("No active subscription", "no_subscription");
   }
@@ -125,11 +154,28 @@ export async function openBillingPortal() {
   redirect(url);
 }
 
+/**
+ * Server actions are reachable as RPC endpoints — the TypeScript signature
+ * does not survive the wire boundary. Normalize any caller-supplied value
+ * down to the literal union (or `undefined`) before it touches authorization
+ * checks or URL construction.
+ */
+function normalizeContext(value: unknown): SubscriptionContext | undefined {
+  return value === "personal" || value === "team" ? value : undefined;
+}
+
+function parseContext(formData: FormData): SubscriptionContext | undefined {
+  return normalizeContext(getString(formData, "context"));
+}
+
 /** Schedule the subscription to end at the current period's close. */
-export async function cancelRenewal(): Promise<ActionResult> {
+export async function cancelRenewal(
+  context?: SubscriptionContext,
+): Promise<ActionResult> {
+  const safeContext = normalizeContext(context);
   try {
-    await assertCanManageBilling();
-    await subscriptionGateway.cancelSubscription();
+    await assertCanManageBilling(safeContext);
+    await subscriptionGateway.cancelSubscription(safeContext);
   } catch (err) {
     console.error("Failed to cancel subscription", err);
     return toActionError(err);
@@ -139,10 +185,13 @@ export async function cancelRenewal(): Promise<ActionResult> {
 }
 
 /** Undo a pending cancellation so the subscription renews normally. */
-export async function resumeSubscription(): Promise<ActionResult> {
+export async function resumeSubscription(
+  context?: SubscriptionContext,
+): Promise<ActionResult> {
+  const safeContext = normalizeContext(context);
   try {
-    await assertCanManageBilling();
-    await subscriptionGateway.resumeSubscription();
+    await assertCanManageBilling(safeContext);
+    await subscriptionGateway.resumeSubscription(safeContext);
   } catch (err) {
     console.error("Failed to resume subscription", err);
     return toActionError(err);
@@ -159,10 +208,11 @@ export async function updateSeats(
   if (quantity === undefined || quantity < 1 || quantity > MAX_SEATS) {
     return fail("invalid_seat_count");
   }
+  const context = parseContext(formData);
 
   try {
-    await assertCanManageBilling();
-    await subscriptionGateway.updateSeats(quantity);
+    await assertCanManageBilling(context);
+    await subscriptionGateway.updateSeats(quantity, context);
   } catch (err) {
     console.error("Failed to update seats", err);
     return toActionError(err);

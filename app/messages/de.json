@@ -181,6 +181,8 @@
   "billing": {
     "title": "Abrechnung",
     "currentPlan": "Aktueller Plan",
+    "currentPersonalPlan": "Aktueller persönlicher Tarif",
+    "currentTeamPlan": "Aktueller Team-Tarif",
     "upgrade": "Upgraden",
     "cancel": "Abo wird zum Ende der Laufzeit gekündigt",
     "cancelRenewal": "Verlängerung kündigen",
@@ -336,6 +338,7 @@
     "unknownError": "Unbekannter Fehler"
   },
   "actionErrors": {
+    "context_required": "Bitte gib an, welches Abonnement verwaltet werden soll.",
     "current_password_required": "Aktuelles Passwort ist erforderlich",
     "email_and_password_required": "E-Mail und Passwort sind erforderlich",
     "email_required": "E-Mail ist erforderlich",

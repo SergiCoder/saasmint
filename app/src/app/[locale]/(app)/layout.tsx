@@ -3,9 +3,10 @@ import { AppLayout } from "@/presentation/components/templates/AppLayout";
 import { redirect } from "@/lib/i18n/navigation";
 import { getPathnameWithoutLocale } from "@/lib/pathname";
 import { isLocale } from "@/lib/i18n/routing";
+import { findTeamSubscription } from "@/domain/models/Subscription";
 import { SignOutButton } from "../_components/SignOutButton";
 import { getCurrentUser } from "./_data/getCurrentUser";
-import { getSubscription } from "./_data/getSubscription";
+import { getSubscriptions } from "./_data/getSubscriptions";
 import { getUserOrgs } from "./_data/getUserOrgs";
 
 interface AppLayoutRouteProps {
@@ -20,11 +21,17 @@ export default async function AppLayoutRoute({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, tCommon, user, subscription, userOrgs] = await Promise.all([
+  // Independent calls run fully in parallel; only `getSubscriptions` chains
+  // off the user fetch so it can pass `user.preferredCurrency` and share the
+  // (app) page's React.cache key for the subscription roundtrip. Awaiting
+  // the user before kicking off the rest would force `t`, `tCommon`, and
+  // `getUserOrgs` to wait an extra RTT for no benefit.
+  const userPromise = getCurrentUser();
+  const [t, tCommon, user, subscriptions, userOrgs] = await Promise.all([
     getTranslations("nav"),
     getTranslations("common"),
-    getCurrentUser(),
-    getSubscription(),
+    userPromise,
+    userPromise.then((u) => getSubscriptions(u.preferredCurrency)),
     getUserOrgs(),
   ]);
 
@@ -39,7 +46,8 @@ export default async function AppLayoutRoute({
     redirect({ href: pathname, locale: user.preferredLocale });
   }
 
-  const hasOrg = subscription?.plan.context === "team" || userOrgs.length > 0;
+  const hasOrg =
+    findTeamSubscription(subscriptions) !== null || userOrgs.length > 0;
 
   const navLinks = [
     { href: "/dashboard", label: t("dashboard") },

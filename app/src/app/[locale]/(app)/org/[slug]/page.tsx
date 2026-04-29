@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { invitationGateway } from "@/infrastructure/registry";
+import { findTeamSubscription } from "@/domain/models/Subscription";
 import { getCurrentUser } from "../../_data/getCurrentUser";
 import { getOrgMembers } from "../../_data/getOrgMembers";
-import { getSubscription } from "../../_data/getSubscription";
+import { getSubscriptions } from "../../_data/getSubscriptions";
 import { getUserOrgs } from "../../_data/getUserOrgs";
 import { OrgMemberList } from "@/presentation/components/organisms/OrgMemberList";
 import { InviteByEmailForm } from "./_components/InviteByEmailForm";
@@ -21,24 +22,30 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const [t, tCommon, user, orgs] = await Promise.all([
+  // Kick off the subscription fetch alongside the user/orgs lookup so it
+  // doesn't sit behind the `org.id` dependency in stage 2. The currency
+  // argument matches the (app) layout's React.cache key so layout + page
+  // share a single subscription roundtrip.
+  const userPromise = getCurrentUser();
+  const [t, tCommon, user, orgs, subscriptions] = await Promise.all([
     getTranslations("org"),
     getTranslations("common"),
-    getCurrentUser(),
+    userPromise,
     getUserOrgs(),
+    userPromise.then((u) => getSubscriptions(u.preferredCurrency)),
   ]);
   const org = orgs.find((o) => o.slug === slug);
 
   if (!org) notFound();
 
-  const [members, invitations, subscription] = await Promise.all([
+  const [members, invitations] = await Promise.all([
     getOrgMembers(org.id),
     invitationGateway.listInvitations(org.id).catch(() => []),
-    getSubscription(),
   ]);
 
-  const isTeamSubscription = subscription?.plan.context === "team";
-  const totalSpots = isTeamSubscription ? subscription.quantity : null;
+  const teamSubscription = findTeamSubscription(subscriptions);
+  const isTeamSubscription = teamSubscription !== null;
+  const totalSpots = teamSubscription?.quantity ?? null;
 
   const me = members.find((m) => m.user.id === user.id);
   const isOwner = me?.role === "owner";

@@ -181,6 +181,8 @@
   "billing": {
     "title": "الفوترة",
     "currentPlan": "الخطة الحالية",
+    "currentPersonalPlan": "الخطة الشخصية الحالية",
+    "currentTeamPlan": "خطة الفريق الحالية",
     "upgrade": "ترقية",
     "cancel": "سيتم إلغاء الاشتراك في نهاية الفترة",
     "cancelRenewal": "إلغاء التجديد",
@@ -336,6 +338,7 @@
     "unknownError": "خطأ غير معروف"
   },
   "actionErrors": {
+    "context_required": "يرجى تحديد الاشتراك الذي تريد إدارته.",
     "current_password_required": "كلمة المرور الحالية مطلوبة",
     "email_and_password_required": "البريد الإلكتروني وكلمة المرور مطلوبان",
     "email_required": "البريد الإلكتروني مطلوب",

@@ -181,6 +181,8 @@
   "billing": {
     "title": "Fakturering",
     "currentPlan": "Nuvarande plan",
+    "currentPersonalPlan": "Nuvarande personlig prenumeration",
+    "currentTeamPlan": "Nuvarande team-prenumeration",
     "upgrade": "Uppgradera",
     "cancel": "Prenumerationen avslutas vid periodens slut",
     "cancelRenewal": "Avbryt förnyelse",
@@ -336,6 +338,7 @@
     "unknownError": "Okänt fel"
   },
   "actionErrors": {
+    "context_required": "Ange vilken prenumeration som ska hanteras.",
     "current_password_required": "Nuvarande lösenord krävs",
     "email_and_password_required": "E-post och lösenord krävs",
     "email_required": "E-post krävs",

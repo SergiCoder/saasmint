@@ -131,6 +131,19 @@ export const SubscriptionSchema = z.object({
   createdAt: z.string(),
 }) satisfies z.ZodType<Subscription>;
 
+/**
+ * Backend's paginated envelope for `GET /billing/subscriptions/me/`. The list
+ * holds 0–2 rows (free tier, single sub, or concurrent personal+team per
+ * rule 5). Empty `results` replaces the prior `404 Not Found` for free-tier
+ * users — gateway no longer special-cases 404 on this endpoint.
+ */
+export const SubscriptionListResponseSchema = z.object({
+  count: z.number(),
+  next: nullableString,
+  previous: nullableString,
+  results: z.array(SubscriptionSchema),
+});
+
 export const PhonePrefixSchema = z.object({
   prefix: z.string(),
   label: z.string(),

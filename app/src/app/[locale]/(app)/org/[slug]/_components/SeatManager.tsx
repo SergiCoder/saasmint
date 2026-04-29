@@ -39,6 +39,9 @@ export function SeatManager({ currentSeats, usedSeats }: SeatManagerProps) {
   const submitSeats = () => {
     const formData = new FormData();
     formData.set("quantity", String(seats));
+    // Seats only exist on team subs; pin the context so a concurrent-billing
+    // user doesn't accidentally hit the personal sub.
+    formData.set("context", "team");
     startTransition(() => {
       formAction(formData);
     });

@@ -17,12 +17,12 @@ vi.mock("next-intl/server", () => ({
 }));
 
 const mockGetByToken = vi.fn<(token: string) => Promise<Invitation>>();
-const mockGetSubscription =
-  vi.fn<(currency?: string) => Promise<Subscription | null>>();
+const mockListSubscriptions =
+  vi.fn<(currency?: string) => Promise<Subscription[]>>();
 vi.mock("@/infrastructure/registry", () => ({
   invitationGateway: { getByToken: (t: string) => mockGetByToken(t) },
   subscriptionGateway: {
-    getSubscription: (currency?: string) => mockGetSubscription(currency),
+    listSubscriptions: (currency?: string) => mockListSubscriptions(currency),
   },
 }));
 
@@ -110,7 +110,7 @@ describe("InvitationPage", () => {
     // Default: anonymous visitor — gateway throws AuthError → page coerces
     // to null. Use the real domain class so the page's `instanceof AuthError`
     // narrowing actually fires (a generic Error would re-throw).
-    mockGetSubscription.mockRejectedValue(
+    mockListSubscriptions.mockRejectedValue(
       new AuthError("No active session", "NO_SESSION"),
     );
   });
@@ -166,7 +166,7 @@ describe("InvitationPage", () => {
 
   describe("concurrent-billing notice", () => {
     it("does not render the notice for anonymous visitors (no active session)", async () => {
-      // beforeEach already configures mockGetSubscription to reject.
+      // beforeEach already configures mockListSubscriptions to reject.
       await renderPage("tok_abc123");
 
       expect(
@@ -175,7 +175,7 @@ describe("InvitationPage", () => {
     });
 
     it("renders the concurrent-billing notice when an authed visitor has an active personal sub", async () => {
-      mockGetSubscription.mockResolvedValue(makeSub());
+      mockListSubscriptions.mockResolvedValue([makeSub()]);
 
       await renderPage("tok_abc123");
 
@@ -186,10 +186,10 @@ describe("InvitationPage", () => {
 
     it("does not render the notice when an authed free-tier visitor has no subscription (gateway resolves null)", async () => {
       // Distinct from the anonymous AuthError-rejected case: an authed user
-      // on the free tier hits the gateway successfully and gets `null` back
-      // (backend 404 → null per DjangoApiSubscriptionGateway). No concurrent
-      // billing risk, so no notice.
-      mockGetSubscription.mockResolvedValue(null);
+      // on the free tier hits the gateway successfully and gets an empty
+      // list back (backend's empty `results` replaces the prior 404). No
+      // concurrent billing risk, so no notice.
+      mockListSubscriptions.mockResolvedValue([]);
 
       await renderPage("tok_abc123");
 
@@ -199,7 +199,7 @@ describe("InvitationPage", () => {
     });
 
     it("does not render the notice when the authed visitor has a team sub (only personal subs trigger dual billing on accept)", async () => {
-      mockGetSubscription.mockResolvedValue(
+      mockListSubscriptions.mockResolvedValue([
         makeSub({
           plan: {
             id: "plan_team",
@@ -211,7 +211,7 @@ describe("InvitationPage", () => {
             price: null,
           },
         }),
-      );
+      ]);
 
       await renderPage("tok_abc123");
 

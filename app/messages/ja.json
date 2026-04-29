@@ -181,6 +181,8 @@
   "billing": {
     "title": "請求",
     "currentPlan": "現在のプラン",
+    "currentPersonalPlan": "現在の個人プラン",
+    "currentTeamPlan": "現在のチームプラン",
     "upgrade": "アップグレード",
     "cancel": "サブスクリプションは期間終了時に解約されます",
     "cancelRenewal": "更新をキャンセル",
@@ -336,6 +338,7 @@
     "unknownError": "不明なエラー"
   },
   "actionErrors": {
+    "context_required": "どのサブスクリプションを管理するか指定してください。",
     "current_password_required": "現在のパスワードを入力してください",
     "email_and_password_required": "メールアドレスとパスワードを入力してください",
     "email_required": "メールアドレスを入力してください",

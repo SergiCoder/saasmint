@@ -2,29 +2,44 @@ import type {
   BillingPortalInput,
   CheckoutSessionInput,
   ISubscriptionGateway,
+  SubscriptionContext,
 } from "@/application/ports/ISubscriptionGateway";
 import type { Subscription } from "@/domain/models/Subscription";
-import { ApiError } from "@/domain/errors/ApiError";
 import { apiFetch, apiFetchVoid } from "./apiClient";
 import { applyPriceDefaults, keysToCamel, keysToSnake } from "./caseTransform";
-import { CheckoutSessionResponseSchema, SubscriptionSchema } from "./schemas";
+import {
+  CheckoutSessionResponseSchema,
+  SubscriptionListResponseSchema,
+} from "./schemas";
+
+function contextQuery(context: SubscriptionContext | undefined): string {
+  // Defense-in-depth: even though the type narrows to a literal union, server
+  // actions hand untrusted RPC arguments to this gateway. Only emit the query
+  // for values that exactly match the whitelist; drop anything else silently
+  // so a tampered payload can't inject extra params or path characters.
+  if (context !== "personal" && context !== "team") return "";
+  return `?context=${context}`;
+}
 
 export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
-  async getSubscription(currency?: string): Promise<Subscription | null> {
-    try {
-      const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
-      const raw = await apiFetch<Record<string, unknown>>(
-        `/billing/subscriptions/me/${query}`,
-      );
-      const camel = keysToCamel(raw) as Record<string, unknown>;
-      if (camel.plan && typeof camel.plan === "object") {
-        applyPriceDefaults(camel.plan as Record<string, unknown>, currency);
+  async listSubscriptions(currency?: string): Promise<Subscription[]> {
+    const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
+    const raw = await apiFetch<Record<string, unknown>>(
+      `/billing/subscriptions/me/${query}`,
+    );
+    const camel = keysToCamel(raw) as Record<string, unknown>;
+    const results = camel.results;
+    if (Array.isArray(results)) {
+      for (const row of results) {
+        if (row && typeof row === "object") {
+          const plan = (row as Record<string, unknown>).plan;
+          if (plan && typeof plan === "object") {
+            applyPriceDefaults(plan as Record<string, unknown>, currency);
+          }
+        }
       }
-      return SubscriptionSchema.parse(camel);
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 404) return null;
-      throw err;
     }
+    return SubscriptionListResponseSchema.parse(camel).results;
   }
 
   async createCheckoutSession(
@@ -47,19 +62,24 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
     return CheckoutSessionResponseSchema.parse(raw);
   }
 
-  async cancelSubscription(): Promise<void> {
-    await apiFetchVoid("/billing/subscriptions/me/", { method: "DELETE" });
+  async cancelSubscription(context?: SubscriptionContext): Promise<void> {
+    await apiFetchVoid(`/billing/subscriptions/me/${contextQuery(context)}`, {
+      method: "DELETE",
+    });
   }
 
-  async resumeSubscription(): Promise<void> {
-    await apiFetchVoid("/billing/subscriptions/me/", {
+  async resumeSubscription(context?: SubscriptionContext): Promise<void> {
+    await apiFetchVoid(`/billing/subscriptions/me/${contextQuery(context)}`, {
       method: "PATCH",
       body: JSON.stringify({ cancel_at_period_end: false }),
     });
   }
 
-  async updateSeats(quantity: number): Promise<void> {
-    await apiFetchVoid("/billing/subscriptions/me/", {
+  async updateSeats(
+    quantity: number,
+    context?: SubscriptionContext,
+  ): Promise<void> {
+    await apiFetchVoid(`/billing/subscriptions/me/${contextQuery(context)}`, {
       method: "PATCH",
       body: JSON.stringify({ quantity }),
     });

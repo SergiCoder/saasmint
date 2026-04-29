@@ -6,6 +6,7 @@ import {
   PhonePrefixSchema,
   PlanSchema,
   ProductSchema,
+  SubscriptionListResponseSchema,
   SubscriptionSchema,
   UserSchema,
 } from "@/infrastructure/api/schemas";
@@ -337,6 +338,91 @@ describe("SubscriptionSchema", () => {
       SubscriptionSchema.parse({
         ...validSubscription,
         plan: { ...validPlan, tier: 99 },
+      }),
+    ).toThrow();
+  });
+});
+
+describe("SubscriptionListResponseSchema", () => {
+  it("accepts an empty results array (free-tier user, replaces the prior 404)", () => {
+    expect(() =>
+      SubscriptionListResponseSchema.parse({
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      }),
+    ).not.toThrow();
+  });
+
+  it("accepts a single-row envelope", () => {
+    const parsed = SubscriptionListResponseSchema.parse({
+      count: 1,
+      next: null,
+      previous: null,
+      results: [validSubscription],
+    });
+    expect(parsed.results).toHaveLength(1);
+    expect(parsed.results[0]?.id).toBe("sub_1");
+  });
+
+  it("accepts a two-row envelope (concurrent personal+team — rule 5)", () => {
+    const teamSub = {
+      ...validSubscription,
+      id: "sub_2",
+      plan: { ...validPlan, id: "plan_team", context: "team" },
+    };
+    const parsed = SubscriptionListResponseSchema.parse({
+      count: 2,
+      next: null,
+      previous: null,
+      results: [validSubscription, teamSub],
+    });
+    expect(parsed.results.map((s) => s.plan.context)).toEqual([
+      "personal",
+      "team",
+    ]);
+  });
+
+  it("accepts string next/previous cursors (paginated envelope shape)", () => {
+    expect(() =>
+      SubscriptionListResponseSchema.parse({
+        count: 3,
+        next: "https://api.example.com/billing/subscriptions/me/?page=2",
+        previous: null,
+        results: [validSubscription],
+      }),
+    ).not.toThrow();
+  });
+
+  it("rejects when results is missing", () => {
+    expect(() =>
+      SubscriptionListResponseSchema.parse({
+        count: 0,
+        next: null,
+        previous: null,
+      }),
+    ).toThrow();
+  });
+
+  it("rejects when count is not a number", () => {
+    expect(() =>
+      SubscriptionListResponseSchema.parse({
+        count: "0",
+        next: null,
+        previous: null,
+        results: [],
+      }),
+    ).toThrow();
+  });
+
+  it("rejects when a row in results fails SubscriptionSchema validation", () => {
+    expect(() =>
+      SubscriptionListResponseSchema.parse({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [{ ...validSubscription, status: "grace_period" }],
       }),
     ).toThrow();
   });

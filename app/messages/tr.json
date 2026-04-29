@@ -181,6 +181,8 @@
   "billing": {
     "title": "Faturalandırma",
     "currentPlan": "Mevcut plan",
+    "currentPersonalPlan": "Mevcut kişisel plan",
+    "currentTeamPlan": "Mevcut takım planı",
     "upgrade": "Yükselt",
     "cancel": "Abonelik dönem sonunda iptal edilecek",
     "cancelRenewal": "Yenilemeyi iptal et",
@@ -336,6 +338,7 @@
     "unknownError": "Bilinmeyen hata"
   },
   "actionErrors": {
+    "context_required": "Lütfen yönetilecek aboneliği belirtin.",
     "current_password_required": "Mevcut şifre gereklidir",
     "email_and_password_required": "E-posta ve şifre gereklidir",
     "email_required": "E-posta gereklidir",

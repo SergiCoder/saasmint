@@ -26,9 +26,9 @@ vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
 
-const mockGetSubscription = vi.fn<() => Promise<Subscription | null>>();
-vi.mock("@/app/[locale]/(app)/_data/getSubscription", () => ({
-  getSubscription: () => mockGetSubscription(),
+const mockGetSubscriptions = vi.fn<() => Promise<Subscription[]>>();
+vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
+  getSubscriptions: () => mockGetSubscriptions(),
 }));
 
 const mockListPlans = vi.fn<(currency: string) => Promise<Plan[]>>();
@@ -149,7 +149,7 @@ describe("TeamCheckoutPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetCurrentUser.mockResolvedValue(makeUser());
-    mockGetSubscription.mockResolvedValue(null);
+    mockGetSubscriptions.mockResolvedValue([]);
     mockListPlans.mockResolvedValue([makeTeamPlan()]);
   });
 
@@ -226,7 +226,7 @@ describe("TeamCheckoutPage", () => {
   });
 
   it("does not pass a personal-sub notice when the caller has no subscription", async () => {
-    mockGetSubscription.mockResolvedValue(null);
+    mockGetSubscriptions.mockResolvedValue([]);
 
     await renderPage({ plan: "price_team_pro_year" });
 
@@ -235,7 +235,7 @@ describe("TeamCheckoutPage", () => {
   });
 
   it("passes the personal-sub auto-cancel notice when the caller has an active personal subscription", async () => {
-    mockGetSubscription.mockResolvedValue(makePersonalSubscription());
+    mockGetSubscriptions.mockResolvedValue([makePersonalSubscription()]);
 
     await renderPage({ plan: "price_team_pro_year" });
 
@@ -250,9 +250,9 @@ describe("TeamCheckoutPage", () => {
   });
 
   it("does not pass a personal-sub notice when the personal subscription is already canceling", async () => {
-    mockGetSubscription.mockResolvedValue(
+    mockGetSubscriptions.mockResolvedValue([
       makePersonalSubscription({ canceledAt: "2026-04-15T00:00:00Z" }),
-    );
+    ]);
 
     await renderPage({ plan: "price_team_pro_year" });
 
@@ -261,7 +261,7 @@ describe("TeamCheckoutPage", () => {
   });
 
   it("does not pass a personal-sub notice when the active subscription is team-context", async () => {
-    mockGetSubscription.mockResolvedValue(
+    mockGetSubscriptions.mockResolvedValue([
       makePersonalSubscription({
         plan: {
           id: "plan_team",
@@ -273,7 +273,7 @@ describe("TeamCheckoutPage", () => {
           price: null,
         },
       }),
-    );
+    ]);
 
     await renderPage({ plan: "price_team_pro_year" });
 
@@ -282,9 +282,9 @@ describe("TeamCheckoutPage", () => {
   });
 
   it("does not pass a personal-sub notice when the personal subscription is trialing (only 'active' qualifies)", async () => {
-    mockGetSubscription.mockResolvedValue(
+    mockGetSubscriptions.mockResolvedValue([
       makePersonalSubscription({ status: "trialing" }),
-    );
+    ]);
 
     await renderPage({ plan: "price_team_pro_year" });
 
@@ -293,9 +293,9 @@ describe("TeamCheckoutPage", () => {
   });
 
   it("does not pass a personal-sub notice when currentPeriodEnd is unparseable", async () => {
-    mockGetSubscription.mockResolvedValue(
+    mockGetSubscriptions.mockResolvedValue([
       makePersonalSubscription({ currentPeriodEnd: "not-a-date" }),
-    );
+    ]);
 
     await renderPage({ plan: "price_team_pro_year" });
 
@@ -304,9 +304,9 @@ describe("TeamCheckoutPage", () => {
   });
 
   it("formats currentPeriodEnd via Intl.DateTimeFormat and passes it as the 'date' param of the notice translation", async () => {
-    mockGetSubscription.mockResolvedValue(
+    mockGetSubscriptions.mockResolvedValue([
       makePersonalSubscription({ currentPeriodEnd: "2026-05-01T00:00:00Z" }),
-    );
+    ]);
 
     await renderPage({ plan: "price_team_pro_year" });
 

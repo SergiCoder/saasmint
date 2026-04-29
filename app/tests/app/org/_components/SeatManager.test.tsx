@@ -72,6 +72,24 @@ describe("SeatManager", () => {
     });
   });
 
+  it("pins context=team in the submitted FormData so concurrent billers don't hit the personal sub", async () => {
+    mockUpdateSeats.mockResolvedValueOnce({ ok: true });
+    const user = userEvent.setup();
+    render(<SeatManager currentSeats={5} usedSeats={3} />);
+
+    await user.click(screen.getByLabelText("addSeat"));
+    await user.click(screen.getByRole("button", { name: "updateSeats" }));
+
+    await waitFor(() => {
+      expect(mockUpdateSeats).toHaveBeenCalledTimes(1);
+    });
+
+    // useActionState invokes the action with (prevState, formData).
+    const formData = mockUpdateSeats.mock.calls[0]![1] as FormData;
+    expect(formData.get("context")).toBe("team");
+    expect(formData.get("quantity")).toBe("6");
+  });
+
   it("opens confirm dialog when decreasing seats", async () => {
     const user = userEvent.setup();
     render(<SeatManager currentSeats={5} usedSeats={3} />);

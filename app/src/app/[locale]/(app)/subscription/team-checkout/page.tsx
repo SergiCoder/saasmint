@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { planGateway } from "@/infrastructure/registry";
+import { findPersonalSubscription } from "@/domain/models/Subscription";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { getCurrentUser } from "../../_data/getCurrentUser";
-import { getSubscription } from "../../_data/getSubscription";
+import { getSubscriptions } from "../../_data/getSubscriptions";
 import { TeamCheckoutForm } from "./_components/TeamCheckoutForm";
 
 interface TeamCheckoutPageProps {
@@ -18,21 +19,27 @@ export default async function TeamCheckoutPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, tPlans, user, subscription, { plan: planPriceId }] =
-    await Promise.all([
-      getTranslations("billing"),
-      getTranslations("plans"),
-      getCurrentUser(),
-      getSubscription(),
-      searchParams,
-    ]);
+  // Resolve the user first so subsequent fetches can share its
+  // preferredCurrency. getCurrentUser is React-cached and is already in
+  // flight from the (app) layout, so this isn't an extra roundtrip.
+  const [t, tPlans, user, { plan: planPriceId }] = await Promise.all([
+    getTranslations("billing"),
+    getTranslations("plans"),
+    getCurrentUser(),
+    searchParams,
+  ]);
 
   if (!planPriceId) {
     redirect("/subscription");
   }
 
   const currency = user.preferredCurrency;
-  const plans = await planGateway.listPlans(currency);
+  // getSubscriptions(currency) shares the (app) layout's React.cache key,
+  // so layout + this page render off a single subscription roundtrip.
+  const [subscriptions, plans] = await Promise.all([
+    getSubscriptions(currency),
+    planGateway.listPlans(currency),
+  ]);
   const plan = plans.find((p) => p.price?.id === planPriceId);
 
   if (!plan || !plan.price || plan.context !== "team") {
@@ -41,15 +48,16 @@ export default async function TeamCheckoutPage({
 
   // Show the auto-cancel notice + opt-out checkbox only when the user has a
   // currently-active personal subscription that isn't already scheduled to
-  // cancel. Anything else (no sub, team sub, already-canceling) skips the UI.
+  // cancel. Anything else (no sub, only-team-sub, already-canceling) skips
+  // the UI.
+  const personalSubscription = findPersonalSubscription(subscriptions);
   const showPersonalSubNotice =
-    subscription !== null &&
-    subscription.plan.context === "personal" &&
-    subscription.status === "active" &&
-    subscription.canceledAt === null;
+    personalSubscription !== null &&
+    personalSubscription.status === "active" &&
+    personalSubscription.canceledAt === null;
 
   const personalSubEndDate = showPersonalSubNotice
-    ? new Date(subscription.currentPeriodEnd)
+    ? new Date(personalSubscription.currentPeriodEnd)
     : null;
   const personalSubEndDateDisplay =
     personalSubEndDate && !Number.isNaN(personalSubEndDate.getTime())

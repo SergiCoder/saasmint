@@ -11,6 +11,13 @@ interface CurrentSubscriptionCardProps {
   planName: string;
   canManage: boolean;
   teamOwnerName: string | null;
+  /**
+   * Set to `true` when the user has both a personal and a team subscription
+   * (rule 5 concurrent billing). Drives explicit `?context=` plumbing on
+   * cancel/resume so the right sub is targeted, and lets the eyebrow label
+   * disambiguate the cards visually. Single-sub callers can omit it.
+   */
+  isConcurrent?: boolean;
 }
 
 /**
@@ -26,6 +33,7 @@ export async function CurrentSubscriptionCard({
   planName,
   canManage,
   teamOwnerName,
+  isConcurrent = false,
 }: CurrentSubscriptionCardProps) {
   const t = await getTranslations("billing");
 
@@ -35,6 +43,13 @@ export async function CurrentSubscriptionCard({
   const plan = subscription.plan;
   const isTeam = plan.context === "team";
   const isCanceling = subscription.canceledAt !== null;
+  // Pin the context query param when the user has both subs running so the
+  // backend doesn't fall back to its default ("team" for ORG_MEMBER).
+  const buttonContext = isConcurrent
+    ? isTeam
+      ? "team"
+      : "personal"
+    : undefined;
 
   const intervalLabel =
     plan.interval === "year"
@@ -56,7 +71,7 @@ export async function CurrentSubscriptionCard({
   const manageAction =
     canManage && hasRealPeriodEnd ? (
       isCanceling ? (
-        <ResumeSubscriptionButton>
+        <ResumeSubscriptionButton context={buttonContext}>
           {t("resumeSubscription")}
         </ResumeSubscriptionButton>
       ) : isTeam ? (
@@ -66,6 +81,7 @@ export async function CurrentSubscriptionCard({
           confirmBody={t("cancelRenewalTeamBody", { date: periodEndDisplay })}
           confirmAction={t("cancelRenewalTeam")}
           confirmDismiss={t("cancelRenewalKeep")}
+          context={buttonContext}
         />
       ) : (
         <CancelRenewalButton
@@ -74,13 +90,21 @@ export async function CurrentSubscriptionCard({
           confirmBody={t("cancelRenewalBody", { date: periodEndDisplay })}
           confirmAction={t("cancelRenewal")}
           confirmDismiss={t("cancelRenewalKeep")}
+          context={buttonContext}
         />
       )
     ) : null;
 
+  // Disambiguate the card eyebrow when the user has both subs side-by-side.
+  const eyebrowLabel = isConcurrent
+    ? isTeam
+      ? t("currentTeamPlan")
+      : t("currentPersonalPlan")
+    : t("currentPlan");
+
   return (
     <SubscriptionCard
-      eyebrowLabel={t("currentPlan")}
+      eyebrowLabel={eyebrowLabel}
       planName={planName}
       status={subscription.status}
       statusLabel={subscription.status}

@@ -181,6 +181,8 @@
   "billing": {
     "title": "Fatturazione",
     "currentPlan": "Piano attuale",
+    "currentPersonalPlan": "Piano personale attuale",
+    "currentTeamPlan": "Piano team attuale",
     "upgrade": "Aggiorna",
     "cancel": "L'abbonamento verrà annullato alla fine del periodo",
     "cancelRenewal": "Annulla rinnovo",
@@ -336,6 +338,7 @@
     "unknownError": "Errore sconosciuto"
   },
   "actionErrors": {
+    "context_required": "Indica quale abbonamento gestire.",
     "current_password_required": "La password attuale è obbligatoria",
     "email_and_password_required": "Email e password sono obbligatori",
     "email_required": "L'email è obbligatoria",

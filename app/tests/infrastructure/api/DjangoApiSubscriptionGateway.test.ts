@@ -18,102 +18,128 @@ beforeEach(() => {
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
 
+const samplePersonalRow = {
+  id: "s1",
+  status: "active",
+  plan: {
+    id: "p1",
+    name: "Pro",
+    description: "Pro plan",
+    context: "personal",
+    tier: 3,
+    interval: "month",
+    price: { id: "pp1", amount: 1900 },
+  },
+  quantity: 1,
+  trial_ends_at: null,
+  current_period_start: "2024-01-01T00:00:00Z",
+  current_period_end: "2024-02-01T00:00:00Z",
+  canceled_at: null,
+  created_at: "2024-01-01T00:00:00Z",
+};
+
+const sampleTeamRow = {
+  id: "s2",
+  status: "active",
+  plan: {
+    id: "p2",
+    name: "Team Pro",
+    description: "Team Pro plan",
+    context: "team",
+    tier: 3,
+    interval: "month",
+    price: { id: "tp1", amount: 4900 },
+  },
+  quantity: 5,
+  trial_ends_at: null,
+  current_period_start: "2024-01-01T00:00:00Z",
+  current_period_end: "2024-02-01T00:00:00Z",
+  canceled_at: null,
+  created_at: "2024-01-01T00:00:00Z",
+};
+
+const expectedPersonal = {
+  id: "s1",
+  status: "active",
+  plan: {
+    id: "p1",
+    name: "Pro",
+    description: "Pro plan",
+    context: "personal",
+    tier: 3,
+    interval: "month",
+    price: { id: "pp1", amount: 1900, displayAmount: 19, currency: "usd" },
+  },
+  quantity: 1,
+  trialEndsAt: null,
+  currentPeriodStart: "2024-01-01T00:00:00Z",
+  currentPeriodEnd: "2024-02-01T00:00:00Z",
+  canceledAt: null,
+  createdAt: "2024-01-01T00:00:00Z",
+};
+
 describe("DjangoApiSubscriptionGateway", () => {
   const gateway = new DjangoApiSubscriptionGateway();
 
-  describe("getSubscription", () => {
-    it("fetches and camelCases the subscription from GET /billing/subscriptions/me/", async () => {
+  describe("listSubscriptions", () => {
+    it("unwraps the paginated envelope into the row array", async () => {
       mockApiFetch.mockResolvedValue({
-        id: "s1",
-        status: "active",
-        plan: {
-          id: "p1",
-          name: "Pro",
-          description: "Pro plan",
-          context: "personal",
-          tier: 3,
-          interval: "month",
-          price: { id: "pp1", amount: 1900 },
-        },
-        quantity: 1,
-        discount_percent: null,
-        discount_end_at: null,
-        trial_ends_at: null,
-        current_period_start: "2024-01-01T00:00:00Z",
-        current_period_end: "2024-02-01T00:00:00Z",
-        canceled_at: null,
-        created_at: "2024-01-01T00:00:00Z",
+        count: 1,
+        next: null,
+        previous: null,
+        results: [samplePersonalRow],
       });
 
-      const result = await gateway.getSubscription();
+      const result = await gateway.listSubscriptions();
 
       expect(mockApiFetch).toHaveBeenCalledWith("/billing/subscriptions/me/");
-      expect(result).toEqual({
-        id: "s1",
-        status: "active",
-        plan: {
-          id: "p1",
-          name: "Pro",
-          description: "Pro plan",
-          context: "personal",
-          tier: 3,
-          interval: "month",
-          price: {
-            id: "pp1",
-            amount: 1900,
-            displayAmount: 19,
-            currency: "usd",
-          },
-        },
-        quantity: 1,
-        trialEndsAt: null,
-        currentPeriodStart: "2024-01-01T00:00:00Z",
-        currentPeriodEnd: "2024-02-01T00:00:00Z",
-        canceledAt: null,
-        createdAt: "2024-01-01T00:00:00Z",
+      expect(result).toEqual([expectedPersonal]);
+    });
+
+    it("returns an empty array when the envelope has no rows (free tier)", async () => {
+      mockApiFetch.mockResolvedValue({
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
       });
+
+      const result = await gateway.listSubscriptions();
+
+      expect(result).toEqual([]);
     });
 
-    it("returns null when API responds with 404", async () => {
-      mockApiFetch.mockRejectedValue(new ApiError(404, "Not Found"));
+    it("returns both rows for a concurrent personal+team caller", async () => {
+      mockApiFetch.mockResolvedValue({
+        count: 2,
+        next: null,
+        previous: null,
+        results: [samplePersonalRow, sampleTeamRow],
+      });
 
-      const result = await gateway.getSubscription();
-      expect(result).toBeNull();
+      const result = await gateway.listSubscriptions();
+
+      expect(result).toHaveLength(2);
+      expect(result.map((r) => r.plan.context)).toEqual(["personal", "team"]);
     });
 
-    it("re-throws non-404 errors", async () => {
+    it("re-throws gateway errors (no special-case 404 anymore — empty list replaces it)", async () => {
       mockApiFetch.mockRejectedValue(new ApiError(500, "Server Error"));
 
-      await expect(gateway.getSubscription()).rejects.toBeInstanceOf(ApiError);
-      await expect(gateway.getSubscription()).rejects.toMatchObject({
-        status: 500,
-      });
+      await expect(gateway.listSubscriptions()).rejects.toBeInstanceOf(
+        ApiError,
+      );
     });
 
     it("appends ?currency= query string when currency is provided", async () => {
       mockApiFetch.mockResolvedValue({
-        id: "s1",
-        status: "active",
-        plan: {
-          id: "p1",
-          name: "Pro",
-          description: "Pro plan",
-          context: "personal",
-          tier: 3,
-          interval: "month",
-          price: { id: "pp1", amount: 1900 },
-        },
-        quantity: 1,
-        discount_percent: null,
-        discount_end_at: null,
-        trial_ends_at: null,
-        current_period_start: "2024-01-01T00:00:00Z",
-        current_period_end: "2024-02-01T00:00:00Z",
-        canceled_at: null,
-        created_at: "2024-01-01T00:00:00Z",
+        count: 1,
+        next: null,
+        previous: null,
+        results: [samplePersonalRow],
       });
 
-      await gateway.getSubscription("eur");
+      await gateway.listSubscriptions("eur");
 
       expect(mockApiFetch).toHaveBeenCalledWith(
         "/billing/subscriptions/me/?currency=eur",
@@ -183,10 +209,48 @@ describe("DjangoApiSubscriptionGateway", () => {
   });
 
   describe("cancelSubscription", () => {
-    it("sends DELETE /billing/subscriptions/me/", async () => {
+    it("sends DELETE /billing/subscriptions/me/ without context query when omitted", async () => {
       mockApiFetchVoid.mockResolvedValue(undefined);
 
       await gateway.cancelSubscription();
+
+      expect(mockApiFetchVoid).toHaveBeenCalledWith(
+        "/billing/subscriptions/me/",
+        { method: "DELETE" },
+      );
+    });
+
+    it("appends ?context=personal when targeting the personal sub", async () => {
+      mockApiFetchVoid.mockResolvedValue(undefined);
+
+      await gateway.cancelSubscription("personal");
+
+      expect(mockApiFetchVoid).toHaveBeenCalledWith(
+        "/billing/subscriptions/me/?context=personal",
+        { method: "DELETE" },
+      );
+    });
+
+    it("appends ?context=team when targeting the team sub", async () => {
+      mockApiFetchVoid.mockResolvedValue(undefined);
+
+      await gateway.cancelSubscription("team");
+
+      expect(mockApiFetchVoid).toHaveBeenCalledWith(
+        "/billing/subscriptions/me/?context=team",
+        { method: "DELETE" },
+      );
+    });
+
+    it("silently drops a tampered context value (defense-in-depth whitelist)", async () => {
+      mockApiFetchVoid.mockResolvedValue(undefined);
+
+      // RPC payload is untrusted: a malicious caller could try to inject path
+      // characters or extra params. The gateway whitelist must drop anything
+      // that isn't exactly "personal" or "team".
+      await gateway.cancelSubscription(
+        "team&admin=1" as unknown as "team",
+      );
 
       expect(mockApiFetchVoid).toHaveBeenCalledWith(
         "/billing/subscriptions/me/",
@@ -209,6 +273,34 @@ describe("DjangoApiSubscriptionGateway", () => {
         },
       );
     });
+
+    it("appends ?context=team when targeting the team sub", async () => {
+      mockApiFetchVoid.mockResolvedValue(undefined);
+
+      await gateway.resumeSubscription("team");
+
+      expect(mockApiFetchVoid).toHaveBeenCalledWith(
+        "/billing/subscriptions/me/?context=team",
+        {
+          method: "PATCH",
+          body: JSON.stringify({ cancel_at_period_end: false }),
+        },
+      );
+    });
+
+    it("appends ?context=personal when targeting the personal sub", async () => {
+      mockApiFetchVoid.mockResolvedValue(undefined);
+
+      await gateway.resumeSubscription("personal");
+
+      expect(mockApiFetchVoid).toHaveBeenCalledWith(
+        "/billing/subscriptions/me/?context=personal",
+        {
+          method: "PATCH",
+          body: JSON.stringify({ cancel_at_period_end: false }),
+        },
+      );
+    });
   });
 
   describe("updateSeats", () => {
@@ -220,6 +312,31 @@ describe("DjangoApiSubscriptionGateway", () => {
       expect(mockApiFetchVoid).toHaveBeenCalledWith(
         "/billing/subscriptions/me/",
         { method: "PATCH", body: JSON.stringify({ quantity: 5 }) },
+      );
+    });
+
+    it("appends ?context=team when targeting the team sub", async () => {
+      mockApiFetchVoid.mockResolvedValue(undefined);
+
+      await gateway.updateSeats(5, "team");
+
+      expect(mockApiFetchVoid).toHaveBeenCalledWith(
+        "/billing/subscriptions/me/?context=team",
+        { method: "PATCH", body: JSON.stringify({ quantity: 5 }) },
+      );
+    });
+
+    it("drops a tampered context value rather than emitting it (whitelist)", async () => {
+      mockApiFetchVoid.mockResolvedValue(undefined);
+
+      await gateway.updateSeats(
+        3,
+        "personal'); DROP TABLE--" as unknown as "personal",
+      );
+
+      expect(mockApiFetchVoid).toHaveBeenCalledWith(
+        "/billing/subscriptions/me/",
+        { method: "PATCH", body: JSON.stringify({ quantity: 3 }) },
       );
     });
   });

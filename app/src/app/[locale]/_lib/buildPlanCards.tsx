@@ -85,7 +85,12 @@ export interface PlanCardGroup {
 
 export interface BuildPlanCardGroupsOptions {
   plans: Plan[];
-  currentPlanId?: string;
+  /**
+   * The user's currently-active plans (0–2 entries — concurrent personal+team
+   * is allowed per rule 5). Used to mark each card as `isCurrent` and to
+   * compute `isUpgrade` against the matching-context current plan.
+   */
+  currentPlans?: Plan[];
   locale: string;
   labels: PlanCardLabels;
   /** Translated plan names keyed by "{context}.{tier}", e.g. "personal.1". */
@@ -150,16 +155,18 @@ function monthlyEquivalent(plan: Plan): number {
 
 export function buildPlanCardGroups({
   plans,
-  currentPlanId,
+  currentPlans = [],
   locale,
   labels,
   planNames,
   planDescriptions,
   renderCta,
 }: BuildPlanCardGroupsOptions): PlanCardGroup[] {
-  const currentPlan = plans.find((p) => p.id === currentPlanId);
-  const currentMonthlyEq = currentPlan ? monthlyEquivalent(currentPlan) : 0;
-  const currentContext = currentPlan?.context;
+  const currentPlanIds = new Set(currentPlans.map((p) => p.id));
+  const currentByContext: Record<Plan["context"], Plan | undefined> = {
+    personal: currentPlans.find((p) => p.context === "personal"),
+    team: currentPlans.find((p) => p.context === "team"),
+  };
 
   // Group by (context, tier).
   const groups = new Map<
@@ -180,19 +187,16 @@ export function buildPlanCardGroups({
     const displayAmount = plan.price?.displayAmount ?? 0;
     const currency = plan.price?.currency ?? "usd";
     const isTeam = plan.context === "team";
-    const isCurrent = Boolean(currentPlanId) && plan.id === currentPlanId;
+    const isCurrent = currentPlanIds.has(plan.id);
     const monthlyEq = monthlyEquivalent(plan);
-    // Personal → team is always an upgrade regardless of price (it unlocks
-    // collaboration features). Team → personal is always a downgrade. Within
-    // the same context, fall back to price comparison.
-    let isUpgrade: boolean;
-    if (currentContext === "personal" && isTeam) {
-      isUpgrade = true;
-    } else if (currentContext === "team" && !isTeam) {
-      isUpgrade = false;
-    } else {
-      isUpgrade = monthlyEq > currentMonthlyEq;
-    }
+    // Compare each candidate against the user's current plan in the SAME
+    // context (concurrent personal+team are independent ladders). When the
+    // user has no plan in that context yet, treat any priced option as an
+    // upgrade.
+    const sameContextCurrent = currentByContext[plan.context];
+    const isUpgrade = sameContextCurrent
+      ? monthlyEq > monthlyEquivalent(sameContextCurrent)
+      : monthlyEq > 0;
     const ctaLabel = labels.upgrade;
 
     const intervalLabel = isTeam

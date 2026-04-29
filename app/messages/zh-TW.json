@@ -181,6 +181,8 @@
   "billing": {
     "title": "帳單",
     "currentPlan": "目前方案",
+    "currentPersonalPlan": "目前個人方案",
+    "currentTeamPlan": "目前團隊方案",
     "upgrade": "升級",
     "cancel": "訂閱將在當前週期結束時取消",
     "cancelRenewal": "取消續訂",
@@ -336,6 +338,7 @@
     "unknownError": "未知錯誤"
   },
   "actionErrors": {
+    "context_required": "請指定要管理的訂閱。",
     "current_password_required": "請輸入目前的密碼",
     "email_and_password_required": "請輸入電子郵件與密碼",
     "email_required": "請輸入電子郵件",

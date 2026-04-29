@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { cancelRenewal } from "@/app/actions/billing";
+import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 import {
   ConfirmDialog,
@@ -15,6 +16,12 @@ interface CancelRenewalButtonProps {
   confirmBody: string;
   confirmAction: string;
   confirmDismiss: string;
+  /**
+   * Targets one of the caller's two possible subscriptions during concurrent
+   * personal+team billing. Omit for single-sub callers — the backend default
+   * (`team` for org members, `personal` otherwise) is correct.
+   */
+  context?: SubscriptionContext;
 }
 
 export function CancelRenewalButton({
@@ -23,6 +30,7 @@ export function CancelRenewalButton({
   confirmBody,
   confirmAction,
   confirmDismiss,
+  context,
 }: CancelRenewalButtonProps) {
   const translateError = useActionErrorMessage();
   const confirmRef = useRef<ConfirmDialogHandle>(null);
@@ -36,7 +44,7 @@ export function CancelRenewalButton({
 
   const confirm = () => {
     startTransition(async () => {
-      const result = await cancelRenewal();
+      const result = await cancelRenewal(context);
       if (result.ok) {
         confirmRef.current?.close();
       } else {

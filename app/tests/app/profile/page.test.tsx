@@ -25,9 +25,15 @@ vi.mock("@/app/[locale]/(app)/_data/getMyOrgRole", () => ({
   getMyOrgRole: () => mockGetMyOrgRole(),
 }));
 
-const mockGetSubscription = vi.fn<() => Promise<Subscription | null>>();
-vi.mock("@/app/[locale]/(app)/_data/getSubscription", () => ({
-  getSubscription: () => mockGetSubscription(),
+const mockGetCurrentUser = vi.fn<() => Promise<User>>();
+vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
+  getCurrentUser: () => mockGetCurrentUser(),
+}));
+
+const mockGetSubscriptions =
+  vi.fn<(currency?: string) => Promise<Subscription[]>>();
+vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
+  getSubscriptions: (currency?: string) => mockGetSubscriptions(currency),
 }));
 
 // Stub the client child components so we can capture the props the page
@@ -137,20 +143,21 @@ async function renderPage() {
 describe("ProfilePage (currency-locked wiring)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetCurrentUser.mockResolvedValue(makeUser());
     mockGetProfile.mockResolvedValue(makeUser());
     mockGetPhonePrefixes.mockResolvedValue([]);
     mockGetMyOrgRole.mockResolvedValue(null);
-    mockGetSubscription.mockResolvedValue(null);
+    mockGetSubscriptions.mockResolvedValue([]);
   });
 
-  it("calls getSubscription once per render to compute the lock flag", async () => {
+  it("calls getSubscriptions once per render to compute the lock flag", async () => {
     await renderPage();
 
-    expect(mockGetSubscription).toHaveBeenCalledTimes(1);
+    expect(mockGetSubscriptions).toHaveBeenCalledTimes(1);
   });
 
-  it("passes currencyLocked=false to ProfileForm when there is no active subscription", async () => {
-    mockGetSubscription.mockResolvedValue(null);
+  it("passes currencyLocked=false to ProfileForm when there are no subscriptions", async () => {
+    mockGetSubscriptions.mockResolvedValue([]);
 
     const { getByTestId } = await renderPage();
 
@@ -163,8 +170,8 @@ describe("ProfilePage (currency-locked wiring)", () => {
     );
   });
 
-  it("passes currencyLocked=true to ProfileForm when the user has an active subscription (Stripe customer exists)", async () => {
-    mockGetSubscription.mockResolvedValue(makeSub());
+  it("passes currencyLocked=true to ProfileForm when the user has any active subscription", async () => {
+    mockGetSubscriptions.mockResolvedValue([makeSub()]);
 
     const { getByTestId } = await renderPage();
 
@@ -181,9 +188,9 @@ describe("ProfilePage (currency-locked wiring)", () => {
     // Even cancelled subs imply a Stripe customer exists, which is what
     // really locks the billing currency. The page comment makes this
     // explicit — don't regress to a status-based check.
-    mockGetSubscription.mockResolvedValue(
+    mockGetSubscriptions.mockResolvedValue([
       makeSub({ status: "canceled", canceledAt: "2026-04-01T00:00:00Z" }),
-    );
+    ]);
 
     const { getByTestId } = await renderPage();
 
