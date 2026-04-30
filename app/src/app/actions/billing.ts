@@ -85,12 +85,17 @@ export async function startProductCheckout(
   const productPriceId = getString(formData, "productPriceId");
   if (!productPriceId) return fail("invalid_input");
 
+  // Optional — only the rule-5b case (org owner with both subs) sends one;
+  // everyone else lets the backend default route by account type.
+  const context = parseContext(formData);
+
   let url: string;
   try {
     const session = await productGateway.createCheckoutSession({
       productPriceId,
       successUrl: `${APP_ORIGIN}/subscription?status=success`,
       cancelUrl: `${APP_ORIGIN}/subscription`,
+      ...(context ? { context } : {}),
     });
     assertTrustedRedirect(session.url);
     url = session.url;

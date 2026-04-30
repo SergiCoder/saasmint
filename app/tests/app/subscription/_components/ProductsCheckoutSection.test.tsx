@@ -1,0 +1,100 @@
+import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import type { Product } from "@/domain/models/Product";
+
+// Stub the server action — the section wraps `startProductCheckout` for each
+// CTA. We don't care about its behaviour here, just that the form forwards
+// the picker selection as `context` when the picker is shown.
+vi.mock("@/app/actions/billing", () => ({
+  startProductCheckout: vi.fn(),
+}));
+
+import { ProductsCheckoutSection } from "@/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection";
+
+const product: Product = {
+  id: "prod1",
+  name: "200 Credits",
+  type: "one_time",
+  credits: 200,
+  price: { id: "pp1", amount: 1999, displayAmount: 19.99, currency: "usd" },
+};
+
+const baseProps = {
+  title: "Credit packs",
+  products: [product],
+  creditsLabel: "credits",
+  buyLabel: "Buy",
+  locale: "en",
+  pickerLabel: "Buy credits for",
+  personalOptionLabel: "My personal account",
+  teamOptionLabel: "Team Acme",
+};
+
+describe("ProductsCheckoutSection", () => {
+  it("does not render the picker when showPicker=false", () => {
+    render(<ProductsCheckoutSection {...baseProps} showPicker={false} />);
+
+    expect(screen.queryByText("Buy credits for")).not.toBeInTheDocument();
+    expect(screen.queryByText("My personal account")).not.toBeInTheDocument();
+    expect(screen.queryByText("Team Acme")).not.toBeInTheDocument();
+  });
+
+  it("does not forward a context hidden input when showPicker=false", () => {
+    // Without the picker, the section must let the backend's account-type
+    // default route the request (no `context` query param).
+    const { container } = render(
+      <ProductsCheckoutSection {...baseProps} showPicker={false} />,
+    );
+
+    expect(
+      container.querySelector('input[type="hidden"][name="context"]'),
+    ).toBeNull();
+  });
+
+  it("renders the picker with both options when showPicker=true", () => {
+    render(<ProductsCheckoutSection {...baseProps} showPicker={true} />);
+
+    expect(screen.getByText("Buy credits for")).toBeInTheDocument();
+    expect(screen.getByLabelText("My personal account")).toBeInTheDocument();
+    expect(screen.getByLabelText("Team Acme")).toBeInTheDocument();
+  });
+
+  it("defaults the picker to team to match the backend's org-member default", () => {
+    const { container } = render(
+      <ProductsCheckoutSection {...baseProps} showPicker={true} />,
+    );
+
+    const teamRadio = screen.getByLabelText("Team Acme") as HTMLInputElement;
+    expect(teamRadio.checked).toBe(true);
+
+    const ctx = container.querySelector(
+      'input[type="hidden"][name="context"]',
+    ) as HTMLInputElement | null;
+    expect(ctx?.value).toBe("team");
+  });
+
+  it("updates the hidden context input when the user selects personal", () => {
+    const { container } = render(
+      <ProductsCheckoutSection {...baseProps} showPicker={true} />,
+    );
+
+    fireEvent.click(screen.getByLabelText("My personal account"));
+
+    const ctx = container.querySelector(
+      'input[type="hidden"][name="context"]',
+    ) as HTMLInputElement | null;
+    expect(ctx?.value).toBe("personal");
+  });
+
+  it("renders nothing when there are no products", () => {
+    const { container } = render(
+      <ProductsCheckoutSection
+        {...baseProps}
+        products={[]}
+        showPicker={true}
+      />,
+    );
+
+    expect(container).toBeEmptyDOMElement();
+  });
+});

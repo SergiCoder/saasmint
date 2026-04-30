@@ -29,6 +29,12 @@ export interface SubscriptionPageData {
    */
   canManageById: Record<string, boolean>;
   teamOwnerName: string | null;
+  /**
+   * Whether the caller is the owner of their (first) org. Drives the rule-5b
+   * product-checkout picker — only org owners with concurrent personal+team
+   * subs need to disambiguate which Stripe customer to charge.
+   */
+  isCurrentUserOrgOwner: boolean;
 }
 
 /**
@@ -63,24 +69,34 @@ export async function getSubscriptionPageData(
     ...(team ? [team] : []),
   ];
 
-  // Resolve canManage flags and the team owner's name in parallel — they
-  // both reach for the same React-cached getOrgMembers(firstOrg.id) call,
-  // so running them concurrently lets the second one short-circuit on the
-  // shared cache entry instead of waiting for the first to finish.
+  // Resolve canManage flags, the team owner's name, and the caller's own
+  // role in parallel — they all reach for the same React-cached
+  // getOrgMembers(firstOrg.id) call, so running them concurrently lets the
+  // later ones short-circuit on the shared cache entry instead of waiting
+  // for the first to finish.
   const firstOrg = userOrgs.at(0);
-  const [canManageEntries, teamOwnerName] = await Promise.all([
-    Promise.all(
-      subscriptions.map(
-        async (s) => [s.id, await canManageBilling(user, s)] as const,
+  const orgMembersPromise = firstOrg
+    ? getOrgMembers(firstOrg.id)
+    : Promise.resolve([]);
+  const [canManageEntries, teamOwnerName, isCurrentUserOrgOwner] =
+    await Promise.all([
+      Promise.all(
+        subscriptions.map(
+          async (s) => [s.id, await canManageBilling(user, s)] as const,
+        ),
       ),
-    ),
-    (async (): Promise<string | null> => {
-      if (!team || !firstOrg) return null;
-      const members = await getOrgMembers(firstOrg.id);
-      const owner = members.find((m) => m.role === "owner");
-      return owner?.user.fullName ?? null;
-    })(),
-  ]);
+      (async (): Promise<string | null> => {
+        if (!team || !firstOrg) return null;
+        const members = await orgMembersPromise;
+        const owner = members.find((m) => m.role === "owner");
+        return owner?.user.fullName ?? null;
+      })(),
+      (async (): Promise<boolean> => {
+        if (!firstOrg) return false;
+        const members = await orgMembersPromise;
+        return members.some((m) => m.user.id === user.id && m.role === "owner");
+      })(),
+    ]);
   const canManageById = Object.fromEntries(canManageEntries);
 
   return {
@@ -90,5 +106,6 @@ export async function getSubscriptionPageData(
     userOrgs,
     canManageById,
     teamOwnerName,
+    isCurrentUserOrgOwner,
   };
 }

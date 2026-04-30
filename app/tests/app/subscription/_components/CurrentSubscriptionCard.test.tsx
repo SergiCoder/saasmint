@@ -169,6 +169,7 @@ function makeSub(overrides: Partial<Subscription> = {}): Subscription {
     trialEndsAt: null,
     currentPeriodStart: "2026-01-01T00:00:00Z",
     currentPeriodEnd: "2026-02-01T00:00:00Z",
+    cancelAt: null,
     canceledAt: null,
     createdAt: "2026-01-01T00:00:00Z",
     ...overrides,
@@ -214,21 +215,79 @@ describe("CurrentSubscriptionCard", () => {
     expect(screen.queryByTestId("resume")).not.toBeInTheDocument();
   });
 
-  it("renders the Resume button instead of Cancel when the sub is canceling", async () => {
+  it("renders the Resume button and 'Cancels on' for an active sub scheduled to cancel", async () => {
+    // Backend mirrors Stripe's `cancel_at` (Dahlia field): set the moment the
+    // user clicks cancel-renewal, cleared on resume. While `status === "active"`
+    // and `cancelAt !== null` we render the cancel-date row, the cancellation
+    // notice, and the Resume action — `canceledAt` only flips when the sub
+    // has actually ended.
     await renderCard({
-      subscription: makeSub({ canceledAt: "2026-01-15T00:00:00Z" }),
+      subscription: makeSub({ cancelAt: "2026-02-01T00:00:00Z" }),
       locale: "en",
       planName: "Pro",
       canManage: true,
       teamOwnerName: null,
     });
 
+    expect(screen.getByTestId("period-end-iso")).toHaveTextContent(
+      "2026-02-01T00:00:00.000Z",
+    );
+    expect(screen.getByTestId("period-end-label")).toHaveTextContent(
+      "cancelsOn",
+    );
     expect(screen.getByTestId("cancel-at-period-end")).toHaveTextContent(
       "true",
     );
-    expect(screen.getByTestId("period-end-label")).toHaveTextContent("endsOn");
     expect(screen.getByTestId("resume")).toBeInTheDocument();
     expect(screen.queryByTestId("cancel-renewal")).not.toBeInTheDocument();
+  });
+
+  it("renders 'Ends on' with the canceledAt date and no manage actions for a fully-canceled sub", async () => {
+    // Once the sub has actually ended (status === "canceled"), Resume is no
+    // longer valid (Stripe rejects it on a closed sub) and Cancel-renewal is
+    // moot. The card just shows when it ended.
+    await renderCard({
+      subscription: makeSub({
+        status: "canceled",
+        cancelAt: null,
+        canceledAt: "2026-02-01T00:00:00Z",
+      }),
+      locale: "en",
+      planName: "Pro",
+      canManage: true,
+      teamOwnerName: null,
+    });
+
+    expect(screen.getByTestId("period-end-iso")).toHaveTextContent(
+      "2026-02-01T00:00:00.000Z",
+    );
+    expect(screen.getByTestId("period-end-label")).toHaveTextContent("endsOn");
+    expect(screen.getByTestId("cancel-at-period-end")).toHaveTextContent(
+      "false",
+    );
+    expect(screen.queryByTestId("resume")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("cancel-renewal")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("billing-portal")).not.toBeInTheDocument();
+  });
+
+  it("uses cancelAt for the date row even when it differs from currentPeriodEnd", async () => {
+    // Stripe Dahlia ships `cancel_at` independently of `current_period_end`,
+    // so we display the actual scheduled cutover instead of the period-end
+    // proxy that the old heuristic relied on.
+    await renderCard({
+      subscription: makeSub({
+        cancelAt: "2026-03-15T00:00:00Z",
+        currentPeriodEnd: "2026-04-01T00:00:00Z",
+      }),
+      locale: "en",
+      planName: "Pro",
+      canManage: true,
+      teamOwnerName: null,
+    });
+
+    expect(screen.getByTestId("period-end-iso")).toHaveTextContent(
+      "2026-03-15T00:00:00.000Z",
+    );
   });
 
   it("omits period-end details when currentPeriodEnd is an unparseable string", async () => {
@@ -518,7 +577,7 @@ describe("CurrentSubscriptionCard", () => {
       );
     });
 
-    it("pins context on the resume button when concurrent and canceling", async () => {
+    it("pins context on the resume button when concurrent and scheduled to cancel", async () => {
       await renderCard({
         subscription: makeSub({
           plan: {
@@ -530,7 +589,7 @@ describe("CurrentSubscriptionCard", () => {
             interval: "month",
             price: null,
           },
-          canceledAt: "2026-01-15T00:00:00Z",
+          cancelAt: "2026-01-15T00:00:00Z",
         }),
         locale: "en",
         planName: "Team Pro",

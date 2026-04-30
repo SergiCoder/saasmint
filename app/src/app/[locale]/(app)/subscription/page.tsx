@@ -3,14 +3,14 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getCurrentUser } from "../_data/getCurrentUser";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
-import { ProductsGrid } from "@/presentation/components/organisms/ProductsGrid";
 import { CheckoutButton } from "./_components/CheckoutButton";
 import { TeamCheckoutButton } from "./_components/TeamCheckoutButton";
 import { CurrentSubscriptionCard } from "./_components/CurrentSubscriptionCard";
 import { CreditBalanceCard } from "./_components/CreditBalanceCard";
 import { FreePlanCard } from "./_components/FreePlanCard";
-import { startCheckout, startProductCheckout } from "@/app/actions/billing";
-import { getCreditBalance } from "../_data/getCreditBalance";
+import { ProductsCheckoutSection } from "./_components/ProductsCheckoutSection";
+import { startCheckout } from "@/app/actions/billing";
+import { getCreditBalances } from "../_data/getCreditBalances";
 import { getSubscriptionPageData } from "./_data/getSubscriptionPageData";
 import {
   buildPlanCardGroups,
@@ -53,19 +53,19 @@ export default async function BillingPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  // Kick off `getCreditBalance` in stage 1 — it doesn't depend on the user
+  // Kick off `getCreditBalances` in stage 1 — it doesn't depend on the user
   // object, so chaining it behind `getSubscriptionPageData(user)` would burn
   // an unnecessary RTT on the critical path. `getSubscriptionPageData` still
   // chains off the user fetch because it needs `user.preferredCurrency`.
   const userPromise = getCurrentUser();
-  const [t, tPlans, tProducts, user, query, creditBalance, pageData] =
+  const [t, tPlans, tProducts, user, query, creditBalances, pageData] =
     await Promise.all([
       getTranslations("billing"),
       getTranslations("plans"),
       getTranslations("products"),
       userPromise,
       searchParams,
-      getCreditBalance(),
+      getCreditBalances(),
       userPromise.then((u) => getSubscriptionPageData(u)),
     ]);
   const {
@@ -75,6 +75,7 @@ export default async function BillingPage({
     userOrgs,
     canManageById,
     teamOwnerName,
+    isCurrentUserOrgOwner,
   } = pageData;
 
   const hasOrg = userOrgs.length > 0;
@@ -192,23 +193,32 @@ export default async function BillingPage({
         </div>
       )}
 
-      {creditBalance && (
-        <CreditBalanceCard
-          eyebrowLabel={t("creditBalanceLabel")}
-          balance={creditBalance.balance}
-          unitLabel={t("credits")}
-          description={t(
-            creditBalance.scope === "org"
-              ? "creditBalanceOrgDescription"
-              : "creditBalancePersonalDescription",
-          )}
-          scopeBadge={t(
-            creditBalance.scope === "org"
-              ? "creditBalanceOrgBadge"
-              : "creditBalancePersonalBadge",
-          )}
-          locale={locale}
-        />
+      {creditBalances.length > 0 && (
+        // Trust backend ordering: it returns rows in the order it wants them
+        // displayed (org-first for ORG_MEMBER upgraders per rule 16). Plain
+        // personal/org labels stay accurate regardless of why both rows
+        // appear, so we don't second-guess scope semantics in the client.
+        <div className="space-y-4">
+          {creditBalances.map((b) => (
+            <CreditBalanceCard
+              key={b.scope}
+              eyebrowLabel={t("creditBalanceLabel")}
+              balance={b.balance}
+              unitLabel={t("credits")}
+              description={t(
+                b.scope === "org"
+                  ? "creditBalanceOrgDescription"
+                  : "creditBalancePersonalDescription",
+              )}
+              scopeBadge={t(
+                b.scope === "org"
+                  ? "creditBalanceOrgBadge"
+                  : "creditBalancePersonalBadge",
+              )}
+              locale={locale}
+            />
+          ))}
+        </div>
       )}
 
       {isTeamSubscription && !teamCanManage && !personalSubscription ? (
@@ -250,22 +260,22 @@ export default async function BillingPage({
         </>
       )}
 
-      <ProductsGrid
+      <ProductsCheckoutSection
         title={t("products")}
         products={products}
         productNames={buildProductTranslations(products, tProducts)}
         creditsLabel={t("credits")}
+        buyLabel={t("buy")}
         locale={locale}
-        renderCta={(product) =>
-          product.price && (
-            <CheckoutButton
-              action={startProductCheckout}
-              field={{ name: "productPriceId", value: product.price.id }}
-            >
-              {t("buy")}
-            </CheckoutButton>
-          )
-        }
+        // Picker is only shown for the rule-5b case: an org owner who kept
+        // their personal subscription alongside the team plan and therefore
+        // has two Stripe customers the credits could land on.
+        showPicker={isCurrentUserOrgOwner && isConcurrent}
+        pickerLabel={t("productCheckoutContextLabel")}
+        personalOptionLabel={t("productCheckoutContextPersonal")}
+        teamOptionLabel={t("productCheckoutContextTeam", {
+          orgName: userOrgs.at(0)?.name ?? "",
+        })}
       />
     </div>
   );

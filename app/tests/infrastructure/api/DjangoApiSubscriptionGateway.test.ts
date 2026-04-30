@@ -34,6 +34,7 @@ const samplePersonalRow = {
   trial_ends_at: null,
   current_period_start: "2024-01-01T00:00:00Z",
   current_period_end: "2024-02-01T00:00:00Z",
+  cancel_at: null,
   canceled_at: null,
   created_at: "2024-01-01T00:00:00Z",
 };
@@ -54,6 +55,7 @@ const sampleTeamRow = {
   trial_ends_at: null,
   current_period_start: "2024-01-01T00:00:00Z",
   current_period_end: "2024-02-01T00:00:00Z",
+  cancel_at: null,
   canceled_at: null,
   created_at: "2024-01-01T00:00:00Z",
 };
@@ -74,6 +76,7 @@ const expectedPersonal = {
   trialEndsAt: null,
   currentPeriodStart: "2024-01-01T00:00:00Z",
   currentPeriodEnd: "2024-02-01T00:00:00Z",
+  cancelAt: null,
   canceledAt: null,
   createdAt: "2024-01-01T00:00:00Z",
 };
@@ -248,9 +251,7 @@ describe("DjangoApiSubscriptionGateway", () => {
       // RPC payload is untrusted: a malicious caller could try to inject path
       // characters or extra params. The gateway whitelist must drop anything
       // that isn't exactly "personal" or "team".
-      await gateway.cancelSubscription(
-        "team&admin=1" as unknown as "team",
-      );
+      await gateway.cancelSubscription("team&admin=1" as unknown as "team");
 
       expect(mockApiFetchVoid).toHaveBeenCalledWith(
         "/billing/subscriptions/me/",

@@ -5,7 +5,9 @@ import {
   type Subscription,
 } from "@/domain/models/Subscription";
 
-function makeSub(overrides: Partial<Subscription> & { id: string }): Subscription {
+function makeSub(
+  overrides: Partial<Subscription> & { id: string },
+): Subscription {
   return {
     id: overrides.id,
     status: overrides.status ?? "active",
@@ -20,9 +22,9 @@ function makeSub(overrides: Partial<Subscription> & { id: string }): Subscriptio
     },
     quantity: overrides.quantity ?? 1,
     trialEndsAt: overrides.trialEndsAt ?? null,
-    currentPeriodStart:
-      overrides.currentPeriodStart ?? "2026-01-01T00:00:00Z",
+    currentPeriodStart: overrides.currentPeriodStart ?? "2026-01-01T00:00:00Z",
     currentPeriodEnd: overrides.currentPeriodEnd ?? "2026-02-01T00:00:00Z",
+    cancelAt: overrides.cancelAt ?? null,
     canceledAt: overrides.canceledAt ?? null,
     createdAt: overrides.createdAt ?? "2026-01-01T00:00:00Z",
   };

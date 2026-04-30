@@ -21,6 +21,13 @@ export interface Subscription {
   readonly trialEndsAt: string | null;
   readonly currentPeriodStart: string;
   readonly currentPeriodEnd: string;
+  /**
+   * Scheduled cutover for a "cancel at period end" — set the moment the
+   * caller hits cancel-renewal, cleared if they resume. Distinct from
+   * `canceledAt`, which only flips when the sub has actually ended. An
+   * active sub with `cancelAt !== null` is the "scheduled to cancel" state.
+   */
+  readonly cancelAt: string | null;
   readonly canceledAt: string | null;
   readonly createdAt: string;
 }

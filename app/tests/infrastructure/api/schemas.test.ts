@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
+  CreditBalanceListResponseSchema,
+  CreditBalanceSchema,
   InvitationSchema,
   OrgMemberSchema,
   OrgSchema,
@@ -106,6 +108,7 @@ const validSubscription = {
   trialEndsAt: null,
   currentPeriodStart: "2024-01-01T00:00:00Z",
   currentPeriodEnd: "2024-02-01T00:00:00Z",
+  cancelAt: null,
   canceledAt: null,
   createdAt: "2024-01-01T00:00:00Z",
 };
@@ -339,6 +342,113 @@ describe("SubscriptionSchema", () => {
         ...validSubscription,
         plan: { ...validPlan, tier: 99 },
       }),
+    ).toThrow();
+  });
+
+  it("accepts a non-null cancelAt timestamp (scheduled-to-cancel state)", () => {
+    // Backend mirrors Stripe's `cancel_at` (Dahlia field): set the moment the
+    // user clicks cancel-renewal. Schema must round-trip the ISO string so the
+    // CurrentSubscriptionCard can render the "Cancels on" date row.
+    const parsed = SubscriptionSchema.parse({
+      ...validSubscription,
+      cancelAt: "2026-03-15T00:00:00Z",
+    });
+    expect(parsed.cancelAt).toBe("2026-03-15T00:00:00Z");
+  });
+
+  it("rejects when cancelAt is not a string or null", () => {
+    expect(() =>
+      SubscriptionSchema.parse({ ...validSubscription, cancelAt: 123 }),
+    ).toThrow();
+  });
+
+  it("rejects when cancelAt is missing entirely (required field)", () => {
+    const { cancelAt: _drop, ...withoutCancelAt } = validSubscription;
+    expect(() => SubscriptionSchema.parse(withoutCancelAt)).toThrow();
+  });
+});
+
+describe("CreditBalanceSchema", () => {
+  it("accepts a valid user-scoped balance", () => {
+    expect(CreditBalanceSchema.parse({ balance: 142, scope: "user" })).toEqual({
+      balance: 142,
+      scope: "user",
+    });
+  });
+
+  it("accepts a zero balance", () => {
+    expect(() =>
+      CreditBalanceSchema.parse({ balance: 0, scope: "org" }),
+    ).not.toThrow();
+  });
+
+  it("rejects negative balances (DB has a non-negative constraint)", () => {
+    expect(() =>
+      CreditBalanceSchema.parse({ balance: -1, scope: "user" }),
+    ).toThrow();
+  });
+
+  it("rejects non-integer balances", () => {
+    expect(() =>
+      CreditBalanceSchema.parse({ balance: 1.5, scope: "user" }),
+    ).toThrow();
+  });
+
+  it("rejects an unknown scope value", () => {
+    expect(() =>
+      CreditBalanceSchema.parse({ balance: 10, scope: "global" }),
+    ).toThrow();
+  });
+
+  it("rejects when balance is not a number", () => {
+    expect(() =>
+      CreditBalanceSchema.parse({ balance: "10", scope: "user" }),
+    ).toThrow();
+  });
+});
+
+describe("CreditBalanceListResponseSchema", () => {
+  it("accepts an empty list (free-tier user)", () => {
+    expect(() =>
+      CreditBalanceListResponseSchema.parse({ balances: [] }),
+    ).not.toThrow();
+  });
+
+  it("accepts a single-row envelope", () => {
+    const parsed = CreditBalanceListResponseSchema.parse({
+      balances: [{ balance: 50, scope: "user" }],
+    });
+    expect(parsed.balances).toHaveLength(1);
+    expect(parsed.balances[0]).toEqual({ balance: 50, scope: "user" });
+  });
+
+  it("accepts a two-row envelope (concurrent personal+team — rule 5)", () => {
+    const parsed = CreditBalanceListResponseSchema.parse({
+      balances: [
+        { balance: 500, scope: "org" },
+        { balance: 75, scope: "user" },
+      ],
+    });
+    expect(parsed.balances.map((b) => b.scope)).toEqual(["org", "user"]);
+  });
+
+  it("rejects when balances is missing", () => {
+    expect(() => CreditBalanceListResponseSchema.parse({})).toThrow();
+  });
+
+  it("rejects when a row in balances fails CreditBalanceSchema validation", () => {
+    expect(() =>
+      CreditBalanceListResponseSchema.parse({
+        balances: [{ balance: -1, scope: "user" }],
+      }),
+    ).toThrow();
+  });
+
+  it("rejects a flat (un-enveloped) balance object", () => {
+    // Pre-refactor shape — the gateway must NOT silently accept a single
+    // object that wasn't wrapped in `{ balances: [...] }`.
+    expect(() =>
+      CreditBalanceListResponseSchema.parse({ balance: 50, scope: "user" }),
     ).toThrow();
   });
 });

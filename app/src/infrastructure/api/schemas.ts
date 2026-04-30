@@ -127,6 +127,7 @@ export const SubscriptionSchema = z.object({
   trialEndsAt: nullableString,
   currentPeriodStart: z.string(),
   currentPeriodEnd: z.string(),
+  cancelAt: nullableString,
   canceledAt: nullableString,
   createdAt: z.string(),
 }) satisfies z.ZodType<Subscription>;
@@ -153,6 +154,15 @@ export const CreditBalanceSchema = z.object({
   balance: z.number().int().nonnegative(),
   scope: z.enum(["user", "org"]),
 }) satisfies z.ZodType<CreditBalance>;
+
+/**
+ * Envelope returned by `GET /billing/credits/me/`. Holds 0–2 rows: free-tier
+ * users get `[]`, single-context users get one row, and concurrent
+ * personal+team billers (rule 5) get both — one `user`-scoped, one `org`-scoped.
+ */
+export const CreditBalanceListResponseSchema = z.object({
+  balances: z.array(CreditBalanceSchema),
+});
 
 /**
  * Envelope returned by Stripe-session-creating endpoints (plan checkout,

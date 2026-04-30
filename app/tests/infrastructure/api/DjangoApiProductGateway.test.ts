@@ -92,6 +92,55 @@ describe("DjangoApiProductGateway", () => {
       expect(result).toEqual({ url: "https://checkout.stripe.com/x" });
     });
 
+    it("appends ?context=team when a team context is supplied (rule 5b)", async () => {
+      mockApiFetch.mockResolvedValue({ url: "https://checkout.stripe.com/y" });
+
+      await gateway.createCheckoutSession({
+        productPriceId: "pp1",
+        successUrl: "https://app.example.com/subscription?status=success",
+        cancelUrl: "https://app.example.com/subscription",
+        context: "team",
+      });
+
+      const [endpoint, init] = mockApiFetch.mock.calls[0] as [string, unknown];
+      expect(endpoint).toBe("/billing/product-checkout-sessions/?context=team");
+      // `context` must NOT appear in the JSON body — it's a query string only.
+      const body = (init as { body: string }).body;
+      expect(body).not.toContain("context");
+    });
+
+    it("appends ?context=personal when a personal context is supplied", async () => {
+      mockApiFetch.mockResolvedValue({ url: "https://checkout.stripe.com/z" });
+
+      await gateway.createCheckoutSession({
+        productPriceId: "pp1",
+        successUrl: "https://app.example.com/subscription?status=success",
+        cancelUrl: "https://app.example.com/subscription",
+        context: "personal",
+      });
+
+      const [endpoint] = mockApiFetch.mock.calls[0] as [string, unknown];
+      expect(endpoint).toBe(
+        "/billing/product-checkout-sessions/?context=personal",
+      );
+    });
+
+    it("drops a tampered context value rather than appending it to the URL", async () => {
+      // Defense-in-depth: even though the type narrows to a literal union,
+      // server actions hand untrusted RPC arguments to this gateway.
+      mockApiFetch.mockResolvedValue({ url: "https://checkout.stripe.com/q" });
+
+      await gateway.createCheckoutSession({
+        productPriceId: "pp1",
+        successUrl: "https://app.example.com/subscription?status=success",
+        cancelUrl: "https://app.example.com/subscription",
+        context: "team&admin=1" as unknown as "team",
+      });
+
+      const [endpoint] = mockApiFetch.mock.calls[0] as [string, unknown];
+      expect(endpoint).toBe("/billing/product-checkout-sessions/");
+    });
+
     it("propagates errors from apiFetch (e.g. 403 for non-owner team members)", async () => {
       mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
 

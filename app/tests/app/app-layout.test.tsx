@@ -168,6 +168,7 @@ function makeTeamSubscription(): Subscription {
     currentPeriodStart: "2025-01-01T00:00:00Z",
     currentPeriodEnd: "2025-02-01T00:00:00Z",
     trialEndsAt: null,
+    cancelAt: null,
     canceledAt: null,
     createdAt: "2025-01-01T00:00:00Z",
   };

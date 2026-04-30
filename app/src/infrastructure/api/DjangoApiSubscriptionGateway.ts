@@ -7,19 +7,11 @@ import type {
 import type { Subscription } from "@/domain/models/Subscription";
 import { apiFetch, apiFetchVoid } from "./apiClient";
 import { applyPriceDefaults, keysToCamel, keysToSnake } from "./caseTransform";
+import { contextQuery } from "./contextQuery";
 import {
   CheckoutSessionResponseSchema,
   SubscriptionListResponseSchema,
 } from "./schemas";
-
-function contextQuery(context: SubscriptionContext | undefined): string {
-  // Defense-in-depth: even though the type narrows to a literal union, server
-  // actions hand untrusted RPC arguments to this gateway. Only emit the query
-  // for values that exactly match the whitelist; drop anything else silently
-  // so a tampered payload can't inject extra params or path characters.
-  if (context !== "personal" && context !== "team") return "";
-  return `?context=${context}`;
-}
 
 export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
   async listSubscriptions(currency?: string): Promise<Subscription[]> {

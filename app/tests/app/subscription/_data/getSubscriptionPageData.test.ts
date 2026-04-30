@@ -103,9 +103,56 @@ describe("getSubscriptionPageData", () => {
       userOrgs: [],
       canManageById: {},
       teamOwnerName: null,
+      isCurrentUserOrgOwner: false,
     });
     expect(mockCanManageBilling).not.toHaveBeenCalled();
     expect(mockGetOrgMembers).not.toHaveBeenCalled();
+  });
+
+  describe("isCurrentUserOrgOwner", () => {
+    // Drives the rule-5b product-checkout picker. Must be true only when the
+    // caller is the owner of their first org — admins/members get the same
+    // routing as personal users (always personal context).
+    it("returns true when the caller is the owner of the first org", async () => {
+      mockGetSubscriptions.mockResolvedValue([]);
+      mockListPlans.mockResolvedValue([]);
+      mockListProducts.mockResolvedValue([]);
+      mockGetUserOrgs.mockResolvedValue([{ id: "org_1" }]);
+      mockGetOrgMembers.mockResolvedValue([
+        { user: { id: "u1", fullName: "User One" }, role: "owner" },
+      ]);
+
+      const data = await getSubscriptionPageData(makeUser({ id: "u1" }));
+
+      expect(data.isCurrentUserOrgOwner).toBe(true);
+    });
+
+    it("returns false when the caller is an admin (not owner)", async () => {
+      mockGetSubscriptions.mockResolvedValue([]);
+      mockListPlans.mockResolvedValue([]);
+      mockListProducts.mockResolvedValue([]);
+      mockGetUserOrgs.mockResolvedValue([{ id: "org_1" }]);
+      mockGetOrgMembers.mockResolvedValue([
+        { user: { id: "u1", fullName: "User One" }, role: "admin" },
+        { user: { id: "owner", fullName: "Alice Owner" }, role: "owner" },
+      ]);
+
+      const data = await getSubscriptionPageData(makeUser({ id: "u1" }));
+
+      expect(data.isCurrentUserOrgOwner).toBe(false);
+    });
+
+    it("returns false when the caller has no org", async () => {
+      mockGetSubscriptions.mockResolvedValue([]);
+      mockListPlans.mockResolvedValue([]);
+      mockListProducts.mockResolvedValue([]);
+      mockGetUserOrgs.mockResolvedValue([]);
+
+      const data = await getSubscriptionPageData(makeUser());
+
+      expect(data.isCurrentUserOrgOwner).toBe(false);
+      expect(mockGetOrgMembers).not.toHaveBeenCalled();
+    });
   });
 
   it("returns plans=[] and logs when planGateway.listPlans rejects", async () => {
@@ -211,17 +258,20 @@ describe("getSubscriptionPageData", () => {
     expect(data.teamOwnerName).toBeNull();
   });
 
-  it("does not look up org members when only a personal sub is present", async () => {
+  it("leaves teamOwnerName null when only a personal sub is present (no team)", async () => {
+    // We still resolve org members because the caller's role drives the
+    // isCurrentUserOrgOwner flag — but `teamOwnerName` is only computed when
+    // a team sub is also present, since it labels the team-sub card.
     const subscription = { id: "sub_p", plan: personalPlan };
     mockGetSubscriptions.mockResolvedValue([subscription]);
     mockListPlans.mockResolvedValue([]);
     mockListProducts.mockResolvedValue([]);
     mockGetUserOrgs.mockResolvedValue([{ id: "org_1" }]);
+    mockGetOrgMembers.mockResolvedValue([]);
     mockCanManageBilling.mockResolvedValue(true);
 
     const data = await getSubscriptionPageData(makeUser());
 
-    expect(mockGetOrgMembers).not.toHaveBeenCalled();
     expect(data.teamOwnerName).toBeNull();
   });
 

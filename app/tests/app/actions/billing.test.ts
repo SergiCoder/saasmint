@@ -307,6 +307,46 @@ describe("billing server actions", () => {
       expect(result).toEqual({ ok: false, code: "unknown_error" });
       expect(mockRedirect).not.toHaveBeenCalled();
     });
+
+    it("forwards a valid context to the gateway when one is supplied (rule 5b)", async () => {
+      mockCreateProductCheckoutSession.mockResolvedValue({
+        url: "https://checkout.stripe.com/product_team",
+      });
+
+      const formData = new FormData();
+      formData.set("productPriceId", "price_credits_200");
+      formData.set("context", "team");
+
+      await expect(startProductCheckout(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockCreateProductCheckoutSession).toHaveBeenCalledWith({
+        productPriceId: "price_credits_200",
+        successUrl: `${APP_URL}/subscription?status=success`,
+        cancelUrl: `${APP_URL}/subscription`,
+        context: "team",
+      });
+    });
+
+    it("drops a tampered context value rather than forwarding it", async () => {
+      // RPC payload is untrusted: anything outside the literal whitelist must
+      // be filtered before reaching the gateway, so a malicious caller can't
+      // inject extra params or path characters via ?context=.
+      mockCreateProductCheckoutSession.mockResolvedValue({
+        url: "https://checkout.stripe.com/product_default",
+      });
+
+      const formData = new FormData();
+      formData.set("productPriceId", "price_credits_200");
+      formData.set("context", "../admin");
+
+      await expect(startProductCheckout(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      const call = mockCreateProductCheckoutSession.mock.calls[0]?.[0];
+      expect(call).toBeDefined();
+      expect(call).not.toHaveProperty("context");
+    });
   });
 
   describe("openBillingPortal", () => {
@@ -442,9 +482,7 @@ describe("billing server actions", () => {
       mockCanManageBilling.mockResolvedValue(true);
       mockCancelSubscription.mockResolvedValue(undefined);
 
-      const result = await cancelRenewal(
-        "../admin" as unknown as "personal",
-      );
+      const result = await cancelRenewal("../admin" as unknown as "personal");
 
       expect(mockCancelSubscription).toHaveBeenCalledWith(undefined);
       expect(result.ok).toBe(true);
@@ -487,9 +525,7 @@ describe("billing server actions", () => {
       mockListSubscriptions.mockResolvedValue([personalSub, teamSub]);
       mockCanManageBilling.mockResolvedValue(true);
 
-      const result = await cancelRenewal(
-        "../admin" as unknown as "personal",
-      );
+      const result = await cancelRenewal("../admin" as unknown as "personal");
 
       expect(result).toEqual({ ok: false, code: "context_required" });
       expect(mockCancelSubscription).not.toHaveBeenCalled();

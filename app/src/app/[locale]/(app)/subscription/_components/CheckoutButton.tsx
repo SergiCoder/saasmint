@@ -20,6 +20,12 @@ interface CheckoutButtonProps {
    * the plan-checkout endpoint.
    */
   field: { name: string; value: string };
+  /**
+   * Optional `?context=` value forwarded as a hidden form field. Only set in
+   * the rule-5b case (org owner with concurrent personal+team subs) — when
+   * omitted the backend falls back to its account-type default.
+   */
+  context?: "personal" | "team";
   children: React.ReactNode;
   highlighted?: boolean;
 }
@@ -27,6 +33,7 @@ interface CheckoutButtonProps {
 export function CheckoutButton({
   action,
   field,
+  context,
   children,
   highlighted = false,
 }: CheckoutButtonProps) {
@@ -36,6 +43,7 @@ export function CheckoutButton({
   return (
     <form action={formAction}>
       <input type="hidden" name={field.name} value={field.value} />
+      {context && <input type="hidden" name="context" value={context} />}
       {state && !state.ok && (
         <p className="mb-2 text-sm text-red-600">{translateError(state)}</p>
       )}

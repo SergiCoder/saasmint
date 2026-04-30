@@ -16,40 +16,70 @@ beforeEach(() => {
 describe("DjangoApiCreditsGateway", () => {
   const gateway = new DjangoApiCreditsGateway();
 
-  it("fetches /billing/credits/me/ and returns the parsed balance", async () => {
-    mockApiFetch.mockResolvedValue({ balance: 142, scope: "user" });
+  it("fetches /billing/credits/me/ and returns the parsed balances", async () => {
+    mockApiFetch.mockResolvedValue({
+      balances: [{ balance: 142, scope: "user" }],
+    });
 
-    const result = await gateway.getBalance();
+    const result = await gateway.listBalances();
 
     expect(mockApiFetch).toHaveBeenCalledWith("/billing/credits/me/");
-    expect(result).toEqual({ balance: 142, scope: "user" });
+    expect(result).toEqual([{ balance: 142, scope: "user" }]);
   });
 
-  it("accepts an org-scoped balance unchanged", async () => {
-    mockApiFetch.mockResolvedValue({ balance: 9000, scope: "org" });
+  it("returns both rows for concurrent personal+team billers (rule 5)", async () => {
+    mockApiFetch.mockResolvedValue({
+      balances: [
+        { balance: 500, scope: "org" },
+        { balance: 75, scope: "user" },
+      ],
+    });
 
-    const result = await gateway.getBalance();
+    const result = await gateway.listBalances();
 
-    expect(result).toEqual({ balance: 9000, scope: "org" });
+    expect(result).toEqual([
+      { balance: 500, scope: "org" },
+      { balance: 75, scope: "user" },
+    ]);
+  });
+
+  it("returns an empty array when the user has no credits", async () => {
+    mockApiFetch.mockResolvedValue({ balances: [] });
+
+    const result = await gateway.listBalances();
+
+    expect(result).toEqual([]);
   });
 
   it("rejects negative balances at the schema boundary", async () => {
     // The backend has a non-negative DB constraint; if it's ever bypassed,
     // schema validation must catch it before the UI renders garbage.
-    mockApiFetch.mockResolvedValue({ balance: -1, scope: "user" });
+    mockApiFetch.mockResolvedValue({
+      balances: [{ balance: -1, scope: "user" }],
+    });
 
-    await expect(gateway.getBalance()).rejects.toThrow();
+    await expect(gateway.listBalances()).rejects.toThrow();
   });
 
   it("rejects an unknown scope value at the schema boundary", async () => {
-    mockApiFetch.mockResolvedValue({ balance: 0, scope: "global" });
+    mockApiFetch.mockResolvedValue({
+      balances: [{ balance: 0, scope: "global" }],
+    });
 
-    await expect(gateway.getBalance()).rejects.toThrow();
+    await expect(gateway.listBalances()).rejects.toThrow();
+  });
+
+  it("rejects responses missing the balances envelope", async () => {
+    mockApiFetch.mockResolvedValue({ balance: 50, scope: "user" });
+
+    await expect(gateway.listBalances()).rejects.toThrow();
   });
 
   it("propagates errors from apiFetch", async () => {
     mockApiFetch.mockRejectedValue(new Error("API 401: unauthorized"));
 
-    await expect(gateway.getBalance()).rejects.toThrow("API 401: unauthorized");
+    await expect(gateway.listBalances()).rejects.toThrow(
+      "API 401: unauthorized",
+    );
   });
 });
