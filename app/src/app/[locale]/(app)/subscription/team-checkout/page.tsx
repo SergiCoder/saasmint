@@ -54,7 +54,7 @@ export default async function TeamCheckoutPage({
   const showPersonalSubNotice =
     personalSubscription !== null &&
     personalSubscription.status === "active" &&
-    personalSubscription.canceledAt === null;
+    personalSubscription.cancelAt === null;
 
   const personalSubEndDate = showPersonalSubNotice
     ? new Date(personalSubscription.currentPeriodEnd)

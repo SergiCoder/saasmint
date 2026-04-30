@@ -250,9 +250,9 @@ describe("TeamCheckoutPage", () => {
     );
   });
 
-  it("does not pass a personal-sub notice when the personal subscription is already canceling", async () => {
+  it("does not pass a personal-sub notice when the personal subscription is already scheduled to cancel", async () => {
     mockGetSubscriptions.mockResolvedValue([
-      makePersonalSubscription({ canceledAt: "2026-04-15T00:00:00Z" }),
+      makePersonalSubscription({ cancelAt: "2026-05-01T00:00:00Z" }),
     ]);
 
     await renderPage({ plan: "price_team_pro_year" });
