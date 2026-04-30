@@ -29,7 +29,6 @@ export const UserSchema = z.object({
   email: z.string(),
   fullName: z.string(),
   avatarUrl: nullableString,
-  accountType: z.enum(["personal", "org_member"]),
   preferredLocale: z.string(),
   preferredCurrency: z.string(),
   phonePrefix: nullableString,

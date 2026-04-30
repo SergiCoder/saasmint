@@ -356,6 +356,7 @@
     "no_subscription": "Ingen aktivt abonnement",
     "not_authorized": "Du har ikke tillatelse til å utføre denne handlingen",
     "not_billing_member": "Du har ikke tillatelse til å administrere fakturering",
+    "org_already_owned": "Du eier allerede en organisasjon — du kan ikke starte et nytt team-abonnement.",
     "passwords_do_not_match": "Passordene stemmer ikke overens",
     "password_too_short": "Passordet må være minst 10 tegn",
     "profile_load_failed": "Kunne ikke laste profilen",

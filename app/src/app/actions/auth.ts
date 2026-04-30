@@ -160,12 +160,9 @@ export async function signUp(
   const routing = slug ? await resolvePlanRouting(slug) : undefined;
   const paidPlan = routing ? slug : undefined;
   const isTeam = routing?.context === "team";
-  const registerEndpoint = isTeam
-    ? "/auth/register/org-owner/"
-    : "/auth/register/";
 
   try {
-    await publicApiFetch<TokenResponse>(registerEndpoint, {
+    await publicApiFetch<TokenResponse>("/auth/register/", {
       method: "POST",
       body: JSON.stringify({
         email: credentials.email,
@@ -304,19 +301,13 @@ export async function startOAuth(
   }
 
   const safeNext = validateNext(nextPath, APP_URL);
-  const planFromNext = new URL(safeNext, APP_URL).searchParams.get("plan");
-  const routing = isValidPlanSlug(planFromNext)
-    ? await resolvePlanRouting(planFromNext)
-    : undefined;
-
-  const isTeam = routing?.context === "team";
 
   // Login-fixation gate: HttpOnly flag cookie, not a nonce. Accepts a
   // seconds-wide race (victim mid-flow when they click attacker's link);
   // tradeoff debated and accepted — see project_oauth_callback_redesign memory.
   await setOAuthFlowCookies(safeNext);
 
-  return { redirectUrl: getOAuthRedirectUrl(provider, { isTeam }) };
+  return { redirectUrl: getOAuthRedirectUrl(provider) };
 }
 
 export async function exchangeOAuthCode(

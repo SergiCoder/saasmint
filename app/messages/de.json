@@ -356,6 +356,7 @@
     "no_subscription": "Kein aktives Abonnement",
     "not_authorized": "Sie sind nicht berechtigt, diese Aktion auszuführen",
     "not_billing_member": "Sie haben keine Berechtigung, die Abrechnung zu verwalten",
+    "org_already_owned": "Sie besitzen bereits eine Organisation — Sie können kein zweites Team-Abonnement starten.",
     "passwords_do_not_match": "Passwörter stimmen nicht überein",
     "password_too_short": "Das Passwort muss mindestens 10 Zeichen lang sein",
     "profile_load_failed": "Profil konnte nicht geladen werden",

@@ -356,6 +356,7 @@
     "no_subscription": "Geen actief abonnement",
     "not_authorized": "Je bent niet bevoegd om deze actie uit te voeren",
     "not_billing_member": "Je hebt geen rechten om facturering te beheren",
+    "org_already_owned": "Je hebt al een organisatie — je kunt geen tweede teamabonnement starten.",
     "passwords_do_not_match": "Wachtwoorden komen niet overeen",
     "password_too_short": "Het wachtwoord moet minimaal 10 tekens lang zijn",
     "profile_load_failed": "Profiel kon niet worden geladen",

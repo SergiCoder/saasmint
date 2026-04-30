@@ -356,6 +356,7 @@
     "no_subscription": "Brak aktywnej subskrypcji",
     "not_authorized": "Nie masz uprawnień do wykonania tej czynności",
     "not_billing_member": "Nie masz uprawnień do zarządzania rozliczeniami",
+    "org_already_owned": "Masz już organizację — nie możesz rozpocząć kolejnej subskrypcji zespołowej.",
     "passwords_do_not_match": "Hasła nie pasują do siebie",
     "password_too_short": "Hasło musi mieć co najmniej 10 znaków",
     "profile_load_failed": "Nie udało się wczytać profilu",

@@ -356,6 +356,7 @@
     "no_subscription": "No hay suscripción activa",
     "not_authorized": "No tienes permiso para realizar esta acción",
     "not_billing_member": "No tienes permiso para gestionar la facturación",
+    "org_already_owned": "Ya eres propietario de una organización; no puedes iniciar otra suscripción de equipo.",
     "passwords_do_not_match": "Las contraseñas no coinciden",
     "password_too_short": "La contraseña debe tener al menos 10 caracteres",
     "profile_load_failed": "No se pudo cargar el perfil",

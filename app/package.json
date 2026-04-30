@@ -1,6 +1,6 @@
 {
   "name": "saasmint-app",
-  "version": "0.8.16",
+  "version": "0.10.0",
   "private": true,
   "license": "MIT",
   "engines": {

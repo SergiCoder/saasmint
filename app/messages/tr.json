@@ -356,6 +356,7 @@
     "no_subscription": "Aktif abonelik yok",
     "not_authorized": "Bu işlemi gerçekleştirme yetkiniz yok",
     "not_billing_member": "Faturalandırmayı yönetme izniniz yok",
+    "org_already_owned": "Zaten bir organizasyona sahipsiniz — başka bir ekip aboneliği başlatamazsınız.",
     "passwords_do_not_match": "Şifreler eşleşmiyor",
     "password_too_short": "Parola en az 10 karakter olmalıdır",
     "profile_load_failed": "Profil yüklenemedi",

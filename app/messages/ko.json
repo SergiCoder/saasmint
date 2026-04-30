@@ -356,6 +356,7 @@
     "no_subscription": "활성 구독이 없습니다",
     "not_authorized": "이 작업을 수행할 권한이 없습니다",
     "not_billing_member": "결제를 관리할 권한이 없습니다",
+    "org_already_owned": "이미 조직을 소유하고 있어 새로운 팀 구독을 시작할 수 없습니다.",
     "passwords_do_not_match": "비밀번호가 일치하지 않습니다",
     "password_too_short": "비밀번호는 10자 이상이어야 합니다",
     "profile_load_failed": "프로필을 불러오지 못했습니다",

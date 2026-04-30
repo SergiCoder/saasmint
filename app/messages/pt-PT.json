@@ -356,6 +356,7 @@
     "no_subscription": "Sem subscrição ativa",
     "not_authorized": "Não tem autorização para realizar esta ação",
     "not_billing_member": "Não tem permissão para gerir a faturação",
+    "org_already_owned": "Já é proprietário de uma organização — não pode iniciar outra subscrição de equipa.",
     "passwords_do_not_match": "As palavras-passe não coincidem",
     "password_too_short": "A palavra-passe tem de ter pelo menos 10 caracteres",
     "profile_load_failed": "Não foi possível carregar o perfil",

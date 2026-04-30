@@ -356,6 +356,7 @@
     "no_subscription": "Aucun abonnement actif",
     "not_authorized": "Vous n'êtes pas autorisé à effectuer cette action",
     "not_billing_member": "Vous n'avez pas l'autorisation de gérer la facturation",
+    "org_already_owned": "Vous possédez déjà une organisation — vous ne pouvez pas démarrer un second abonnement d'équipe.",
     "passwords_do_not_match": "Les mots de passe ne correspondent pas",
     "password_too_short": "Le mot de passe doit contenir au moins 10 caractères",
     "profile_load_failed": "Échec du chargement du profil",

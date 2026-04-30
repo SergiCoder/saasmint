@@ -22,7 +22,6 @@ vi.mock("@/infrastructure/registry", () => ({
 const mockUser = {
   id: "user_123",
   email: "user@example.com",
-  accountType: "personal" as const,
   fullName: "John Doe",
   preferredLocale: "en",
   preferredCurrency: "usd",

@@ -396,6 +396,7 @@
     "no_subscription": "No active subscription",
     "not_authorized": "You are not authorized to perform this action",
     "not_billing_member": "You do not have permission to manage billing",
+    "org_already_owned": "You already own an organisation — you can't start a second team subscription.",
     "passwords_do_not_match": "Passwords do not match",
     "password_too_short": "Password must be at least 10 characters",
     "profile_load_failed": "Failed to load profile",

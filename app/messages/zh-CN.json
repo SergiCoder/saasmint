@@ -356,6 +356,7 @@
     "no_subscription": "没有有效的订阅",
     "not_authorized": "您无权执行此操作",
     "not_billing_member": "您无权管理账单",
+    "org_already_owned": "您已拥有一个组织，无法再启动另一个团队订阅。",
     "passwords_do_not_match": "两次输入的密码不一致",
     "password_too_short": "密码长度至少为 10 个字符",
     "profile_load_failed": "加载个人资料失败",

@@ -356,6 +356,7 @@
     "no_subscription": "Nenhuma assinatura ativa",
     "not_authorized": "Você não tem autorização para realizar esta ação",
     "not_billing_member": "Você não tem permissão para gerenciar a cobrança",
+    "org_already_owned": "Você já é proprietário de uma organização — não é possível iniciar outra assinatura de equipe.",
     "passwords_do_not_match": "As senhas não coincidem",
     "password_too_short": "A senha deve ter pelo menos 10 caracteres",
     "profile_load_failed": "Não foi possível carregar o perfil",

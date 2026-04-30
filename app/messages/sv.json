@@ -356,6 +356,7 @@
     "no_subscription": "Ingen aktiv prenumeration",
     "not_authorized": "Du har inte behörighet att utföra den här åtgärden",
     "not_billing_member": "Du har inte behörighet att hantera faktureringen",
+    "org_already_owned": "Du äger redan en organisation — du kan inte starta ytterligare en team-prenumeration.",
     "passwords_do_not_match": "Lösenorden matchar inte",
     "password_too_short": "Lösenordet måste vara minst 10 tecken",
     "profile_load_failed": "Det gick inte att ladda profilen",

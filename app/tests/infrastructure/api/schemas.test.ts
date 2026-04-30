@@ -18,7 +18,6 @@ const validUser = {
   email: "alice@example.com",
   fullName: "Alice",
   avatarUrl: null,
-  accountType: "personal",
   preferredLocale: "en",
   preferredCurrency: "USD",
   phonePrefix: null,
@@ -118,20 +117,6 @@ describe("UserSchema", () => {
     expect(() => UserSchema.parse(validUser)).not.toThrow();
   });
 
-  it("accepts the org_member account type", () => {
-    const parsed = UserSchema.parse({
-      ...validUser,
-      accountType: "org_member",
-    });
-    expect(parsed.accountType).toBe("org_member");
-  });
-
-  it("rejects an unknown accountType", () => {
-    expect(() =>
-      UserSchema.parse({ ...validUser, accountType: "admin" }),
-    ).toThrow();
-  });
-
   it("rejects an unknown registrationMethod", () => {
     expect(() =>
       UserSchema.parse({ ...validUser, registrationMethod: "facebook" }),
@@ -161,6 +146,26 @@ describe("UserSchema", () => {
         UserSchema.parse({ ...validUser, registrationMethod: method }),
       ).not.toThrow();
     }
+  });
+
+  it("accepts a payload that lacks accountType (forward-compat with the dropped field)", () => {
+    // The accountType field was removed from User/UserSchema. Backends on the
+    // matching version no longer send it; the schema must accept the leaner
+    // payload without complaining.
+    expect(() => UserSchema.parse(validUser)).not.toThrow();
+    const parsed = UserSchema.parse(validUser);
+    expect(parsed).not.toHaveProperty("accountType");
+  });
+
+  it("strips an unexpected accountType field from older backend responses", () => {
+    // Backward-compat: a server that still returns accountType (mid-rollout
+    // or a stale instance) must not break parsing — Zod's default strips
+    // unknown keys so the field is silently dropped.
+    const parsed = UserSchema.parse({
+      ...validUser,
+      accountType: "personal",
+    });
+    expect(parsed).not.toHaveProperty("accountType");
   });
 });
 

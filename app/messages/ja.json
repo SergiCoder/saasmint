@@ -356,6 +356,7 @@
     "no_subscription": "有効なサブスクリプションがありません",
     "not_authorized": "この操作を行う権限がありません",
     "not_billing_member": "請求を管理する権限がありません",
+    "org_already_owned": "すでに組織を所有しているため、新しいチームサブスクリプションを開始できません。",
     "passwords_do_not_match": "パスワードが一致しません",
     "password_too_short": "パスワードは 10 文字以上で入力してください",
     "profile_load_failed": "プロフィールを読み込めませんでした",

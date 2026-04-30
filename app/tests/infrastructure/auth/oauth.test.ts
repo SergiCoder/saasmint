@@ -46,19 +46,16 @@ describe("getOAuthRedirectUrl", () => {
     );
   });
 
-  it("omits account_type when isTeam is falsy", () => {
-    const url = new URL(getOAuthRedirectUrl("google"));
-    expect(url.searchParams.has("account_type")).toBe(false);
-
-    const urlExplicit = new URL(
-      getOAuthRedirectUrl("google", { isTeam: false }),
-    );
-    expect(urlExplicit.searchParams.has("account_type")).toBe(false);
-  });
-
-  it("appends account_type=org_owner when isTeam is true", () => {
-    const url = new URL(getOAuthRedirectUrl("github", { isTeam: true }));
-    expect(url.searchParams.get("account_type")).toBe("org_owner");
-    expect(url.pathname).toBe("/api/v1/auth/oauth/github/");
-  });
+  it.each(OAUTH_PROVIDERS)(
+    "never includes an account_type query param (%s)",
+    (provider) => {
+      // Backend ignores account_type as of the org_already_owned rename — the
+      // frontend must not send it for any provider, since stripping it
+      // client-side is the only way to surface a regression if a future
+      // caller tries to reintroduce it.
+      const url = new URL(getOAuthRedirectUrl(provider));
+      expect(url.searchParams.has("account_type")).toBe(false);
+      expect(url.search).toBe("");
+    },
+  );
 });

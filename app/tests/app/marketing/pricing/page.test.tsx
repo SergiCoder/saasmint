@@ -99,7 +99,6 @@ function makeUser(overrides: Partial<User> = {}): User {
     email: "test@example.com",
     fullName: "Test User",
     avatarUrl: null,
-    accountType: "personal",
     preferredLocale: "en",
     preferredCurrency: "usd",
     phonePrefix: null,

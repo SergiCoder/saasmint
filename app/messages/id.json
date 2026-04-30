@@ -356,6 +356,7 @@
     "no_subscription": "Tidak ada langganan aktif",
     "not_authorized": "Anda tidak berwenang untuk melakukan tindakan ini",
     "not_billing_member": "Anda tidak memiliki izin untuk mengelola penagihan",
+    "org_already_owned": "Anda sudah memiliki organisasi — tidak dapat memulai langganan tim kedua.",
     "passwords_do_not_match": "Kata sandi tidak cocok",
     "password_too_short": "Kata sandi harus minimal 10 karakter",
     "profile_load_failed": "Gagal memuat profil",
