@@ -9,8 +9,10 @@ import { startCheckout } from "@/app/actions/billing";
 interface RenderPlanUpgradeCtaOptions {
   plan: Plan;
   isUpgrade: boolean;
+  isCurrent: boolean;
   isTeam: boolean;
-  ctaLabel: string;
+  upgradeLabel: string;
+  changePlanLabel: string;
   hasOrg: boolean;
   personalSubscription: Subscription | null;
   teamSubscription: Subscription | null;
@@ -19,17 +21,22 @@ interface RenderPlanUpgradeCtaOptions {
 }
 
 /**
- * Shared routing matrix for plan upgrade CTAs used on both /subscription and
- * /pricing. Upgrades for an existing in-context subscription route to the
- * Stripe Billing Portal (canonical change-plan surface). First-time purchases
- * use Checkout. Backend rule 8 unconditionally 409s a second team checkout for
- * an org owner, so the portal is the only legal upgrade path there.
+ * Shared routing matrix for plan-change CTAs used on both /subscription and
+ * /pricing. Same-context upgrades and downgrades route to the Stripe Billing
+ * Portal (canonical change-plan surface — backend defers downgrades to period
+ * end automatically). First-time purchases use Checkout. Backend rule 8
+ * unconditionally 409s a second team checkout for an org owner, so the portal
+ * is the only legal change-plan path there. Returns `null` when the user has
+ * already scheduled a change to this exact plan — the subscription card's
+ * downgrade banner offers the "Keep current plan" action instead.
  */
 export function renderPlanUpgradeCta({
   plan,
   isUpgrade,
+  isCurrent,
   isTeam,
-  ctaLabel,
+  upgradeLabel,
+  changePlanLabel,
   hasOrg,
   personalSubscription,
   teamSubscription,
@@ -37,17 +44,20 @@ export function renderPlanUpgradeCta({
   teamCanManage,
 }: RenderPlanUpgradeCtaOptions): React.ReactNode {
   if (!plan.price) return null;
-  if (!isUpgrade) return null;
+  if (isCurrent) return null;
 
-  const highlighted = plan.tier === PLAN_TIER_PRO;
-  const hasSubInContext = isTeam
-    ? teamSubscription !== null
-    : personalSubscription !== null;
+  const highlighted = plan.tier === PLAN_TIER_PRO && isUpgrade;
+  const subInContext = isTeam ? teamSubscription : personalSubscription;
+  const hasSubInContext = subInContext !== null;
   const canManageInContext = isTeam ? teamCanManage : personalCanManage;
 
   if (hasSubInContext) {
-    // Non-billing members can't action the upgrade; the portal would 403.
+    // Non-billing members can't action a plan change; the portal would 403.
     if (!canManageInContext) return null;
+    // A schedule already targets this plan — the subscription banner owns
+    // the "Keep current plan" cancel-action; rendering another CTA here
+    // would confuse "switch" with "undo switch".
+    if (subInContext.scheduledPlan?.id === plan.id) return null;
     // Pin context; required for concurrent billers (rule 5) and harmless for
     // single-sub callers since it matches the backend default routing.
     const portalContext = isTeam ? "team" : "personal";
@@ -56,11 +66,16 @@ export function renderPlanUpgradeCta({
         context={portalContext}
         highlighted={highlighted}
         fullWidth
+        flow="subscription_update_confirm"
+        planPriceId={plan.price.id}
       >
-        {ctaLabel}
+        {isUpgrade ? upgradeLabel : changePlanLabel}
       </BillingPortalButton>
     );
   }
+
+  // No sub in this context yet — only upgrades (fresh checkout) make sense.
+  if (!isUpgrade) return null;
 
   if (isTeam) {
     // First-time team checkout: rule 8 blocks a second team checkout for an
@@ -68,7 +83,7 @@ export function renderPlanUpgradeCta({
     if (hasOrg) return null;
     return (
       <TeamCheckoutButton planPriceId={plan.price.id} highlighted={highlighted}>
-        {ctaLabel}
+        {upgradeLabel}
       </TeamCheckoutButton>
     );
   }
@@ -79,7 +94,7 @@ export function renderPlanUpgradeCta({
       field={{ name: "planPriceId", value: plan.price.id }}
       highlighted={highlighted}
     >
-      {ctaLabel}
+      {upgradeLabel}
     </CheckoutButton>
   );
 }

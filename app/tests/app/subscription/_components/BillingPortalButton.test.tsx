@@ -54,6 +54,37 @@ describe("BillingPortalButton", () => {
     );
   });
 
+  it("forwards flow + planPriceId as hidden inputs for deep-link upgrades", () => {
+    const { container } = render(
+      <BillingPortalButton
+        flow="subscription_update_confirm"
+        planPriceId="price_123"
+      >
+        Upgrade to Pro
+      </BillingPortalButton>,
+    );
+    const flowInput = container.querySelector(
+      'input[name="flow"]',
+    ) as HTMLInputElement | null;
+    const planInput = container.querySelector(
+      'input[name="planPriceId"]',
+    ) as HTMLInputElement | null;
+    expect(flowInput?.value).toBe("subscription_update_confirm");
+    expect(planInput?.value).toBe("price_123");
+  });
+
+  it("omits planPriceId when flow is not set", () => {
+    const { container } = render(
+      <BillingPortalButton planPriceId="price_123">Manage</BillingPortalButton>,
+    );
+    expect(
+      container.querySelector('input[name="flow"]'),
+    ).not.toBeInTheDocument();
+    expect(
+      container.querySelector('input[name="planPriceId"]'),
+    ).not.toBeInTheDocument();
+  });
+
   it("applies the full-width class only when fullWidth is set", () => {
     const { rerender } = render(
       <BillingPortalButton>Manage</BillingPortalButton>,

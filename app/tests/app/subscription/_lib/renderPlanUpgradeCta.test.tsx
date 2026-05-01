@@ -43,14 +43,18 @@ function makeSubscription(context: "personal" | "team"): Subscription {
     currentPeriodEnd: "2024-02-01T00:00:00Z",
     cancelAt: null,
     canceledAt: null,
+    scheduledPlan: null,
+    scheduledChangeAt: null,
     createdAt: "2024-01-01T00:00:00Z",
   };
 }
 
 const defaultOpts = {
   isUpgrade: true,
+  isCurrent: false,
   isTeam: false,
-  ctaLabel: "Upgrade",
+  upgradeLabel: "Upgrade",
+  changePlanLabel: "Change plan",
   hasOrg: false,
   personalSubscription: null,
   teamSubscription: null,
@@ -126,6 +130,17 @@ describe("renderPlanUpgradeCta — personal upgrade via portal", () => {
       'input[name="context"]',
     ) as HTMLInputElement | null;
     expect(hidden?.value).toBe("personal");
+    // Deep-link the portal directly into Stripe's plan-switch confirm screen
+    // for the target plan price, instead of dropping the user on the portal
+    // home (current sub / payment / invoices).
+    const flow = container.querySelector(
+      'input[name="flow"]',
+    ) as HTMLInputElement | null;
+    const planPriceId = container.querySelector(
+      'input[name="planPriceId"]',
+    ) as HTMLInputElement | null;
+    expect(flow?.value).toBe("subscription_update_confirm");
+    expect(planPriceId?.value).toBe("price_1");
     expect(screen.getByRole("button", { name: "Upgrade" })).toBeInTheDocument();
   });
 
@@ -199,6 +214,14 @@ describe("renderPlanUpgradeCta — team upgrade via portal", () => {
       'input[name="context"]',
     ) as HTMLInputElement | null;
     expect(hidden?.value).toBe("team");
+    const flow = container.querySelector(
+      'input[name="flow"]',
+    ) as HTMLInputElement | null;
+    const planPriceId = container.querySelector(
+      'input[name="planPriceId"]',
+    ) as HTMLInputElement | null;
+    expect(flow?.value).toBe("subscription_update_confirm");
+    expect(planPriceId?.value).toBe("price_1");
     expect(screen.getByRole("button", { name: "Upgrade" })).toBeInTheDocument();
   });
 

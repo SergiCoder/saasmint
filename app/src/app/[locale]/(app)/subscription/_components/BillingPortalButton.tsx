@@ -1,5 +1,8 @@
 import { Button } from "@/presentation/components/atoms/Button";
-import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
+import type {
+  BillingPortalFlow,
+  SubscriptionContext,
+} from "@/application/ports/ISubscriptionGateway";
 import { openBillingPortal } from "@/app/actions/billing";
 
 interface BillingPortalButtonProps {
@@ -25,6 +28,16 @@ interface BillingPortalButtonProps {
    * button matches the full-width checkout CTAs sitting next to it.
    */
   fullWidth?: boolean;
+  /**
+   * Deep-link the portal session into a focused flow. Pair with
+   * `planPriceId`. Omit to land on the portal home (default).
+   */
+  flow?: BillingPortalFlow;
+  /**
+   * Target `PlanPrice.id` for the deep-link flow. Required when `flow` is
+   * set; ignored otherwise.
+   */
+  planPriceId?: string;
 }
 
 export function BillingPortalButton({
@@ -32,10 +45,16 @@ export function BillingPortalButton({
   context,
   highlighted = false,
   fullWidth = false,
+  flow,
+  planPriceId,
 }: BillingPortalButtonProps) {
   return (
     <form action={openBillingPortal}>
       {context ? <input type="hidden" name="context" value={context} /> : null}
+      {flow ? <input type="hidden" name="flow" value={flow} /> : null}
+      {flow && planPriceId ? (
+        <input type="hidden" name="planPriceId" value={planPriceId} />
+      ) : null}
       <Button
         type="submit"
         variant={highlighted ? "primary" : "secondary"}

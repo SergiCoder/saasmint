@@ -130,6 +130,8 @@ function makePersonalSubscription(
     currentPeriodEnd: "2026-05-01T00:00:00Z",
     cancelAt: null,
     canceledAt: null,
+    scheduledPlan: null,
+    scheduledChangeAt: null,
     createdAt: "2026-04-01T00:00:00Z",
     ...overrides,
   };

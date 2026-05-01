@@ -14,6 +14,13 @@ export interface CheckoutSessionInput {
   cancelUrl: string;
 }
 
+/**
+ * Portal deep-link flow. Currently the only supported value;
+ * lands the user on Stripe's plan-switch confirmation screen for
+ * `planPriceId`.
+ */
+export type BillingPortalFlow = "subscription_update_confirm";
+
 export interface BillingPortalInput {
   returnUrl: string;
   /**
@@ -24,6 +31,16 @@ export interface BillingPortalInput {
    * callers can omit it.
    */
   context?: SubscriptionContext;
+  /**
+   * Deep-link the portal into a focused flow. Omit for the default landing
+   * (current subscription / payment / invoices). Pair with `planPriceId`.
+   */
+  flow?: BillingPortalFlow;
+  /**
+   * Target `PlanPrice.id` for `flow=subscription_update_confirm`. Ignored
+   * when `flow` is unset.
+   */
+  planPriceId?: string;
 }
 
 /**
@@ -49,6 +66,13 @@ export interface ISubscriptionGateway {
   cancelSubscription(context?: SubscriptionContext): Promise<void>;
   /** Undo a pending cancellation so the subscription renews normally. */
   resumeSubscription(context?: SubscriptionContext): Promise<void>;
+  /**
+   * Release a pending deferred plan change (downgrade scheduled at period
+   * end) so the current plan continues. Idempotent — safe when no schedule
+   * exists. Both `?context=` resolution and is_billing checks mirror the
+   * other mutating subscription endpoints.
+   */
+  releaseScheduledChange(context?: SubscriptionContext): Promise<void>;
   /** Update the seat count on a team subscription. */
   updateSeats(quantity: number, context?: SubscriptionContext): Promise<void>;
 }

@@ -21,6 +21,7 @@ const mockCancelSubscription = vi.fn();
 const mockResumeSubscription = vi.fn();
 const mockUpdateSeats = vi.fn();
 const mockCreateProductCheckoutSession = vi.fn();
+const mockReleaseScheduledChange = vi.fn();
 
 vi.mock("@/infrastructure/registry", () => ({
   authGateway: { getCurrentUser: mockGetCurrentUser },
@@ -31,6 +32,7 @@ vi.mock("@/infrastructure/registry", () => ({
     cancelSubscription: mockCancelSubscription,
     resumeSubscription: mockResumeSubscription,
     updateSeats: mockUpdateSeats,
+    releaseScheduledChange: mockReleaseScheduledChange,
   },
   productGateway: {
     createCheckoutSession: mockCreateProductCheckoutSession,
@@ -50,6 +52,7 @@ let openBillingPortal: typeof import("@/app/actions/billing").openBillingPortal;
 let cancelRenewal: typeof import("@/app/actions/billing").cancelRenewal;
 let resumeSubscription: typeof import("@/app/actions/billing").resumeSubscription;
 let updateSeats: typeof import("@/app/actions/billing").updateSeats;
+let releaseScheduledChange: typeof import("@/app/actions/billing").releaseScheduledChange;
 
 beforeEach(async () => {
   vi.clearAllMocks();
@@ -60,6 +63,7 @@ beforeEach(async () => {
   cancelRenewal = mod.cancelRenewal;
   resumeSubscription = mod.resumeSubscription;
   updateSeats = mod.updateSeats;
+  releaseScheduledChange = mod.releaseScheduledChange;
 });
 
 describe("billing server actions", () => {
@@ -420,6 +424,47 @@ describe("billing server actions", () => {
       });
     });
 
+    it("forwards flow + planPriceId for a deep-link upgrade", async () => {
+      // The upgrade CTA on /subscription deep-links the portal into Stripe's
+      // plan-switch confirm screen instead of the portal home — needs both
+      // flow=subscription_update_confirm and the target plan_price_id.
+      mockCreateBillingPortalSession.mockResolvedValue({
+        url: "https://billing.stripe.com/portal_upgrade",
+      });
+      const formData = new FormData();
+      formData.set("flow", "subscription_update_confirm");
+      formData.set("planPriceId", "price_pro_monthly");
+
+      await expect(openBillingPortal(formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+
+      expect(mockCreateBillingPortalSession).toHaveBeenCalledWith({
+        returnUrl: `${APP_URL}/subscription`,
+        flow: "subscription_update_confirm",
+        planPriceId: "price_pro_monthly",
+      });
+    });
+
+    it("drops an unknown flow value and ignores planPriceId", async () => {
+      // Server actions are RPCs — only the literal union is forwarded so a
+      // hostile caller can't smuggle other Stripe portal flows.
+      mockCreateBillingPortalSession.mockResolvedValue({
+        url: "https://billing.stripe.com/portal_default",
+      });
+      const formData = new FormData();
+      formData.set("flow", "subscription_cancel");
+      formData.set("planPriceId", "price_pro_monthly");
+
+      await expect(openBillingPortal(formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+
+      const call = mockCreateBillingPortalSession.mock.calls[0]?.[0];
+      expect(call).not.toHaveProperty("flow");
+      expect(call).not.toHaveProperty("planPriceId");
+    });
+
     it("drops a tampered context value and falls back to the backend default", async () => {
       // Server actions are reachable as RPCs — `parseContext` filters to the
       // literal union, so a hostile caller can't inject extra params or
@@ -644,6 +689,93 @@ describe("billing server actions", () => {
 
       expect(result).toEqual({ ok: false, code: "context_required" });
       expect(mockResumeSubscription).not.toHaveBeenCalled();
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("releaseScheduledChange", () => {
+    const user = { id: "u1" };
+    const subscription = { id: "s1", plan: { context: "personal" } };
+
+    it("releases the scheduled change and revalidates when allowed", async () => {
+      mockGetCurrentUser.mockResolvedValue(user);
+      mockListSubscriptions.mockResolvedValue([subscription]);
+      mockCanManageBilling.mockResolvedValue(true);
+      mockReleaseScheduledChange.mockResolvedValue(undefined);
+
+      const result = await releaseScheduledChange();
+
+      expect(mockReleaseScheduledChange).toHaveBeenCalledOnce();
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        "/subscription",
+        "layout",
+      );
+      expect(result.ok).toBe(true);
+    });
+
+    it("returns not_billing_member when caller cannot manage billing", async () => {
+      mockGetCurrentUser.mockResolvedValue(user);
+      mockListSubscriptions.mockResolvedValue([subscription]);
+      mockCanManageBilling.mockResolvedValue(false);
+
+      const result = await releaseScheduledChange();
+
+      expect(result).toEqual({ ok: false, code: "not_billing_member" });
+      expect(mockReleaseScheduledChange).not.toHaveBeenCalled();
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+    });
+
+    it("returns no_subscription when there is no active subscription", async () => {
+      mockGetCurrentUser.mockResolvedValue(user);
+      mockListSubscriptions.mockResolvedValue([]);
+
+      const result = await releaseScheduledChange();
+
+      expect(result).toEqual({ ok: false, code: "no_subscription" });
+      expect(mockReleaseScheduledChange).not.toHaveBeenCalled();
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+    });
+
+    it("forwards context=personal to the gateway when supplied", async () => {
+      const personalSub = { id: "sub_p", plan: { context: "personal" } };
+      const teamSub = { id: "sub_t", plan: { context: "team" } };
+      mockGetCurrentUser.mockResolvedValue(user);
+      mockListSubscriptions.mockResolvedValue([personalSub, teamSub]);
+      mockCanManageBilling.mockResolvedValue(true);
+      mockReleaseScheduledChange.mockResolvedValue(undefined);
+
+      const result = await releaseScheduledChange("personal");
+
+      expect(mockCanManageBilling).toHaveBeenCalledWith(user, personalSub);
+      expect(mockReleaseScheduledChange).toHaveBeenCalledWith("personal");
+      expect(result.ok).toBe(true);
+    });
+
+    it("maps a gateway ApiError 404 to no_subscription", async () => {
+      const { ApiError } = await import("@/domain/errors/ApiError");
+      mockGetCurrentUser.mockResolvedValue(user);
+      mockListSubscriptions.mockResolvedValue([subscription]);
+      mockCanManageBilling.mockResolvedValue(true);
+      mockReleaseScheduledChange.mockRejectedValue(new ApiError(404, {}));
+
+      const result = await releaseScheduledChange();
+
+      expect(result).toEqual({ ok: false, code: "HTTP_404" });
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+    });
+
+    it("maps a gateway ApiError 403 code to not_billing_member", async () => {
+      const { ApiError } = await import("@/domain/errors/ApiError");
+      mockGetCurrentUser.mockResolvedValue(user);
+      mockListSubscriptions.mockResolvedValue([subscription]);
+      mockCanManageBilling.mockResolvedValue(true);
+      mockReleaseScheduledChange.mockRejectedValue(
+        new ApiError(403, { code: "not_billing_member" }),
+      );
+
+      const result = await releaseScheduledChange();
+
+      expect(result).toEqual({ ok: false, code: "not_billing_member" });
       expect(mockRevalidatePath).not.toHaveBeenCalled();
     });
   });

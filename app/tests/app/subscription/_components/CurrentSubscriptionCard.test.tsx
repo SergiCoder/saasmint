@@ -16,6 +16,49 @@ vi.mock("next-intl/server", () => ({
   ),
 }));
 
+vi.mock(
+  "@/app/[locale]/(app)/subscription/_components/ReleaseScheduledChangeButton",
+  async () => {
+    const React = await import("react");
+    return {
+      ReleaseScheduledChangeButton: ({
+        children,
+        context,
+      }: {
+        children: React.ReactNode;
+        context?: "personal" | "team";
+      }) =>
+        React.createElement(
+          "button",
+          {
+            type: "button",
+            "data-testid": "release-scheduled-change",
+            "data-context": context ?? "",
+          },
+          children,
+        ),
+    };
+  },
+);
+
+vi.mock("@/presentation/components/molecules/AlertBanner", async () => {
+  const React = await import("react");
+  return {
+    AlertBanner: ({
+      children,
+      variant,
+    }: {
+      children: React.ReactNode;
+      variant?: string;
+    }) =>
+      React.createElement(
+        "div",
+        { "data-testid": "alert-banner", "data-variant": variant ?? "" },
+        children,
+      ),
+  };
+});
+
 // Replace sibling child components with simple stand-ins so we can verify
 // they are (or aren't) rendered without pulling in their full client trees.
 vi.mock(
@@ -171,6 +214,8 @@ function makeSub(overrides: Partial<Subscription> = {}): Subscription {
     currentPeriodEnd: "2026-02-01T00:00:00Z",
     cancelAt: null,
     canceledAt: null,
+    scheduledPlan: null,
+    scheduledChangeAt: null,
     createdAt: "2026-01-01T00:00:00Z",
     ...overrides,
   };
@@ -617,6 +662,143 @@ describe("CurrentSubscriptionCard", () => {
         "data-context",
         "",
       );
+    });
+  });
+
+  describe("scheduled downgrade banner", () => {
+    const scheduledPlan = {
+      id: "plan_basic",
+      name: "Basic",
+      description: "",
+      context: "personal" as const,
+      tier: 2 as const,
+      interval: "month" as const,
+      price: null,
+    };
+
+    it("renders the downgrade banner when scheduledPlan is set and canManage=true", async () => {
+      await renderCard({
+        subscription: makeSub({
+          scheduledPlan,
+          scheduledChangeAt: "2026-03-01T00:00:00Z",
+        }),
+        locale: "en",
+        planName: "Pro",
+        canManage: true,
+        teamOwnerName: null,
+      });
+
+      expect(screen.getByTestId("alert-banner")).toBeInTheDocument();
+      expect(
+        screen.getByTestId("release-scheduled-change"),
+      ).toBeInTheDocument();
+    });
+
+    it("includes the scheduled plan name and date in the banner headline", async () => {
+      await renderCard({
+        subscription: makeSub({
+          scheduledPlan,
+          scheduledChangeAt: "2026-03-01T00:00:00Z",
+        }),
+        locale: "en",
+        planName: "Pro",
+        canManage: true,
+        teamOwnerName: null,
+      });
+
+      // The i18n stub echoes key:param=value for interpolated strings.
+      const banner = screen.getByTestId("alert-banner");
+      expect(banner.textContent).toContain("scheduledDowngradeHeadline");
+      expect(banner.textContent).toContain("scheduledDowngradeBody");
+    });
+
+    it("does NOT render the downgrade banner when cancelAt is also set (cancel takes priority)", async () => {
+      await renderCard({
+        subscription: makeSub({
+          scheduledPlan,
+          scheduledChangeAt: "2026-03-01T00:00:00Z",
+          cancelAt: "2026-02-01T00:00:00Z",
+        }),
+        locale: "en",
+        planName: "Pro",
+        canManage: true,
+        teamOwnerName: null,
+      });
+
+      expect(screen.queryByTestId("alert-banner")).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("release-scheduled-change"),
+      ).not.toBeInTheDocument();
+      // Resume button shown because cancelAt is set.
+      expect(screen.getByTestId("resume")).toBeInTheDocument();
+    });
+
+    it("does NOT render the downgrade banner when scheduledPlan is null", async () => {
+      await renderCard({
+        subscription: makeSub({ scheduledPlan: null, scheduledChangeAt: null }),
+        locale: "en",
+        planName: "Pro",
+        canManage: true,
+        teamOwnerName: null,
+      });
+
+      expect(screen.queryByTestId("alert-banner")).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("release-scheduled-change"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("does NOT render the downgrade banner when canManage=false", async () => {
+      await renderCard({
+        subscription: makeSub({
+          scheduledPlan,
+          scheduledChangeAt: "2026-03-01T00:00:00Z",
+        }),
+        locale: "en",
+        planName: "Pro",
+        canManage: false,
+        teamOwnerName: null,
+      });
+
+      expect(screen.queryByTestId("alert-banner")).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("release-scheduled-change"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("pins context on ReleaseScheduledChangeButton when concurrent", async () => {
+      await renderCard({
+        subscription: makeSub({
+          scheduledPlan,
+          scheduledChangeAt: "2026-03-01T00:00:00Z",
+        }),
+        locale: "en",
+        planName: "Pro",
+        canManage: true,
+        teamOwnerName: null,
+        isConcurrent: true,
+      });
+
+      expect(screen.getByTestId("release-scheduled-change")).toHaveAttribute(
+        "data-context",
+        "personal",
+      );
+    });
+
+    it("renders the card without a wrapper div when there is no downgrade banner", async () => {
+      const { container } = await renderCard({
+        subscription: makeSub(),
+        locale: "en",
+        planName: "Pro",
+        canManage: true,
+        teamOwnerName: null,
+      });
+
+      // Without a banner, the component returns the card directly (no wrapper).
+      expect(
+        container.querySelector('[data-testid="subscription-card"]'),
+      ).toBeInTheDocument();
+      expect(container.querySelector(".space-y-3")).not.toBeInTheDocument();
     });
   });
 });

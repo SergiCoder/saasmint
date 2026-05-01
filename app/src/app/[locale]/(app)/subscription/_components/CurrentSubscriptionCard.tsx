@@ -1,8 +1,11 @@
 import { getTranslations } from "next-intl/server";
 import type { Subscription } from "@/domain/models/Subscription";
+import { translatePlanName } from "@/lib/i18n/planTranslation";
+import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { SubscriptionCard } from "@/presentation/components/organisms/SubscriptionCard";
 import { BillingPortalButton } from "./BillingPortalButton";
 import { CancelRenewalButton } from "./CancelRenewalButton";
+import { ReleaseScheduledChangeButton } from "./ReleaseScheduledChangeButton";
 import { ResumeSubscriptionButton } from "./ResumeSubscriptionButton";
 
 interface CurrentSubscriptionCardProps {
@@ -35,7 +38,10 @@ export async function CurrentSubscriptionCard({
   teamOwnerName,
   isConcurrent = false,
 }: CurrentSubscriptionCardProps) {
-  const t = await getTranslations("billing");
+  const [t, tPlans] = await Promise.all([
+    getTranslations("billing"),
+    getTranslations("plans"),
+  ]);
 
   const plan = subscription.plan;
   const isTeam = plan.context === "team";
@@ -50,6 +56,15 @@ export async function CurrentSubscriptionCard({
   const isFullyCanceled = subscription.status === "canceled";
   const isScheduledToCancel =
     !isFullyCanceled && subscription.cancelAt !== null;
+  // Downgrade scheduled at period end. The cancel banner takes precedence —
+  // when the user has BOTH a cancel and a downgrade pending, Stripe releases
+  // the schedule on cancel; the downgrade message would just be misleading.
+  const scheduledPlan = subscription.scheduledPlan;
+  const isScheduledDowngrade =
+    !isFullyCanceled &&
+    !isScheduledToCancel &&
+    scheduledPlan !== null &&
+    subscription.scheduledChangeAt !== null;
   const dateIso = isFullyCanceled
     ? subscription.canceledAt
     : isScheduledToCancel
@@ -130,7 +145,45 @@ export async function CurrentSubscriptionCard({
       : t("currentPersonalPlan")
     : t("currentPlan");
 
-  return (
+  const scheduledChangeDate = subscription.scheduledChangeAt
+    ? new Date(subscription.scheduledChangeAt)
+    : null;
+  const scheduledChangeDisplay =
+    isScheduledDowngrade &&
+    scheduledChangeDate &&
+    !Number.isNaN(scheduledChangeDate.getTime())
+      ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(
+          scheduledChangeDate,
+        )
+      : "";
+  const scheduledPlanName =
+    isScheduledDowngrade && scheduledPlan
+      ? translatePlanName(tPlans, scheduledPlan)
+      : "";
+
+  const downgradeBanner =
+    isScheduledDowngrade && canManage ? (
+      <AlertBanner variant="info">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <p className="font-medium">
+              {t("scheduledDowngradeHeadline", {
+                plan: scheduledPlanName,
+                date: scheduledChangeDisplay,
+              })}
+            </p>
+            <p className="text-xs">
+              {t("scheduledDowngradeBody", { plan: planName })}
+            </p>
+          </div>
+          <ReleaseScheduledChangeButton context={buttonContext}>
+            {t("keepCurrentPlan", { plan: planName })}
+          </ReleaseScheduledChangeButton>
+        </div>
+      </AlertBanner>
+    ) : null;
+
+  const card = (
     <SubscriptionCard
       eyebrowLabel={eyebrowLabel}
       planName={planName}
@@ -158,5 +211,13 @@ export async function CurrentSubscriptionCard({
         ) : undefined
       }
     />
+  );
+
+  if (!downgradeBanner) return card;
+  return (
+    <div className="space-y-3">
+      {downgradeBanner}
+      {card}
+    </div>
   );
 }

@@ -29,6 +29,14 @@ export interface Subscription {
    */
   readonly cancelAt: string | null;
   readonly canceledAt: string | null;
+  /**
+   * Pending plan change deferred to period end (downgrade Pro→Basic etc.).
+   * Set together with `scheduledChangeAt`; both are cleared when the user
+   * releases the schedule via `DELETE /scheduled-change/` or it applies at
+   * `current_period_end`. Upgrades apply immediately and never populate this.
+   */
+  readonly scheduledPlan: Plan | null;
+  readonly scheduledChangeAt: string | null;
   readonly createdAt: string;
 }
 

@@ -26,6 +26,8 @@ function makeSub(
     currentPeriodEnd: overrides.currentPeriodEnd ?? "2026-02-01T00:00:00Z",
     cancelAt: overrides.cancelAt ?? null,
     canceledAt: overrides.canceledAt ?? null,
+    scheduledPlan: overrides.scheduledPlan ?? null,
+    scheduledChangeAt: overrides.scheduledChangeAt ?? null,
     createdAt: overrides.createdAt ?? "2026-01-01T00:00:00Z",
   };
 }

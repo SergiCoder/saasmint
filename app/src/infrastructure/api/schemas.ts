@@ -128,6 +128,8 @@ export const SubscriptionSchema = z.object({
   currentPeriodEnd: z.string(),
   cancelAt: nullableString,
   canceledAt: nullableString,
+  scheduledPlan: PlanSchema.nullable(),
+  scheduledChangeAt: nullableString,
   createdAt: z.string(),
 }) satisfies z.ZodType<Subscription>;
 

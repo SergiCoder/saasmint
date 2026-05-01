@@ -177,8 +177,10 @@ export default async function PricingPage({ params, searchParams }: Props) {
       return renderPlanUpgradeCta({
         plan,
         isUpgrade,
+        isCurrent,
         isTeam,
-        ctaLabel,
+        upgradeLabel: ctaLabel,
+        changePlanLabel: t("changePlan"),
         hasOrg,
         personalSubscription,
         teamSubscription,

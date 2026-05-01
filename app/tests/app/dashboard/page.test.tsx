@@ -251,6 +251,8 @@ describe("DashboardPage", () => {
         currentPeriodEnd: "2026-02-01T00:00:00Z",
         cancelAt: null,
         canceledAt: null,
+        scheduledPlan: null,
+        scheduledChangeAt: null,
         createdAt: "2026-01-01T00:00:00Z",
       };
     }

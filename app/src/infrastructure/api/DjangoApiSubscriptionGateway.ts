@@ -24,9 +24,17 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
     if (Array.isArray(results)) {
       for (const row of results) {
         if (row && typeof row === "object") {
-          const plan = (row as Record<string, unknown>).plan;
+          const record = row as Record<string, unknown>;
+          const plan = record.plan;
           if (plan && typeof plan === "object") {
             applyPriceDefaults(plan as Record<string, unknown>, currency);
+          }
+          const scheduledPlan = record.scheduledPlan;
+          if (scheduledPlan && typeof scheduledPlan === "object") {
+            applyPriceDefaults(
+              scheduledPlan as Record<string, unknown>,
+              currency,
+            );
           }
         }
       }
@@ -69,6 +77,13 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
       method: "PATCH",
       body: JSON.stringify({ cancel_at_period_end: false }),
     });
+  }
+
+  async releaseScheduledChange(context?: SubscriptionContext): Promise<void> {
+    await apiFetchVoid(
+      `/billing/subscriptions/me/scheduled-change/${contextQuery(context)}`,
+      { method: "DELETE" },
+    );
   }
 
   async updateSeats(

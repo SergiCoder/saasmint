@@ -234,7 +234,10 @@
     "teamPlanReadonly": "Your team subscription is managed by the organization owner.",
     "checkout": "Checkout",
     "personalSubAutoCancelNotice": "Your personal subscription will end on {date} when this team plan starts billing. You'll keep personal features until then.",
-    "keepPersonalSubscription": "Keep my personal subscription running alongside the team plan."
+    "keepPersonalSubscription": "Keep my personal subscription running alongside the team plan.",
+    "scheduledDowngradeHeadline": "Downgrading to {plan} on {date}",
+    "scheduledDowngradeBody": "You'll keep all {plan} features until then.",
+    "keepCurrentPlan": "Keep {plan}"
   },
   "profile": {
     "title": "Profile",

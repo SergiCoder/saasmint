@@ -109,6 +109,8 @@ const validSubscription = {
   currentPeriodEnd: "2024-02-01T00:00:00Z",
   cancelAt: null,
   canceledAt: null,
+  scheduledPlan: null,
+  scheduledChangeAt: null,
   createdAt: "2024-01-01T00:00:00Z",
 };
 

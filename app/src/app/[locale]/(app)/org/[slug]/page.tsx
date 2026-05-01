@@ -11,7 +11,7 @@ import { InviteByEmailForm } from "./_components/InviteByEmailForm";
 import { MemberActions } from "./_components/MemberActions";
 import { InvitationList } from "./_components/InvitationList";
 import { TransferOwnershipForm } from "./_components/TransferOwnershipForm";
-import { DeleteOrgDialog } from "./_components/DeleteOrgDialog";
+import { DeleteOrgZone } from "./_components/DeleteOrgZone";
 import { SeatManager } from "./_components/SeatManager";
 
 interface OrgDetailPageProps {
@@ -161,44 +161,27 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
         </section>
       )}
 
-      {isOwner && (
-        <section className="rounded-lg border border-red-200 bg-white p-6 shadow-sm">
-          {transferCandidates.length > 0 && (
-            <div className="mb-6">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900">
-                {t("transferOwnership")}
-              </h2>
-              <TransferOwnershipForm
-                orgId={org.id}
-                candidates={transferCandidates}
-                label={t("transferOwnership")}
-                selectLabel={t("selectNewOwner")}
-                confirmTitle={t("transferOwnershipConfirmTitle")}
-                confirmBody={t("transferOwnershipConfirmBody", {
-                  name: "{name}",
-                })}
-                confirmAction={tCommon("confirm")}
-                confirmDismiss={tCommon("cancel")}
-              />
-            </div>
-          )}
-          <div
-            className={
-              transferCandidates.length > 0
-                ? "border-t border-gray-200 pt-6"
-                : ""
-            }
-          >
-            <h2 className="mb-2 text-lg font-semibold text-red-600">
-              {t("deleteOrg")}
-            </h2>
-            <p className="mb-4 text-sm text-gray-600">
-              {t("deleteOrgDescription")}
-            </p>
-            <DeleteOrgDialog orgId={org.id} orgName={org.name} />
-          </div>
+      {isOwner && transferCandidates.length > 0 && (
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">
+            {t("transferOwnership")}
+          </h2>
+          <TransferOwnershipForm
+            orgId={org.id}
+            candidates={transferCandidates}
+            label={t("transferOwnership")}
+            selectLabel={t("selectNewOwner")}
+            confirmTitle={t("transferOwnershipConfirmTitle")}
+            confirmBody={t("transferOwnershipConfirmBody", {
+              name: "{name}",
+            })}
+            confirmAction={tCommon("confirm")}
+            confirmDismiss={tCommon("cancel")}
+          />
         </section>
       )}
+
+      {isOwner && <DeleteOrgZone orgId={org.id} orgName={org.name} />}
     </div>
   );
 }

@@ -169,6 +169,8 @@ function makeTeamSubscription(): Subscription {
     trialEndsAt: null,
     cancelAt: null,
     canceledAt: null,
+    scheduledPlan: null,
+    scheduledChangeAt: null,
     createdAt: "2025-01-01T00:00:00Z",
   };
 }
