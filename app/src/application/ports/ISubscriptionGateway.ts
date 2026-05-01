@@ -16,6 +16,14 @@ export interface CheckoutSessionInput {
 
 export interface BillingPortalInput {
   returnUrl: string;
+  /**
+   * Concurrent billers (rule 5) MUST pin which Stripe customer the portal
+   * session attaches to — without it the backend defaults ("team" for org
+   * members, otherwise "personal") would silently route the team owner's
+   * "manage personal" click into the team customer's portal. Single-context
+   * callers can omit it.
+   */
+  context?: SubscriptionContext;
 }
 
 /**

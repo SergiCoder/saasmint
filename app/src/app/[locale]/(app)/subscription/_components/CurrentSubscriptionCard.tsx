@@ -150,7 +150,9 @@ export async function CurrentSubscriptionCard({
       actions={
         canManage && manageAction ? (
           <div className="flex w-full flex-wrap items-center gap-x-4 gap-y-2">
-            <BillingPortalButton>{t("portal")}</BillingPortalButton>
+            <BillingPortalButton context={buttonContext}>
+              {t("portal")}
+            </BillingPortalButton>
             {manageAction}
           </div>
         ) : undefined

@@ -48,7 +48,16 @@ export function MobileMenuToggle({
 
       {open && (
         <div className="absolute top-(--navbar-height) right-0 left-0 border-t border-gray-200 bg-white/97 backdrop-blur-xl md:hidden">
-          <div className="space-y-1 px-5 py-4 sm:px-8">{children}</div>
+          <div
+            className="space-y-1 px-5 py-4 sm:px-8"
+            onClick={(e) => {
+              if ((e.target as HTMLElement).closest("a, button")) {
+                setOpen(false);
+              }
+            }}
+          >
+            {children}
+          </div>
         </div>
       )}
     </>

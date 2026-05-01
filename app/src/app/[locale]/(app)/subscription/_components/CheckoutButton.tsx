@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { Button } from "@/presentation/components/atoms/Button";
 import type { ActionResult } from "@/lib/actions/ActionResult";
+import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 
 export type CheckoutAction = (
@@ -25,7 +26,7 @@ interface CheckoutButtonProps {
    * the rule-5b case (org owner with concurrent personal+team subs) — when
    * omitted the backend falls back to its account-type default.
    */
-  context?: "personal" | "team";
+  context?: SubscriptionContext;
   children: React.ReactNode;
   highlighted?: boolean;
 }

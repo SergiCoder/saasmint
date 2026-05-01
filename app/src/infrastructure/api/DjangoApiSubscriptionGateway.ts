@@ -47,10 +47,14 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
   async createBillingPortalSession(
     input: BillingPortalInput,
   ): Promise<{ url: string }> {
-    const raw = await apiFetch<unknown>("/billing/portal-sessions/", {
-      method: "POST",
-      body: JSON.stringify(keysToSnake(input)),
-    });
+    const { context, ...body } = input;
+    const raw = await apiFetch<unknown>(
+      `/billing/portal-sessions/${contextQuery(context)}`,
+      {
+        method: "POST",
+        body: JSON.stringify(keysToSnake(body)),
+      },
+    );
     return CheckoutSessionResponseSchema.parse(raw);
   }
 

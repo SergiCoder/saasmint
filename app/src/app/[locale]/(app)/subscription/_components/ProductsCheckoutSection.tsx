@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { ProductsGrid } from "@/presentation/components/organisms/ProductsGrid";
 import type { Product } from "@/domain/models/Product";
+import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
 import { CheckoutButton } from "./CheckoutButton";
 import { startProductCheckout } from "@/app/actions/billing";
-
-type CheckoutContext = "personal" | "team";
 
 interface ProductsCheckoutSectionProps {
   title: string;
@@ -44,18 +43,24 @@ export function ProductsCheckoutSection({
   // for org members. The picker only renders when `showPicker` is true; for
   // everyone else the unused state value is irrelevant because we don't
   // forward `context` to the action.
-  const [selected, setSelected] = useState<CheckoutContext>("team");
+  const [selected, setSelected] = useState<SubscriptionContext>("team");
 
   if (products.length === 0) return null;
 
   return (
     <div className="space-y-4">
       {showPicker && (
-        <fieldset className="rounded-lg border border-gray-200 bg-white p-4">
-          <legend className="px-1 text-sm font-medium text-gray-700">
+        <fieldset className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          {/* Keep `legend` in the DOM for screen readers (it's the
+            accessible name for the radio group), but visually render the
+            label as a card heading so the picker matches the product
+            cards sitting next to it instead of looking like a stray form
+            field. */}
+          <legend className="sr-only">{pickerLabel}</legend>
+          <h3 aria-hidden="true" className="font-semibold text-gray-900">
             {pickerLabel}
-          </legend>
-          <div className="mt-1 flex flex-wrap gap-4">
+          </h3>
+          <div className="mt-3 flex flex-wrap gap-4">
             {(
               [
                 ["personal", personalOptionLabel],

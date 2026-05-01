@@ -4,14 +4,14 @@ import {
   planGateway,
   productGateway,
   subscriptionGateway,
-  orgGateway,
 } from "@/infrastructure/registry";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
-import { ProductsGrid } from "@/presentation/components/organisms/ProductsGrid";
 import { GetStartedButton } from "./_components/GetStartedButton";
-import { CheckoutButton } from "@/app/[locale]/(app)/subscription/_components/CheckoutButton";
-import { TeamCheckoutButton } from "@/app/[locale]/(app)/subscription/_components/TeamCheckoutButton";
-import { startCheckout, startProductCheckout } from "@/app/actions/billing";
+import { ProductsCheckoutSection } from "@/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection";
+import { renderPlanUpgradeCta } from "@/app/[locale]/(app)/subscription/_lib/renderPlanUpgradeCta";
+import { getOrgMembers } from "@/app/[locale]/(app)/_data/getOrgMembers";
+import { getUserOrgs } from "@/app/[locale]/(app)/_data/getUserOrgs";
+import { canManageBilling } from "@/app/[locale]/(app)/subscription/_data/canManageBilling";
 import { getOptionalUser } from "../_data/getOptionalUser";
 import {
   buildPlanCardGroups,
@@ -26,7 +26,11 @@ import {
 import type { Plan } from "@/domain/models/Plan";
 import { PLAN_TIER_FREE, PLAN_TIER_PRO } from "@/domain/models/Plan";
 import type { Product } from "@/domain/models/Product";
-import type { Subscription } from "@/domain/models/Subscription";
+import {
+  findPersonalSubscription,
+  findTeamSubscription,
+  type Subscription,
+} from "@/domain/models/Subscription";
 
 /**
  * Backend v0.7.0 stopped exposing the personal-free plan row (free = absence
@@ -85,11 +89,44 @@ export default async function PricingPage({ params, searchParams }: Props) {
     user
       ? productGateway.listProducts(currency).catch((): Product[] => [])
       : Promise.resolve([] as Product[]),
-    user ? orgGateway.listUserOrgs().catch(() => []) : Promise.resolve([]),
+    user ? getUserOrgs() : Promise.resolve([]),
   ]);
 
   const hasOrg = userOrgs.length > 0;
+  const isConcurrent = subscriptions.length > 1;
   const currentPlans = subscriptions.map((s) => s.plan);
+
+  const personalSubscription = findPersonalSubscription(subscriptions);
+  const teamSubscription = findTeamSubscription(subscriptions);
+
+  // Per-context billing-management flags drive whether the upgrade CTA on a
+  // higher-tier card routes to the Stripe Customer Portal (the canonical
+  // change-plan surface) or stays hidden (non-billing org members can't
+  // action a team upgrade). Personal subs are always manageable by their
+  // owner; team subs only by the org's billing member.
+  // canManageBilling() shares React.cache with /subscription, so resolving
+  // both contexts here is free when the user only happens to land on
+  // /pricing first. Both calls run concurrently; either side resolves to
+  // false when the user has no sub in that context (cheap default).
+  const [personalCanManage, teamCanManage] = await Promise.all([
+    user && personalSubscription
+      ? canManageBilling(user, personalSubscription)
+      : Promise.resolve(false),
+    user && teamSubscription
+      ? canManageBilling(user, teamSubscription)
+      : Promise.resolve(false),
+  ]);
+
+  // Resolve org-owner flag only when both signals that gate the picker are
+  // already true (signed-in user with concurrent personal+team subs). Skips
+  // the orgMembers roundtrip in every other case — most page renders.
+  const firstOrg = userOrgs.at(0);
+  const isCurrentUserOrgOwner =
+    user && isConcurrent && firstOrg
+      ? (await getOrgMembers(firstOrg.id)).some(
+          (m) => m.user.id === user.id && m.role === "owner",
+        )
+      : false;
 
   const allPlans = [...SYNTHETIC_FREE_PLANS, ...plans];
   const { planNames, planDescriptions } = buildPlanTranslations(
@@ -137,27 +174,17 @@ export default async function PricingPage({ params, searchParams }: Props) {
         );
       }
       if (isCurrent) return null;
-      if (!isUpgrade) return null;
-      if (isTeam) {
-        if (hasOrg) return null;
-        return (
-          <TeamCheckoutButton
-            planPriceId={plan.price.id}
-            highlighted={highlighted}
-          >
-            {ctaLabel}
-          </TeamCheckoutButton>
-        );
-      }
-      return (
-        <CheckoutButton
-          action={startCheckout}
-          field={{ name: "planPriceId", value: plan.price.id }}
-          highlighted={highlighted}
-        >
-          {ctaLabel}
-        </CheckoutButton>
-      );
+      return renderPlanUpgradeCta({
+        plan,
+        isUpgrade,
+        isTeam,
+        ctaLabel,
+        hasOrg,
+        personalSubscription,
+        teamSubscription,
+        personalCanManage,
+        teamCanManage,
+      });
     },
   });
 
@@ -218,24 +245,26 @@ export default async function PricingPage({ params, searchParams }: Props) {
         )}
       </div>
 
-      <ProductsGrid
-        className="mt-16"
-        title={t("products")}
-        products={products}
-        productNames={buildProductTranslations(products, tProducts)}
-        creditsLabel={t("credits")}
-        locale={locale}
-        renderCta={(product) =>
-          product.price && (
-            <CheckoutButton
-              action={startProductCheckout}
-              field={{ name: "productPriceId", value: product.price.id }}
-            >
-              {t("buy")}
-            </CheckoutButton>
-          )
-        }
-      />
+      <div className="mt-16">
+        <ProductsCheckoutSection
+          title={t("products")}
+          products={products}
+          productNames={buildProductTranslations(products, tProducts)}
+          creditsLabel={t("credits")}
+          buyLabel={t("buy")}
+          locale={locale}
+          // Picker is only shown for the rule-5b case: an org owner who kept
+          // their personal subscription alongside the team plan and therefore
+          // has two Stripe customers the credits could land on. Mirrors the
+          // gate on /subscription so both surfaces behave identically.
+          showPicker={isCurrentUserOrgOwner && isConcurrent}
+          pickerLabel={t("productCheckoutContextLabel")}
+          personalOptionLabel={t("productCheckoutContextPersonal")}
+          teamOptionLabel={t("productCheckoutContextTeam", {
+            orgName: userOrgs.at(0)?.name ?? "",
+          })}
+        />
+      </div>
     </div>
   );
 }

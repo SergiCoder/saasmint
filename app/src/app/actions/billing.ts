@@ -142,12 +142,18 @@ export async function startCheckout(
   redirect(url);
 }
 
-export async function openBillingPortal() {
+export async function openBillingPortal(formData?: FormData) {
+  // Form-submitted context picks the Stripe customer the portal attaches to.
+  // Concurrent billers (rule 5) MUST send it — otherwise the backend default
+  // ("team" for org members, "personal" otherwise) would route a "manage
+  // personal" click into the team portal. Single-context callers omit it.
+  const context = formData ? parseContext(formData) : undefined;
   let url: string | null = null;
   try {
-    await assertCanManageBilling();
+    await assertCanManageBilling(context);
     const session = await subscriptionGateway.createBillingPortalSession({
       returnUrl: `${APP_ORIGIN}/subscription`,
+      ...(context ? { context } : {}),
     });
     assertTrustedRedirect(session.url);
     url = session.url;

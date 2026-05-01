@@ -53,7 +53,6 @@ export default async function AppLayoutRoute({
     { href: "/dashboard", label: t("dashboard") },
     { href: "/feature1", label: t("feature1") },
     { href: "/feature2", label: t("feature2") },
-    ...(hasOrg ? [{ href: "/org", label: t("org") }] : []),
   ];
 
   const userMenuItems = [

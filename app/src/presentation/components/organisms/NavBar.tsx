@@ -1,3 +1,4 @@
+import { Link } from "@/lib/i18n/navigation";
 import { Logo } from "../atoms/Logo";
 import { Avatar } from "../atoms/Avatar";
 import { LocaleDropdown } from "../atoms/LocaleDropdown";
@@ -56,11 +57,22 @@ export function NavBar({
           <LocaleDropdown />
           {actions}
           {user && userMenuItems ? (
-            <UserMenu
-              user={user}
-              menuItems={userMenuItems}
-              signOutSlot={userMenuSignOut}
-            />
+            <>
+              <div className="hidden md:block">
+                <UserMenu
+                  user={user}
+                  menuItems={userMenuItems}
+                  signOutSlot={userMenuSignOut}
+                />
+              </div>
+              <Link
+                href="/profile"
+                className="md:hidden"
+                aria-label={user.fullName}
+              >
+                <Avatar src={user.avatarUrl} alt={user.fullName} size="sm" />
+              </Link>
+            </>
           ) : (
             user && (
               <Avatar src={user.avatarUrl} alt={user.fullName} size="sm" />

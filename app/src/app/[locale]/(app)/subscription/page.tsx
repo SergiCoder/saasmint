@@ -3,13 +3,11 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getCurrentUser } from "../_data/getCurrentUser";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
-import { CheckoutButton } from "./_components/CheckoutButton";
-import { TeamCheckoutButton } from "./_components/TeamCheckoutButton";
+import { renderPlanUpgradeCta } from "./_lib/renderPlanUpgradeCta";
 import { CurrentSubscriptionCard } from "./_components/CurrentSubscriptionCard";
 import { CreditBalanceCard } from "./_components/CreditBalanceCard";
 import { FreePlanCard } from "./_components/FreePlanCard";
 import { ProductsCheckoutSection } from "./_components/ProductsCheckoutSection";
-import { startCheckout } from "@/app/actions/billing";
 import { getCreditBalances } from "../_data/getCreditBalances";
 import { getSubscriptionPageData } from "./_data/getSubscriptionPageData";
 import {
@@ -23,7 +21,6 @@ import {
   SUBSCRIPTION_INTERVAL_HREFS,
 } from "@/app/[locale]/_lib/pricingInterval";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
-import { PLAN_TIER_PRO } from "@/domain/models/Plan";
 import {
   findPersonalSubscription,
   findTeamSubscription,
@@ -91,6 +88,9 @@ export default async function BillingPage({
   const isTeamSubscription = teamSubscription !== null;
   const teamCanManage =
     teamSubscription !== null && canManageById[teamSubscription.id] === true;
+  const personalCanManage =
+    personalSubscription !== null &&
+    canManageById[personalSubscription.id] === true;
 
   const { planNames, planDescriptions } = buildPlanTranslations(plans, tPlans);
 
@@ -124,29 +124,17 @@ export default async function BillingPage({
           </p>
         );
       }
-      if (!plan.price) return null;
-      if (!isUpgrade) return null;
-      const highlighted = plan.tier === PLAN_TIER_PRO;
-      if (isTeam) {
-        if (hasOrg) return null;
-        return (
-          <TeamCheckoutButton
-            planPriceId={plan.price.id}
-            highlighted={highlighted}
-          >
-            {ctaLabel}
-          </TeamCheckoutButton>
-        );
-      }
-      return (
-        <CheckoutButton
-          action={startCheckout}
-          field={{ name: "planPriceId", value: plan.price.id }}
-          highlighted={highlighted}
-        >
-          {ctaLabel}
-        </CheckoutButton>
-      );
+      return renderPlanUpgradeCta({
+        plan,
+        isUpgrade,
+        isTeam,
+        ctaLabel,
+        hasOrg,
+        personalSubscription,
+        teamSubscription,
+        personalCanManage,
+        teamCanManage,
+      });
     },
   });
 

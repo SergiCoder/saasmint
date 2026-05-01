@@ -209,6 +209,42 @@ describe("DjangoApiSubscriptionGateway", () => {
       });
       expect(result).toEqual(response);
     });
+
+    it("appends ?context=team to the URL and keeps it out of the body", async () => {
+      // Concurrent personal+team billers (rule 5) MUST pin which Stripe
+      // customer the portal attaches to — `context` is plumbed as a query
+      // string (mirroring cancel/resume/updateSeats), not in the body.
+      const response = { url: "https://billing.stripe.com/portal_team" };
+      mockApiFetch.mockResolvedValue(response);
+
+      await gateway.createBillingPortalSession({
+        returnUrl: `${APP_URL}/billing`,
+        context: "team",
+      });
+
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        "/billing/portal-sessions/?context=team",
+        {
+          method: "POST",
+          body: JSON.stringify({ return_url: `${APP_URL}/billing` }),
+        },
+      );
+    });
+
+    it("appends ?context=personal when targeting the personal sub", async () => {
+      const response = { url: "https://billing.stripe.com/portal_personal" };
+      mockApiFetch.mockResolvedValue(response);
+
+      await gateway.createBillingPortalSession({
+        returnUrl: `${APP_URL}/billing`,
+        context: "personal",
+      });
+
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        "/billing/portal-sessions/?context=personal",
+        expect.any(Object),
+      );
+    });
   });
 
   describe("cancelSubscription", () => {

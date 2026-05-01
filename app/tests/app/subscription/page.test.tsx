@@ -70,10 +70,13 @@ vi.mock("@/app/[locale]/(app)/subscription/_data/canManageBilling", () => ({
     ),
 }));
 
-// Use-case stubs — return empty lists so we don't render the pricing table.
-// Gateway stubs — return empty lists so we don't render the pricing table.
+// Gateway stubs — return empty lists by default; tests that need to render
+// the pricing grid can override `mockListPlans` per-case.
+const mockListPlans = vi.fn<(currency?: string) => Promise<unknown[]>>(() =>
+  Promise.resolve([]),
+);
 vi.mock("@/infrastructure/registry", () => ({
-  planGateway: { listPlans: () => Promise.resolve([]) },
+  planGateway: { listPlans: (c?: string) => mockListPlans(c) },
   productGateway: { listProducts: () => Promise.resolve([]) },
 }));
 
@@ -82,7 +85,34 @@ vi.mock("@/infrastructure/registry", () => ({
 vi.mock("@/presentation/components/organisms/PricingSection", async () => {
   const React = await import("react");
   return {
-    PricingSection: () => React.createElement("div", null, "pricing-section"),
+    PricingSection: (props: {
+      title: string;
+      groups: {
+        key: string;
+        monthly?: { cta: React.ReactNode | null };
+        yearly?: { cta: React.ReactNode | null };
+      }[];
+    }) =>
+      React.createElement(
+        "div",
+        { "data-testid": `pricing-section-${props.title}` },
+        props.groups.map((g) =>
+          React.createElement(
+            "div",
+            { key: g.key, "data-testid": `plan-${g.key}` },
+            React.createElement(
+              "div",
+              { "data-testid": `plan-${g.key}-monthly` },
+              g.monthly?.cta ?? null,
+            ),
+            React.createElement(
+              "div",
+              { "data-testid": `plan-${g.key}-yearly` },
+              g.yearly?.cta ?? null,
+            ),
+          ),
+        ),
+      ),
   };
 });
 
@@ -172,7 +202,11 @@ vi.mock(
     const React = await import("react");
     return {
       CheckoutButton: ({ children }: { children: React.ReactNode }) =>
-        React.createElement("button", { type: "button" }, children),
+        React.createElement(
+          "button",
+          { type: "button", "data-cta": "checkout" },
+          children,
+        ),
     };
   },
 );
@@ -183,7 +217,11 @@ vi.mock(
     const React = await import("react");
     return {
       TeamCheckoutButton: ({ children }: { children: React.ReactNode }) =>
-        React.createElement("button", { type: "button" }, children),
+        React.createElement(
+          "button",
+          { type: "button", "data-cta": "team-checkout" },
+          children,
+        ),
     };
   },
 );
@@ -193,8 +231,22 @@ vi.mock(
   async () => {
     const React = await import("react");
     return {
-      BillingPortalButton: ({ children }: { children: React.ReactNode }) =>
-        React.createElement("button", { type: "button" }, children),
+      BillingPortalButton: ({
+        children,
+        context,
+      }: {
+        children: React.ReactNode;
+        context?: "personal" | "team";
+      }) =>
+        React.createElement(
+          "button",
+          {
+            type: "button",
+            "data-cta": "portal",
+            "data-context": context ?? "",
+          },
+          children,
+        ),
     };
   },
 );
@@ -614,6 +666,163 @@ describe("BillingPage (subscription/page)", () => {
       await renderPage({});
 
       expect(screen.queryByText("teamPlanReadonly")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("upgrade CTA routing", () => {
+    // Two-context subscriber on basic in both. Targeted at the bug where the
+    // team-pro upgrade CTA was being suppressed by an `if (hasOrg) return null`
+    // guard that conflated "starting a new team checkout" with "upgrading an
+    // existing team subscription". The portal is the canonical Stripe path
+    // for plan changes on an existing subscription.
+
+    function makeSub(
+      id: string,
+      context: "personal" | "team",
+      tier: 2 | 3,
+    ): Subscription {
+      return {
+        id,
+        status: "active",
+        plan: {
+          id: `${id}-plan`,
+          name: tier === 2 ? "Basic" : "Pro",
+          description: "",
+          context,
+          tier,
+          interval: "month",
+          price: {
+            id: `${id}-price`,
+            // Cheap basic; expensive pro. Monthly-equivalent comparison drives
+            // `isUpgrade` in buildPlanCards.
+            amount: tier === 2 ? 1000 : 3000,
+            displayAmount: tier === 2 ? 10 : 30,
+            currency: "usd",
+          },
+        },
+        quantity: 1,
+        trialEndsAt: null,
+        currentPeriodStart: "2026-01-01T00:00:00Z",
+        currentPeriodEnd: "2026-02-01T00:00:00Z",
+        cancelAt: null,
+        canceledAt: null,
+        createdAt: "2026-01-01T00:00:00Z",
+      };
+    }
+
+    function makePlan(
+      id: string,
+      context: "personal" | "team",
+      tier: 2 | 3,
+    ): unknown {
+      return {
+        id,
+        name: tier === 2 ? "Basic" : "Pro",
+        description: "",
+        context,
+        tier,
+        interval: "month",
+        price: {
+          id: `${id}-price`,
+          amount: tier === 2 ? 1000 : 3000,
+          displayAmount: tier === 2 ? 10 : 30,
+          currency: "usd",
+        },
+      };
+    }
+
+    it("renders a portal-routing CTA on the team-pro card for an existing team-basic subscriber (regression: button was missing)", async () => {
+      mockGetSubscriptions.mockResolvedValueOnce([
+        makeSub("sub_p", "personal", 2),
+        makeSub("sub_t", "team", 2),
+      ]);
+      mockCanManageBilling.mockResolvedValue(true);
+      mockListPlans.mockResolvedValueOnce([
+        makePlan("plan_p_basic", "personal", 2),
+        makePlan("plan_p_pro", "personal", 3),
+        makePlan("plan_t_basic", "team", 2),
+        makePlan("plan_t_pro", "team", 3),
+      ]);
+
+      await renderPage({});
+
+      // Team-pro card: actionable upgrade CTA wired to the billing portal
+      // with `?context=team`. Backend rule 8 would 409 a fresh team checkout
+      // here; portal is the only legal upgrade route.
+      const teamProCta = screen
+        .getByTestId("plan-team-3-monthly")
+        .querySelector("[data-cta]") as HTMLElement | null;
+      expect(teamProCta).not.toBeNull();
+      expect(teamProCta?.getAttribute("data-cta")).toBe("portal");
+      expect(teamProCta?.getAttribute("data-context")).toBe("team");
+
+      // Personal-pro card stays on the same portal route — Stripe handles
+      // proration in place; posting a fresh personal Checkout would create
+      // a parallel sub.
+      const personalProCta = screen
+        .getByTestId("plan-personal-3-monthly")
+        .querySelector("[data-cta]") as HTMLElement | null;
+      expect(personalProCta?.getAttribute("data-cta")).toBe("portal");
+      expect(personalProCta?.getAttribute("data-context")).toBe("personal");
+    });
+
+    it("hides the upgrade CTA on a higher-tier team card when the caller cannot manage the team sub", async () => {
+      // Non-billing org member with a personal sub of their own. They can
+      // upgrade their own personal plan, but the team upgrade is the
+      // billing member's call — the team-pro CTA must be hidden.
+      mockGetSubscriptions.mockResolvedValueOnce([
+        makeSub("sub_p", "personal", 2),
+        makeSub("sub_t", "team", 2),
+      ]);
+      mockCanManageBilling.mockImplementation(
+        async (_user, sub) => sub.plan.context === "personal",
+      );
+      mockListPlans.mockResolvedValueOnce([
+        makePlan("plan_t_basic", "team", 2),
+        makePlan("plan_t_pro", "team", 3),
+      ]);
+
+      await renderPage({});
+
+      const teamProSlot = screen.getByTestId("plan-team-3-monthly");
+      expect(teamProSlot.querySelector("[data-cta]")).toBeNull();
+    });
+
+    it("keeps the first-time team checkout CTA when the user has no team sub and no org", async () => {
+      // No team sub, no org membership: legitimate fresh team checkout.
+      mockGetSubscriptions.mockResolvedValueOnce([]);
+      mockGetUserOrgs.mockResolvedValueOnce([]);
+      mockListPlans.mockResolvedValueOnce([
+        makePlan("plan_t_basic", "team", 2),
+        makePlan("plan_t_pro", "team", 3),
+      ]);
+
+      await renderPage({});
+
+      const teamProCta = screen
+        .getByTestId("plan-team-3-monthly")
+        .querySelector("[data-cta]") as HTMLElement | null;
+      expect(teamProCta?.getAttribute("data-cta")).toBe("team-checkout");
+    });
+
+    it("suppresses team CTAs for an org owner with no team sub (rule 8 would 409)", async () => {
+      // Edge case: user owns an org but doesn't have a team subscription on
+      // it (e.g. a former team sub that was cancelled). Posting a fresh
+      // team Checkout would 409 with org_already_owned, so the CTA stays
+      // hidden until the user resolves the conflict out of band.
+      mockGetSubscriptions.mockResolvedValueOnce([]);
+      mockGetUserOrgs.mockResolvedValueOnce([
+        { id: "org_1", name: "Acme", slug: "acme", logoUrl: null },
+      ]);
+      mockListPlans.mockResolvedValueOnce([
+        makePlan("plan_t_basic", "team", 2),
+        makePlan("plan_t_pro", "team", 3),
+      ]);
+
+      await renderPage({});
+
+      const teamProSlot = screen.getByTestId("plan-team-3-monthly");
+      expect(teamProSlot.querySelector("[data-cta]")).toBeNull();
     });
   });
 });

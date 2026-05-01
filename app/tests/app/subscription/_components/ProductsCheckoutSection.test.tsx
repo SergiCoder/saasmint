@@ -54,7 +54,13 @@ describe("ProductsCheckoutSection", () => {
   it("renders the picker with both options when showPicker=true", () => {
     render(<ProductsCheckoutSection {...baseProps} showPicker={true} />);
 
-    expect(screen.getByText("Buy credits for")).toBeInTheDocument();
+    // The picker label appears twice on purpose: a visible h3 (matches the
+    // product cards' title weight) plus an sr-only legend that gives the
+    // radio fieldset its accessible name. The h3 is `aria-hidden` so it
+    // doesn't double-announce, which is why we query for it as a plain
+    // heading element rather than via the accessibility tree.
+    const heading = document.querySelector('h3[aria-hidden="true"]');
+    expect(heading?.textContent).toBe("Buy credits for");
     expect(screen.getByLabelText("My personal account")).toBeInTheDocument();
     expect(screen.getByLabelText("Team Acme")).toBeInTheDocument();
   });

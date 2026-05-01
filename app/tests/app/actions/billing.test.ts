@@ -395,6 +395,49 @@ describe("billing server actions", () => {
       expect(mockRedirect).not.toHaveBeenCalled();
       errSpy.mockRestore();
     });
+
+    it("forwards a form-supplied context to the gateway", async () => {
+      // Concurrent personal+team billers (rule 5) MUST pin which Stripe
+      // customer the portal attaches to — the BillingPortalButton plumbs
+      // `context` as a hidden form field so the action can forward it.
+      mockListSubscriptions.mockResolvedValueOnce([
+        { id: "s1", plan: { context: "personal" } },
+        { id: "s2", plan: { context: "team" } },
+      ]);
+      mockCreateBillingPortalSession.mockResolvedValue({
+        url: "https://billing.stripe.com/portal_team",
+      });
+      const formData = new FormData();
+      formData.set("context", "team");
+
+      await expect(openBillingPortal(formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+
+      expect(mockCreateBillingPortalSession).toHaveBeenCalledWith({
+        returnUrl: `${APP_URL}/subscription`,
+        context: "team",
+      });
+    });
+
+    it("drops a tampered context value and falls back to the backend default", async () => {
+      // Server actions are reachable as RPCs — `parseContext` filters to the
+      // literal union, so a hostile caller can't inject extra params or
+      // path characters via the context field.
+      mockCreateBillingPortalSession.mockResolvedValue({
+        url: "https://billing.stripe.com/portal_default",
+      });
+      const formData = new FormData();
+      formData.set("context", "../admin");
+
+      await expect(openBillingPortal(formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+
+      const call = mockCreateBillingPortalSession.mock.calls[0]?.[0];
+      expect(call).toBeDefined();
+      expect(call).not.toHaveProperty("context");
+    });
   });
 
   describe("cancelRenewal", () => {

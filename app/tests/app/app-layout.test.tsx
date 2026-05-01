@@ -208,28 +208,36 @@ describe("(app)/layout", () => {
     expect(hrefs).toEqual(["/dashboard", "/feature1", "/feature2"]);
   });
 
-  it("adds /org nav link when the user has a team subscription", async () => {
+  it("adds /org user-menu link when the user has a team subscription", async () => {
     mockGetSubscriptions.mockResolvedValue([makeTeamSubscription()]);
 
     await renderLayout("en");
 
-    const hrefs = Array.from(
+    const navHrefs = Array.from(
       screen.getByTestId("nav-links").querySelectorAll("li"),
     ).map((li) => li.getAttribute("data-href"));
+    const menuHrefs = Array.from(
+      screen.getByTestId("menu-items").querySelectorAll("li"),
+    ).map((li) => li.getAttribute("data-href"));
 
-    expect(hrefs).toContain("/org");
+    expect(navHrefs).not.toContain("/org");
+    expect(menuHrefs).toContain("/org");
   });
 
-  it("adds /org nav link when the user belongs to any org (no team sub)", async () => {
+  it("adds /org user-menu link when the user belongs to any org (no team sub)", async () => {
     mockGetUserOrgs.mockResolvedValue([makeOrg()]);
 
     await renderLayout("en");
 
-    const hrefs = Array.from(
+    const navHrefs = Array.from(
       screen.getByTestId("nav-links").querySelectorAll("li"),
     ).map((li) => li.getAttribute("data-href"));
+    const menuHrefs = Array.from(
+      screen.getByTestId("menu-items").querySelectorAll("li"),
+    ).map((li) => li.getAttribute("data-href"));
 
-    expect(hrefs).toContain("/org");
+    expect(navHrefs).not.toContain("/org");
+    expect(menuHrefs).toContain("/org");
   });
 
   it("redirects to preferredLocale when it differs from the URL locale", async () => {
