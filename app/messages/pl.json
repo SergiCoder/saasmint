@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Sforkuj repozytorium, dostosuj branding i uruchom. Darmowe i open-source.",
     "ctaSectionPlaceholder": "ty@firma.pl",
     "ctaSectionButton": "Zacznij budować →",
+    "ctaSectionSuccessTitle": "Dziękujemy za rejestrację!",
+    "ctaSectionSuccessBody": "Wkrótce się odezwiemy.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Użytkownicy",
     "dashUptimeVal": "1,248",
@@ -85,6 +87,7 @@
       "noAccount": "Nie masz konta?",
       "register": "Zarejestruj się",
       "registered": "Konto utworzone! Sprawdź e-mail, aby zweryfikować konto.",
+      "invited": "Dołączyłeś do zespołu! Sprawdź e-mail, aby zweryfikować konto przed zalogowaniem.",
       "accountDeleted": "Twoje konto zostało usunięte. Przykro nam, że odchodzisz.",
       "errorNoSession": "Twoja sesja wygasła. Zaloguj się ponownie.",
       "errorEmailNotVerified": "Zweryfikuj swój adres e-mail przed zalogowaniem. Sprawdź skrzynkę odbiorczą.",
@@ -92,6 +95,7 @@
       "errorAccountDeactivated": "To konto zostało dezaktywowane.",
       "errorBackendRejected": "Uwierzytelnianie nie powiodło się. Spróbuj ponownie.",
       "errorOAuth": "Logowanie społecznościowe nie powiodło się. Spróbuj ponownie.",
+      "errorOAuthEmailUnverifiedCollision": "Twoje konto społecznościowe jest zarejestrowane na adres e-mail, który ma już tutaj konto z hasłem. Zaloguj się najpierw przy użyciu hasła; możesz powiązać dostawcę społecznościowego później.",
       "forgotPassword": "Nie pamiętasz hasła?"
     },
     "forgotPassword": {
@@ -178,12 +182,18 @@
   "billing": {
     "title": "Płatności",
     "currentPlan": "Aktualny plan",
+    "currentPersonalPlan": "Aktualny plan osobisty",
+    "currentTeamPlan": "Aktualny plan zespołowy",
     "upgrade": "Uaktualnij",
+    "upgradeTo": "Uaktualnij do {plan}",
     "cancel": "Subskrypcja zostanie anulowana na koniec okresu",
     "cancelRenewal": "Anuluj odnowienie",
     "cancelRenewalTitle": "Anulować odnowienie?",
     "cancelRenewalBody": "Twoja subskrypcja pozostanie aktywna do {date}. Po tym dniu stracisz dostęp do płatnych funkcji.",
     "cancelRenewalKeep": "Zachowaj subskrypcję",
+    "cancelRenewalTeamTitle": "Anulować subskrypcję zespołu?",
+    "cancelRenewalTeamBody": "Twoja subskrypcja zespołu zostanie anulowana z końcem bieżącego okresu ({date}). W tym momencie Twoja organizacja, wszyscy członkowie i oczekujące zaproszenia zostaną usunięte. Tej operacji nie można cofnąć.",
+    "cancelRenewalTeam": "Anuluj subskrypcję zespołu",
     "resumeSubscription": "Wznów subskrypcję",
     "changePlan": "Zmień plan",
     "applyPromo": "Zastosuj kod promocyjny",
@@ -191,6 +201,7 @@
     "success": "Płatność powiodła się!",
     "successDesc": "Twoja subskrypcja została zaktualizowana.",
     "renewsOn": "Odnawia się",
+    "cancelsOn": "Anuluje się",
     "endsOn": "Kończy się",
     "billedMonthly": "Rozliczane miesięcznie",
     "billedYearly": "Rozliczane rocznie",
@@ -198,6 +209,14 @@
     "seats": "miejsca",
     "products": "Pakiety kredytów",
     "credits": "kredyty",
+    "creditBalanceLabel": "Saldo kredytów",
+    "creditBalancePersonalDescription": "Kredyty powiązane z Twoim kontem.",
+    "creditBalanceOrgDescription": "Współdzielone z zespołem — każdy członek może z nich korzystać.",
+    "creditBalancePersonalBadge": "Osobiste",
+    "creditBalanceOrgBadge": "Zespół",
+    "productCheckoutContextLabel": "Kup kredyty dla",
+    "productCheckoutContextPersonal": "Mojego konta osobistego",
+    "productCheckoutContextTeam": "Zespołu {orgName}",
     "buy": "Kup",
     "getStarted": "Rozpocznij",
     "select": "Wybierz",
@@ -214,8 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Zarządzane przez {name}",
-    "teamPlanReadonly": "Subskrypcja Twojego zespołu jest zarządzana przez właściciela organizacji.",
-    "checkout": "Płatność"
+    "checkout": "Płatność",
+    "personalSubAutoCancelNotice": "Twoja subskrypcja osobista zakończy się {date}, gdy ten plan zespołowy rozpocznie naliczanie. Do tego czasu zachowasz funkcje osobiste.",
+    "keepPersonalSubscription": "Zachowaj moją subskrypcję osobistą równolegle z planem zespołowym.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Ustawienia",
@@ -224,6 +254,7 @@
     "email": "E-mail",
     "preferredLocale": "Język",
     "preferredCurrency": "Waluta",
+    "currencyLockedNote": "Waluta rozliczeniowa jest ustalana przy pierwszej subskrypcji i nie można jej później zmienić.",
     "phonePrefix": "Numer kierunkowy",
     "phone": "Telefon",
     "phoneNumberRequired": "Podaj numer telefonu",
@@ -246,7 +277,7 @@
     "deleteAccount": "Usuń konto",
     "deleteConfirm": "To trwale usunie Twoje konto i wszystkie dane.",
     "deleteDialogTitle": "Czy na pewno?",
-    "deleteDialogDescription": "Tej czynności nie można cofnąć. Wpisz swój adres e-mail, aby potwierdzić.",
+    "deleteDialogDescription": "Tej czynności nie można cofnąć. Twoja aktywna subskrypcja zostanie natychmiast anulowana, a dostęp zakończy się teraz. Wpisz swój adres e-mail, aby potwierdzić.",
     "deleteDialogLabel": "Adres e-mail",
     "deleteDialogPlaceholder": "you@example.com",
     "deleteDialogCancel": "Anuluj",
@@ -254,7 +285,6 @@
     "deleteDialogMismatch": "Adres e-mail nie pasuje do konta.",
     "deleteDialogError": "Nie udało się usunąć konta. Spróbuj ponownie.",
     "deleteBlockedOwner": "Jesteś właścicielem organizacji. Przekaż własność lub usuń organizację przed usunięciem konta.",
-    "deleteBlockedMember": "Należysz do zespołu. Skontaktuj się z właścicielem zespołu, aby najpierw zostać usuniętym.",
     "pronounsHeHim": "On/Jego",
     "pronounsSheHer": "Ona/Jej",
     "pronounsTheyThem": "Ono/Ich",
@@ -305,11 +335,12 @@
     "deleteOrg": "Usuń organizację",
     "deleteOrgDescription": "Trwale usuń tę organizację. Wszyscy członkowie zostaną usunięci, oczekujące zaproszenia anulowane, a Twoja subskrypcja natychmiast anulowana bez zwrotu kosztów.",
     "deleteOrgDialogTitle": "Usunąć tę organizację?",
-    "deleteOrgDialogDescription": "Tej operacji nie można cofnąć. Jeśli to jedyna Twoja organizacja, Twoje konto również zostanie usunięte.",
+    "deleteOrgDialogDescription": "Tej operacji nie można cofnąć. Subskrypcja zespołu zostanie natychmiast anulowana, a członkowie utracą dostęp. Wpisz nazwę organizacji, aby potwierdzić.",
     "deleteOrgDialogLabel": "Wpisz {name}, aby potwierdzić",
     "deleteOrgDialogCancel": "Anuluj",
     "deleteOrgDialogSubmit": "Trwale usuń organizację",
-    "deleteOrgDialogMismatch": "Nazwa organizacji nie zgadza się."
+    "deleteOrgDialogMismatch": "Nazwa organizacji nie zgadza się.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Ładowanie...",
@@ -323,6 +354,7 @@
     "unknownError": "Nieznany błąd"
   },
   "actionErrors": {
+    "context_required": "Wskaż, którą subskrypcją chcesz zarządzać.",
     "current_password_required": "Aktualne hasło jest wymagane",
     "email_and_password_required": "E-mail i hasło są wymagane",
     "email_required": "Adres e-mail jest wymagany",
@@ -336,19 +368,26 @@
     "no_subscription": "Brak aktywnej subskrypcji",
     "not_authorized": "Nie masz uprawnień do wykonania tej czynności",
     "not_billing_member": "Nie masz uprawnień do zarządzania rozliczeniami",
+    "org_already_owned": "Masz już organizację — nie możesz rozpocząć kolejnej subskrypcji zespołowej.",
     "passwords_do_not_match": "Hasła nie pasują do siebie",
     "password_too_short": "Hasło musi mieć co najmniej 10 znaków",
     "profile_load_failed": "Nie udało się wczytać profilu",
     "session_expired": "Sesja wygasła. Zaloguj się ponownie.",
     "unknown_error": "Coś poszło nie tak. Spróbuj ponownie.",
-    "unsupported_image": "Nieobsługiwany typ obrazu"
+    "unsupported_image": "Nieobsługiwany typ obrazu",
+    "message_required": "Dołącz wiadomość.",
+    "message_too_long": "Wiadomość jest za długa (maks. 5000 znaków).",
+    "HTTP_429": "Zbyt wiele żądań. Spróbuj ponownie później.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Kontakt",
     "description": "Masz pytanie lub potrzebujesz pomocy? Chętnie Cię wysłuchamy.",
     "placeholder": "Twój adres e-mail",
     "submit": "Wyślij",
-    "messagePlaceholder": "Twoja wiadomość"
+    "messagePlaceholder": "Twoja wiadomość",
+    "successTitle": "Wiadomość wysłana",
+    "successBody": "Dziękujemy za kontakt. Odpowiemy najszybciej, jak to możliwe."
   },
   "about": {
     "title": "O tym projekcie",
@@ -403,7 +442,8 @@
     "fullName": "Imię i nazwisko",
     "password": "Hasło",
     "accept": "Zaakceptuj zaproszenie",
-    "decline": "Odrzuć zaproszenie"
+    "decline": "Odrzuć zaproszenie",
+    "concurrentSubscriptionNotice": "Masz obecnie subskrypcję osobistą. Będzie nadal naliczana wraz z członkostwem w zespole. Anuluj ją na stronie subskrypcji, jeśli już jej nie potrzebujesz."
   },
   "plans": {
     "personal": {

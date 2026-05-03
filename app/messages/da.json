@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Fork repoen, tilpas dit brand og lancér. Gratis og open source.",
     "ctaSectionPlaceholder": "you@company.com",
     "ctaSectionButton": "Start building →",
+    "ctaSectionSuccessTitle": "Tak for tilmeldingen!",
+    "ctaSectionSuccessBody": "Vi kontakter dig snart.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Brugere",
     "dashUptimeVal": "1,248",
@@ -85,6 +87,7 @@
       "noAccount": "Har du ikke en konto?",
       "register": "Opret konto",
       "registered": "Konto oprettet! Tjek din e-mail for at bekræfte din konto.",
+      "invited": "Du er kommet med på holdet! Tjek din e-mail for at bekræfte din konto, før du logger ind.",
       "accountDeleted": "Din konto er blevet slettet. Vi er kede af at se dig gå.",
       "errorNoSession": "Din session er udløbet. Log venligst ind igen.",
       "errorEmailNotVerified": "Bekræft din e-mailadresse, før du logger ind. Tjek din indbakke.",
@@ -92,6 +95,7 @@
       "errorAccountDeactivated": "Denne konto er deaktiveret.",
       "errorBackendRejected": "Godkendelse mislykkedes. Prøv at logge ind igen.",
       "errorOAuth": "Socialt login mislykkedes. Prøv venligst igen.",
+      "errorOAuthEmailUnverifiedCollision": "Din sociale konto er registreret med en e-mailadresse, der allerede har en adgangskode-konto her. Log venligst ind med din adgangskode først; du kan tilknytte den sociale udbyder bagefter.",
       "forgotPassword": "Glemt adgangskode?"
     },
     "forgotPassword": {
@@ -178,12 +182,18 @@
   "billing": {
     "title": "Fakturering",
     "currentPlan": "Nuværende plan",
+    "currentPersonalPlan": "Nuværende personligt abonnement",
+    "currentTeamPlan": "Nuværende team-abonnement",
     "upgrade": "Opgrader",
+    "upgradeTo": "Opgrader til {plan}",
     "cancel": "Abonnementet annulleres ved periodens udløb",
     "cancelRenewal": "Annuller fornyelse",
     "cancelRenewalTitle": "Annuller fornyelse?",
     "cancelRenewalBody": "Dit abonnement forbliver aktivt indtil {date}. Derefter mister du adgangen til betalte funktioner.",
     "cancelRenewalKeep": "Behold abonnement",
+    "cancelRenewalTeamTitle": "Annullér teamabonnement?",
+    "cancelRenewalTeamBody": "Dit teamabonnement annulleres ved udgangen af den aktuelle periode ({date}). På det tidspunkt fjernes din organisation, alle medlemmer og afventende invitationer. Dette kan ikke fortrydes.",
+    "cancelRenewalTeam": "Annullér teamabonnement",
     "resumeSubscription": "Genoptag abonnement",
     "changePlan": "Skift plan",
     "applyPromo": "Brug kampagnekode",
@@ -191,6 +201,7 @@
     "success": "Betaling gennemført!",
     "successDesc": "Dit abonnement er blevet opdateret.",
     "renewsOn": "Fornyes den",
+    "cancelsOn": "Opsiges den",
     "endsOn": "Slutter den",
     "billedMonthly": "Faktureret månedligt",
     "billedYearly": "Faktureret årligt",
@@ -198,6 +209,14 @@
     "seats": "pladser",
     "products": "Kreditpakker",
     "credits": "kreditter",
+    "creditBalanceLabel": "Kreditsaldo",
+    "creditBalancePersonalDescription": "Kreditter knyttet til din konto.",
+    "creditBalanceOrgDescription": "Delt med dit team — ethvert medlem kan bruge dem.",
+    "creditBalancePersonalBadge": "Personlig",
+    "creditBalanceOrgBadge": "Team",
+    "productCheckoutContextLabel": "Køb kreditter til",
+    "productCheckoutContextPersonal": "Min personlige konto",
+    "productCheckoutContextTeam": "Team {orgName}",
     "buy": "Køb",
     "getStarted": "Kom i gang",
     "select": "Vælg",
@@ -214,8 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Administreret af {name}",
-    "teamPlanReadonly": "Dit teamabonnement administreres af organisationens ejer.",
-    "checkout": "Betaling"
+    "checkout": "Betaling",
+    "personalSubAutoCancelNotice": "Dit personlige abonnement slutter den {date}, når dette team-abonnement begynder at blive faktureret. Du beholder de personlige funktioner indtil da.",
+    "keepPersonalSubscription": "Behold mit personlige abonnement sideløbende med team-abonnementet.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Indstillinger",
@@ -224,6 +254,7 @@
     "email": "E-mail",
     "preferredLocale": "Sprog",
     "preferredCurrency": "Valuta",
+    "currencyLockedNote": "Din faktureringsvaluta fastsættes, når du tegner abonnement første gang, og kan ikke ændres bagefter.",
     "phonePrefix": "Landekode",
     "phone": "Telefon",
     "phoneNumberRequired": "Indtast et telefonnummer",
@@ -246,7 +277,7 @@
     "deleteAccount": "Slet konto",
     "deleteConfirm": "Dette sletter permanent din konto og alle data.",
     "deleteDialogTitle": "Er du sikker?",
-    "deleteDialogDescription": "Denne handling kan ikke fortrydes. Indtast din e-mailadresse for at bekræfte.",
+    "deleteDialogDescription": "Denne handling kan ikke fortrydes. Dit aktive abonnement annulleres straks, og din adgang ophører nu. Indtast din e-mailadresse for at bekræfte.",
     "deleteDialogLabel": "E-mailadresse",
     "deleteDialogPlaceholder": "you@example.com",
     "deleteDialogCancel": "Annuller",
@@ -254,7 +285,6 @@
     "deleteDialogMismatch": "E-mailadressen stemmer ikke overens med din konto.",
     "deleteDialogError": "Kontoen kunne ikke slettes. Prøv igen.",
     "deleteBlockedOwner": "Du ejer en organisation. Overdrag ejerskab eller slet organisationen, før du sletter din konto.",
-    "deleteBlockedMember": "Du tilhører et team. Kontakt venligst din teamejer for at blive fjernet først.",
     "pronounsHeHim": "Han/Ham",
     "pronounsSheHer": "Hun/Hende",
     "pronounsTheyThem": "De/Dem",
@@ -305,11 +335,12 @@
     "deleteOrg": "Slet organisation",
     "deleteOrgDescription": "Slet denne organisation permanent. Alle medlemmer fjernes, afventende invitationer annulleres, og dit abonnement annulleres straks uden refusion.",
     "deleteOrgDialogTitle": "Slet denne organisation?",
-    "deleteOrgDialogDescription": "Denne handling kan ikke fortrydes. Hvis dette er din eneste organisation, slettes din konto også.",
+    "deleteOrgDialogDescription": "Denne handling kan ikke fortrydes. Teamabonnementet annulleres straks, og medlemmerne mister adgang. Indtast organisationsnavnet for at bekræfte.",
     "deleteOrgDialogLabel": "Skriv {name} for at bekræfte",
     "deleteOrgDialogCancel": "Annullér",
     "deleteOrgDialogSubmit": "Slet organisation permanent",
-    "deleteOrgDialogMismatch": "Organisationens navn stemmer ikke overens."
+    "deleteOrgDialogMismatch": "Organisationens navn stemmer ikke overens.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Indlæser...",
@@ -323,6 +354,7 @@
     "unknownError": "Ukendt fejl"
   },
   "actionErrors": {
+    "context_required": "Angiv venligst, hvilket abonnement der skal administreres.",
     "current_password_required": "Nuværende adgangskode er påkrævet",
     "email_and_password_required": "E-mail og adgangskode er påkrævet",
     "email_required": "E-mail er påkrævet",
@@ -336,19 +368,26 @@
     "no_subscription": "Intet aktivt abonnement",
     "not_authorized": "Du har ikke tilladelse til at udføre denne handling",
     "not_billing_member": "Du har ikke tilladelse til at administrere fakturering",
+    "org_already_owned": "Du ejer allerede en organisation — du kan ikke starte endnu et team-abonnement.",
     "passwords_do_not_match": "Adgangskoderne stemmer ikke overens",
     "password_too_short": "Adgangskoden skal være mindst 10 tegn",
     "profile_load_failed": "Profilen kunne ikke indlæses",
     "session_expired": "Sessionen er udløbet. Log venligst ind igen.",
     "unknown_error": "Noget gik galt. Prøv venligst igen.",
-    "unsupported_image": "Billedtypen understøttes ikke"
+    "unsupported_image": "Billedtypen understøttes ikke",
+    "message_required": "Tilføj venligst en besked.",
+    "message_too_long": "Beskeden er for lang (maks. 5000 tegn).",
+    "HTTP_429": "For mange forespørgsler. Prøv igen senere.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Kontakt os",
     "description": "Har du et spørgsmål eller brug for hjælp? Vi hører gerne fra dig.",
     "placeholder": "Din e-mailadresse",
     "submit": "Send",
-    "messagePlaceholder": "Din besked"
+    "messagePlaceholder": "Din besked",
+    "successTitle": "Beskeden er sendt",
+    "successBody": "Tak for din henvendelse. Vi svarer hurtigst muligt."
   },
   "about": {
     "title": "Om dette projekt",
@@ -403,7 +442,8 @@
     "fullName": "Fulde navn",
     "password": "Adgangskode",
     "accept": "Acceptér invitation",
-    "decline": "Afvis invitation"
+    "decline": "Afvis invitation",
+    "concurrentSubscriptionNotice": "Du har i øjeblikket et personligt abonnement. Det vil fortsat blive faktureret sammen med dit teammedlemskab. Annullér det fra din abonnementsside, hvis du ikke længere har brug for det."
   },
   "plans": {
     "personal": {

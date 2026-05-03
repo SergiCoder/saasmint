@@ -1,17 +1,27 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "@/lib/i18n/navigation";
 import { Button } from "@/presentation/components/atoms/Button";
 import { resumeSubscription } from "@/app/actions/billing";
+import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 
 interface ResumeSubscriptionButtonProps {
   children: React.ReactNode;
+  /**
+   * Targets one of the caller's two possible subscriptions during concurrent
+   * personal+team billing. Omit for single-sub callers — the backend default
+   * is correct.
+   */
+  context?: SubscriptionContext;
 }
 
 export function ResumeSubscriptionButton({
   children,
+  context,
 }: ResumeSubscriptionButtonProps) {
+  const router = useRouter();
   const translateError = useActionErrorMessage();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -19,8 +29,10 @@ export function ResumeSubscriptionButton({
   const handleClick = () => {
     setError(null);
     startTransition(async () => {
-      const result = await resumeSubscription();
-      if (!result.ok) {
+      const result = await resumeSubscription(context);
+      if (result.ok) {
+        router.refresh();
+      } else {
         setError(translateError(result));
       }
     });

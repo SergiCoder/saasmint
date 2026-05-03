@@ -2,9 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { invitationGateway } from "@/infrastructure/registry";
-import { setAuthCookies } from "@/infrastructure/auth/cookies";
 import {
-  ok,
   fail,
   toActionError,
   type ActionResult,
@@ -12,20 +10,14 @@ import {
 import { getString } from "@/lib/actions/parseFormData";
 import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
 
-/**
- * Accept an invitation and return a post-success redirect target for the
- * client to navigate to. We deliberately avoid a server-side `redirect()`
- * here: the action sets fresh auth cookies and a server redirect makes
- * Next.js pre-render the RSC payload for the target page in parallel, which
- * races with cookie propagation and can produce a "redirect count exceeded"
- * error for an already-authenticated browser accepting its own invitation.
- * Letting the client navigate via `router.push` after the Set-Cookie response
- * commits sidesteps the race. Mirrors the `verifyEmail` pattern.
- */
+// Backend creates the invitee as unverified and emails a verification link
+// instead of issuing tokens. We mirror the regular signup flow: redirect to
+// /login with the `invited` flag so the page renders an invitation-specific
+// "check your email" banner.
 export async function acceptInvitation(
   _prev: unknown,
   formData: FormData,
-): Promise<ActionResult<{ redirectTo: string }>> {
+): Promise<ActionResult<never>> {
   const token = getString(formData, "token");
   const fullName = getString(formData, "fullName");
   const password = getString(formData, "password");
@@ -41,14 +33,12 @@ export async function acceptInvitation(
   }
 
   try {
-    const { accessToken, refreshToken } =
-      await invitationGateway.acceptInvitation(token, { fullName, password });
-    await setAuthCookies(accessToken, refreshToken);
+    await invitationGateway.acceptInvitation(token, { fullName, password });
   } catch (err) {
     console.error("Failed to accept invitation", err);
     return toActionError(err);
   }
-  return ok({ redirectTo: "/dashboard" });
+  redirect("/login?invited=true");
 }
 
 // Fire-and-forget: consumed via `<form action={fn}>` which requires

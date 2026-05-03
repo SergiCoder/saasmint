@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Форкните репозиторий, настройте брендинг и запускайте. Бесплатно и с открытым исходным кодом.",
     "ctaSectionPlaceholder": "you@company.ru",
     "ctaSectionButton": "Начать строить →",
+    "ctaSectionSuccessTitle": "Спасибо за регистрацию!",
+    "ctaSectionSuccessBody": "Мы скоро свяжемся с вами.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Пользователи",
     "dashUptimeVal": "1,248",
@@ -85,6 +87,7 @@
       "noAccount": "Нет аккаунта?",
       "register": "Зарегистрироваться",
       "registered": "Аккаунт создан! Проверьте электронную почту для подтверждения.",
+      "invited": "Вы присоединились к команде! Проверьте электронную почту, чтобы подтвердить аккаунт перед входом.",
       "accountDeleted": "Ваш аккаунт был удалён. Нам жаль, что вы уходите.",
       "errorNoSession": "Ваша сессия истекла. Пожалуйста, войдите снова.",
       "errorEmailNotVerified": "Подтвердите адрес электронной почты перед входом. Проверьте папку «Входящие».",
@@ -92,6 +95,7 @@
       "errorAccountDeactivated": "Этот аккаунт деактивирован.",
       "errorBackendRejected": "Ошибка аутентификации. Попробуйте войти снова.",
       "errorOAuth": "Ошибка социального входа. Пожалуйста, попробуйте снова.",
+      "errorOAuthEmailUnverifiedCollision": "Ваша учётная запись соцсети зарегистрирована на адрес электронной почты, у которого уже есть учётная запись с паролем здесь. Сначала войдите по паролю; после этого вы сможете привязать соцсеть.",
       "forgotPassword": "Забыли пароль?"
     },
     "forgotPassword": {
@@ -178,12 +182,18 @@
   "billing": {
     "title": "Оплата",
     "currentPlan": "Текущий план",
+    "currentPersonalPlan": "Текущий личный тариф",
+    "currentTeamPlan": "Текущий тариф для команды",
     "upgrade": "Улучшить",
+    "upgradeTo": "Перейти на {plan}",
     "cancel": "Подписка будет отменена в конце периода",
     "cancelRenewal": "Отменить продление",
     "cancelRenewalTitle": "Отменить продление?",
     "cancelRenewalBody": "Ваша подписка останется активной до {date}. После этого вы потеряете доступ к платным функциям.",
     "cancelRenewalKeep": "Сохранить подписку",
+    "cancelRenewalTeamTitle": "Отменить командную подписку?",
+    "cancelRenewalTeamBody": "Ваша командная подписка будет отменена в конце текущего периода ({date}). В этот момент ваша организация, все участники и ожидающие приглашения будут удалены. Это действие необратимо.",
+    "cancelRenewalTeam": "Отменить командную подписку",
     "resumeSubscription": "Возобновить подписку",
     "changePlan": "Сменить план",
     "applyPromo": "Применить промокод",
@@ -191,6 +201,7 @@
     "success": "Оплата прошла успешно!",
     "successDesc": "Ваша подписка обновлена.",
     "renewsOn": "Продлевается",
+    "cancelsOn": "Отменяется",
     "endsOn": "Заканчивается",
     "billedMonthly": "Ежемесячная оплата",
     "billedYearly": "Годовая оплата",
@@ -198,6 +209,14 @@
     "seats": "мест",
     "products": "Пакеты кредитов",
     "credits": "кредиты",
+    "creditBalanceLabel": "Баланс кредитов",
+    "creditBalancePersonalDescription": "Кредиты, привязанные к вашей учётной записи.",
+    "creditBalanceOrgDescription": "Общие с вашей командой — может использовать любой участник.",
+    "creditBalancePersonalBadge": "Личный",
+    "creditBalanceOrgBadge": "Команда",
+    "productCheckoutContextLabel": "Купить кредиты для",
+    "productCheckoutContextPersonal": "Моего личного аккаунта",
+    "productCheckoutContextTeam": "Команды {orgName}",
     "buy": "Купить",
     "getStarted": "Начать",
     "select": "Выбрать",
@@ -214,8 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Управляется {name}",
-    "teamPlanReadonly": "Подписка вашей команды управляется владельцем организации.",
-    "checkout": "Оплата"
+    "checkout": "Оплата",
+    "personalSubAutoCancelNotice": "Ваша личная подписка завершится {date}, когда начнётся оплата этого тарифа для команды. До этого момента вы сохраните личные возможности.",
+    "keepPersonalSubscription": "Сохранить мою личную подписку параллельно с тарифом для команды.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Настройки",
@@ -224,6 +254,7 @@
     "email": "Эл. почта",
     "preferredLocale": "Язык",
     "preferredCurrency": "Валюта",
+    "currencyLockedNote": "Валюта оплаты устанавливается при первой подписке и не может быть изменена впоследствии.",
     "phonePrefix": "Код страны",
     "phone": "Телефон",
     "phoneNumberRequired": "Введите номер телефона",
@@ -246,7 +277,7 @@
     "deleteAccount": "Удалить аккаунт",
     "deleteConfirm": "Это навсегда удалит ваш аккаунт и все данные.",
     "deleteDialogTitle": "Вы уверены?",
-    "deleteDialogDescription": "Это действие нельзя отменить. Введите свой адрес электронной почты для подтверждения.",
+    "deleteDialogDescription": "Это действие нельзя отменить. Ваша активная подписка будет немедленно отменена, и доступ завершится сейчас. Введите свой адрес электронной почты для подтверждения.",
     "deleteDialogLabel": "Адрес электронной почты",
     "deleteDialogPlaceholder": "you@example.com",
     "deleteDialogCancel": "Отмена",
@@ -254,7 +285,6 @@
     "deleteDialogMismatch": "Электронная почта не совпадает с почтой вашего аккаунта.",
     "deleteDialogError": "Не удалось удалить аккаунт. Пожалуйста, попробуйте снова.",
     "deleteBlockedOwner": "Вы являетесь владельцем организации. Передайте права собственности или удалите организацию, прежде чем удалять учётную запись.",
-    "deleteBlockedMember": "Вы состоите в команде. Пожалуйста, свяжитесь с владельцем команды, чтобы вас сначала удалили.",
     "pronounsHeHim": "Он/Его",
     "pronounsSheHer": "Она/Её",
     "pronounsTheyThem": "Они/Их",
@@ -305,11 +335,12 @@
     "deleteOrg": "Удалить организацию",
     "deleteOrgDescription": "Безвозвратно удалить эту организацию. Все участники будут удалены, ожидающие приглашения отменены, а подписка немедленно отменена без возврата средств.",
     "deleteOrgDialogTitle": "Удалить эту организацию?",
-    "deleteOrgDialogDescription": "Это действие нельзя отменить. Если это ваша единственная организация, ваша учётная запись также будет удалена.",
+    "deleteOrgDialogDescription": "Это действие нельзя отменить. Подписка команды будет немедленно отменена, и участники потеряют доступ. Введите название организации для подтверждения.",
     "deleteOrgDialogLabel": "Введите {name} для подтверждения",
     "deleteOrgDialogCancel": "Отмена",
     "deleteOrgDialogSubmit": "Удалить организацию навсегда",
-    "deleteOrgDialogMismatch": "Название организации не совпадает."
+    "deleteOrgDialogMismatch": "Название организации не совпадает.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Загрузка...",
@@ -323,6 +354,7 @@
     "unknownError": "Неизвестная ошибка"
   },
   "actionErrors": {
+    "context_required": "Пожалуйста, укажите, какой подпиской управлять.",
     "current_password_required": "Требуется текущий пароль",
     "email_and_password_required": "Требуются электронная почта и пароль",
     "email_required": "Требуется электронная почта",
@@ -336,19 +368,26 @@
     "no_subscription": "Нет активной подписки",
     "not_authorized": "У вас нет прав для выполнения этого действия",
     "not_billing_member": "У вас нет прав для управления биллингом",
+    "org_already_owned": "Вы уже владеете организацией — нельзя оформить ещё одну командную подписку.",
     "passwords_do_not_match": "Пароли не совпадают",
     "password_too_short": "Пароль должен содержать не менее 10 символов",
     "profile_load_failed": "Не удалось загрузить профиль",
     "session_expired": "Сеанс истёк. Войдите снова.",
     "unknown_error": "Что-то пошло не так. Повторите попытку.",
-    "unsupported_image": "Неподдерживаемый тип изображения"
+    "unsupported_image": "Неподдерживаемый тип изображения",
+    "message_required": "Пожалуйста, добавьте сообщение.",
+    "message_too_long": "Сообщение слишком длинное (макс. 5000 символов).",
+    "HTTP_429": "Слишком много запросов. Попробуйте позже.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Связаться с нами",
     "description": "Есть вопрос или нужна помощь? Мы будем рады вас выслушать.",
     "placeholder": "Ваш адрес электронной почты",
     "submit": "Отправить",
-    "messagePlaceholder": "Ваше сообщение"
+    "messagePlaceholder": "Ваше сообщение",
+    "successTitle": "Сообщение отправлено",
+    "successBody": "Спасибо за обращение. Мы ответим как можно скорее."
   },
   "about": {
     "title": "Об этом проекте",
@@ -403,7 +442,8 @@
     "fullName": "Полное имя",
     "password": "Пароль",
     "accept": "Принять приглашение",
-    "decline": "Отклонить приглашение"
+    "decline": "Отклонить приглашение",
+    "concurrentSubscriptionNotice": "У вас сейчас есть личная подписка. Она будет продолжать оплачиваться параллельно с вашим членством в команде. Отмените её на странице подписки, если она вам больше не нужна."
   },
   "plans": {
     "personal": {

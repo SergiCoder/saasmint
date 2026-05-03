@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Faça fork do repositório, personalize a marca e lance. Gratuito e open-source.",
     "ctaSectionPlaceholder": "voce@empresa.com.br",
     "ctaSectionButton": "Comece a construir →",
+    "ctaSectionSuccessTitle": "Obrigado por se inscrever!",
+    "ctaSectionSuccessBody": "Entraremos em contato em breve.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Usuários",
     "dashUptimeVal": "1,248",
@@ -85,6 +87,7 @@
       "noAccount": "Não tem uma conta?",
       "register": "Cadastre-se",
       "registered": "Conta criada! Verifique seu e-mail para confirmar sua conta.",
+      "invited": "Você entrou na equipe! Verifique seu e-mail para confirmar sua conta antes de fazer login.",
       "accountDeleted": "Sua conta foi excluída. Lamentamos vê-lo partir.",
       "errorNoSession": "Sua sessão expirou. Faça login novamente.",
       "errorEmailNotVerified": "Verifique seu endereço de e-mail antes de fazer login. Confira sua caixa de entrada.",
@@ -92,6 +95,7 @@
       "errorAccountDeactivated": "Esta conta foi desativada.",
       "errorBackendRejected": "Falha na autenticação. Tente fazer login novamente.",
       "errorOAuth": "Login social falhou. Por favor, tente novamente.",
+      "errorOAuthEmailUnverifiedCollision": "Sua conta social está registrada com um endereço de e-mail que já possui uma conta com senha aqui. Faça login com sua senha primeiro; você poderá vincular o provedor social depois.",
       "forgotPassword": "Esqueceu a senha?"
     },
     "forgotPassword": {
@@ -178,12 +182,18 @@
   "billing": {
     "title": "Faturamento",
     "currentPlan": "Plano atual",
+    "currentPersonalPlan": "Plano pessoal atual",
+    "currentTeamPlan": "Plano da equipe atual",
     "upgrade": "Fazer upgrade",
+    "upgradeTo": "Fazer upgrade para {plan}",
     "cancel": "A assinatura será cancelada no final do período",
     "cancelRenewal": "Cancelar renovação",
     "cancelRenewalTitle": "Cancelar renovação?",
     "cancelRenewalBody": "Sua assinatura permanecerá ativa até {date}. Depois disso, você perderá o acesso aos recursos pagos.",
     "cancelRenewalKeep": "Manter assinatura",
+    "cancelRenewalTeamTitle": "Cancelar assinatura da equipe?",
+    "cancelRenewalTeamBody": "Sua assinatura da equipe será cancelada ao final do período atual ({date}). Nesse momento, sua organização, todos os membros e convites pendentes serão removidos. Esta ação é irreversível.",
+    "cancelRenewalTeam": "Cancelar assinatura da equipe",
     "resumeSubscription": "Retomar assinatura",
     "changePlan": "Alterar plano",
     "applyPromo": "Aplicar código promocional",
@@ -191,6 +201,7 @@
     "success": "Pagamento realizado!",
     "successDesc": "Sua assinatura foi atualizada.",
     "renewsOn": "Renova em",
+    "cancelsOn": "Cancela em",
     "endsOn": "Termina em",
     "billedMonthly": "Cobrança mensal",
     "billedYearly": "Cobrança anual",
@@ -198,6 +209,14 @@
     "seats": "assentos",
     "products": "Pacotes de créditos",
     "credits": "créditos",
+    "creditBalanceLabel": "Saldo de créditos",
+    "creditBalancePersonalDescription": "Créditos vinculados à sua conta.",
+    "creditBalanceOrgDescription": "Compartilhados com sua equipe — qualquer membro pode usar.",
+    "creditBalancePersonalBadge": "Pessoal",
+    "creditBalanceOrgBadge": "Equipe",
+    "productCheckoutContextLabel": "Comprar créditos para",
+    "productCheckoutContextPersonal": "Minha conta pessoal",
+    "productCheckoutContextTeam": "Equipe {orgName}",
     "buy": "Comprar",
     "getStarted": "Começar",
     "select": "Selecionar",
@@ -214,8 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Gerenciado por {name}",
-    "teamPlanReadonly": "A assinatura da sua equipe é gerenciada pelo proprietário da organização.",
-    "checkout": "Pagamento"
+    "checkout": "Pagamento",
+    "personalSubAutoCancelNotice": "Sua assinatura pessoal terminará em {date} quando este plano de equipe começar a ser cobrado. Você manterá os recursos pessoais até lá.",
+    "keepPersonalSubscription": "Manter minha assinatura pessoal ativa junto com o plano de equipe.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Configurações",
@@ -224,6 +254,7 @@
     "email": "E-mail",
     "preferredLocale": "Idioma",
     "preferredCurrency": "Moeda",
+    "currencyLockedNote": "A moeda de cobrança é definida ao assinar pela primeira vez e não pode ser alterada depois.",
     "phonePrefix": "Código do país",
     "phone": "Telefone",
     "phoneNumberRequired": "Informe um número de telefone",
@@ -246,7 +277,7 @@
     "deleteAccount": "Excluir conta",
     "deleteConfirm": "Isso excluirá permanentemente sua conta e todos os dados.",
     "deleteDialogTitle": "Tem certeza?",
-    "deleteDialogDescription": "Esta ação não pode ser desfeita. Digite seu endereço de e-mail para confirmar.",
+    "deleteDialogDescription": "Esta ação não pode ser desfeita. Sua assinatura ativa será cancelada imediatamente e seu acesso terminará agora. Digite seu endereço de e-mail para confirmar.",
     "deleteDialogLabel": "Endereço de e-mail",
     "deleteDialogPlaceholder": "you@example.com",
     "deleteDialogCancel": "Cancelar",
@@ -254,7 +285,6 @@
     "deleteDialogMismatch": "O e-mail não corresponde ao da sua conta.",
     "deleteDialogError": "Falha ao excluir a conta. Tente novamente.",
     "deleteBlockedOwner": "Você é proprietário de uma organização. Transfira a propriedade ou exclua a organização antes de excluir sua conta.",
-    "deleteBlockedMember": "Você pertence a uma equipe. Entre em contato com o proprietário da equipe para ser removido primeiro.",
     "pronounsHeHim": "Ele/Dele",
     "pronounsSheHer": "Ela/Dela",
     "pronounsTheyThem": "Elu/Delu",
@@ -305,11 +335,12 @@
     "deleteOrg": "Excluir organização",
     "deleteOrgDescription": "Excluir permanentemente esta organização. Todos os membros serão removidos, os convites pendentes cancelados e sua assinatura cancelada imediatamente sem reembolso.",
     "deleteOrgDialogTitle": "Excluir esta organização?",
-    "deleteOrgDialogDescription": "Esta ação não pode ser desfeita. Se esta for sua única organização, sua conta também será excluída.",
+    "deleteOrgDialogDescription": "Esta ação não pode ser desfeita. A assinatura da equipe será cancelada imediatamente e os membros perderão o acesso. Digite o nome da organização para confirmar.",
     "deleteOrgDialogLabel": "Digite {name} para confirmar",
     "deleteOrgDialogCancel": "Cancelar",
     "deleteOrgDialogSubmit": "Excluir organização permanentemente",
-    "deleteOrgDialogMismatch": "O nome da organização não coincide."
+    "deleteOrgDialogMismatch": "O nome da organização não coincide.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Carregando...",
@@ -323,6 +354,7 @@
     "unknownError": "Erro desconhecido"
   },
   "actionErrors": {
+    "context_required": "Indique qual assinatura você quer gerenciar.",
     "current_password_required": "A senha atual é obrigatória",
     "email_and_password_required": "E-mail e senha são obrigatórios",
     "email_required": "O e-mail é obrigatório",
@@ -336,19 +368,26 @@
     "no_subscription": "Nenhuma assinatura ativa",
     "not_authorized": "Você não tem autorização para realizar esta ação",
     "not_billing_member": "Você não tem permissão para gerenciar a cobrança",
+    "org_already_owned": "Você já é proprietário de uma organização — não é possível iniciar outra assinatura de equipe.",
     "passwords_do_not_match": "As senhas não coincidem",
     "password_too_short": "A senha deve ter pelo menos 10 caracteres",
     "profile_load_failed": "Não foi possível carregar o perfil",
     "session_expired": "Sessão expirada. Faça login novamente.",
     "unknown_error": "Algo deu errado. Tente novamente.",
-    "unsupported_image": "Tipo de imagem não suportado"
+    "unsupported_image": "Tipo de imagem não suportado",
+    "message_required": "Por favor, inclua uma mensagem.",
+    "message_too_long": "A mensagem é muito longa (máx. 5000 caracteres).",
+    "HTTP_429": "Muitas tentativas. Tente novamente mais tarde.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Fale conosco",
     "description": "Tem alguma dúvida ou precisa de ajuda? Adoraríamos ouvir você.",
     "placeholder": "Seu endereço de e-mail",
     "submit": "Enviar",
-    "messagePlaceholder": "Sua mensagem"
+    "messagePlaceholder": "Sua mensagem",
+    "successTitle": "Mensagem enviada",
+    "successBody": "Obrigado pelo contato. Responderemos o mais rápido possível."
   },
   "about": {
     "title": "Sobre este projeto",
@@ -403,7 +442,8 @@
     "fullName": "Nome completo",
     "password": "Senha",
     "accept": "Aceitar convite",
-    "decline": "Recusar convite"
+    "decline": "Recusar convite",
+    "concurrentSubscriptionNotice": "Você tem atualmente uma assinatura pessoal. Ela continuará sendo cobrada junto com sua participação na equipe. Cancele-a na página de assinatura se não precisar mais dela."
   },
   "plans": {
     "personal": {

@@ -5,6 +5,7 @@ import type {
 import type { Product } from "@/domain/models/Product";
 import { apiFetch } from "./apiClient";
 import { keysToCamelWithPrice, keysToSnake } from "./caseTransform";
+import { contextQuery } from "./contextQuery";
 import { CheckoutSessionResponseSchema, ProductSchema } from "./schemas";
 
 export class DjangoApiProductGateway implements IProductGateway {
@@ -21,10 +22,14 @@ export class DjangoApiProductGateway implements IProductGateway {
   async createCheckoutSession(
     input: ProductCheckoutInput,
   ): Promise<{ url: string }> {
-    const raw = await apiFetch<unknown>("/billing/product-checkout-sessions/", {
-      method: "POST",
-      body: JSON.stringify(keysToSnake(input)),
-    });
+    const { context, ...body } = input;
+    const raw = await apiFetch<unknown>(
+      `/billing/product-checkout-sessions/${contextQuery(context)}`,
+      {
+        method: "POST",
+        body: JSON.stringify(keysToSnake(body)),
+      },
+    );
     return CheckoutSessionResponseSchema.parse(raw);
   }
 }

@@ -54,21 +54,17 @@ export class DjangoApiInvitationGateway implements IInvitationGateway {
   async acceptInvitation(
     token: string,
     input: { fullName: string; password: string },
-  ): Promise<{ accessToken: string; refreshToken: string }> {
-    const data = await publicApiFetch<{
-      access_token: string;
-      refresh_token: string;
-    }>(`/invitations/${token}/accept/`, {
+  ): Promise<void> {
+    // Backend creates the user as unverified and queues a verification
+    // email — it deliberately does not issue session tokens here. The user
+    // must click the verification link before they can sign in.
+    await publicApiFetchVoid(`/invitations/${token}/accept/`, {
       method: "POST",
       body: JSON.stringify({
         full_name: input.fullName,
         password: input.password,
       }),
     });
-    return {
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token,
-    };
   }
 
   async declineInvitation(token: string): Promise<void> {

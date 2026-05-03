@@ -8,5 +8,8 @@ import type { Org } from "@/domain/models/Org";
  * per server render pass.
  */
 export const getUserOrgs = cache(async function getUserOrgs(): Promise<Org[]> {
-  return orgGateway.listUserOrgs().catch(() => []);
+  return orgGateway.listUserOrgs().catch((err: unknown) => {
+    console.error("Failed to fetch user orgs", err);
+    return [];
+  });
 });

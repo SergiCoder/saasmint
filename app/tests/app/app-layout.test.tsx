@@ -43,9 +43,9 @@ vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
 
-const mockGetSubscription = vi.fn<() => Promise<Subscription | null>>();
-vi.mock("@/app/[locale]/(app)/_data/getSubscription", () => ({
-  getSubscription: () => mockGetSubscription(),
+const mockGetSubscriptions = vi.fn<() => Promise<Subscription[]>>();
+vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
+  getSubscriptions: () => mockGetSubscriptions(),
 }));
 
 const mockGetUserOrgs = vi.fn<() => Promise<Org[]>>();
@@ -117,7 +117,6 @@ function makeUser(overrides: Partial<User> = {}): User {
     email: "test@example.com",
     fullName: "Test User",
     avatarUrl: null,
-    accountType: "personal",
     preferredLocale: "en",
     preferredCurrency: "usd",
     phonePrefix: null,
@@ -164,11 +163,15 @@ function makeTeamSubscription(): Subscription {
         currency: "usd",
       },
     },
-    quantity: 3,
+    seatLimit: 3,
+    seatsUsed: 1,
     currentPeriodStart: "2025-01-01T00:00:00Z",
     currentPeriodEnd: "2025-02-01T00:00:00Z",
     trialEndsAt: null,
+    cancelAt: null,
     canceledAt: null,
+    scheduledPlan: null,
+    scheduledChangeAt: null,
     createdAt: "2025-01-01T00:00:00Z",
   };
 }
@@ -187,7 +190,7 @@ describe("(app)/layout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetCurrentUser.mockResolvedValue(makeUser());
-    mockGetSubscription.mockResolvedValue(null);
+    mockGetSubscriptions.mockResolvedValue([]);
     mockGetUserOrgs.mockResolvedValue([]);
     mockGetPathnameWithoutLocale.mockResolvedValue("/dashboard");
   });
@@ -208,28 +211,36 @@ describe("(app)/layout", () => {
     expect(hrefs).toEqual(["/dashboard", "/feature1", "/feature2"]);
   });
 
-  it("adds /org nav link when the user has a team subscription", async () => {
-    mockGetSubscription.mockResolvedValue(makeTeamSubscription());
+  it("adds /org user-menu link when the user has a team subscription", async () => {
+    mockGetSubscriptions.mockResolvedValue([makeTeamSubscription()]);
 
     await renderLayout("en");
 
-    const hrefs = Array.from(
+    const navHrefs = Array.from(
       screen.getByTestId("nav-links").querySelectorAll("li"),
     ).map((li) => li.getAttribute("data-href"));
+    const menuHrefs = Array.from(
+      screen.getByTestId("menu-items").querySelectorAll("li"),
+    ).map((li) => li.getAttribute("data-href"));
 
-    expect(hrefs).toContain("/org");
+    expect(navHrefs).not.toContain("/org");
+    expect(menuHrefs).toContain("/org");
   });
 
-  it("adds /org nav link when the user belongs to any org (no team sub)", async () => {
+  it("adds /org user-menu link when the user belongs to any org (no team sub)", async () => {
     mockGetUserOrgs.mockResolvedValue([makeOrg()]);
 
     await renderLayout("en");
 
-    const hrefs = Array.from(
+    const navHrefs = Array.from(
       screen.getByTestId("nav-links").querySelectorAll("li"),
     ).map((li) => li.getAttribute("data-href"));
+    const menuHrefs = Array.from(
+      screen.getByTestId("menu-items").querySelectorAll("li"),
+    ).map((li) => li.getAttribute("data-href"));
 
-    expect(hrefs).toContain("/org");
+    expect(navHrefs).not.toContain("/org");
+    expect(menuHrefs).toContain("/org");
   });
 
   it("redirects to preferredLocale when it differs from the URL locale", async () => {

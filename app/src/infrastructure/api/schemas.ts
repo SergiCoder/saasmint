@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { CreditBalance } from "@/domain/models/CreditBalance";
 import type { Invitation } from "@/domain/models/Invitation";
 import type { Org } from "@/domain/models/Org";
 import type { OrgMember } from "@/domain/models/OrgMember";
@@ -28,7 +29,6 @@ export const UserSchema = z.object({
   email: z.string(),
   fullName: z.string(),
   avatarUrl: nullableString,
-  accountType: z.enum(["personal", "org_member"]),
   preferredLocale: z.string(),
   preferredCurrency: z.string(),
   phonePrefix: nullableString,
@@ -122,18 +122,49 @@ export const SubscriptionSchema = z.object({
     "paused",
   ]),
   plan: PlanSchema,
-  quantity: z.number(),
+  seatLimit: z.number(),
+  seatsUsed: z.number(),
   trialEndsAt: nullableString,
   currentPeriodStart: z.string(),
   currentPeriodEnd: z.string(),
+  cancelAt: nullableString,
   canceledAt: nullableString,
+  scheduledPlan: PlanSchema.nullable(),
+  scheduledChangeAt: nullableString,
   createdAt: z.string(),
 }) satisfies z.ZodType<Subscription>;
+
+/**
+ * Backend's paginated envelope for `GET /billing/subscriptions/me/`. The list
+ * holds 0–2 rows (free tier, single sub, or concurrent personal+team per
+ * rule 5). Empty `results` replaces the prior `404 Not Found` for free-tier
+ * users — gateway no longer special-cases 404 on this endpoint.
+ */
+export const SubscriptionListResponseSchema = z.object({
+  count: z.number(),
+  next: nullableString,
+  previous: nullableString,
+  results: z.array(SubscriptionSchema),
+});
 
 export const PhonePrefixSchema = z.object({
   prefix: z.string(),
   label: z.string(),
 }) satisfies z.ZodType<PhonePrefix>;
+
+export const CreditBalanceSchema = z.object({
+  balance: z.number().int().nonnegative(),
+  scope: z.enum(["user", "org"]),
+}) satisfies z.ZodType<CreditBalance>;
+
+/**
+ * Envelope returned by `GET /billing/credits/me/`. Holds 0–2 rows: free-tier
+ * users get `[]`, single-context users get one row, and concurrent
+ * personal+team billers (rule 5) get both — one `user`-scoped, one `org`-scoped.
+ */
+export const CreditBalanceListResponseSchema = z.object({
+  balances: z.array(CreditBalanceSchema),
+});
 
 /**
  * Envelope returned by Stripe-session-creating endpoints (plan checkout,

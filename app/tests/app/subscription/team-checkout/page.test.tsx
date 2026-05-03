@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { User } from "@/domain/models/User";
 import type { Plan } from "@/domain/models/Plan";
+import type { Subscription } from "@/domain/models/Subscription";
 
 // --- Mocks ---------------------------------------------------------------
 
@@ -25,6 +26,11 @@ vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
 
+const mockGetSubscriptions = vi.fn<() => Promise<Subscription[]>>();
+vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
+  getSubscriptions: () => mockGetSubscriptions(),
+}));
+
 const mockListPlans = vi.fn<(currency: string) => Promise<Plan[]>>();
 vi.mock("@/infrastructure/registry", () => ({
   planGateway: { listPlans: (c: string) => mockListPlans(c) },
@@ -44,6 +50,8 @@ vi.mock(
         "data-display-amount": String(props.displayAmount),
         "data-currency": props.currency as string,
         "data-interval": props.interval as string,
+        "data-personal-sub-notice":
+          (props.personalSubAutoCancelNotice as string | undefined) ?? "",
       }),
   }),
 );
@@ -61,7 +69,6 @@ function makeUser(overrides: Partial<User> = {}): User {
     email: "test@example.com",
     fullName: "Test User",
     avatarUrl: null,
-    accountType: "personal",
     preferredLocale: "en",
     preferredCurrency: "usd",
     phonePrefix: null,
@@ -97,6 +104,40 @@ function makeTeamPlan(overrides: Partial<Plan> = {}): Plan {
   };
 }
 
+function makePersonalSubscription(
+  overrides: Partial<Subscription> = {},
+): Subscription {
+  return {
+    id: "sub_personal_1",
+    status: "active",
+    plan: {
+      id: "plan_personal_pro_month",
+      name: "Personal Pro",
+      description: "Personal plan",
+      context: "personal",
+      tier: 3,
+      interval: "month",
+      price: {
+        id: "price_personal_pro_month",
+        amount: 1900,
+        displayAmount: 19,
+        currency: "usd",
+      },
+    },
+    seatLimit: 1,
+    seatsUsed: 1,
+    trialEndsAt: null,
+    currentPeriodStart: "2026-04-01T00:00:00Z",
+    currentPeriodEnd: "2026-05-01T00:00:00Z",
+    cancelAt: null,
+    canceledAt: null,
+    scheduledPlan: null,
+    scheduledChangeAt: null,
+    createdAt: "2026-04-01T00:00:00Z",
+    ...overrides,
+  };
+}
+
 async function renderPage(searchParams: { plan?: string }) {
   const jsx = await TeamCheckoutPage({
     params: Promise.resolve({ locale: "en" }),
@@ -111,6 +152,7 @@ describe("TeamCheckoutPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetCurrentUser.mockResolvedValue(makeUser());
+    mockGetSubscriptions.mockResolvedValue([]);
     mockListPlans.mockResolvedValue([makeTeamPlan()]);
   });
 
@@ -184,5 +226,104 @@ describe("TeamCheckoutPage", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "teamCheckout",
     );
+  });
+
+  it("does not pass a personal-sub notice when the caller has no subscription", async () => {
+    mockGetSubscriptions.mockResolvedValue([]);
+
+    await renderPage({ plan: "price_team_pro_year" });
+
+    const form = screen.getByTestId("team-checkout-form");
+    expect(form).toHaveAttribute("data-personal-sub-notice", "");
+  });
+
+  it("passes the personal-sub auto-cancel notice when the caller has an active personal subscription", async () => {
+    mockGetSubscriptions.mockResolvedValue([makePersonalSubscription()]);
+
+    await renderPage({ plan: "price_team_pro_year" });
+
+    const form = screen.getByTestId("team-checkout-form");
+    // The local translator stub echoes the key; we just verify the notice
+    // prop is populated, which only happens when the active personal-sub
+    // branch fires.
+    expect(form).toHaveAttribute(
+      "data-personal-sub-notice",
+      "personalSubAutoCancelNotice",
+    );
+  });
+
+  it("does not pass a personal-sub notice when the personal subscription is already scheduled to cancel", async () => {
+    mockGetSubscriptions.mockResolvedValue([
+      makePersonalSubscription({ cancelAt: "2026-05-01T00:00:00Z" }),
+    ]);
+
+    await renderPage({ plan: "price_team_pro_year" });
+
+    const form = screen.getByTestId("team-checkout-form");
+    expect(form).toHaveAttribute("data-personal-sub-notice", "");
+  });
+
+  it("does not pass a personal-sub notice when the active subscription is team-context", async () => {
+    mockGetSubscriptions.mockResolvedValue([
+      makePersonalSubscription({
+        plan: {
+          id: "plan_team",
+          name: "Team",
+          description: "Team",
+          context: "team",
+          tier: 3,
+          interval: "month",
+          price: null,
+        },
+      }),
+    ]);
+
+    await renderPage({ plan: "price_team_pro_year" });
+
+    const form = screen.getByTestId("team-checkout-form");
+    expect(form).toHaveAttribute("data-personal-sub-notice", "");
+  });
+
+  it("does not pass a personal-sub notice when the personal subscription is trialing (only 'active' qualifies)", async () => {
+    mockGetSubscriptions.mockResolvedValue([
+      makePersonalSubscription({ status: "trialing" }),
+    ]);
+
+    await renderPage({ plan: "price_team_pro_year" });
+
+    const form = screen.getByTestId("team-checkout-form");
+    expect(form).toHaveAttribute("data-personal-sub-notice", "");
+  });
+
+  it("does not pass a personal-sub notice when currentPeriodEnd is unparseable", async () => {
+    mockGetSubscriptions.mockResolvedValue([
+      makePersonalSubscription({ currentPeriodEnd: "not-a-date" }),
+    ]);
+
+    await renderPage({ plan: "price_team_pro_year" });
+
+    const form = screen.getByTestId("team-checkout-form");
+    expect(form).toHaveAttribute("data-personal-sub-notice", "");
+  });
+
+  it("formats currentPeriodEnd via Intl.DateTimeFormat and passes it as the 'date' param of the notice translation", async () => {
+    mockGetSubscriptions.mockResolvedValue([
+      makePersonalSubscription({ currentPeriodEnd: "2026-05-01T00:00:00Z" }),
+    ]);
+
+    await renderPage({ plan: "price_team_pro_year" });
+
+    // The translator stub echoes the key, so we verify formatting by checking
+    // how `t(...)` was invoked: with the long-format date string for the en
+    // locale. The exact string is whatever `Intl.DateTimeFormat("en", { dateStyle: "long" })`
+    // produces for that ISO date — recompute it locally to keep the assertion
+    // independent of timezone/ICU drift.
+    const expectedDate = new Intl.DateTimeFormat("en", {
+      dateStyle: "long",
+    }).format(new Date("2026-05-01T00:00:00Z"));
+
+    expect(mockTranslate).toHaveBeenCalledWith("personalSubAutoCancelNotice", {
+      date: expectedDate,
+    });
   });
 });

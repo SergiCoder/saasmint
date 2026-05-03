@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Fork de repo, pas de branding aan en lanceer. Gratis en open-source.",
     "ctaSectionPlaceholder": "u@bedrijf.nl",
     "ctaSectionButton": "Begin met bouwen →",
+    "ctaSectionSuccessTitle": "Bedankt voor je aanmelding!",
+    "ctaSectionSuccessBody": "We nemen binnenkort contact met je op.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Gebruikers",
     "dashUptimeVal": "1,248",
@@ -85,6 +87,7 @@
       "noAccount": "Nog geen account?",
       "register": "Registreren",
       "registered": "Account aangemaakt! Controleer uw e-mail om uw account te verifiëren.",
+      "invited": "U bent lid geworden van het team! Controleer uw e-mail om uw account te verifiëren voordat u inlogt.",
       "accountDeleted": "Uw account is verwijderd. Het spijt ons u te zien gaan.",
       "errorNoSession": "Uw sessie is verlopen. Log opnieuw in.",
       "errorEmailNotVerified": "Verifieer uw e-mailadres voordat u inlogt. Controleer uw inbox.",
@@ -92,6 +95,7 @@
       "errorAccountDeactivated": "Dit account is gedeactiveerd.",
       "errorBackendRejected": "Authenticatie mislukt. Probeer opnieuw in te loggen.",
       "errorOAuth": "Sociale login mislukt. Probeer het opnieuw.",
+      "errorOAuthEmailUnverifiedCollision": "Uw sociale account is geregistreerd met een e-mailadres dat hier al een wachtwoordaccount heeft. Log eerst in met uw wachtwoord; u kunt de sociale provider daarna koppelen.",
       "forgotPassword": "Wachtwoord vergeten?"
     },
     "forgotPassword": {
@@ -178,12 +182,18 @@
   "billing": {
     "title": "Facturering",
     "currentPlan": "Huidig abonnement",
+    "currentPersonalPlan": "Huidig persoonlijk abonnement",
+    "currentTeamPlan": "Huidig teamabonnement",
     "upgrade": "Upgraden",
+    "upgradeTo": "Upgraden naar {plan}",
     "cancel": "Abonnement wordt opgezegd aan het einde van de periode",
     "cancelRenewal": "Verlenging annuleren",
     "cancelRenewalTitle": "Verlenging annuleren?",
     "cancelRenewalBody": "Je abonnement blijft actief tot {date}. Daarna verlies je toegang tot betaalde functies.",
     "cancelRenewalKeep": "Abonnement behouden",
+    "cancelRenewalTeamTitle": "Teamabonnement opzeggen?",
+    "cancelRenewalTeamBody": "Uw teamabonnement wordt opgezegd aan het einde van de huidige periode ({date}). Op dat moment worden uw organisatie, alle leden en openstaande uitnodigingen verwijderd. Deze actie is onomkeerbaar.",
+    "cancelRenewalTeam": "Teamabonnement opzeggen",
     "resumeSubscription": "Abonnement hervatten",
     "changePlan": "Abonnement wijzigen",
     "applyPromo": "Promotiecode toepassen",
@@ -191,6 +201,7 @@
     "success": "Betaling geslaagd!",
     "successDesc": "Uw abonnement is bijgewerkt.",
     "renewsOn": "Verlengt op",
+    "cancelsOn": "Wordt opgezegd op",
     "endsOn": "Eindigt op",
     "billedMonthly": "Maandelijks gefactureerd",
     "billedYearly": "Jaarlijks gefactureerd",
@@ -198,6 +209,14 @@
     "seats": "stoelen",
     "products": "Creditpakketten",
     "credits": "credits",
+    "creditBalanceLabel": "Tegoedsaldo",
+    "creditBalancePersonalDescription": "Tegoeden gekoppeld aan je account.",
+    "creditBalanceOrgDescription": "Gedeeld met je team — elk lid kan ze besteden.",
+    "creditBalancePersonalBadge": "Persoonlijk",
+    "creditBalanceOrgBadge": "Team",
+    "productCheckoutContextLabel": "Credits kopen voor",
+    "productCheckoutContextPersonal": "Mijn persoonlijke account",
+    "productCheckoutContextTeam": "Team {orgName}",
     "buy": "Kopen",
     "getStarted": "Aan de slag",
     "select": "Selecteer",
@@ -214,8 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Beheerd door {name}",
-    "teamPlanReadonly": "Het teamabonnement wordt beheerd door de eigenaar van de organisatie.",
-    "checkout": "Afrekenen"
+    "checkout": "Afrekenen",
+    "personalSubAutoCancelNotice": "Uw persoonlijke abonnement eindigt op {date} wanneer dit teamplan in rekening wordt gebracht. Tot die tijd behoudt u de persoonlijke functies.",
+    "keepPersonalSubscription": "Mijn persoonlijke abonnement naast het teamplan laten doorlopen.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Instellingen",
@@ -224,6 +254,7 @@
     "email": "E-mail",
     "preferredLocale": "Taal",
     "preferredCurrency": "Valuta",
+    "currencyLockedNote": "Uw factureringsvaluta wordt ingesteld bij uw eerste abonnement en kan daarna niet meer worden gewijzigd.",
     "phonePrefix": "Landcode",
     "phone": "Telefoon",
     "phoneNumberRequired": "Voer een telefoonnummer in",
@@ -246,7 +277,7 @@
     "deleteAccount": "Account verwijderen",
     "deleteConfirm": "Dit verwijdert uw account en alle gegevens permanent.",
     "deleteDialogTitle": "Weet u het zeker?",
-    "deleteDialogDescription": "Deze actie kan niet ongedaan worden gemaakt. Typ uw e-mailadres ter bevestiging.",
+    "deleteDialogDescription": "Deze actie kan niet ongedaan worden gemaakt. Uw actieve abonnement wordt onmiddellijk opgezegd en uw toegang eindigt nu. Typ uw e-mailadres ter bevestiging.",
     "deleteDialogLabel": "E-mailadres",
     "deleteDialogPlaceholder": "you@example.com",
     "deleteDialogCancel": "Annuleren",
@@ -254,7 +285,6 @@
     "deleteDialogMismatch": "Het e-mailadres komt niet overeen met uw account.",
     "deleteDialogError": "Account verwijderen mislukt. Probeer het opnieuw.",
     "deleteBlockedOwner": "U bent eigenaar van een organisatie. Draag het eigenaarschap over of verwijder de organisatie voordat u uw account verwijdert.",
-    "deleteBlockedMember": "Je behoort tot een team. Neem contact op met je teameigenaar om eerst verwijderd te worden.",
     "pronounsHeHim": "Hij/Hem",
     "pronounsSheHer": "Zij/Haar",
     "pronounsTheyThem": "Hen/Hun",
@@ -305,11 +335,12 @@
     "deleteOrg": "Organisatie verwijderen",
     "deleteOrgDescription": "Verwijder deze organisatie permanent. Alle leden worden verwijderd, openstaande uitnodigingen geannuleerd en uw abonnement direct opgezegd zonder restitutie.",
     "deleteOrgDialogTitle": "Deze organisatie verwijderen?",
-    "deleteOrgDialogDescription": "Deze actie kan niet ongedaan worden gemaakt. Als dit uw enige organisatie is, wordt ook uw account verwijderd.",
+    "deleteOrgDialogDescription": "Deze actie kan niet ongedaan worden gemaakt. Het team-abonnement wordt onmiddellijk opgezegd en leden verliezen de toegang. Typ de naam van de organisatie ter bevestiging.",
     "deleteOrgDialogLabel": "Typ {name} om te bevestigen",
     "deleteOrgDialogCancel": "Annuleren",
     "deleteOrgDialogSubmit": "Organisatie permanent verwijderen",
-    "deleteOrgDialogMismatch": "De naam van de organisatie komt niet overeen."
+    "deleteOrgDialogMismatch": "De naam van de organisatie komt niet overeen.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Laden...",
@@ -323,6 +354,7 @@
     "unknownError": "Onbekende fout"
   },
   "actionErrors": {
+    "context_required": "Geef aan welk abonnement je wilt beheren.",
     "current_password_required": "Huidig wachtwoord is vereist",
     "email_and_password_required": "E-mailadres en wachtwoord zijn vereist",
     "email_required": "E-mailadres is vereist",
@@ -336,19 +368,26 @@
     "no_subscription": "Geen actief abonnement",
     "not_authorized": "Je bent niet bevoegd om deze actie uit te voeren",
     "not_billing_member": "Je hebt geen rechten om facturering te beheren",
+    "org_already_owned": "Je hebt al een organisatie — je kunt geen tweede teamabonnement starten.",
     "passwords_do_not_match": "Wachtwoorden komen niet overeen",
     "password_too_short": "Het wachtwoord moet minimaal 10 tekens lang zijn",
     "profile_load_failed": "Profiel kon niet worden geladen",
     "session_expired": "Sessie verlopen. Log opnieuw in.",
     "unknown_error": "Er is iets misgegaan. Probeer het opnieuw.",
-    "unsupported_image": "Niet-ondersteund afbeeldingstype"
+    "unsupported_image": "Niet-ondersteund afbeeldingstype",
+    "message_required": "Voeg een bericht toe.",
+    "message_too_long": "Bericht is te lang (max. 5000 tekens).",
+    "HTTP_429": "Te veel verzoeken. Probeer het later opnieuw.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Contact",
     "description": "Heeft u een vraag of hulp nodig? We horen graag van u.",
     "placeholder": "Uw e-mailadres",
     "submit": "Verzenden",
-    "messagePlaceholder": "Uw bericht"
+    "messagePlaceholder": "Uw bericht",
+    "successTitle": "Bericht verzonden",
+    "successBody": "Bedankt voor je bericht. We reageren zo snel mogelijk."
   },
   "about": {
     "title": "Over dit project",
@@ -403,7 +442,8 @@
     "fullName": "Volledige naam",
     "password": "Wachtwoord",
     "accept": "Uitnodiging accepteren",
-    "decline": "Uitnodiging weigeren"
+    "decline": "Uitnodiging weigeren",
+    "concurrentSubscriptionNotice": "U heeft momenteel een persoonlijk abonnement. Het wordt naast uw teamlidmaatschap doorgefactureerd. Zeg het op via uw abonnementenpagina als u het niet meer nodig heeft."
   },
   "plans": {
     "personal": {

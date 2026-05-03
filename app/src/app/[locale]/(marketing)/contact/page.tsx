@@ -31,6 +31,8 @@ export default async function ContactPage({ params }: Props) {
           placeholder={t("placeholder")}
           messagePlaceholder={t("messagePlaceholder")}
           submitLabel={t("submit")}
+          successTitle={t("successTitle")}
+          successBody={t("successBody")}
         />
       </div>
     </section>

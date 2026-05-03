@@ -72,6 +72,38 @@ describe("CheckoutButton", () => {
     expect(button).toHaveAttribute("data-variant", "secondary");
   });
 
+  it("does not render a context hidden input by default", () => {
+    // For non-rule-5b callers we want the backend's account-type default to
+    // route the request, so the form must not pin a context value.
+    const { container } = render(
+      <CheckoutButton
+        action={mockProductAction}
+        field={{ name: "productPriceId", value: "price_credits_200" }}
+      >
+        Buy
+      </CheckoutButton>,
+    );
+    expect(
+      container.querySelector('input[type="hidden"][name="context"]'),
+    ).toBeNull();
+  });
+
+  it("renders a context hidden input when a context prop is supplied", () => {
+    const { container } = render(
+      <CheckoutButton
+        action={mockProductAction}
+        field={{ name: "productPriceId", value: "price_credits_200" }}
+        context="team"
+      >
+        Buy
+      </CheckoutButton>,
+    );
+    const ctx = container.querySelector(
+      'input[type="hidden"][name="context"]',
+    ) as HTMLInputElement | null;
+    expect(ctx?.value).toBe("team");
+  });
+
   it("uses the primary variant when highlighted", () => {
     render(
       <CheckoutButton

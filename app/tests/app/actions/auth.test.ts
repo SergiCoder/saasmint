@@ -301,7 +301,11 @@ describe("auth server actions", () => {
       expect(mockRedirect).toHaveBeenCalledWith("/login?registered=true");
     });
 
-    it("uses org-owner endpoint when plan resolves to a team plan", async () => {
+    it("uses /auth/register/ for team plans and remembers the team checkout context", async () => {
+      // Backend dropped /auth/register/org-owner/ — registration is unified
+      // and the org is created later when the team checkout webhook fires.
+      // Frontend still tracks isTeam locally so verify-email redirects into
+      // /subscription/team-checkout instead of /subscription/checkout.
       mockPublicApiFetch.mockResolvedValue({});
 
       const formData = new FormData();
@@ -314,7 +318,7 @@ describe("auth server actions", () => {
         "NEXT_REDIRECT",
       );
       expect(mockPublicApiFetch).toHaveBeenCalledWith(
-        "/auth/register/org-owner/",
+        "/auth/register/",
         expect.objectContaining({ method: "POST" }),
       );
       expect(mockSetPendingPlan).toHaveBeenCalledWith("price_team_pro", true);
@@ -663,7 +667,10 @@ describe("auth server actions", () => {
       expect(result.redirectUrl).toMatch(/\/api\/v1\/auth\/oauth\/google\/$/);
     });
 
-    it("appends account_type=org_owner when plan in next resolves to a team plan", async () => {
+    it("never appends account_type, even for a team plan in next", async () => {
+      // Backend OAuth handler ignores account_type — frontend stops sending
+      // it. The team-checkout next is still preserved so the post-callback
+      // redirect lands on /subscription/team-checkout.
       const result = await startOAuth(
         "github",
         "/subscription/team-checkout?plan=price_team_pro",
@@ -672,27 +679,14 @@ describe("auth server actions", () => {
       expect(mockSetOAuthFlowCookies).toHaveBeenCalledWith(
         "/subscription/team-checkout?plan=price_team_pro",
       );
-      expect(new URL(result.redirectUrl).searchParams.get("account_type")).toBe(
-        "org_owner",
-      );
+      expect(new URL(result.redirectUrl).search).toBe("");
     });
 
-    it("does not append account_type when plan resolves to a personal plan", async () => {
-      const result = await startOAuth(
-        "github",
-        "/subscription/checkout?plan=price_pro_monthly",
-      );
-
-      expect(new URL(result.redirectUrl).searchParams.get("account_type")).toBe(
-        null,
-      );
-    });
-
-    it("preserves next and omits account_type when plan in next is unknown to the catalog", async () => {
+    it("preserves next when plan in next is unknown to the catalog", async () => {
       // Backend v0.7.0 dropped the personal-free row; a stale link with the
-      // former free price id resolves to undefined and is treated as a
-      // non-team flow. The next is preserved as-is so the eventual checkout
-      // page can redirect the user back to /subscription cleanly.
+      // former free price id resolves to undefined. The next is preserved
+      // as-is so the eventual checkout page can redirect the user back to
+      // /subscription cleanly.
       const result = await startOAuth(
         "google",
         "/subscription/checkout?plan=price_unknown",
@@ -701,9 +695,7 @@ describe("auth server actions", () => {
       expect(mockSetOAuthFlowCookies).toHaveBeenCalledWith(
         "/subscription/checkout?plan=price_unknown",
       );
-      expect(new URL(result.redirectUrl).searchParams.get("account_type")).toBe(
-        null,
-      );
+      expect(new URL(result.redirectUrl).search).toBe("");
     });
 
     it("writes fallback /dashboard when next is untrusted", async () => {
@@ -776,6 +768,24 @@ describe("auth server actions", () => {
 
       const result = await exchangeOAuthCode("code_abc");
       expect(result).toEqual({ ok: false, error: "oauth_error" });
+      expect(mockSetAuthCookies).not.toHaveBeenCalled();
+    });
+
+    it("returns oauth_email_unverified_collision when backend rejects with that code", async () => {
+      const { ApiError } = await import("@/domain/errors/ApiError");
+      mockConsumeOAuthFlowCookies.mockResolvedValue({
+        inProgress: true,
+        next: "/dashboard",
+      });
+      mockPublicApiFetch.mockRejectedValue(
+        new ApiError(409, { code: "oauth_email_unverified_collision" }),
+      );
+
+      const result = await exchangeOAuthCode("code_abc");
+      expect(result).toEqual({
+        ok: false,
+        error: "oauth_email_unverified_collision",
+      });
       expect(mockSetAuthCookies).not.toHaveBeenCalled();
     });
 

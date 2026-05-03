@@ -127,18 +127,17 @@ describe("DjangoApiInvitationGateway", () => {
   });
 
   describe("acceptInvitation", () => {
-    it("sends POST /invitations/:token/accept/ and returns tokens", async () => {
-      mockPublicApiFetch.mockResolvedValue({
-        access_token: "at",
-        refresh_token: "rt",
-      });
+    it("sends POST /invitations/:token/accept/ and resolves to void", async () => {
+      // Backend doesn't return session tokens — the user is created as
+      // unverified and a verification email is dispatched instead.
+      mockPublicApiFetchVoid.mockResolvedValue(undefined);
 
       const result = await gateway.acceptInvitation("abc123", {
         fullName: "Bob Smith",
         password: "secret123",
       });
 
-      expect(mockPublicApiFetch).toHaveBeenCalledWith(
+      expect(mockPublicApiFetchVoid).toHaveBeenCalledWith(
         "/invitations/abc123/accept/",
         {
           method: "POST",
@@ -148,7 +147,7 @@ describe("DjangoApiInvitationGateway", () => {
           }),
         },
       );
-      expect(result).toEqual({ accessToken: "at", refreshToken: "rt" });
+      expect(result).toBeUndefined();
     });
   });
 

@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Fork 仓库，自定义品牌，然后发布。免费且开源。",
     "ctaSectionPlaceholder": "you@company.cn",
     "ctaSectionButton": "开始构建 →",
+    "ctaSectionSuccessTitle": "感谢您的注册！",
+    "ctaSectionSuccessBody": "我们将尽快与您联系。",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "用户",
     "dashUptimeVal": "1,248",
@@ -85,6 +87,7 @@
       "noAccount": "还没有账户？",
       "register": "注册",
       "registered": "账户已创建！请检查您的邮箱以验证账户。",
+      "invited": "您已加入团队！登录前请检查您的邮箱以验证账户。",
       "accountDeleted": "您的账户已被删除。很遗憾看到您离开。",
       "errorNoSession": "您的会话已过期，请重新登录。",
       "errorEmailNotVerified": "登录前请验证您的邮箱地址。请检查您的收件箱。",
@@ -92,6 +95,7 @@
       "errorAccountDeactivated": "此账户已被停用。",
       "errorBackendRejected": "身份验证失败。请重新登录。",
       "errorOAuth": "社交登录失败。请重试。",
+      "errorOAuthEmailUnverifiedCollision": "您的社交账户使用的电子邮件地址在此已有密码账户。请先使用密码登录，之后可以关联社交账户。",
       "forgotPassword": "忘记密码？"
     },
     "forgotPassword": {
@@ -178,12 +182,18 @@
   "billing": {
     "title": "账单",
     "currentPlan": "当前方案",
+    "currentPersonalPlan": "当前个人计划",
+    "currentTeamPlan": "当前团队计划",
     "upgrade": "升级",
+    "upgradeTo": "升级到 {plan}",
     "cancel": "订阅将在当前周期结束时取消",
     "cancelRenewal": "取消续订",
     "cancelRenewalTitle": "取消续订？",
     "cancelRenewalBody": "您的订阅将在 {date} 之前保持有效。之后您将无法使用付费功能。",
     "cancelRenewalKeep": "保留订阅",
+    "cancelRenewalTeamTitle": "取消团队订阅？",
+    "cancelRenewalTeamBody": "您的团队订阅将在当前周期结束时（{date}）取消。届时，您的组织、所有成员和待处理的邀请将被移除。此操作无法撤销。",
+    "cancelRenewalTeam": "取消团队订阅",
     "resumeSubscription": "恢复订阅",
     "changePlan": "更改方案",
     "applyPromo": "使用促销代码",
@@ -191,6 +201,7 @@
     "success": "支付成功！",
     "successDesc": "您的订阅已更新。",
     "renewsOn": "续订日期",
+    "cancelsOn": "取消日期",
     "endsOn": "结束日期",
     "billedMonthly": "按月计费",
     "billedYearly": "按年计费",
@@ -198,6 +209,14 @@
     "seats": "席位",
     "products": "积分包",
     "credits": "积分",
+    "creditBalanceLabel": "积分余额",
+    "creditBalancePersonalDescription": "与您的账户关联的积分。",
+    "creditBalanceOrgDescription": "与您的团队共享 — 任何成员都可使用。",
+    "creditBalancePersonalBadge": "个人",
+    "creditBalanceOrgBadge": "团队",
+    "productCheckoutContextLabel": "购买积分给",
+    "productCheckoutContextPersonal": "我的个人账户",
+    "productCheckoutContextTeam": "团队 {orgName}",
     "buy": "购买",
     "getStarted": "开始使用",
     "select": "选择",
@@ -214,8 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "由 {name} 管理",
-    "teamPlanReadonly": "您的团队订阅由组织所有者管理。",
-    "checkout": "结账"
+    "checkout": "结账",
+    "personalSubAutoCancelNotice": "您的个人订阅将在 {date} 结束，届时此团队计划开始计费。在此之前您将保留个人功能。",
+    "keepPersonalSubscription": "保留我的个人订阅与团队计划并行。",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "设置",
@@ -224,6 +254,7 @@
     "email": "邮箱",
     "preferredLocale": "语言",
     "preferredCurrency": "货币",
+    "currencyLockedNote": "您的结算货币在首次订阅时设定，之后无法更改。",
     "phonePrefix": "国家代码",
     "phone": "电话号码",
     "phoneNumberRequired": "请输入电话号码",
@@ -246,7 +277,7 @@
     "deleteAccount": "删除账户",
     "deleteConfirm": "这将永久删除您的账户和所有数据。",
     "deleteDialogTitle": "您确定吗？",
-    "deleteDialogDescription": "此操作无法撤销。请输入您的电子邮件地址以确认。",
+    "deleteDialogDescription": "此操作无法撤销。您的有效订阅将立即取消，您的访问权限将立即终止。请输入您的电子邮件地址以确认。",
     "deleteDialogLabel": "电子邮件地址",
     "deleteDialogPlaceholder": "you@example.com",
     "deleteDialogCancel": "取消",
@@ -254,7 +285,6 @@
     "deleteDialogMismatch": "电子邮件与您的账户邮箱不匹配。",
     "deleteDialogError": "删除账户失败，请重试。",
     "deleteBlockedOwner": "您是一个组织的所有者。删除账户前，请转移所有权或删除组织。",
-    "deleteBlockedMember": "您属于一个团队。请先联系您的团队所有者将您移除。",
     "pronounsHeHim": "他/Him",
     "pronounsSheHer": "她/Her",
     "pronounsTheyThem": "They/Them",
@@ -305,11 +335,12 @@
     "deleteOrg": "删除组织",
     "deleteOrgDescription": "永久删除此组织。所有成员将被移除，待处理的邀请将被取消，您的订阅将立即取消且不退款。",
     "deleteOrgDialogTitle": "删除此组织？",
-    "deleteOrgDialogDescription": "此操作无法撤销。如果这是您唯一的组织，您的账户也将被删除。",
+    "deleteOrgDialogDescription": "此操作无法撤销。团队订阅将立即取消，成员将失去访问权限。请输入组织名称以确认。",
     "deleteOrgDialogLabel": "输入 {name} 以确认",
     "deleteOrgDialogCancel": "取消",
     "deleteOrgDialogSubmit": "永久删除组织",
-    "deleteOrgDialogMismatch": "组织名称不匹配。"
+    "deleteOrgDialogMismatch": "组织名称不匹配。",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "加载中...",
@@ -323,6 +354,7 @@
     "unknownError": "未知错误"
   },
   "actionErrors": {
+    "context_required": "请指定要管理的订阅。",
     "current_password_required": "请输入当前密码",
     "email_and_password_required": "请输入邮箱和密码",
     "email_required": "请输入邮箱",
@@ -336,19 +368,26 @@
     "no_subscription": "没有有效的订阅",
     "not_authorized": "您无权执行此操作",
     "not_billing_member": "您无权管理账单",
+    "org_already_owned": "您已拥有一个组织，无法再启动另一个团队订阅。",
     "passwords_do_not_match": "两次输入的密码不一致",
     "password_too_short": "密码长度至少为 10 个字符",
     "profile_load_failed": "加载个人资料失败",
     "session_expired": "会话已过期,请重新登录。",
     "unknown_error": "出了点问题,请重试。",
-    "unsupported_image": "不支持的图片类型"
+    "unsupported_image": "不支持的图片类型",
+    "message_required": "请输入消息内容。",
+    "message_too_long": "消息过长（最多 5000 个字符）。",
+    "HTTP_429": "请求过多，请稍后再试。",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "联系我们",
     "description": "有问题或需要帮助？我们很乐意听取您的反馈。",
     "placeholder": "您的电子邮件地址",
     "submit": "发送",
-    "messagePlaceholder": "您的留言"
+    "messagePlaceholder": "您的留言",
+    "successTitle": "消息已发送",
+    "successBody": "感谢您的联系。我们将尽快回复您。"
   },
   "about": {
     "title": "关于本项目",
@@ -403,7 +442,8 @@
     "fullName": "全名",
     "password": "密码",
     "accept": "接受邀请",
-    "decline": "拒绝邀请"
+    "decline": "拒绝邀请",
+    "concurrentSubscriptionNotice": "您目前拥有个人订阅。它将与您的团队成员资格并行计费。如果您不再需要，请在订阅页面取消。"
   },
   "plans": {
     "personal": {

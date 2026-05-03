@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Forkez le dépôt, personnalisez l'image de marque et lancez. Gratuit et open-source.",
     "ctaSectionPlaceholder": "vous@entreprise.com",
     "ctaSectionButton": "Commencer à construire →",
+    "ctaSectionSuccessTitle": "Merci pour votre inscription !",
+    "ctaSectionSuccessBody": "Nous vous contacterons bientôt.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Utilisateurs",
     "dashUptimeVal": "1,248",
@@ -85,6 +87,7 @@
       "noAccount": "Vous n'avez pas de compte ?",
       "register": "S'inscrire",
       "registered": "Compte créé ! Vérifiez votre e-mail pour confirmer votre compte.",
+      "invited": "Vous avez rejoint l'équipe ! Vérifiez votre e-mail pour confirmer votre compte avant de vous connecter.",
       "accountDeleted": "Votre compte a été supprimé. Nous sommes désolés de vous voir partir.",
       "errorNoSession": "Votre session a expiré. Veuillez vous reconnecter.",
       "errorEmailNotVerified": "Veuillez vérifier votre adresse e-mail avant de vous connecter. Consultez votre boîte de réception.",
@@ -92,6 +95,7 @@
       "errorAccountDeactivated": "Ce compte a été désactivé.",
       "errorBackendRejected": "Échec de l'authentification. Veuillez réessayer.",
       "errorOAuth": "La connexion sociale a échoué. Veuillez réessayer.",
+      "errorOAuthEmailUnverifiedCollision": "Votre compte social est enregistré avec une adresse e-mail qui a déjà un compte avec mot de passe ici. Veuillez vous connecter avec votre mot de passe d'abord ; vous pourrez ensuite associer le fournisseur social.",
       "forgotPassword": "Mot de passe oublié ?"
     },
     "forgotPassword": {
@@ -178,12 +182,18 @@
   "billing": {
     "title": "Facturation",
     "currentPlan": "Plan actuel",
+    "currentPersonalPlan": "Plan personnel actuel",
+    "currentTeamPlan": "Plan d'équipe actuel",
     "upgrade": "Mettre à niveau",
+    "upgradeTo": "Passer à {plan}",
     "cancel": "L'abonnement sera annulé à la fin de la période",
     "cancelRenewal": "Annuler le renouvellement",
     "cancelRenewalTitle": "Annuler le renouvellement ?",
     "cancelRenewalBody": "Votre abonnement restera actif jusqu'au {date}. Ensuite, vous perdrez l'accès aux fonctionnalités payantes.",
     "cancelRenewalKeep": "Conserver l'abonnement",
+    "cancelRenewalTeamTitle": "Annuler l'abonnement de l'équipe ?",
+    "cancelRenewalTeamBody": "Votre abonnement d'équipe sera annulé à la fin de la période en cours ({date}). À ce moment-là, votre organisation, tous les membres et les invitations en attente seront supprimés. Cette action est irréversible.",
+    "cancelRenewalTeam": "Annuler l'abonnement de l'équipe",
     "resumeSubscription": "Reprendre l'abonnement",
     "changePlan": "Changer de plan",
     "applyPromo": "Appliquer un code promo",
@@ -191,6 +201,7 @@
     "success": "Paiement réussi !",
     "successDesc": "Votre abonnement a été mis à jour.",
     "renewsOn": "Renouvellement le",
+    "cancelsOn": "Annulation le",
     "endsOn": "Se termine le",
     "billedMonthly": "Facturation mensuelle",
     "billedYearly": "Facturation annuelle",
@@ -198,6 +209,14 @@
     "seats": "places",
     "products": "Packs de crédits",
     "credits": "crédits",
+    "creditBalanceLabel": "Solde de crédits",
+    "creditBalancePersonalDescription": "Crédits liés à votre compte.",
+    "creditBalanceOrgDescription": "Partagés avec votre équipe — tout membre peut les utiliser.",
+    "creditBalancePersonalBadge": "Personnel",
+    "creditBalanceOrgBadge": "Équipe",
+    "productCheckoutContextLabel": "Acheter des crédits pour",
+    "productCheckoutContextPersonal": "Mon compte personnel",
+    "productCheckoutContextTeam": "Équipe {orgName}",
     "buy": "Acheter",
     "getStarted": "Commencer",
     "select": "Choisir",
@@ -214,8 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Géré par {name}",
-    "teamPlanReadonly": "L'abonnement de votre équipe est géré par le propriétaire de l'organisation.",
-    "checkout": "Paiement"
+    "checkout": "Paiement",
+    "personalSubAutoCancelNotice": "Votre abonnement personnel prendra fin le {date} lorsque ce plan d'équipe commencera à être facturé. Vous conserverez les fonctionnalités personnelles jusque-là.",
+    "keepPersonalSubscription": "Conserver mon abonnement personnel actif avec le plan d'équipe.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Paramètres",
@@ -224,6 +254,7 @@
     "email": "E-mail",
     "preferredLocale": "Langue",
     "preferredCurrency": "Devise",
+    "currencyLockedNote": "Votre devise de facturation est définie lors de votre premier abonnement et ne peut pas être modifiée par la suite.",
     "phonePrefix": "Indicatif pays",
     "phone": "Téléphone",
     "phoneNumberRequired": "Veuillez saisir un numéro de téléphone",
@@ -246,7 +277,7 @@
     "deleteAccount": "Supprimer le compte",
     "deleteConfirm": "Cela supprimera définitivement votre compte et toutes vos données.",
     "deleteDialogTitle": "Êtes-vous sûr ?",
-    "deleteDialogDescription": "Cette action est irréversible. Saisissez votre adresse e-mail pour confirmer.",
+    "deleteDialogDescription": "Cette action est irréversible. Votre abonnement actif sera annulé immédiatement et votre accès prendra fin maintenant. Saisissez votre adresse e-mail pour confirmer.",
     "deleteDialogLabel": "Adresse e-mail",
     "deleteDialogPlaceholder": "you@example.com",
     "deleteDialogCancel": "Annuler",
@@ -254,7 +285,6 @@
     "deleteDialogMismatch": "L'adresse e-mail ne correspond pas à celle de votre compte.",
     "deleteDialogError": "Échec de la suppression du compte. Veuillez réessayer.",
     "deleteBlockedOwner": "Vous êtes propriétaire d'une organisation. Transférez la propriété ou supprimez l'organisation avant de supprimer votre compte.",
-    "deleteBlockedMember": "Vous appartenez à une équipe. Veuillez contacter le propriétaire de votre équipe pour être retiré(e) d'abord.",
     "pronounsHeHim": "Il/Lui",
     "pronounsSheHer": "Elle",
     "pronounsTheyThem": "Iel",
@@ -305,11 +335,12 @@
     "deleteOrg": "Supprimer l'organisation",
     "deleteOrgDescription": "Supprimer définitivement cette organisation. Tous les membres seront retirés, les invitations en attente annulées, et votre abonnement annulé immédiatement sans remboursement.",
     "deleteOrgDialogTitle": "Supprimer cette organisation ?",
-    "deleteOrgDialogDescription": "Cette action est irréversible. Si c'est votre seule organisation, votre compte sera également supprimé.",
+    "deleteOrgDialogDescription": "Cette action est irréversible. L'abonnement de l'équipe sera annulé immédiatement et les membres perdront l'accès. Saisissez le nom de l'organisation pour confirmer.",
     "deleteOrgDialogLabel": "Tapez {name} pour confirmer",
     "deleteOrgDialogCancel": "Annuler",
     "deleteOrgDialogSubmit": "Supprimer l'organisation définitivement",
-    "deleteOrgDialogMismatch": "Le nom de l'organisation ne correspond pas."
+    "deleteOrgDialogMismatch": "Le nom de l'organisation ne correspond pas.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Chargement...",
@@ -323,6 +354,7 @@
     "unknownError": "Erreur inconnue"
   },
   "actionErrors": {
+    "context_required": "Veuillez préciser quel abonnement gérer.",
     "current_password_required": "Le mot de passe actuel est requis",
     "email_and_password_required": "L'e-mail et le mot de passe sont requis",
     "email_required": "L'e-mail est requis",
@@ -336,19 +368,26 @@
     "no_subscription": "Aucun abonnement actif",
     "not_authorized": "Vous n'êtes pas autorisé à effectuer cette action",
     "not_billing_member": "Vous n'avez pas l'autorisation de gérer la facturation",
+    "org_already_owned": "Vous possédez déjà une organisation — vous ne pouvez pas démarrer un second abonnement d'équipe.",
     "passwords_do_not_match": "Les mots de passe ne correspondent pas",
     "password_too_short": "Le mot de passe doit contenir au moins 10 caractères",
     "profile_load_failed": "Échec du chargement du profil",
     "session_expired": "Session expirée. Veuillez vous reconnecter.",
     "unknown_error": "Une erreur est survenue. Veuillez réessayer.",
-    "unsupported_image": "Type d'image non pris en charge"
+    "unsupported_image": "Type d'image non pris en charge",
+    "message_required": "Veuillez inclure un message.",
+    "message_too_long": "Le message est trop long (5000 caractères maximum).",
+    "HTTP_429": "Trop de requêtes. Veuillez réessayer plus tard.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Contactez-nous",
     "description": "Une question ou besoin d'aide ? Nous serions ravis de vous entendre.",
     "placeholder": "Votre adresse e-mail",
     "submit": "Envoyer",
-    "messagePlaceholder": "Votre message"
+    "messagePlaceholder": "Votre message",
+    "successTitle": "Message envoyé",
+    "successBody": "Merci de nous avoir contactés. Nous vous répondrons dès que possible."
   },
   "about": {
     "title": "À propos de ce projet",
@@ -403,7 +442,8 @@
     "fullName": "Nom complet",
     "password": "Mot de passe",
     "accept": "Accepter l'invitation",
-    "decline": "Décliner l'invitation"
+    "decline": "Décliner l'invitation",
+    "concurrentSubscriptionNotice": "Vous avez actuellement un abonnement personnel. Il continuera d'être facturé parallèlement à votre adhésion à l'équipe. Annulez-le depuis votre page d'abonnement si vous n'en avez plus besoin."
   },
   "plans": {
     "personal": {

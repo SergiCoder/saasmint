@@ -13,6 +13,7 @@ const SRC_ROOT = join(process.cwd(), "src");
 const EXPECTED_USE_CLIENT_FILES: readonly string[] = [
   "src/app/[locale]/(app)/error.tsx",
   "src/app/[locale]/(app)/org/[slug]/_components/DeleteOrgDialog.tsx",
+  "src/app/[locale]/(app)/org/[slug]/_components/DeleteOrgZone.tsx",
   "src/app/[locale]/(app)/org/[slug]/_components/InviteByEmailForm.tsx",
   "src/app/[locale]/(app)/org/[slug]/_components/MemberActions.tsx",
   "src/app/[locale]/(app)/org/[slug]/_components/SeatManager.tsx",
@@ -22,7 +23,10 @@ const EXPECTED_USE_CLIENT_FILES: readonly string[] = [
   "src/app/[locale]/(app)/profile/_components/DeleteAccountDialog.tsx",
   "src/app/[locale]/(app)/profile/_components/ProfileForm.tsx",
   "src/app/[locale]/(app)/subscription/_components/CancelRenewalButton.tsx",
+  "src/app/[locale]/(app)/subscription/_components/ChangePlanButton.tsx",
   "src/app/[locale]/(app)/subscription/_components/CheckoutButton.tsx",
+  "src/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection.tsx",
+  "src/app/[locale]/(app)/subscription/_components/ReleaseScheduledChangeButton.tsx",
   "src/app/[locale]/(app)/subscription/_components/ResumeSubscriptionButton.tsx",
   "src/app/[locale]/(app)/subscription/team-checkout/_components/TeamCheckoutForm.tsx",
   "src/app/[locale]/(auth)/_components/AuthForm.tsx",
@@ -45,6 +49,7 @@ const EXPECTED_USE_CLIENT_FILES: readonly string[] = [
   "src/presentation/components/molecules/PronounsPicker.tsx",
   "src/presentation/components/molecules/TypeToConfirmDialog.tsx",
   "src/presentation/components/molecules/UserMenu.tsx",
+  "src/presentation/components/organisms/CtaSection.tsx",
   "src/presentation/components/organisms/MobileMenuToggle.tsx",
   "src/presentation/components/organisms/RouteErrorBoundary.tsx",
 ];

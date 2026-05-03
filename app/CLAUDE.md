@@ -1,10 +1,10 @@
-# SaaSmint App — CLAUDE.md
+# SaaSmint App
 
-Next.js 16 SaaS frontend template paired with `SaaSmint Core`.
+Next.js 16 SaaS frontend paired with `SaaSmint Core`.
 
 ## Architecture
 
-Strict hexagonal architecture enforced by layer isolation:
+Strict hexagonal layers:
 
 | Layer          | Location                        | Can import                                         |
 | -------------- | ------------------------------- | -------------------------------------------------- |
@@ -15,139 +15,107 @@ Strict hexagonal architecture enforced by layer isolation:
 
 **Never** import from `infrastructure/` inside `domain/` or `application/`.
 
-`src/application/` currently contains only `ports/` — port interfaces that describe what the presentation layer needs from gateways. Server actions and `_data/` fetchers call gateways directly (via `src/infrastructure/registry.ts`) rather than through a use-case indirection layer; the port interfaces still provide the type contract and enable swapping implementations.
+`src/application/` currently contains only `ports/`. Server actions and `_data/` fetchers call gateways directly via `src/infrastructure/registry.ts` — port interfaces still provide the type contract for swapping implementations.
 
 ## Domain Models
 
-Core types in `src/domain/models/`. All model fields are declared `readonly` (including `readonly string[]` arrays) — treat domain objects as immutable; build new copies rather than mutating in place.
+Core types in `src/domain/models/`. All fields `readonly` — treat domain objects as immutable.
 
-- `User` — authenticated user (id, account type, locale/currency preferences)
-- `Org` — organisation record (id, name, slug, logoUrl)
-- `OrgMember` — org membership (nested `user: OrgMemberUser`, role: `owner | admin | member`, isBilling flag)
-- `Invitation` — org invite (id, org, email, role: `admin | member`, status: `pending | accepted | expired | cancelled | declined`, invitedBy, dates)
-- `Plan` — billing plan (id, name, description, context: `personal | team`, tier: `PlanTier` (1=free, 2=basic, 3=pro), interval: `month | year`, single `price`). The backend catalog only returns paid plans; the personal-free tier is the absence of a `Subscription` and is synthesised client-side where a Free card needs to be rendered (e.g. marketing pricing page).
-- `PlanPrice` — individual plan price point (id, amount, displayAmount, currency)
-- `Product` — one-time purchase product (id, name, type: `one_time`, credits, `price`)
-- `ProductPrice` — individual product price point (id, amount, displayAmount, currency)
-- `Subscription` — real Stripe subscription row (status, plan snapshot, seat `quantity`, period dates, trial); team seat count is capped by `MAX_SEATS`. Users on the free tier have no row — the backend returns 404 and `(app)/_data/getSubscription.ts` resolves to `null`.
-- `PhonePrefix` — reference entry for phone-number country prefixes (prefix, label)
+- `User`, `Org`, `OrgMember` (role: `owner | admin | member`, `isBilling` flag), `Invitation`, `PhonePrefix`
+- `Plan` — `(context: personal|team, tier: 1=free|2=basic|3=pro, interval: month|year)` + single `price`. Backend returns paid plans only; the personal-free card is synthesised client-side where needed.
+- `PlanPrice`, `Product` (one-time), `ProductPrice`
+- `Subscription` — Stripe-mirrored row. `GET /billing/subscriptions/me/` returns a paginated envelope with 0–2 rows. Use `findPersonalSubscription()` / `findTeamSubscription()` to pick a row. `seatLimit` = purchased seat capacity (authoritative cap — do not hardcode a constant); `seatsUsed` = accepted members currently occupying seats. "Scheduled to cancel" UI = `cancelAt` is set; `canceledAt` only flips after the sub actually ends. `scheduledPlan` + `scheduledChangeAt` are set together when a downgrade is deferred to period end (upgrades apply immediately and leave both `null`); cleared when the user releases the schedule via `releaseScheduledChange()` or it applies. Mutating endpoints accept `?context=personal|team` (required when both rows exist; backend defaults to `team` for org members, `personal` otherwise).
+- `CreditBalance` — `{balance, scope: "user"|"org"}`. `GET /billing/credits/me/` returns `{balances:[...]}`, 0–2 rows. Render in backend-provided order without re-sorting.
 
-Domain errors in `src/domain/errors/`:
-
-- `AuthError` — authentication / authorisation failures
-- `BillingError` — payment and subscription failures
-- `ApiError` — generic HTTP failure from the Django API (carries `status`, raw `body`, and a `detail` getter that extracts Django-style `{ detail }` or `string[]` messages)
-- `NetworkError` — fetch couldn't reach the server (DNS, connection refused, timeout); carries the original exception as `cause`
-
-All error classes carry a `code: string` field for programmatic handling. `ApiError` picks its code in this order: an explicit `code` constructor argument, then a Django-style `body.code` string (e.g. `payment_provider_error`, `invalid_credentials`), then the `HTTP_<status>` fallback. `NetworkError` is `NETWORK_UNREACHABLE`. Server actions translate thrown domain/gateway errors into stable string codes via `toActionError()` in `src/lib/actions/ActionResult.ts`; client components resolve those codes to user-facing strings through the `actionErrors.<code>` next-intl namespace using the `useActionErrorMessage` hook (`src/lib/actions/useActionErrorMessage.ts`), which prefers the server-provided `message` (typically `ApiError.detail`), then the `actionErrors.<code>` translation, then `actionErrors.unknown_error`.
+Domain errors in `src/domain/errors/`: `AuthError`, `BillingError`, `ApiError` (carries `status`, `body`, `detail` getter), `NetworkError` (carries `cause`). All have a `code: string`. `ApiError.code` resolution: explicit arg → `body.code` → `HTTP_<status>`. Server actions translate thrown errors via `toActionError()`; clients resolve codes through `actionErrors.<code>` next-intl namespace via `useActionErrorMessage`.
 
 ## Infrastructure
 
-Gateway implementations in `src/infrastructure/`, organised by provider:
+`src/infrastructure/` organised by provider:
 
-- `api/` — `DjangoApi*Gateway` classes that call `SaaSmint Core` via `apiFetch` (auth, user, org, org-member, invitation, plan, product, subscription, reference)
-- `auth/` — `cookies.ts` for JWT cookie management (set, clear, read access/refresh tokens)
+- `api/` — `DjangoApi*Gateway` classes calling Core via `apiFetch`
+- `auth/cookies.ts` — JWT cookie management
 
-Reference data (currencies, locales, timezones, phone prefixes) is served via `DjangoApiReferenceGateway` behind `IReferenceGateway`.
+Avatar uploads go through `POST /account/avatar/`; client-side compression via `src/lib/compressImage.ts` runs first.
 
-Avatar uploads go through the Django API (`POST /account/avatar/`). Client-side image compression (`src/lib/compressImage.ts`) runs before upload.
-
-Each gateway implements a port interface from `src/application/ports/` (e.g. `IOrgGateway`, `IAuthGateway`, `IReferenceGateway`).
-
-`src/infrastructure/registry.ts` exports singleton instances of every gateway — import gateways from the registry, not by instantiating classes directly.
+Each gateway implements a port from `src/application/ports/`. **Import singletons from `src/infrastructure/registry.ts`** — never instantiate gateway classes directly.
 
 ### API client
 
-`src/infrastructure/api/apiClient.ts` exposes four variants on top of a shared `raw()` helper:
+`src/infrastructure/api/apiClient.ts` exposes four variants over a shared `raw()`:
 
-- `apiFetch<T>` / `apiFetchVoid` — require an access token; throw `AuthError("NO_SESSION")` if none
-- `apiFetchOptional<T>` — send the token when present, fall through to an anonymous request otherwise (used for endpoints that personalize for logged-in users but still work anonymously, e.g. plans list). If the sent token is rejected (`AuthError`), the helper retries once anonymously so a stale cookie that slipped past the proxy refresh doesn't crash the anonymous render path
-- `publicApiFetch<T>` / `publicApiFetchVoid` — never send a token
+- `apiFetch<T>` / `apiFetchVoid` — require token; throw `AuthError("NO_SESSION")` if none.
+- `apiFetchOptional<T>` — send token if present, fall back to anonymous. If a sent token is rejected, retries once anonymously.
+- `publicApiFetch<T>` / `publicApiFetchVoid` — never send a token.
 
-Non-OK responses are normalized: `401` on an authenticated request becomes `AuthError`; everything else becomes `ApiError(status, body)`. Network failures (ECONNREFUSED, fetch-failed, etc.) are rewrapped as a friendly "Unable to reach the server" error.
+Non-OK normalization: `401` on authenticated → `AuthError`; everything else → `ApiError(status, body)`. Network failures → friendly "unreachable" error.
 
 ### Response parsing
 
-Gateways never cast raw JSON to domain types. The pattern is:
+Gateways never cast raw JSON to domain types:
 
-1. `apiFetch<Record<string, unknown>>(...)` to get untyped JSON
-2. `keysToCamel(raw)` (or `keysToCamelWithPrice` for Plan/Product/Subscription, plus `flattenPhone` for User) in `src/infrastructure/api/caseTransform.ts` to normalise key shape
-3. `UserSchema.parse(...)` etc. from `src/infrastructure/api/schemas.ts` — a set of Zod schemas `satisfies z.ZodType<DomainModel>` that validate and return a correctly-typed domain object
+1. `apiFetch<Record<string, unknown>>(...)` for untyped JSON
+2. `keysToCamel(raw)` (or `keysToCamelWithPrice` for Plan/Product, plus `flattenPhone` for User) in `caseTransform.ts`
+3. `UserSchema.parse(...)` etc. from `schemas.ts` — Zod schemas `satisfies z.ZodType<DomainModel>`
 
-Always validate through the relevant schema when adding a new endpoint; do not re-introduce `keysToCamel<T>()` generic casts.
+Always validate through a schema for new endpoints; do not re-introduce generic casts.
 
-### Environment variables
+### Env vars
 
-Public env vars are validated once at module load in `src/lib/env.ts` (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_APP_URL` must be valid URLs). The validator is intentionally zod-free so `src/proxy.ts` can import `env` without pulling zod into the Edge middleware bundle. Import `env` from `@/lib/env` instead of reading `process.env.NEXT_PUBLIC_*` directly so misconfiguration fails fast with a clear message.
+Public env vars validated once at module load in `src/lib/env.ts` (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_APP_URL`). Validator is zod-free so `src/proxy.ts` can import it without pulling zod into the Edge bundle. Import `env` from `@/lib/env` rather than reading `process.env.NEXT_PUBLIC_*` directly.
 
 ## Authentication
 
-Django issues JWTs directly — no third-party auth provider.
+Django issues JWTs directly — no third-party provider.
 
-- **Tokens**: Access token (15 min) + refresh token (7 days) stored in HTTP-only secure cookies
-- **Login/Signup**: Server actions call Django `POST /auth/login/` and `POST /auth/register/`
-- **OAuth**: Server action sets a short-lived `oauth_in_progress` flow cookie and redirects to Django `GET /auth/oauth/{provider}/`. Django completes the provider handshake and redirects back to `/auth/callback#code=<opaque>`. A client component strips the fragment via `history.replaceState` and calls the `exchangeOAuthCode` server action, which validates the flow cookie and exchanges the code at `POST /auth/oauth/exchange/` for tokens. Post-login redirect targets are validated against an allowlist (`src/lib/oauthNext.ts`)
-- **Middleware** (`src/proxy.ts`): On routes that actually read the session user, decodes the access token JWT (base64 only), checks expiry, and refreshes via `POST /auth/refresh/` when expired or missing. Anonymous-only routes (`/login`, `/signup`, `/forgot-password`, `/reset-password`, `/verify-email`, `/auth/callback`, `/auth/error`, `/invitations`) skip the refresh round-trip. When Django rejects the refresh (401), the middleware clears the stale access/refresh cookies on both the incoming request and outgoing response so downstream gateway calls don't send a token that will trip their 401 branches. The middleware also forwards the current request pathname as an `x-pathname` request header (`PATHNAME_HEADER` in `src/lib/pathname.ts`), so server components can read it via `getPathname()` / `getPathnameWithoutLocale()` without falling back to `usePathname()` on the client.
-- **API calls**: `apiClient.ts` reads `access_token` cookie, sends as `Authorization: Bearer` header
-- **Email verification**: Django sends verification email, user clicks link → `verify-email` page calls `POST /auth/verify-email/`
+- **Tokens**: access (15 min) + refresh (7 days) in HTTP-only secure cookies.
+- **Login/Signup**: server actions call `POST /auth/login/`, `POST /auth/register/`.
+- **OAuth**: server action sets short-lived `oauth_in_progress` flow cookie + redirects to `GET /auth/oauth/{provider}/`. Django redirects back to `/auth/callback#code=<opaque>`. Client strips fragment via `history.replaceState` and calls `exchangeOAuthCode` server action → `POST /auth/oauth/exchange/`. Post-login redirect targets validated against an allowlist (`src/lib/oauthNext.ts`).
+- **Middleware (`src/proxy.ts`)**: on routes that read the session user, decodes the access token JWT (base64 only), refreshes via `POST /auth/refresh/` when expired/missing. Anonymous-only routes skip the refresh. On 401, clears stale cookies on both request and response. Forwards pathname as `x-pathname` (`PATHNAME_HEADER` in `src/lib/pathname.ts`); read on the server via `getPathname()` / `getPathnameWithoutLocale()`.
+- **API calls**: `apiClient.ts` reads `access_token` cookie, sends `Authorization: Bearer`.
 
 ## Component Design
 
-Strict atomic design in `src/presentation/components/`:
+Atomic structure in `src/presentation/components/`: `atoms/`, `molecules/`, `organisms/`, `templates/`. Flat files (`atoms/Button.tsx`, no folder-per-component); one barrel `index.ts` per level.
 
-- `atoms/` — Button, Input, Badge, Avatar, AvatarUpload, Label, Spinner, FullPageSpinner, Logo, SectionLabel, LocaleDropdown, FormattedDate, Divider, GitHubIcon, GoogleIcon, MicrosoftIcon
-- `molecules/` — FormField, MetricCard, NavLink, PlanCard, AlertBanner, ConfirmDialog, FeatureCard, StatItem, TrustBar, OrgCard, OAuthButtons, UserMenu, PronounsPicker, PasswordRequirements
-- `organisms/` — NavBar, MobileMenuToggle, Footer, PricingSection, PricingIntervalSwitch, SubscriptionCard, OrgMemberList, InvoiceTable, CtaSection, DashboardMock, ErrorView, RouteErrorBoundary, ProductsGrid, FeaturesGrid, LogoCloud, StatsSection
-- `templates/` — MarketingLayout, AuthLayout, AppLayout, PolicyPage
-
-## Presentation Conventions
-
-- Tailwind v4 utility classes only — no CSS modules or styled-components
-- Custom design tokens defined in `src/app/globals.css` via `@theme`
-- Flat component files: `atoms/Button.tsx` (no folder-per-component)
-- One barrel `index.ts` per atomic level for re-exports
-- Components receive all user-facing text as props — no hardcoded strings
-- Server Components by default; `"use client"` only for interactivity (onClick, onChange, useState)
+- Tailwind v4 utility classes only; design tokens in `src/app/globals.css` via `@theme`.
+- Components receive all user-facing text as props — no hardcoded strings.
+- Server Components by default; `"use client"` only for interactivity.
 
 ## Server Actions
 
-Server Actions live in `src/app/actions/` (one file per domain area: `auth.ts`, `avatar.ts`, `billing.ts`, `invitation.ts`, `org.ts`, `user.ts`). Each action calls gateways directly from `src/infrastructure/registry.ts` (there is no use-case indirection layer) and returns an `ActionResult<T>` envelope from `src/lib/actions/ActionResult.ts`:
+In `src/app/actions/` (one file per area). Each action calls gateways directly from the registry and returns `ActionResult<T>` from `src/lib/actions/ActionResult.ts`:
 
-- `ok()` / `ok(data)` — success, with optional payload
-- `fail(code, { message?, fieldErrors? })` — validation/domain failure with a stable string code the client translates via `actionErrors.<code>`
-- `toActionError(err)` — maps a thrown `AuthError`/`NetworkError`/`BillingError`/`ApiError` to a `fail(...)`; used inside try/catch around gateway calls
+- `ok()` / `ok(data)` — success.
+- `fail(code, { message?, fieldErrors? })` — failure with stable string code.
+- `toActionError(err)` — maps thrown gateway errors to `fail(...)`.
 
-Form-field parsing uses the tiny helpers in `src/lib/actions/parseFormData.ts` (`getString`, `getNonEmptyString`, `getInt`, `getFile`) — each returns the narrowed value or `undefined`, and the action decides whether to return `fail("invalid_input")`.
+Form parsing uses `src/lib/actions/parseFormData.ts` (`getString`, `getNonEmptyString`, `getInt`, `getFile`).
 
-Actions `console.error` the raw thrown error (including any `ApiError.body`) before returning `toActionError(err)` / `fail(...)`, so server logs retain the backend failure payload even though clients only see the stable error code.
+Actions `console.error` the raw error (including `ApiError.body`) before returning so server logs retain backend payloads while clients only see stable codes.
 
-Co-located server-side fetchers in `_data/` directories also call gateways directly and are wrapped in `React.cache()` (e.g. `(app)/_data/getSubscription.ts`, `(app)/_data/getCurrentUser.ts`).
+Co-located `_data/` fetchers also call gateways directly and are wrapped in `React.cache()`.
 
 ## Route Groups
 
-`src/app/[locale]/` uses four route groups with distinct layouts:
+`src/app/[locale]/`:
 
-- `(marketing)/` — public pages (landing, pricing, blog, about, contact, privacy, terms, cookies) using `MarketingLayout`
-- `(auth)/` — login/signup/forgot-password/reset-password/verify-email pages using `AuthLayout`
-- `(app)/` — authenticated pages (dashboard, subscription, profile, org) using `AppLayout`
-- `(public)/` — unauthenticated public pages (invitation acceptance)
+- `(marketing)/` — public pages, `MarketingLayout`
+- `(auth)/` — login/signup/etc., `AuthLayout`
+- `(app)/` — authenticated, `AppLayout`
+- `(public)/` — unauthenticated public (invitation acceptance)
 
-Route-specific client components live in co-located `_components/` directories (e.g. `(app)/subscription/_components/CheckoutButton.tsx`). Shared server-side data fetchers live in co-located `_data/` directories and are wrapped in `React.cache()` so a layout and its pages share a single API call per render (e.g. `(app)/_data/getSubscription.ts`). These fetchers call gateways directly from the infrastructure registry.
+Route-specific clients in co-located `_components/`; shared server fetchers in `_data/` (cached).
 
 ## Key Rules
 
-- App Router only (`src/app/`) — no `pages/` directory
-- Server Components by default — `"use client"` only when needed
-- No raw `fetch` in components — go through a server action (`src/app/actions/`) or a `_data/` fetcher that calls a gateway from the infrastructure registry
-- Auth: Django JWT in `Authorization: Bearer <token>` header (read from HTTP-only cookie)
-- Payments: Stripe-hosted Checkout redirect only — no embedded forms
-- All user-facing strings through next-intl — never hardcoded
-- Brand color: teal `#0D9488` (`primary-600`)
-- TypeScript runs with `strict`, `noUncheckedIndexedAccess`, `noImplicitReturns`, and `noFallthroughCasesInSwitch` — array/tuple indexing yields `T | undefined`, so narrow before use instead of reaching for `!`
-
-## Versioning
-
-Bump `package.json` `version` on every PR — the bump is part of the PR, not a separate commit later. Frontend (`saasmint-app`) and backend (`saasmint-core` + `saasmint-core-lib`) ship in lockstep: a `v<X.Y.Z>` tag in either repo is only valid if the matching tag exists in the other. Pick the next semver in coordination with whatever the backend PR is targeting; never let the two drift.
+- App Router only — no `pages/`.
+- No raw `fetch` in components — go through a server action or `_data/` fetcher.
+- Auth: Django JWT in `Authorization: Bearer` (read from HTTP-only cookie).
+- Payments: Stripe-hosted surfaces only — no embedded forms. First-time subscriptions use Checkout; plan changes for existing subscribers use `changePlan` server action (`PATCH /billing/subscriptions/me/`) — upgrades apply immediately, downgrades defer to period end. The Billing Portal (`openBillingPortal` action, `BillingPortalButton` component) is for payment method management and invoices only.
+- All user-facing strings through next-intl.
+- Brand color: teal `#0D9488` (`primary-600`).
+- TS `strict`, `noUncheckedIndexedAccess`, `noImplicitReturns`, `noFallthroughCasesInSwitch` — narrow indexed access instead of using `!`.
 
 ## Committing
 
@@ -156,29 +124,29 @@ Always use `/commit`. Never commit manually.
 ## Running
 
 ```bash
-pnpm install     # first-time setup
-pnpm dev         # start dev server on https://localhost:3000 (Turbopack, --experimental-https)
+pnpm install
+pnpm dev         # https://localhost:3000 (Turbopack, --experimental-https)
 ```
 
-The dev script reads the root CA and localhost certs from sibling `../saasmint-core/infra/certs/`; clone both repos side-by-side.
+Dev server reads root CA + localhost certs from `../saasmint-core/infra/certs/` — clone both repos side-by-side.
 
 ## Testing
 
 ```bash
-pnpm test             # run all tests once
-pnpm test:coverage    # run tests with v8 coverage report
+pnpm test
+pnpm test:coverage
 ```
 
-Tests live in `tests/` mirroring the `src/` structure (e.g. `src/domain/errors/DomainError.ts` → `tests/domain/errors/DomainError.test.ts`). The test runner is Vitest; configuration is in `vitest.config.ts`.
+Tests in `tests/` mirror `src/` (Vitest; config in `vitest.config.ts`).
 
-### Global test fixtures (`tests/setup.ts`)
+### Global fixtures (`tests/setup.ts`)
 
-- **`next-intl` stub** — `useTranslations()` returns a translator that echoes the i18n key when called without params, and substitutes `{param}` placeholders when called with a params object (unused params are appended, space-separated). Component tests can therefore assert on interpolated values (e.g. `getByText(/Jane Doe/)`) without coupling to a specific key-name format. `useLocale()` returns `"en"` and `useMessages()` returns `{}`.
-- **`@/lib/i18n/navigation` stub** — `Link` renders a plain `<a>`; `useRouter`, `redirect`, `permanentRedirect`, `usePathname`, and `getPathname` are no-ops or identity helpers.
-- **`console.error` silencing** — a `beforeEach` hook installs `vi.spyOn(console, "error").mockImplementation(() => {})` so tests that exercise error paths don't pollute test output. Tests that want to assert on logging can still read calls via `vi.mocked(console.error)` — no ad-hoc `vi.spyOn` needed.
-- **DOM cleanup** — `afterEach(cleanup)` unmounts every React tree rendered via Testing Library.
+- **`next-intl` stub** — `useTranslations()` echoes the i18n key when called without params, substitutes `{param}` placeholders with a params object (unused params appended). `useLocale()`→`"en"`, `useMessages()`→`{}`.
+- **`@/lib/i18n/navigation` stub** — `Link` renders plain `<a>`; routing helpers are no-ops.
+- **`console.error` silenced** via `vi.spyOn` in `beforeEach`. Read calls via `vi.mocked(console.error)` to assert on logging.
+- **DOM cleanup** — `afterEach(cleanup)`.
 
-### Component testing conventions
+### Component testing
 
-- **`Button`** exposes its `variant` and `size` as `data-variant` / `data-size` attributes. Prefer these over class-name matching when asserting visual variants (e.g. `expect(btn).toHaveAttribute("data-variant", "danger")`).
-- Prefer the i18n stub's placeholder echoing over brittle fake translation maps — assert on the interpolated values that end users would see.
+- `Button` exposes `variant`/`size` as `data-variant` / `data-size` — prefer those over class-name matching.
+- Assert on interpolated values from the i18n stub, not on key names.

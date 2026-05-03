@@ -102,10 +102,10 @@ jobs:
         run: |
           node -e "
           const fs = require('fs');
-          let comment = '';
 
-          // ── Vulnerability audit ──
+          // ── Vulnerability audit section ──
           // pnpm audit --json uses the npm v1 format: { advisories: { id: { module_name, severity, ... } } }
+          let auditSection = '';
           try {
             const data = JSON.parse(fs.readFileSync('/tmp/audit-raw.json', 'utf8'));
             const rows = Object.values(data.advisories || {})
@@ -115,40 +115,43 @@ jobs:
                 return \`| \${v.module_name} | \${v.severity} | \${v.vulnerable_versions} | \${fix} |\`;
               });
             if (rows.length) {
-              comment += '## ⚠️ Vulnerability Audit\n\n';
-              comment += '| Package | Severity | Vulnerable range | Fix |\n|---|---|---|---|\n';
-              comment += rows.join('\n') + '\n\n';
+              auditSection = '## ⚠️ Vulnerability Audit\n\n'
+                + '| Package | Severity | Vulnerable range | Fix |\n|---|---|---|---|\n'
+                + rows.join('\n') + '\n\n';
             }
           } catch {}
+          if (!auditSection) {
+            auditSection = '## ✅ Vulnerability Audit\n\nNo known vulnerabilities found.\n\n';
+          }
 
-          // ── Outdated dependencies ──
+          // ── Outdated dependencies section ──
           // Packages intentionally held below latest due to ecosystem compatibility:
           //   eslint - pinned at ^9; @typescript-eslint 8.x (used by eslint-config-next)
           //            does not yet support eslint 10 (scopeManager API break)
           const outdatedIgnore = ['eslint'];
+          let depsSection = '';
           try {
             const data = JSON.parse(fs.readFileSync('/tmp/outdated-raw.json', 'utf8'));
             const rows = Object.entries(data)
               .filter(([name, v]) => !outdatedIgnore.includes(name) && v.latest && v.current !== v.latest)
               .map(([name, v]) => \`| \${name} | \${v.current} | \${v.latest} | \${v.dependencyType} |\`);
             if (rows.length) {
-              comment += '## Outdated Dependencies\n\n';
-              comment += '| Package | Current | Latest | Type |\n|---|---|---|---|\n';
-              comment += rows.join('\n') + '\n\n';
-              comment += '> Run \`pnpm update\` to update.\n';
+              depsSection = '## Outdated Dependencies\n\n'
+                + '| Package | Current | Latest | Type |\n|---|---|---|---|\n'
+                + rows.join('\n') + '\n\n'
+                + '> Run \`pnpm update\` to update.\n';
             }
           } catch {}
-
-          if (!comment) {
-            comment = '## Dependency Report\n\nNo vulnerabilities or outdated packages found.\n';
+          if (!depsSection) {
+            depsSection = '## ✅ Dependencies\n\nAll dependencies are up to date.\n';
           }
 
-          fs.writeFileSync('/tmp/pr-comment.txt', comment);
+          fs.writeFileSync('/tmp/pr-comment.txt', auditSection + depsSection);
           "
 
           # Delete previous bot comment if present
           gh api "repos/${GH_REPO}/issues/${PR_NUMBER}/comments" \
-            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("Vulnerability Audit") or contains("Outdated Dependencies") or contains("Dependency Report"))) | .id' \
+            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("Vulnerability Audit") or contains("Outdated Dependencies") or contains("Dependencies") or contains("Dependency Report"))) | .id' \
             | xargs -I{} gh api -X DELETE "repos/${GH_REPO}/issues/comments/{}" 2>/dev/null || true
 
           gh pr comment "$PR_NUMBER" --body-file /tmp/pr-comment.txt

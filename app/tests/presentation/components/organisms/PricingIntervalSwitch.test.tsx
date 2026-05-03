@@ -30,9 +30,7 @@ const baseProps = {
 
 describe("PricingIntervalSwitch", () => {
   it("renders the header, both tabs as links, and the active grid", () => {
-    render(
-      <PricingIntervalSwitch {...baseProps} selectedInterval="month" />,
-    );
+    render(<PricingIntervalSwitch {...baseProps} selectedInterval="month" />);
 
     expect(
       screen.getByRole("heading", { name: "Pricing" }),
@@ -46,9 +44,7 @@ describe("PricingIntervalSwitch", () => {
   });
 
   it("marks the selected month tab and points the other at yearlyHref", () => {
-    render(
-      <PricingIntervalSwitch {...baseProps} selectedInterval="month" />,
-    );
+    render(<PricingIntervalSwitch {...baseProps} selectedInterval="month" />);
 
     const monthlyTab = screen.getByRole("tab", { name: "Monthly" });
     const yearlyTab = screen.getByRole("tab", { name: "Yearly" });
@@ -60,9 +56,7 @@ describe("PricingIntervalSwitch", () => {
   });
 
   it("marks the selected year tab when selectedInterval='year'", () => {
-    render(
-      <PricingIntervalSwitch {...baseProps} selectedInterval="year" />,
-    );
+    render(<PricingIntervalSwitch {...baseProps} selectedInterval="year" />);
 
     expect(screen.getByRole("tab", { name: "Yearly" })).toHaveAttribute(
       "aria-selected",
@@ -86,16 +80,12 @@ describe("PricingIntervalSwitch", () => {
   });
 
   it("omits the savingsBadge slot when undefined", () => {
-    render(
-      <PricingIntervalSwitch {...baseProps} selectedInterval="month" />,
-    );
+    render(<PricingIntervalSwitch {...baseProps} selectedInterval="month" />);
     expect(screen.queryByText(/Save/)).not.toBeInTheDocument();
   });
 
   it("applies selected/unselected styling based on selectedInterval", () => {
-    render(
-      <PricingIntervalSwitch {...baseProps} selectedInterval="year" />,
-    );
+    render(<PricingIntervalSwitch {...baseProps} selectedInterval="year" />);
 
     const monthlyTab = screen.getByRole("tab", { name: "Monthly" });
     const yearlyTab = screen.getByRole("tab", { name: "Yearly" });

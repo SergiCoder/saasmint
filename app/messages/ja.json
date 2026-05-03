@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "リポジトリをフォークし、ブランドをカスタマイズして、ローンチ。無料でオープンソース。",
     "ctaSectionPlaceholder": "you@company.jp",
     "ctaSectionButton": "構築を始める →",
+    "ctaSectionSuccessTitle": "ご登録ありがとうございます！",
+    "ctaSectionSuccessBody": "後ほどご連絡いたします。",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "ユーザー",
     "dashUptimeVal": "1,248",
@@ -85,6 +87,7 @@
       "noAccount": "アカウントをお持ちでないですか？",
       "register": "新規登録",
       "registered": "アカウントが作成されました！メールを確認してアカウントを認証してください。",
+      "invited": "チームに参加しました！サインインする前に、メールを確認してアカウントを認証してください。",
       "accountDeleted": "アカウントが削除されました。ご利用ありがとうございました。",
       "errorNoSession": "セッションの有効期限が切れました。再度ログインしてください。",
       "errorEmailNotVerified": "ログインする前にメールアドレスを確認してください。受信トレイをご確認ください。",
@@ -92,6 +95,7 @@
       "errorAccountDeactivated": "このアカウントは無効化されています。",
       "errorBackendRejected": "認証に失敗しました。再度ログインしてください。",
       "errorOAuth": "ソーシャルログインに失敗しました。もう一度お試しください。",
+      "errorOAuthEmailUnverifiedCollision": "ソーシャルアカウントは、こちらで既にパスワードアカウントを持っているメールアドレスで登録されています。最初にパスワードでサインインしてください。その後でソーシャルプロバイダーを連携できます。",
       "forgotPassword": "パスワードを忘れましたか？"
     },
     "forgotPassword": {
@@ -178,12 +182,18 @@
   "billing": {
     "title": "請求",
     "currentPlan": "現在のプラン",
+    "currentPersonalPlan": "現在の個人プラン",
+    "currentTeamPlan": "現在のチームプラン",
     "upgrade": "アップグレード",
+    "upgradeTo": "{plan}にアップグレード",
     "cancel": "サブスクリプションは期間終了時に解約されます",
     "cancelRenewal": "更新をキャンセル",
     "cancelRenewalTitle": "更新をキャンセルしますか？",
     "cancelRenewalBody": "サブスクリプションは{date}まで有効です。その後、有料機能へのアクセスは失われます。",
     "cancelRenewalKeep": "サブスクリプションを継続",
+    "cancelRenewalTeamTitle": "チームのサブスクリプションをキャンセルしますか?",
+    "cancelRenewalTeamBody": "チームのサブスクリプションは現在の期間の終了時 ({date}) にキャンセルされます。その時点で、組織、すべてのメンバー、保留中の招待が削除されます。この操作は元に戻せません。",
+    "cancelRenewalTeam": "チームのサブスクリプションをキャンセル",
     "resumeSubscription": "サブスクリプションを再開",
     "changePlan": "プランを変更",
     "applyPromo": "プロモコードを適用",
@@ -191,6 +201,7 @@
     "success": "お支払い完了！",
     "successDesc": "サブスクリプションが更新されました。",
     "renewsOn": "更新日",
+    "cancelsOn": "解約日",
     "endsOn": "終了日",
     "billedMonthly": "月額請求",
     "billedYearly": "年額請求",
@@ -198,6 +209,14 @@
     "seats": "シート",
     "products": "クレジットパック",
     "credits": "クレジット",
+    "creditBalanceLabel": "クレジット残高",
+    "creditBalancePersonalDescription": "あなたのアカウントに紐づくクレジット。",
+    "creditBalanceOrgDescription": "チームで共有 — どのメンバーも利用できます。",
+    "creditBalancePersonalBadge": "個人",
+    "creditBalanceOrgBadge": "チーム",
+    "productCheckoutContextLabel": "クレジットの購入先",
+    "productCheckoutContextPersonal": "個人アカウント",
+    "productCheckoutContextTeam": "チーム {orgName}",
     "buy": "購入",
     "getStarted": "始める",
     "select": "選択",
@@ -214,8 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "{name} が管理",
-    "teamPlanReadonly": "チームのサブスクリプションは組織オーナーが管理しています。",
-    "checkout": "お支払い"
+    "checkout": "お支払い",
+    "personalSubAutoCancelNotice": "個人サブスクリプションは、このチームプランの請求が開始される {date} に終了します。それまで個人機能はご利用いただけます。",
+    "keepPersonalSubscription": "チームプランと並行して個人サブスクリプションを継続する。",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "設定",
@@ -224,6 +254,7 @@
     "email": "メール",
     "preferredLocale": "言語",
     "preferredCurrency": "通貨",
+    "currencyLockedNote": "請求通貨は最初のサブスクリプション時に設定され、後で変更することはできません。",
     "phonePrefix": "国番号",
     "phone": "電話番号",
     "phoneNumberRequired": "電話番号を入力してください",
@@ -246,7 +277,7 @@
     "deleteAccount": "アカウントを削除",
     "deleteConfirm": "アカウントとすべてのデータが完全に削除されます。",
     "deleteDialogTitle": "本当によろしいですか？",
-    "deleteDialogDescription": "この操作は元に戻せません。確認のためメールアドレスを入力してください。",
+    "deleteDialogDescription": "この操作は元に戻せません。有効なサブスクリプションは直ちにキャンセルされ、アクセスは今すぐ終了します。確認のためメールアドレスを入力してください。",
     "deleteDialogLabel": "メールアドレス",
     "deleteDialogPlaceholder": "you@example.com",
     "deleteDialogCancel": "キャンセル",
@@ -254,7 +285,6 @@
     "deleteDialogMismatch": "メールアドレスがアカウントのものと一致しません。",
     "deleteDialogError": "アカウントの削除に失敗しました。もう一度お試しください。",
     "deleteBlockedOwner": "あなたは組織のオーナーです。アカウントを削除する前に、オーナー権限を譲渡するか組織を削除してください。",
-    "deleteBlockedMember": "あなたはチームに所属しています。先にチームオーナーに連絡して、メンバーから外してもらってください。",
     "pronounsHeHim": "彼/Him",
     "pronounsSheHer": "彼女/Her",
     "pronounsTheyThem": "They/Them",
@@ -305,11 +335,12 @@
     "deleteOrg": "組織を削除",
     "deleteOrgDescription": "この組織を完全に削除します。すべてのメンバーが削除され、保留中の招待がキャンセルされ、サブスクリプションは返金なしで即座にキャンセルされます。",
     "deleteOrgDialogTitle": "この組織を削除しますか？",
-    "deleteOrgDialogDescription": "この操作は取り消せません。これがあなたの唯一の組織である場合、アカウントも削除されます。",
+    "deleteOrgDialogDescription": "この操作は取り消せません。チームのサブスクリプションは直ちにキャンセルされ、メンバーはアクセスを失います。確認のため組織名を入力してください。",
     "deleteOrgDialogLabel": "確認のため {name} を入力してください",
     "deleteOrgDialogCancel": "キャンセル",
     "deleteOrgDialogSubmit": "組織を完全に削除",
-    "deleteOrgDialogMismatch": "組織名が一致しません。"
+    "deleteOrgDialogMismatch": "組織名が一致しません。",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "読み込み中...",
@@ -323,6 +354,7 @@
     "unknownError": "不明なエラー"
   },
   "actionErrors": {
+    "context_required": "どのサブスクリプションを管理するか指定してください。",
     "current_password_required": "現在のパスワードを入力してください",
     "email_and_password_required": "メールアドレスとパスワードを入力してください",
     "email_required": "メールアドレスを入力してください",
@@ -336,19 +368,26 @@
     "no_subscription": "有効なサブスクリプションがありません",
     "not_authorized": "この操作を行う権限がありません",
     "not_billing_member": "請求を管理する権限がありません",
+    "org_already_owned": "すでに組織を所有しているため、新しいチームサブスクリプションを開始できません。",
     "passwords_do_not_match": "パスワードが一致しません",
     "password_too_short": "パスワードは 10 文字以上で入力してください",
     "profile_load_failed": "プロフィールを読み込めませんでした",
     "session_expired": "セッションの有効期限が切れました。もう一度ログインしてください。",
     "unknown_error": "問題が発生しました。もう一度お試しください。",
-    "unsupported_image": "サポートされていない画像形式です"
+    "unsupported_image": "サポートされていない画像形式です",
+    "message_required": "メッセージを入力してください。",
+    "message_too_long": "メッセージが長すぎます（最大5000文字）。",
+    "HTTP_429": "リクエストが多すぎます。しばらくしてから再度お試しください。",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "お問い合わせ",
     "description": "ご質問やお困りのことがありますか？お気軽にご連絡ください。",
     "placeholder": "メールアドレス",
     "submit": "送信",
-    "messagePlaceholder": "メッセージ"
+    "messagePlaceholder": "メッセージ",
+    "successTitle": "メッセージを送信しました",
+    "successBody": "お問い合わせいただきありがとうございます。できるだけ早くご返信いたします。"
   },
   "about": {
     "title": "このプロジェクトについて",
@@ -403,7 +442,8 @@
     "fullName": "氏名",
     "password": "パスワード",
     "accept": "招待を承諾",
-    "decline": "招待を辞退"
+    "decline": "招待を辞退",
+    "concurrentSubscriptionNotice": "現在、個人サブスクリプションをお持ちです。チームメンバーシップと並行して引き続き請求されます。不要になった場合は、サブスクリプションページから解約してください。"
   },
   "plans": {
     "personal": {

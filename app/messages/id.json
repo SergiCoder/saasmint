@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Fork repo, sesuaikan branding, dan luncurkan. Gratis dan open-source.",
     "ctaSectionPlaceholder": "you@company.com",
     "ctaSectionButton": "Start building →",
+    "ctaSectionSuccessTitle": "Terima kasih telah mendaftar!",
+    "ctaSectionSuccessBody": "Kami akan menghubungi Anda segera.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Pengguna",
     "dashUptimeVal": "1,248",
@@ -85,6 +87,7 @@
       "noAccount": "Belum punya akun?",
       "register": "Daftar",
       "registered": "Akun dibuat! Periksa email Anda untuk memverifikasi akun.",
+      "invited": "Anda telah bergabung dengan tim! Periksa email Anda untuk memverifikasi akun sebelum masuk.",
       "accountDeleted": "Akun Anda telah dihapus. Kami menyesal melihat Anda pergi.",
       "errorNoSession": "Sesi Anda telah berakhir. Silakan masuk kembali.",
       "errorEmailNotVerified": "Verifikasi alamat email Anda sebelum masuk. Periksa kotak masuk Anda.",
@@ -92,6 +95,7 @@
       "errorAccountDeactivated": "Akun ini telah dinonaktifkan.",
       "errorBackendRejected": "Autentikasi gagal. Silakan coba masuk kembali.",
       "errorOAuth": "Login sosial gagal. Silakan coba lagi.",
+      "errorOAuthEmailUnverifiedCollision": "Akun sosial Anda terdaftar dengan alamat email yang sudah memiliki akun dengan kata sandi di sini. Harap masuk dengan kata sandi Anda terlebih dahulu; Anda dapat menautkan penyedia sosial setelahnya.",
       "forgotPassword": "Lupa kata sandi?"
     },
     "forgotPassword": {
@@ -178,12 +182,18 @@
   "billing": {
     "title": "Tagihan",
     "currentPlan": "Paket saat ini",
+    "currentPersonalPlan": "Paket pribadi saat ini",
+    "currentTeamPlan": "Paket tim saat ini",
     "upgrade": "Tingkatkan",
+    "upgradeTo": "Tingkatkan ke {plan}",
     "cancel": "Langganan akan dibatalkan pada akhir periode",
     "cancelRenewal": "Batalkan perpanjangan",
     "cancelRenewalTitle": "Batalkan perpanjangan?",
     "cancelRenewalBody": "Langganan Anda akan tetap aktif hingga {date}. Setelah itu, Anda akan kehilangan akses ke fitur berbayar.",
     "cancelRenewalKeep": "Pertahankan langganan",
+    "cancelRenewalTeamTitle": "Batalkan langganan tim?",
+    "cancelRenewalTeamBody": "Langganan tim Anda akan dibatalkan pada akhir periode saat ini ({date}). Pada saat itu, organisasi Anda, semua anggota, dan undangan tertunda akan dihapus. Tindakan ini tidak dapat dibatalkan.",
+    "cancelRenewalTeam": "Batalkan langganan tim",
     "resumeSubscription": "Lanjutkan langganan",
     "changePlan": "Ubah paket",
     "applyPromo": "Terapkan kode promo",
@@ -191,6 +201,7 @@
     "success": "Pembayaran berhasil!",
     "successDesc": "Langganan Anda telah diperbarui.",
     "renewsOn": "Diperpanjang pada",
+    "cancelsOn": "Dibatalkan pada",
     "endsOn": "Berakhir pada",
     "billedMonthly": "Ditagih bulanan",
     "billedYearly": "Ditagih tahunan",
@@ -198,6 +209,14 @@
     "seats": "kursi",
     "products": "Paket kredit",
     "credits": "kredit",
+    "creditBalanceLabel": "Saldo kredit",
+    "creditBalancePersonalDescription": "Kredit yang ditautkan ke akun Anda.",
+    "creditBalanceOrgDescription": "Dibagikan dengan tim Anda — anggota mana pun dapat menggunakannya.",
+    "creditBalancePersonalBadge": "Pribadi",
+    "creditBalanceOrgBadge": "Tim",
+    "productCheckoutContextLabel": "Beli kredit untuk",
+    "productCheckoutContextPersonal": "Akun pribadi saya",
+    "productCheckoutContextTeam": "Tim {orgName}",
     "buy": "Beli",
     "getStarted": "Mulai",
     "select": "Pilih",
@@ -214,8 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Dikelola oleh {name}",
-    "teamPlanReadonly": "Langganan tim Anda dikelola oleh pemilik organisasi.",
-    "checkout": "Pembayaran"
+    "checkout": "Pembayaran",
+    "personalSubAutoCancelNotice": "Langganan pribadi Anda akan berakhir pada {date} saat paket tim ini mulai ditagih. Anda akan tetap memiliki fitur pribadi hingga saat itu.",
+    "keepPersonalSubscription": "Pertahankan langganan pribadi saya berjalan bersama paket tim.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Pengaturan",
@@ -224,6 +254,7 @@
     "email": "Email",
     "preferredLocale": "Bahasa",
     "preferredCurrency": "Mata uang",
+    "currencyLockedNote": "Mata uang penagihan Anda ditetapkan saat pertama kali berlangganan dan tidak dapat diubah setelahnya.",
     "phonePrefix": "Kode negara",
     "phone": "Telepon",
     "phoneNumberRequired": "Masukkan nomor telepon",
@@ -246,7 +277,7 @@
     "deleteAccount": "Hapus akun",
     "deleteConfirm": "Ini akan menghapus akun dan semua data Anda secara permanen.",
     "deleteDialogTitle": "Apakah Anda yakin?",
-    "deleteDialogDescription": "Tindakan ini tidak dapat dibatalkan. Ketik alamat email Anda untuk mengonfirmasi.",
+    "deleteDialogDescription": "Tindakan ini tidak dapat dibatalkan. Langganan aktif Anda akan dibatalkan segera dan akses berakhir sekarang. Ketik alamat email Anda untuk mengonfirmasi.",
     "deleteDialogLabel": "Alamat email",
     "deleteDialogPlaceholder": "you@example.com",
     "deleteDialogCancel": "Batal",
@@ -254,7 +285,6 @@
     "deleteDialogMismatch": "Email tidak cocok dengan email akun Anda.",
     "deleteDialogError": "Gagal menghapus akun. Silakan coba lagi.",
     "deleteBlockedOwner": "Anda pemilik sebuah organisasi. Transfer kepemilikan atau hapus organisasi sebelum menghapus akun Anda.",
-    "deleteBlockedMember": "Anda tergabung dalam tim. Silakan hubungi pemilik tim Anda untuk dihapus terlebih dahulu.",
     "pronounsHeHim": "Dia (laki-laki)",
     "pronounsSheHer": "Dia (perempuan)",
     "pronounsTheyThem": "Mereka",
@@ -305,11 +335,12 @@
     "deleteOrg": "Hapus organisasi",
     "deleteOrgDescription": "Hapus organisasi ini secara permanen. Semua anggota akan dihapus, undangan yang tertunda dibatalkan, dan langganan Anda dibatalkan segera tanpa pengembalian dana.",
     "deleteOrgDialogTitle": "Hapus organisasi ini?",
-    "deleteOrgDialogDescription": "Tindakan ini tidak dapat dibatalkan. Jika ini satu-satunya organisasi Anda, akun Anda juga akan dihapus.",
+    "deleteOrgDialogDescription": "Tindakan ini tidak dapat dibatalkan. Langganan tim akan dibatalkan segera dan anggota akan kehilangan akses. Ketik nama organisasi untuk mengonfirmasi.",
     "deleteOrgDialogLabel": "Ketik {name} untuk konfirmasi",
     "deleteOrgDialogCancel": "Batal",
     "deleteOrgDialogSubmit": "Hapus organisasi secara permanen",
-    "deleteOrgDialogMismatch": "Nama organisasi tidak cocok."
+    "deleteOrgDialogMismatch": "Nama organisasi tidak cocok.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Memuat...",
@@ -323,6 +354,7 @@
     "unknownError": "Kesalahan tidak diketahui"
   },
   "actionErrors": {
+    "context_required": "Silakan tentukan langganan yang ingin dikelola.",
     "current_password_required": "Kata sandi saat ini wajib diisi",
     "email_and_password_required": "Email dan kata sandi wajib diisi",
     "email_required": "Email wajib diisi",
@@ -336,19 +368,26 @@
     "no_subscription": "Tidak ada langganan aktif",
     "not_authorized": "Anda tidak berwenang untuk melakukan tindakan ini",
     "not_billing_member": "Anda tidak memiliki izin untuk mengelola penagihan",
+    "org_already_owned": "Anda sudah memiliki organisasi — tidak dapat memulai langganan tim kedua.",
     "passwords_do_not_match": "Kata sandi tidak cocok",
     "password_too_short": "Kata sandi harus minimal 10 karakter",
     "profile_load_failed": "Gagal memuat profil",
     "session_expired": "Sesi kedaluwarsa. Silakan masuk lagi.",
     "unknown_error": "Terjadi kesalahan. Silakan coba lagi.",
-    "unsupported_image": "Tipe gambar tidak didukung"
+    "unsupported_image": "Tipe gambar tidak didukung",
+    "message_required": "Mohon sertakan pesan.",
+    "message_too_long": "Pesan terlalu panjang (maks. 5000 karakter).",
+    "HTTP_429": "Terlalu banyak permintaan. Silakan coba lagi nanti.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Hubungi kami",
     "description": "Punya pertanyaan atau butuh bantuan? Kami senang mendengar dari Anda.",
     "placeholder": "Alamat email Anda",
     "submit": "Kirim",
-    "messagePlaceholder": "Pesan Anda"
+    "messagePlaceholder": "Pesan Anda",
+    "successTitle": "Pesan terkirim",
+    "successBody": "Terima kasih telah menghubungi kami. Kami akan membalas secepatnya."
   },
   "about": {
     "title": "Tentang proyek ini",
@@ -403,7 +442,8 @@
     "fullName": "Nama lengkap",
     "password": "Kata sandi",
     "accept": "Terima undangan",
-    "decline": "Tolak undangan"
+    "decline": "Tolak undangan",
+    "concurrentSubscriptionNotice": "Anda saat ini memiliki langganan pribadi. Itu akan terus ditagih bersama keanggotaan tim Anda. Batalkan dari halaman langganan Anda jika Anda tidak membutuhkannya lagi."
   },
   "plans": {
     "personal": {

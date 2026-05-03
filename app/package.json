@@ -1,6 +1,6 @@
 {
   "name": "saasmint-app",
-  "version": "0.7.0",
+  "version": "0.11.0",
   "private": true,
   "license": "MIT",
   "engines": {
@@ -20,20 +20,20 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@stripe/stripe-js": "^9.3.1",
+    "@stripe/stripe-js": "^9.4.0",
     "@tailwindcss/forms": "^0.5.11",
     "gray-matter": "^4.0.3",
     "next": "^16.2.4",
-    "next-intl": "^4.9.1",
+    "next-intl": "^4.11.0",
     "react": "19.2.5",
     "react-dom": "19.2.5",
-    "zod": "^4.3.6"
+    "zod": "^4.4.2"
   },
   "//": "pnpm.overrides pins transitive deps above their CVE ranges: vite (8.0.0-8.0.4) and postcss (<8.5.10, pulled in by next@16.2.4). Drop entries once their parents bump.",
   "pnpm": {
     "overrides": {
       "vite": "^8.0.7",
-      "postcss": "^8.5.10"
+      "postcss": "^8.5.13"
     }
   },
   "devDependencies": {
@@ -49,10 +49,10 @@
     "autoprefixer": "^10.5.0",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.4",
-    "jsdom": "^29.0.2",
-    "postcss": "^8.5.10",
+    "jsdom": "^29.1.1",
+    "postcss": "^8.5.13",
     "prettier": "^3.8.3",
-    "prettier-plugin-tailwindcss": "^0.7.3",
+    "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4.2.4",
     "typescript": "^6.0.3",
     "vitest": "^4.1.5"

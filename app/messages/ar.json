@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "انسخ المستودع، خصّص العلامة التجارية، وأطلق. مجاني ومفتوح المصدر.",
     "ctaSectionPlaceholder": "you@company.com",
     "ctaSectionButton": "ابدأ البناء ←",
+    "ctaSectionSuccessTitle": "شكراً لتسجيلك!",
+    "ctaSectionSuccessBody": "سنتواصل معك قريباً.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "المستخدمون",
     "dashUptimeVal": "1,248",
@@ -85,6 +87,7 @@
       "noAccount": "ليس لديك حساب؟",
       "register": "إنشاء حساب",
       "registered": "تم إنشاء الحساب! تحقق من بريدك الإلكتروني لتأكيد حسابك.",
+      "invited": "لقد انضممت إلى الفريق! تحقق من بريدك الإلكتروني لتأكيد حسابك قبل تسجيل الدخول.",
       "accountDeleted": "تم حذف حسابك. نأسف لرؤيتك تغادر.",
       "errorNoSession": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
       "errorEmailNotVerified": "يرجى التحقق من عنوان بريدك الإلكتروني قبل تسجيل الدخول. تحقق من صندوق الوارد.",
@@ -92,6 +95,7 @@
       "errorAccountDeactivated": "تم إلغاء تنشيط هذا الحساب.",
       "errorBackendRejected": "فشل المصادقة. يرجى المحاولة مرة أخرى.",
       "errorOAuth": "فشل تسجيل الدخول الاجتماعي. يرجى المحاولة مرة أخرى.",
+      "errorOAuthEmailUnverifiedCollision": "حسابك على وسائل التواصل الاجتماعي مسجل بعنوان بريد إلكتروني لديه بالفعل حساب بكلمة مرور هنا. يرجى تسجيل الدخول بكلمة المرور أولاً؛ يمكنك ربط مزود وسائل التواصل الاجتماعي لاحقًا.",
       "forgotPassword": "هل نسيت كلمة المرور؟"
     },
     "forgotPassword": {
@@ -178,12 +182,18 @@
   "billing": {
     "title": "الفوترة",
     "currentPlan": "الخطة الحالية",
+    "currentPersonalPlan": "الخطة الشخصية الحالية",
+    "currentTeamPlan": "خطة الفريق الحالية",
     "upgrade": "ترقية",
+    "upgradeTo": "الترقية إلى {plan}",
     "cancel": "سيتم إلغاء الاشتراك في نهاية الفترة",
     "cancelRenewal": "إلغاء التجديد",
     "cancelRenewalTitle": "إلغاء التجديد؟",
     "cancelRenewalBody": "سيظل اشتراكك نشطًا حتى {date}. بعد ذلك، ستفقد الوصول إلى الميزات المدفوعة.",
     "cancelRenewalKeep": "الاحتفاظ بالاشتراك",
+    "cancelRenewalTeamTitle": "إلغاء اشتراك الفريق؟",
+    "cancelRenewalTeamBody": "سيتم إلغاء اشتراك فريقك في نهاية الفترة الحالية ({date}). في ذلك الوقت، ستتم إزالة منظمتك وجميع الأعضاء والدعوات المعلقة. لا يمكن التراجع عن هذا الإجراء.",
+    "cancelRenewalTeam": "إلغاء اشتراك الفريق",
     "resumeSubscription": "استئناف الاشتراك",
     "changePlan": "تغيير الخطة",
     "applyPromo": "تطبيق رمز ترويجي",
@@ -191,6 +201,7 @@
     "success": "تم الدفع بنجاح!",
     "successDesc": "تم تحديث اشتراكك.",
     "renewsOn": "يُجدد في",
+    "cancelsOn": "يُلغى في",
     "endsOn": "ينتهي في",
     "billedMonthly": "فوترة شهرية",
     "billedYearly": "فوترة سنوية",
@@ -198,6 +209,14 @@
     "seats": "مقاعد",
     "products": "حزم الرصيد",
     "credits": "أرصدة",
+    "creditBalanceLabel": "رصيد الأرصدة",
+    "creditBalancePersonalDescription": "أرصدة مرتبطة بحسابك.",
+    "creditBalanceOrgDescription": "مشتركة مع فريقك — يمكن لأي عضو استخدامها.",
+    "creditBalancePersonalBadge": "شخصي",
+    "creditBalanceOrgBadge": "فريق",
+    "productCheckoutContextLabel": "شراء أرصدة لـ",
+    "productCheckoutContextPersonal": "حسابي الشخصي",
+    "productCheckoutContextTeam": "فريق {orgName}",
     "buy": "شراء",
     "getStarted": "ابدأ الآن",
     "select": "اختر",
@@ -214,8 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "تتم الإدارة بواسطة {name}",
-    "teamPlanReadonly": "يتم إدارة اشتراك فريقك بواسطة مالك المؤسسة.",
-    "checkout": "الدفع"
+    "checkout": "الدفع",
+    "personalSubAutoCancelNotice": "سينتهي اشتراكك الشخصي في {date} عندما تبدأ فوترة خطة الفريق هذه. ستحتفظ بالميزات الشخصية حتى ذلك الحين.",
+    "keepPersonalSubscription": "احتفظ باشتراكي الشخصي جنبًا إلى جنب مع خطة الفريق.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "الإعدادات",
@@ -224,6 +254,7 @@
     "email": "البريد الإلكتروني",
     "preferredLocale": "اللغة",
     "preferredCurrency": "العملة",
+    "currencyLockedNote": "تُحدد عملة الفوترة عند الاشتراك لأول مرة ولا يمكن تغييرها بعد ذلك.",
     "phonePrefix": "رمز الدولة",
     "phone": "رقم الهاتف",
     "phoneNumberRequired": "يرجى إدخال رقم الهاتف",
@@ -246,7 +277,7 @@
     "deleteAccount": "حذف الحساب",
     "deleteConfirm": "سيؤدي هذا إلى حذف حسابك وجميع بياناتك نهائيًا.",
     "deleteDialogTitle": "هل أنت متأكد؟",
-    "deleteDialogDescription": "لا يمكن التراجع عن هذا الإجراء. اكتب عنوان بريدك الإلكتروني للتأكيد.",
+    "deleteDialogDescription": "لا يمكن التراجع عن هذا الإجراء. سيتم إلغاء اشتراكك النشط فورًا وسينتهي وصولك الآن. اكتب عنوان بريدك الإلكتروني للتأكيد.",
     "deleteDialogLabel": "عنوان البريد الإلكتروني",
     "deleteDialogPlaceholder": "you@example.com",
     "deleteDialogCancel": "إلغاء",
@@ -254,7 +285,6 @@
     "deleteDialogMismatch": "البريد الإلكتروني لا يتطابق مع بريد حسابك.",
     "deleteDialogError": "فشل حذف الحساب. يرجى المحاولة مرة أخرى.",
     "deleteBlockedOwner": "أنت مالك منظمة. قم بنقل الملكية أو حذف المنظمة قبل حذف حسابك.",
-    "deleteBlockedMember": "أنت عضو في فريق. يرجى التواصل مع مالك الفريق لإزالتك أولاً.",
     "pronounsHeHim": "هو/له",
     "pronounsSheHer": "هي/لها",
     "pronounsTheyThem": "هم/لهم",
@@ -305,11 +335,12 @@
     "deleteOrg": "حذف المنظمة",
     "deleteOrgDescription": "حذف هذه المنظمة نهائيًا. سيتم إزالة جميع الأعضاء، وإلغاء الدعوات المعلقة، وإلغاء اشتراكك على الفور دون استرداد.",
     "deleteOrgDialogTitle": "حذف هذه المنظمة؟",
-    "deleteOrgDialogDescription": "لا يمكن التراجع عن هذا الإجراء. إذا كانت هذه منظمتك الوحيدة، فسيتم حذف حسابك أيضًا.",
+    "deleteOrgDialogDescription": "لا يمكن التراجع عن هذا الإجراء. سيتم إلغاء اشتراك الفريق فورًا وسيفقد الأعضاء إمكانية الوصول. اكتب اسم المنظمة للتأكيد.",
     "deleteOrgDialogLabel": "اكتب {name} للتأكيد",
     "deleteOrgDialogCancel": "إلغاء",
     "deleteOrgDialogSubmit": "حذف المنظمة نهائيًا",
-    "deleteOrgDialogMismatch": "اسم المنظمة غير متطابق."
+    "deleteOrgDialogMismatch": "اسم المنظمة غير متطابق.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "جارٍ التحميل...",
@@ -323,6 +354,7 @@
     "unknownError": "خطأ غير معروف"
   },
   "actionErrors": {
+    "context_required": "يرجى تحديد الاشتراك الذي تريد إدارته.",
     "current_password_required": "كلمة المرور الحالية مطلوبة",
     "email_and_password_required": "البريد الإلكتروني وكلمة المرور مطلوبان",
     "email_required": "البريد الإلكتروني مطلوب",
@@ -336,19 +368,26 @@
     "no_subscription": "لا يوجد اشتراك نشط",
     "not_authorized": "ليس لديك الصلاحية لتنفيذ هذا الإجراء",
     "not_billing_member": "ليس لديك صلاحية إدارة الفوترة",
+    "org_already_owned": "أنت تمتلك بالفعل مؤسسة — لا يمكنك بدء اشتراك فريق آخر.",
     "passwords_do_not_match": "كلمتا المرور غير متطابقتين",
     "password_too_short": "يجب أن تتكون كلمة المرور من 10 أحرف على الأقل",
     "profile_load_failed": "تعذّر تحميل الملف الشخصي",
     "session_expired": "انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى.",
     "unknown_error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
-    "unsupported_image": "نوع الصورة غير مدعوم"
+    "unsupported_image": "نوع الصورة غير مدعوم",
+    "message_required": "يرجى تضمين رسالة.",
+    "message_too_long": "الرسالة طويلة جداً (حد أقصى 5000 حرف).",
+    "HTTP_429": "طلبات كثيرة جداً. يرجى المحاولة مرة أخرى لاحقاً.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "اتصل بنا",
     "description": "هل لديك سؤال أو تحتاج مساعدة؟ يسعدنا سماعك.",
     "placeholder": "عنوان بريدك الإلكتروني",
     "submit": "إرسال",
-    "messagePlaceholder": "رسالتك"
+    "messagePlaceholder": "رسالتك",
+    "successTitle": "تم إرسال الرسالة",
+    "successBody": "شكراً لتواصلك معنا. سنرد عليك في أقرب وقت ممكن."
   },
   "about": {
     "title": "حول هذا المشروع",
@@ -403,7 +442,8 @@
     "fullName": "الاسم الكامل",
     "password": "كلمة المرور",
     "accept": "قبول الدعوة",
-    "decline": "رفض الدعوة"
+    "decline": "رفض الدعوة",
+    "concurrentSubscriptionNotice": "لديك حاليًا اشتراك شخصي. سيستمر في الفوترة جنبًا إلى جنب مع عضوية فريقك. ألغه من صفحة اشتراكك إذا لم تعد بحاجة إليه."
   },
   "plans": {
     "personal": {

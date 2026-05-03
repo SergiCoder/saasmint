@@ -133,4 +133,43 @@ describe("CancelRenewalButton", () => {
     await user.click(screen.getByRole("button", { name: "Keep subscription" }));
     expect(screen.queryByText("Are you sure?")).not.toBeInTheDocument();
   });
+
+  it("forwards context=personal to cancelRenewal when the prop is set", async () => {
+    mockCancelRenewal.mockResolvedValueOnce({ ok: true, data: null });
+    const user = userEvent.setup();
+    render(<CancelRenewalButton {...defaultProps} context="personal" />);
+
+    await user.click(screen.getByRole("button", { name: "Cancel renewal" }));
+    await user.click(screen.getByRole("button", { name: "Yes, cancel" }));
+
+    await waitFor(() => {
+      expect(mockCancelRenewal).toHaveBeenCalledWith("personal");
+    });
+  });
+
+  it("forwards context=team to cancelRenewal when the prop is set", async () => {
+    mockCancelRenewal.mockResolvedValueOnce({ ok: true, data: null });
+    const user = userEvent.setup();
+    render(<CancelRenewalButton {...defaultProps} context="team" />);
+
+    await user.click(screen.getByRole("button", { name: "Cancel renewal" }));
+    await user.click(screen.getByRole("button", { name: "Yes, cancel" }));
+
+    await waitFor(() => {
+      expect(mockCancelRenewal).toHaveBeenCalledWith("team");
+    });
+  });
+
+  it("calls cancelRenewal without context when the prop is omitted", async () => {
+    mockCancelRenewal.mockResolvedValueOnce({ ok: true, data: null });
+    const user = userEvent.setup();
+    render(<CancelRenewalButton {...defaultProps} />);
+
+    await user.click(screen.getByRole("button", { name: "Cancel renewal" }));
+    await user.click(screen.getByRole("button", { name: "Yes, cancel" }));
+
+    await waitFor(() => {
+      expect(mockCancelRenewal).toHaveBeenCalledWith(undefined);
+    });
+  });
 });

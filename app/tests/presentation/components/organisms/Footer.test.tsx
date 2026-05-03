@@ -81,4 +81,29 @@ describe("Footer", () => {
     const footer = container.querySelector("footer");
     expect(footer?.className).toContain("mt-auto");
   });
+
+  it("does not render a version link when the version prop is omitted", () => {
+    render(<Footer {...defaultProps} />);
+    expect(screen.queryByRole("link", { name: /^v\d/ })).toBeNull();
+  });
+
+  it("renders the version label as an external link when version is provided", () => {
+    render(
+      <Footer
+        {...defaultProps}
+        version={{
+          label: "v0.8.0",
+          href: "https://github.com/SergiCoder/saasmint-app/releases/tag/v0.8.0",
+        }}
+      />,
+    );
+
+    const link = screen.getByRole("link", { name: "v0.8.0" });
+    expect(link).toHaveAttribute(
+      "href",
+      "https://github.com/SergiCoder/saasmint-app/releases/tag/v0.8.0",
+    );
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noreferrer noopener");
+  });
 });

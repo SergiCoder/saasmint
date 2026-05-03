@@ -10,7 +10,6 @@ const defaultProps = {
   currentPeriodEndIso: "2027-01-15T00:00:00.000Z",
   periodEndLocale: "en-US",
   periodEndLabel: "Renews on",
-  cancelAtPeriodEnd: false,
 };
 
 describe("SubscriptionCard", () => {
@@ -29,10 +28,9 @@ describe("SubscriptionCard", () => {
   });
 
   describe("status badge variants", () => {
-    it("maps active status to success badge", () => {
+    it("hides the badge entirely when status is active (routine state)", () => {
       render(<SubscriptionCard {...defaultProps} />);
-      const badge = screen.getByText("Active");
-      expect(badge.className).toContain("bg-green-50");
+      expect(screen.queryByText("Active")).not.toBeInTheDocument();
     });
 
     it("maps trialing status to info badge", () => {
@@ -43,8 +41,7 @@ describe("SubscriptionCard", () => {
           statusLabel="Trial"
         />,
       );
-      const badge = screen.getByText("Trial");
-      expect(badge.className).toContain("bg-blue-50");
+      expect(screen.getByText("Trial").className).toContain("bg-blue-50");
     });
 
     it("maps past_due status to warning badge", () => {
@@ -55,8 +52,7 @@ describe("SubscriptionCard", () => {
           statusLabel="Past Due"
         />,
       );
-      const badge = screen.getByText("Past Due");
-      expect(badge.className).toContain("bg-yellow-50");
+      expect(screen.getByText("Past Due").className).toContain("bg-yellow-50");
     });
 
     it("maps canceled status to error badge", () => {
@@ -67,8 +63,7 @@ describe("SubscriptionCard", () => {
           statusLabel="Canceled"
         />,
       );
-      const badge = screen.getByText("Canceled");
-      expect(badge.className).toContain("bg-red-50");
+      expect(screen.getByText("Canceled").className).toContain("bg-red-50");
     });
 
     it("maps unpaid status to error badge", () => {
@@ -79,8 +74,7 @@ describe("SubscriptionCard", () => {
           statusLabel="Unpaid"
         />,
       );
-      const badge = screen.getByText("Unpaid");
-      expect(badge.className).toContain("bg-red-50");
+      expect(screen.getByText("Unpaid").className).toContain("bg-red-50");
     });
 
     it("maps incomplete status to warning badge", () => {
@@ -91,65 +85,50 @@ describe("SubscriptionCard", () => {
           statusLabel="Incomplete"
         />,
       );
-      const badge = screen.getByText("Incomplete");
-      expect(badge.className).toContain("bg-yellow-50");
+      expect(screen.getByText("Incomplete").className).toContain(
+        "bg-yellow-50",
+      );
     });
   });
 
-  describe("cancel at period end", () => {
-    it("shows cancel label when cancelAtPeriodEnd is true and label provided", () => {
+  describe("slots", () => {
+    it("renders headerAction next to the badge", () => {
       render(
         <SubscriptionCard
           {...defaultProps}
-          cancelAtPeriodEnd
-          cancelLabel="Subscription will end on Jan 15, 2027"
+          headerAction={<button>Manage billing</button>}
         />,
       );
       expect(
-        screen.getByText("Subscription will end on Jan 15, 2027"),
+        screen.getByRole("button", { name: "Manage billing" }),
       ).toBeInTheDocument();
     });
 
-    it("does not show cancel label when cancelAtPeriodEnd is false", () => {
+    it("renders dateAction inline with the date row", () => {
       render(
         <SubscriptionCard
           {...defaultProps}
-          cancelAtPeriodEnd={false}
-          cancelLabel="Will end"
-        />,
-      );
-      expect(screen.queryByText("Will end")).not.toBeInTheDocument();
-    });
-
-    it("does not show cancel label when cancelAtPeriodEnd is true but no label", () => {
-      render(<SubscriptionCard {...defaultProps} cancelAtPeriodEnd />);
-      // No yellow warning text should appear
-      const { container } = render(
-        <SubscriptionCard {...defaultProps} cancelAtPeriodEnd />,
-      );
-      const yellowText = container.querySelector(".text-yellow-700");
-      expect(yellowText).not.toBeInTheDocument();
-    });
-  });
-
-  describe("actions slot", () => {
-    it("renders actions when provided", () => {
-      render(
-        <SubscriptionCard
-          {...defaultProps}
-          actions={<button>Cancel</button>}
+          dateAction={<button>Cancel renewal</button>}
         />,
       );
       expect(
-        screen.getByRole("button", { name: "Cancel" }),
+        screen.getByRole("button", { name: "Cancel renewal" }),
       ).toBeInTheDocument();
     });
 
-    it("does not render actions container when no actions", () => {
-      const { container } = render(<SubscriptionCard {...defaultProps} />);
-      expect(
-        container.querySelector(".mt-6.flex.gap-3"),
-      ).not.toBeInTheDocument();
+    it("renders banner content when provided", () => {
+      render(
+        <SubscriptionCard
+          {...defaultProps}
+          banner={<div role="alert">Scheduled change</div>}
+        />,
+      );
+      expect(screen.getByRole("alert")).toHaveTextContent("Scheduled change");
+    });
+
+    it("renders footer text when provided", () => {
+      render(<SubscriptionCard {...defaultProps} footer="Managed by Alice" />);
+      expect(screen.getByText("Managed by Alice")).toBeInTheDocument();
     });
   });
 

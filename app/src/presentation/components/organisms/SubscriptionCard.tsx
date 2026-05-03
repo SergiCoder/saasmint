@@ -17,14 +17,29 @@ export interface SubscriptionCardProps {
   planName: string;
   status: keyof typeof statusVariant;
   statusLabel: string;
-  subtitle?: string;
+  subtitle?: React.ReactNode;
   currentPeriodEndIso?: string;
   periodEndLocale?: string;
   periodEndLabel?: string;
-  cancelAtPeriodEnd: boolean;
-  cancelLabel?: string;
+  /**
+   * Optional inline action rendered next to the date row (e.g. "Cancel
+   * renewal" link on an actively-renewing sub). Aligned right; the row only
+   * appears when both `currentPeriodEndIso` + `periodEndLabel` are set.
+   */
+  dateAction?: React.ReactNode;
+  /**
+   * Optional inline action rendered in the card header next to the status
+   * badge (e.g. "Manage billing" button). Top-right corner of the card.
+   */
+  headerAction?: React.ReactNode;
   footer?: string;
-  actions?: React.ReactNode;
+  /**
+   * Optional in-card banner rendered below the header (e.g. scheduled
+   * downgrade or scheduled cancel notice). The caller controls the banner's
+   * own styling so a single card can host info / warning / error variants
+   * without the organism encoding any of them.
+   */
+  banner?: React.ReactNode;
   className?: string;
 }
 
@@ -37,17 +52,17 @@ export function SubscriptionCard({
   currentPeriodEndIso,
   periodEndLocale,
   periodEndLabel,
-  cancelAtPeriodEnd,
-  cancelLabel,
+  dateAction,
+  headerAction,
   footer,
-  actions,
+  banner,
   className = "",
 }: SubscriptionCardProps) {
   return (
     <div
       className={`rounded-lg border border-gray-200 bg-white p-6 shadow-sm ${className}`}
     >
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-4">
         <div>
           {eyebrowLabel && (
             <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
@@ -57,32 +72,39 @@ export function SubscriptionCard({
           <h3 className="mt-1 text-lg font-semibold text-gray-900">
             {planName}
           </h3>
-          {subtitle && <p className="mt-1 text-sm text-gray-500">{subtitle}</p>}
+          {subtitle && (
+            <div className="mt-1 text-sm text-gray-500">{subtitle}</div>
+          )}
         </div>
-        <Badge variant={statusVariant[status]}>{statusLabel}</Badge>
+        <div className="flex flex-shrink-0 items-center gap-3">
+          {/* "active" is the routine state; the date row + banners already
+              convey it. Show the badge only for non-routine states (trial,
+              past_due, unpaid, canceled, etc.) where it adds information. */}
+          {status !== "active" && (
+            <Badge variant={statusVariant[status]}>{statusLabel}</Badge>
+          )}
+          {headerAction}
+        </div>
       </div>
 
       {currentPeriodEndIso && periodEndLabel && periodEndLocale && (
-        <dl className="mt-6 space-y-3 text-sm">
-          <div className="flex justify-between">
+        <dl className="mt-6 text-sm">
+          <div className="flex items-center justify-between gap-4">
             <dt className="text-gray-500">{periodEndLabel}</dt>
-            <dd className="font-medium text-gray-900">
+            <dd className="flex items-center gap-3 font-medium text-gray-900">
               <FormattedDate
                 iso={currentPeriodEndIso}
                 locale={periodEndLocale}
               />
+              {dateAction}
             </dd>
           </div>
         </dl>
       )}
 
-      {cancelAtPeriodEnd && cancelLabel && (
-        <p className="mt-4 text-sm text-yellow-700">{cancelLabel}</p>
-      )}
+      {banner && <div className="mt-6">{banner}</div>}
 
       {footer && <p className="mt-4 text-sm text-gray-500">{footer}</p>}
-
-      {actions && <div className="mt-6 flex gap-3">{actions}</div>}
     </div>
   );
 }

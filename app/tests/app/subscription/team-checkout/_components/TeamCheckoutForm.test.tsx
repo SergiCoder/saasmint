@@ -21,6 +21,8 @@ const defaultProps = {
     total: "Total",
     checkout: "Upgrade",
     error: "Failed to start checkout. Please try again.",
+    keepPersonalSubscription:
+      "Keep my personal subscription running alongside the team plan.",
   },
 };
 
@@ -87,7 +89,7 @@ describe("TeamCheckoutForm", () => {
       'input[type="hidden"][name="planPriceId"]',
     ) as HTMLInputElement;
     const qtyInput = container.querySelector(
-      'input[type="hidden"][name="quantity"]',
+      'input[type="hidden"][name="seatLimit"]',
     ) as HTMLInputElement;
     expect(planInput.value).toBe("price_team_1");
     expect(qtyInput.value).toBe("2");
@@ -96,5 +98,54 @@ describe("TeamCheckoutForm", () => {
   it("renders the checkout button", () => {
     render(<TeamCheckoutForm {...defaultProps} />);
     expect(screen.getByRole("button", { name: "Upgrade" })).toBeInTheDocument();
+  });
+
+  it("hides the personal-sub notice and checkbox when no notice is provided", () => {
+    const { container } = render(<TeamCheckoutForm {...defaultProps} />);
+    expect(
+      container.querySelector('input[name="keepPersonalSubscription"]'),
+    ).toBeNull();
+  });
+
+  it("renders the personal-sub notice and an unchecked opt-out checkbox when a notice is provided", () => {
+    const { container } = render(
+      <TeamCheckoutForm
+        {...defaultProps}
+        personalSubAutoCancelNotice="Your personal subscription will end on May 1, 2026 when this team plan starts billing."
+      />,
+    );
+
+    expect(
+      screen.getByText(/Your personal subscription will end on May 1, 2026/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(
+        /Keep my personal subscription running alongside the team plan/,
+      ),
+    ).toBeInTheDocument();
+
+    const checkbox = container.querySelector(
+      'input[name="keepPersonalSubscription"]',
+    ) as HTMLInputElement;
+    expect(checkbox).not.toBeNull();
+    expect(checkbox.type).toBe("checkbox");
+    expect(checkbox.checked).toBe(false);
+  });
+
+  it("toggles the opt-out checkbox to checked when the user clicks it", () => {
+    const { container } = render(
+      <TeamCheckoutForm
+        {...defaultProps}
+        personalSubAutoCancelNotice="Your personal subscription will end on May 1, 2026."
+      />,
+    );
+
+    const checkbox = container.querySelector(
+      'input[name="keepPersonalSubscription"]',
+    ) as HTMLInputElement;
+    expect(checkbox.checked).toBe(false);
+
+    fireEvent.click(checkbox);
+    expect(checkbox.checked).toBe(true);
   });
 });

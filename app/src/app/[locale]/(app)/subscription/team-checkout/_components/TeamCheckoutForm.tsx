@@ -6,7 +6,6 @@ import { Input } from "@/presentation/components/atoms/Input";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { startCheckout } from "@/app/actions/billing";
-import { MAX_SEATS } from "@/domain/models/Subscription";
 import { formatCurrency } from "@/lib/formatCurrency";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 
@@ -18,6 +17,12 @@ interface TeamCheckoutFormProps {
   locale: string;
   interval: string;
   minSeats?: number;
+  /**
+   * Translated notice shown when the user has an active personal subscription.
+   * When set, the form also renders an opt-out checkbox to keep personal
+   * running concurrently. Undefined hides both.
+   */
+  personalSubAutoCancelNotice?: string;
   labels: {
     orgName: string;
     seat: string;
@@ -25,6 +30,7 @@ interface TeamCheckoutFormProps {
     total: string;
     checkout: string;
     error: string;
+    keepPersonalSubscription: string;
   };
 }
 
@@ -36,6 +42,7 @@ export function TeamCheckoutForm({
   locale,
   interval,
   minSeats = 2,
+  personalSubAutoCancelNotice,
   labels,
 }: TeamCheckoutFormProps) {
   const translateError = useActionErrorMessage();
@@ -48,7 +55,7 @@ export function TeamCheckoutForm({
   return (
     <form action={action} className="space-y-6">
       <input type="hidden" name="planPriceId" value={planPriceId} />
-      <input type="hidden" name="quantity" value={quantity} />
+      <input type="hidden" name="seatLimit" value={quantity} />
 
       <div>
         <h2 className="text-lg font-semibold text-gray-900">{planName}</h2>
@@ -63,6 +70,22 @@ export function TeamCheckoutForm({
         </AlertBanner>
       )}
 
+      {personalSubAutoCancelNotice && (
+        <div className="space-y-3">
+          <AlertBanner variant="info">
+            {personalSubAutoCancelNotice}
+          </AlertBanner>
+          <label className="flex cursor-pointer items-start gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              name="keepPersonalSubscription"
+              className="mt-0.5 cursor-pointer"
+            />
+            <span>{labels.keepPersonalSubscription}</span>
+          </label>
+        </div>
+      )}
+
       <FormField label={labels.orgName} name="orgName" required />
 
       <div className="space-y-1">
@@ -74,7 +97,6 @@ export function TeamCheckoutForm({
             id="seats"
             type="number"
             min={minSeats}
-            max={MAX_SEATS}
             value={quantity}
             onChange={(e) =>
               setQuantity(

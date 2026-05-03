@@ -1,5 +1,9 @@
 import { NavBar, type NavBarLink, type NavBarUser } from "../organisms/NavBar";
-import { Footer, type FooterSection } from "../organisms/Footer";
+import {
+  Footer,
+  type FooterSection,
+  type FooterVersion,
+} from "../organisms/Footer";
 import type { UserMenuItem } from "../molecules/UserMenu";
 
 export interface MarketingLayoutProps {
@@ -12,6 +16,7 @@ export interface MarketingLayoutProps {
   toggleNavLabel: string;
   footerSections: FooterSection[];
   copyright: string;
+  footerVersion?: FooterVersion;
   children: React.ReactNode;
 }
 
@@ -25,6 +30,7 @@ export function MarketingLayout({
   toggleNavLabel,
   footerSections,
   copyright,
+  footerVersion,
   children,
 }: MarketingLayoutProps) {
   return (
@@ -43,6 +49,7 @@ export function MarketingLayout({
         appName={appName}
         sections={footerSections}
         copyright={copyright}
+        version={footerVersion}
       />
     </div>
   );

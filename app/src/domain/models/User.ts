@@ -5,7 +5,6 @@ export interface User {
   readonly email: string;
   readonly fullName: string;
   readonly avatarUrl: string | null;
-  readonly accountType: "personal" | "org_member";
   readonly preferredLocale: string;
   readonly preferredCurrency: string;
   readonly phonePrefix: string | null;

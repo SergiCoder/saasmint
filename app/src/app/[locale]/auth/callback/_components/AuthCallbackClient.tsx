@@ -53,6 +53,8 @@ export function AuthCallbackClient({
           router.replace(result.next);
         } else if (result.error === "oauth_no_flow") {
           router.replace("/login?error=oauth_no_flow");
+        } else if (result.error === "oauth_email_unverified_collision") {
+          router.replace("/login?error=oauth_email_unverified_collision");
         } else {
           router.replace("/login?error=oauth_error");
         }

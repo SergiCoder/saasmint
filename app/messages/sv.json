@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Forka repot, anpassa varumärket och lansera. Gratis och öppen källkod.",
     "ctaSectionPlaceholder": "you@company.com",
     "ctaSectionButton": "Start building →",
+    "ctaSectionSuccessTitle": "Tack för din registrering!",
+    "ctaSectionSuccessBody": "Vi hör av oss snart.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Användare",
     "dashUptimeVal": "1,248",
@@ -85,6 +87,7 @@
       "noAccount": "Har du inget konto?",
       "register": "Registrera dig",
       "registered": "Konto skapat! Kontrollera din e-post för att verifiera ditt konto.",
+      "invited": "Du har gått med i teamet! Kontrollera din e-post för att verifiera ditt konto innan du loggar in.",
       "accountDeleted": "Ditt konto har raderats. Vi är ledsna att se dig gå.",
       "errorNoSession": "Din session har löpt ut. Logga in igen.",
       "errorEmailNotVerified": "Verifiera din e-postadress innan du loggar in. Kontrollera din inkorg.",
@@ -92,6 +95,7 @@
       "errorAccountDeactivated": "Detta konto har inaktiverats.",
       "errorBackendRejected": "Autentisering misslyckades. Försök logga in igen.",
       "errorOAuth": "Social inloggning misslyckades. Försök igen.",
+      "errorOAuthEmailUnverifiedCollision": "Ditt sociala konto är registrerat med en e-postadress som redan har ett lösenordskonto här. Logga in med ditt lösenord först; du kan koppla den sociala leverantören efteråt.",
       "forgotPassword": "Glömt lösenord?"
     },
     "forgotPassword": {
@@ -178,12 +182,18 @@
   "billing": {
     "title": "Fakturering",
     "currentPlan": "Nuvarande plan",
+    "currentPersonalPlan": "Nuvarande personlig prenumeration",
+    "currentTeamPlan": "Nuvarande team-prenumeration",
     "upgrade": "Uppgradera",
+    "upgradeTo": "Uppgradera till {plan}",
     "cancel": "Prenumerationen avslutas vid periodens slut",
     "cancelRenewal": "Avbryt förnyelse",
     "cancelRenewalTitle": "Avbryta förnyelse?",
     "cancelRenewalBody": "Din prenumeration fortsätter att vara aktiv till {date}. Därefter förlorar du åtkomsten till betalda funktioner.",
     "cancelRenewalKeep": "Behåll prenumeration",
+    "cancelRenewalTeamTitle": "Avsluta teamprenumeration?",
+    "cancelRenewalTeamBody": "Din teamprenumeration avslutas i slutet av den aktuella perioden ({date}). Vid den tidpunkten tas din organisation, alla medlemmar och väntande inbjudningar bort. Denna åtgärd kan inte ångras.",
+    "cancelRenewalTeam": "Avsluta teamprenumeration",
     "resumeSubscription": "Återuppta prenumeration",
     "changePlan": "Byt plan",
     "applyPromo": "Ange kampanjkod",
@@ -191,6 +201,7 @@
     "success": "Betalning lyckades!",
     "successDesc": "Din prenumeration har uppdaterats.",
     "renewsOn": "Förnyas den",
+    "cancelsOn": "Avslutas",
     "endsOn": "Slutar den",
     "billedMonthly": "Faktureras månadsvis",
     "billedYearly": "Faktureras årligen",
@@ -198,6 +209,14 @@
     "seats": "platser",
     "products": "Kreditpaket",
     "credits": "krediter",
+    "creditBalanceLabel": "Kreditsaldo",
+    "creditBalancePersonalDescription": "Krediter kopplade till ditt konto.",
+    "creditBalanceOrgDescription": "Delas med ditt team — alla medlemmar kan använda dem.",
+    "creditBalancePersonalBadge": "Personlig",
+    "creditBalanceOrgBadge": "Team",
+    "productCheckoutContextLabel": "Köp krediter till",
+    "productCheckoutContextPersonal": "Mitt personliga konto",
+    "productCheckoutContextTeam": "Team {orgName}",
     "buy": "Köp",
     "getStarted": "Kom igång",
     "select": "Välj",
@@ -214,8 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Hanteras av {name}",
-    "teamPlanReadonly": "Ditt teamprenumeration hanteras av organisationens ägare.",
-    "checkout": "Betalning"
+    "checkout": "Betalning",
+    "personalSubAutoCancelNotice": "Din personliga prenumeration upphör den {date} när detta team-abonnemang börjar faktureras. Du behåller de personliga funktionerna fram till dess.",
+    "keepPersonalSubscription": "Behåll min personliga prenumeration parallellt med team-abonnemanget.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Inställningar",
@@ -224,6 +254,7 @@
     "email": "E-post",
     "preferredLocale": "Språk",
     "preferredCurrency": "Valuta",
+    "currencyLockedNote": "Din faktureringsvaluta anges när du tecknar prenumeration första gången och kan inte ändras efteråt.",
     "phonePrefix": "Landskod",
     "phone": "Telefon",
     "phoneNumberRequired": "Ange ett telefonnummer",
@@ -246,7 +277,7 @@
     "deleteAccount": "Radera konto",
     "deleteConfirm": "Detta raderar ditt konto och all data permanent.",
     "deleteDialogTitle": "Är du säker?",
-    "deleteDialogDescription": "Denna åtgärd kan inte ångras. Skriv in din e-postadress för att bekräfta.",
+    "deleteDialogDescription": "Denna åtgärd kan inte ångras. Din aktiva prenumeration avslutas omedelbart och åtkomsten upphör nu. Skriv in din e-postadress för att bekräfta.",
     "deleteDialogLabel": "E-postadress",
     "deleteDialogPlaceholder": "you@example.com",
     "deleteDialogCancel": "Avbryt",
@@ -254,7 +285,6 @@
     "deleteDialogMismatch": "E-postadressen matchar inte ditt konto.",
     "deleteDialogError": "Det gick inte att radera kontot. Försök igen.",
     "deleteBlockedOwner": "Du äger en organisation. Överför ägarskap eller ta bort organisationen innan du tar bort ditt konto.",
-    "deleteBlockedMember": "Du tillhör ett team. Kontakta din teamägare för att bli borttagen först.",
     "pronounsHeHim": "Han/Honom",
     "pronounsSheHer": "Hon/Henne",
     "pronounsTheyThem": "Hen",
@@ -305,11 +335,12 @@
     "deleteOrg": "Ta bort organisation",
     "deleteOrgDescription": "Ta bort denna organisation permanent. Alla medlemmar tas bort, väntande inbjudningar avbryts och din prenumeration avslutas omedelbart utan återbetalning.",
     "deleteOrgDialogTitle": "Ta bort denna organisation?",
-    "deleteOrgDialogDescription": "Denna åtgärd kan inte ångras. Om detta är din enda organisation tas även ditt konto bort.",
+    "deleteOrgDialogDescription": "Denna åtgärd kan inte ångras. Teamprenumerationen avslutas omedelbart och medlemmar förlorar åtkomsten. Skriv organisationens namn för att bekräfta.",
     "deleteOrgDialogLabel": "Skriv {name} för att bekräfta",
     "deleteOrgDialogCancel": "Avbryt",
     "deleteOrgDialogSubmit": "Ta bort organisation permanent",
-    "deleteOrgDialogMismatch": "Organisationens namn stämmer inte."
+    "deleteOrgDialogMismatch": "Organisationens namn stämmer inte.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Laddar...",
@@ -323,6 +354,7 @@
     "unknownError": "Okänt fel"
   },
   "actionErrors": {
+    "context_required": "Ange vilken prenumeration som ska hanteras.",
     "current_password_required": "Nuvarande lösenord krävs",
     "email_and_password_required": "E-post och lösenord krävs",
     "email_required": "E-post krävs",
@@ -336,19 +368,26 @@
     "no_subscription": "Ingen aktiv prenumeration",
     "not_authorized": "Du har inte behörighet att utföra den här åtgärden",
     "not_billing_member": "Du har inte behörighet att hantera faktureringen",
+    "org_already_owned": "Du äger redan en organisation — du kan inte starta ytterligare en team-prenumeration.",
     "passwords_do_not_match": "Lösenorden matchar inte",
     "password_too_short": "Lösenordet måste vara minst 10 tecken",
     "profile_load_failed": "Det gick inte att ladda profilen",
     "session_expired": "Sessionen har gått ut. Logga in igen.",
     "unknown_error": "Något gick fel. Försök igen.",
-    "unsupported_image": "Bildtypen stöds inte"
+    "unsupported_image": "Bildtypen stöds inte",
+    "message_required": "Inkludera ett meddelande.",
+    "message_too_long": "Meddelandet är för långt (max 5000 tecken).",
+    "HTTP_429": "För många förfrågningar. Försök igen senare.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Kontakta oss",
     "description": "Har du en fråga eller behöver hjälp? Vi vill gärna höra från dig.",
     "placeholder": "Din e-postadress",
     "submit": "Skicka",
-    "messagePlaceholder": "Ditt meddelande"
+    "messagePlaceholder": "Ditt meddelande",
+    "successTitle": "Meddelandet har skickats",
+    "successBody": "Tack för att du hörde av dig. Vi svarar så snart vi kan."
   },
   "about": {
     "title": "Om det här projektet",
@@ -403,7 +442,8 @@
     "fullName": "Fullständigt namn",
     "password": "Lösenord",
     "accept": "Acceptera inbjudan",
-    "decline": "Avböj inbjudan"
+    "decline": "Avböj inbjudan",
+    "concurrentSubscriptionNotice": "Du har för närvarande en personlig prenumeration. Den kommer att fortsätta faktureras parallellt med ditt teammedlemskap. Avsluta den från din prenumerationssida om du inte längre behöver den."
   },
   "plans": {
     "personal": {

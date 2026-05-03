@@ -11,10 +11,23 @@ export interface FooterSection {
   links: FooterLink[];
 }
 
+export interface FooterVersion {
+  /** Display label, e.g. "v0.8.0". */
+  label: string;
+  /** External URL the label links to (e.g. a GitHub releases page). */
+  href: string;
+}
+
 export interface FooterProps {
   appName: string;
   sections: FooterSection[];
   copyright: string;
+  /**
+   * Optional release tag rendered next to the copyright as a small external
+   * link. Useful as a build-version stamp on a SaaS template so forkers can
+   * see what version their copy is at.
+   */
+  version?: FooterVersion;
   className?: string;
 }
 
@@ -22,6 +35,7 @@ export function Footer({
   appName,
   sections,
   copyright,
+  version,
   className = "",
 }: FooterProps) {
   const allLinks = sections.flatMap((s) => s.links);
@@ -46,7 +60,22 @@ export function Footer({
           })}
         </div>
 
-        <p className="text-[13px] text-gray-400">{copyright}</p>
+        <p className="flex flex-wrap items-center justify-center gap-x-2 text-[13px] text-gray-400 sm:justify-end">
+          <span>{copyright}</span>
+          {version && (
+            <>
+              <span aria-hidden="true">·</span>
+              <a
+                href={version.href}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-gray-400 transition-colors hover:text-gray-700"
+              >
+                {version.label}
+              </a>
+            </>
+          )}
+        </p>
       </div>
     </footer>
   );

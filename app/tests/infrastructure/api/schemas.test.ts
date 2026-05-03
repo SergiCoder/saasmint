@@ -1,11 +1,14 @@
 import { describe, it, expect } from "vitest";
 import {
+  CreditBalanceListResponseSchema,
+  CreditBalanceSchema,
   InvitationSchema,
   OrgMemberSchema,
   OrgSchema,
   PhonePrefixSchema,
   PlanSchema,
   ProductSchema,
+  SubscriptionListResponseSchema,
   SubscriptionSchema,
   UserSchema,
 } from "@/infrastructure/api/schemas";
@@ -15,7 +18,6 @@ const validUser = {
   email: "alice@example.com",
   fullName: "Alice",
   avatarUrl: null,
-  accountType: "personal",
   preferredLocale: "en",
   preferredCurrency: "USD",
   phonePrefix: null,
@@ -101,31 +103,21 @@ const validSubscription = {
   id: "sub_1",
   status: "active",
   plan: validPlan,
-  quantity: 1,
+  seatLimit: 1,
+  seatsUsed: 1,
   trialEndsAt: null,
   currentPeriodStart: "2024-01-01T00:00:00Z",
   currentPeriodEnd: "2024-02-01T00:00:00Z",
+  cancelAt: null,
   canceledAt: null,
+  scheduledPlan: null,
+  scheduledChangeAt: null,
   createdAt: "2024-01-01T00:00:00Z",
 };
 
 describe("UserSchema", () => {
   it("accepts a valid user", () => {
     expect(() => UserSchema.parse(validUser)).not.toThrow();
-  });
-
-  it("accepts the org_member account type", () => {
-    const parsed = UserSchema.parse({
-      ...validUser,
-      accountType: "org_member",
-    });
-    expect(parsed.accountType).toBe("org_member");
-  });
-
-  it("rejects an unknown accountType", () => {
-    expect(() =>
-      UserSchema.parse({ ...validUser, accountType: "admin" }),
-    ).toThrow();
   });
 
   it("rejects an unknown registrationMethod", () => {
@@ -157,6 +149,26 @@ describe("UserSchema", () => {
         UserSchema.parse({ ...validUser, registrationMethod: method }),
       ).not.toThrow();
     }
+  });
+
+  it("accepts a payload that lacks accountType (forward-compat with the dropped field)", () => {
+    // The accountType field was removed from User/UserSchema. Backends on the
+    // matching version no longer send it; the schema must accept the leaner
+    // payload without complaining.
+    expect(() => UserSchema.parse(validUser)).not.toThrow();
+    const parsed = UserSchema.parse(validUser);
+    expect(parsed).not.toHaveProperty("accountType");
+  });
+
+  it("strips an unexpected accountType field from older backend responses", () => {
+    // Backward-compat: a server that still returns accountType (mid-rollout
+    // or a stale instance) must not break parsing — Zod's default strips
+    // unknown keys so the field is silently dropped.
+    const parsed = UserSchema.parse({
+      ...validUser,
+      accountType: "personal",
+    });
+    expect(parsed).not.toHaveProperty("accountType");
   });
 });
 
@@ -337,6 +349,198 @@ describe("SubscriptionSchema", () => {
       SubscriptionSchema.parse({
         ...validSubscription,
         plan: { ...validPlan, tier: 99 },
+      }),
+    ).toThrow();
+  });
+
+  it("accepts a non-null cancelAt timestamp (scheduled-to-cancel state)", () => {
+    // Backend mirrors Stripe's `cancel_at` (Dahlia field): set the moment the
+    // user clicks cancel-renewal. Schema must round-trip the ISO string so the
+    // CurrentSubscriptionCard can render the "Cancels on" date row.
+    const parsed = SubscriptionSchema.parse({
+      ...validSubscription,
+      cancelAt: "2026-03-15T00:00:00Z",
+    });
+    expect(parsed.cancelAt).toBe("2026-03-15T00:00:00Z");
+  });
+
+  it("rejects when cancelAt is not a string or null", () => {
+    expect(() =>
+      SubscriptionSchema.parse({ ...validSubscription, cancelAt: 123 }),
+    ).toThrow();
+  });
+
+  it("rejects when cancelAt is missing entirely (required field)", () => {
+    const { cancelAt: _drop, ...withoutCancelAt } = validSubscription;
+    expect(() => SubscriptionSchema.parse(withoutCancelAt)).toThrow();
+  });
+});
+
+describe("CreditBalanceSchema", () => {
+  it("accepts a valid user-scoped balance", () => {
+    expect(CreditBalanceSchema.parse({ balance: 142, scope: "user" })).toEqual({
+      balance: 142,
+      scope: "user",
+    });
+  });
+
+  it("accepts a zero balance", () => {
+    expect(() =>
+      CreditBalanceSchema.parse({ balance: 0, scope: "org" }),
+    ).not.toThrow();
+  });
+
+  it("rejects negative balances (DB has a non-negative constraint)", () => {
+    expect(() =>
+      CreditBalanceSchema.parse({ balance: -1, scope: "user" }),
+    ).toThrow();
+  });
+
+  it("rejects non-integer balances", () => {
+    expect(() =>
+      CreditBalanceSchema.parse({ balance: 1.5, scope: "user" }),
+    ).toThrow();
+  });
+
+  it("rejects an unknown scope value", () => {
+    expect(() =>
+      CreditBalanceSchema.parse({ balance: 10, scope: "global" }),
+    ).toThrow();
+  });
+
+  it("rejects when balance is not a number", () => {
+    expect(() =>
+      CreditBalanceSchema.parse({ balance: "10", scope: "user" }),
+    ).toThrow();
+  });
+});
+
+describe("CreditBalanceListResponseSchema", () => {
+  it("accepts an empty list (free-tier user)", () => {
+    expect(() =>
+      CreditBalanceListResponseSchema.parse({ balances: [] }),
+    ).not.toThrow();
+  });
+
+  it("accepts a single-row envelope", () => {
+    const parsed = CreditBalanceListResponseSchema.parse({
+      balances: [{ balance: 50, scope: "user" }],
+    });
+    expect(parsed.balances).toHaveLength(1);
+    expect(parsed.balances[0]).toEqual({ balance: 50, scope: "user" });
+  });
+
+  it("accepts a two-row envelope (concurrent personal+team — rule 5)", () => {
+    const parsed = CreditBalanceListResponseSchema.parse({
+      balances: [
+        { balance: 500, scope: "org" },
+        { balance: 75, scope: "user" },
+      ],
+    });
+    expect(parsed.balances.map((b) => b.scope)).toEqual(["org", "user"]);
+  });
+
+  it("rejects when balances is missing", () => {
+    expect(() => CreditBalanceListResponseSchema.parse({})).toThrow();
+  });
+
+  it("rejects when a row in balances fails CreditBalanceSchema validation", () => {
+    expect(() =>
+      CreditBalanceListResponseSchema.parse({
+        balances: [{ balance: -1, scope: "user" }],
+      }),
+    ).toThrow();
+  });
+
+  it("rejects a flat (un-enveloped) balance object", () => {
+    // Pre-refactor shape — the gateway must NOT silently accept a single
+    // object that wasn't wrapped in `{ balances: [...] }`.
+    expect(() =>
+      CreditBalanceListResponseSchema.parse({ balance: 50, scope: "user" }),
+    ).toThrow();
+  });
+});
+
+describe("SubscriptionListResponseSchema", () => {
+  it("accepts an empty results array (free-tier user, replaces the prior 404)", () => {
+    expect(() =>
+      SubscriptionListResponseSchema.parse({
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      }),
+    ).not.toThrow();
+  });
+
+  it("accepts a single-row envelope", () => {
+    const parsed = SubscriptionListResponseSchema.parse({
+      count: 1,
+      next: null,
+      previous: null,
+      results: [validSubscription],
+    });
+    expect(parsed.results).toHaveLength(1);
+    expect(parsed.results[0]?.id).toBe("sub_1");
+  });
+
+  it("accepts a two-row envelope (concurrent personal+team — rule 5)", () => {
+    const teamSub = {
+      ...validSubscription,
+      id: "sub_2",
+      plan: { ...validPlan, id: "plan_team", context: "team" },
+    };
+    const parsed = SubscriptionListResponseSchema.parse({
+      count: 2,
+      next: null,
+      previous: null,
+      results: [validSubscription, teamSub],
+    });
+    expect(parsed.results.map((s) => s.plan.context)).toEqual([
+      "personal",
+      "team",
+    ]);
+  });
+
+  it("accepts string next/previous cursors (paginated envelope shape)", () => {
+    expect(() =>
+      SubscriptionListResponseSchema.parse({
+        count: 3,
+        next: "https://api.example.com/billing/subscriptions/me/?page=2",
+        previous: null,
+        results: [validSubscription],
+      }),
+    ).not.toThrow();
+  });
+
+  it("rejects when results is missing", () => {
+    expect(() =>
+      SubscriptionListResponseSchema.parse({
+        count: 0,
+        next: null,
+        previous: null,
+      }),
+    ).toThrow();
+  });
+
+  it("rejects when count is not a number", () => {
+    expect(() =>
+      SubscriptionListResponseSchema.parse({
+        count: "0",
+        next: null,
+        previous: null,
+        results: [],
+      }),
+    ).toThrow();
+  });
+
+  it("rejects when a row in results fails SubscriptionSchema validation", () => {
+    expect(() =>
+      SubscriptionListResponseSchema.parse({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [{ ...validSubscription, status: "grace_period" }],
       }),
     ).toThrow();
   });

@@ -1,36 +1,54 @@
 import { planGateway, productGateway } from "@/infrastructure/registry";
 import type { Plan } from "@/domain/models/Plan";
 import type { Product } from "@/domain/models/Product";
-import type { Subscription } from "@/domain/models/Subscription";
+import {
+  findPersonalSubscription,
+  findTeamSubscription,
+  type Subscription,
+} from "@/domain/models/Subscription";
 import type { Org } from "@/domain/models/Org";
 import type { User } from "@/domain/models/User";
-import { getSubscription } from "../../_data/getSubscription";
+import { getSubscriptions } from "../../_data/getSubscriptions";
 import { getUserOrgs } from "../../_data/getUserOrgs";
 import { getOrgMembers } from "../../_data/getOrgMembers";
 import { canManageBilling } from "./canManageBilling";
 
 export interface SubscriptionPageData {
-  subscription: Subscription | null;
+  /**
+   * Active subscriptions, in stable order: personal first, then team. 0–2 rows
+   * (free tier, single sub, or concurrent personal+team — rule 5).
+   */
+  subscriptions: Subscription[];
   plans: Plan[];
   products: Product[];
   userOrgs: Org[];
-  canManage: boolean;
+  /**
+   * Per-subscription "can the caller manage billing on this row" flags,
+   * keyed by `subscription.id`. Personal subs are always manageable by their
+   * owner; team subs only by the org's billing member.
+   */
+  canManageById: Record<string, boolean>;
   teamOwnerName: string | null;
+  /**
+   * Whether the caller is the owner of their (first) org. Drives the rule-5b
+   * product-checkout picker — only org owners with concurrent personal+team
+   * subs need to disambiguate which Stripe customer to charge.
+   */
+  isCurrentUserOrgOwner: boolean;
 }
 
 /**
- * Fan-out data loader for the subscription page. Fetches subscription, plans,
- * products, and orgs in parallel; resolves `canManage` and the team owner
- * name (for team plans) once the subscription is in hand. Each call-site
- * gateway failure collapses to an empty result so the page can still render.
+ * Fan-out data loader for the subscription page. Fetches the user's
+ * subscriptions, plans, products, and orgs in parallel. Each gateway
+ * failure collapses to an empty result so the page can still render.
  */
 export async function getSubscriptionPageData(
   user: User,
 ): Promise<SubscriptionPageData> {
   const currency = user.preferredCurrency;
 
-  const [subscription, plans, products, userOrgs] = await Promise.all([
-    getSubscription(currency),
+  const [rawSubscriptions, plans, products, userOrgs] = await Promise.all([
+    getSubscriptions(currency),
     planGateway.listPlans(currency).catch((err: unknown): Plan[] => {
       console.error("Failed to fetch plans", err);
       return [];
@@ -42,17 +60,52 @@ export async function getSubscriptionPageData(
     getUserOrgs(),
   ]);
 
-  const canManage = subscription
-    ? await canManageBilling(user, subscription)
-    : false;
+  // Stable order: personal first, then team. The current-subscription card(s)
+  // render in this order on the subscription page.
+  const personal = findPersonalSubscription(rawSubscriptions);
+  const team = findTeamSubscription(rawSubscriptions);
+  const subscriptions = [
+    ...(personal ? [personal] : []),
+    ...(team ? [team] : []),
+  ];
 
-  let teamOwnerName: string | null = null;
+  // Resolve canManage flags, the team owner's name, and the caller's own
+  // role in parallel — they all reach for the same React-cached
+  // getOrgMembers(firstOrg.id) call, so running them concurrently lets the
+  // later ones short-circuit on the shared cache entry instead of waiting
+  // for the first to finish.
   const firstOrg = userOrgs.at(0);
-  if (subscription?.plan.context === "team" && firstOrg) {
-    const members = await getOrgMembers(firstOrg.id);
-    const owner = members.find((m) => m.role === "owner");
-    if (owner) teamOwnerName = owner.user.fullName;
-  }
+  const orgMembersPromise = firstOrg
+    ? getOrgMembers(firstOrg.id)
+    : Promise.resolve([]);
+  const [canManageEntries, teamOwnerName, isCurrentUserOrgOwner] =
+    await Promise.all([
+      Promise.all(
+        subscriptions.map(
+          async (s) => [s.id, await canManageBilling(user, s)] as const,
+        ),
+      ),
+      (async (): Promise<string | null> => {
+        if (!team || !firstOrg) return null;
+        const members = await orgMembersPromise;
+        const owner = members.find((m) => m.role === "owner");
+        return owner?.user.fullName ?? null;
+      })(),
+      (async (): Promise<boolean> => {
+        if (!firstOrg) return false;
+        const members = await orgMembersPromise;
+        return members.some((m) => m.user.id === user.id && m.role === "owner");
+      })(),
+    ]);
+  const canManageById = Object.fromEntries(canManageEntries);
 
-  return { subscription, plans, products, userOrgs, canManage, teamOwnerName };
+  return {
+    subscriptions,
+    plans,
+    products,
+    userOrgs,
+    canManageById,
+    teamOwnerName,
+    isCurrentUserOrgOwner,
+  };
 }

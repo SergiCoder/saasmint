@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { planGateway } from "@/infrastructure/registry";
+import { findPersonalSubscription } from "@/domain/models/Subscription";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { getCurrentUser } from "../../_data/getCurrentUser";
+import { getSubscriptions } from "../../_data/getSubscriptions";
 import { TeamCheckoutForm } from "./_components/TeamCheckoutForm";
 
 interface TeamCheckoutPageProps {
@@ -17,6 +19,9 @@ export default async function TeamCheckoutPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
+  // Resolve the user first so subsequent fetches can share its
+  // preferredCurrency. getCurrentUser is React-cached and is already in
+  // flight from the (app) layout, so this isn't an extra roundtrip.
   const [t, tPlans, user, { plan: planPriceId }] = await Promise.all([
     getTranslations("billing"),
     getTranslations("plans"),
@@ -29,12 +34,37 @@ export default async function TeamCheckoutPage({
   }
 
   const currency = user.preferredCurrency;
-  const plans = await planGateway.listPlans(currency);
+  // getSubscriptions(currency) shares the (app) layout's React.cache key,
+  // so layout + this page render off a single subscription roundtrip.
+  const [subscriptions, plans] = await Promise.all([
+    getSubscriptions(currency),
+    planGateway.listPlans(currency),
+  ]);
   const plan = plans.find((p) => p.price?.id === planPriceId);
 
   if (!plan || !plan.price || plan.context !== "team") {
     redirect("/subscription");
   }
+
+  // Show the auto-cancel notice + opt-out checkbox only when the user has a
+  // currently-active personal subscription that isn't already scheduled to
+  // cancel. Anything else (no sub, only-team-sub, already-canceling) skips
+  // the UI.
+  const personalSubscription = findPersonalSubscription(subscriptions);
+  const showPersonalSubNotice =
+    personalSubscription !== null &&
+    personalSubscription.status === "active" &&
+    personalSubscription.cancelAt === null;
+
+  const personalSubEndDate = showPersonalSubNotice
+    ? new Date(personalSubscription.currentPeriodEnd)
+    : null;
+  const personalSubEndDateDisplay =
+    personalSubEndDate && !Number.isNaN(personalSubEndDate.getTime())
+      ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(
+          personalSubEndDate,
+        )
+      : undefined;
 
   return (
     <div className="mx-auto max-w-md space-y-6 pb-12">
@@ -47,6 +77,13 @@ export default async function TeamCheckoutPage({
           currency={plan.price.currency}
           locale={locale}
           interval={plan.interval}
+          personalSubAutoCancelNotice={
+            personalSubEndDateDisplay
+              ? t("personalSubAutoCancelNotice", {
+                  date: personalSubEndDateDisplay,
+                })
+              : undefined
+          }
           labels={{
             orgName: t("orgName"),
             seat: t("seat"),
@@ -54,6 +91,7 @@ export default async function TeamCheckoutPage({
             total: t("total"),
             checkout: t("upgrade"),
             error: t("checkoutError"),
+            keepPersonalSubscription: t("keepPersonalSubscription"),
           }}
         />
       </div>

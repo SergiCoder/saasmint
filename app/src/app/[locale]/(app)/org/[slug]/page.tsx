@@ -1,16 +1,18 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { invitationGateway } from "@/infrastructure/registry";
+import { findTeamSubscription } from "@/domain/models/Subscription";
+import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { getCurrentUser } from "../../_data/getCurrentUser";
 import { getOrgMembers } from "../../_data/getOrgMembers";
-import { getSubscription } from "../../_data/getSubscription";
+import { getSubscriptions } from "../../_data/getSubscriptions";
 import { getUserOrgs } from "../../_data/getUserOrgs";
 import { OrgMemberList } from "@/presentation/components/organisms/OrgMemberList";
 import { InviteByEmailForm } from "./_components/InviteByEmailForm";
 import { MemberActions } from "./_components/MemberActions";
 import { InvitationList } from "./_components/InvitationList";
 import { TransferOwnershipForm } from "./_components/TransferOwnershipForm";
-import { DeleteOrgDialog } from "./_components/DeleteOrgDialog";
+import { DeleteOrgZone } from "./_components/DeleteOrgZone";
 import { SeatManager } from "./_components/SeatManager";
 
 interface OrgDetailPageProps {
@@ -21,24 +23,48 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const [t, tCommon, user, orgs] = await Promise.all([
+  // Kick off the subscription fetch alongside the user/orgs lookup so it
+  // doesn't sit behind the `org.id` dependency in stage 2. The currency
+  // argument matches the (app) layout's React.cache key so layout + page
+  // share a single subscription roundtrip.
+  const userPromise = getCurrentUser();
+  const [t, tCommon, tPlans, user, orgs, subscriptions] = await Promise.all([
     getTranslations("org"),
     getTranslations("common"),
-    getCurrentUser(),
+    getTranslations("plans"),
+    userPromise,
     getUserOrgs(),
+    userPromise.then((u) => getSubscriptions(u.preferredCurrency)),
   ]);
   const org = orgs.find((o) => o.slug === slug);
 
   if (!org) notFound();
 
-  const [members, invitations, subscription] = await Promise.all([
+  const [members, invitations] = await Promise.all([
     getOrgMembers(org.id),
     invitationGateway.listInvitations(org.id).catch(() => []),
-    getSubscription(),
   ]);
 
-  const isTeamSubscription = subscription?.plan.context === "team";
-  const totalSpots = isTeamSubscription ? subscription.quantity : null;
+  const teamSubscription = findTeamSubscription(subscriptions);
+  const isTeamSubscription = teamSubscription !== null;
+  const totalSpots = teamSubscription?.seatLimit ?? null;
+  // Pre-compute the scheduled plan-switch context for the seat-update
+  // success message. The seat update itself is always immediate; this info
+  // describes a *separate* pending plan downgrade that may still apply at
+  // period end. SeatManager only renders it when both facts coincide.
+  const scheduledPlanName =
+    teamSubscription?.scheduledPlan != null
+      ? translatePlanName(tPlans, teamSubscription.scheduledPlan)
+      : null;
+  const scheduledChangeAtIso = teamSubscription?.scheduledChangeAt ?? null;
+  const scheduledChangeDate =
+    scheduledChangeAtIso !== null ? new Date(scheduledChangeAtIso) : null;
+  const scheduledChangeDisplay =
+    scheduledChangeDate !== null && !Number.isNaN(scheduledChangeDate.getTime())
+      ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(
+          scheduledChangeDate,
+        )
+      : null;
 
   const me = members.find((m) => m.user.id === user.id);
   const isOwner = me?.role === "owner";
@@ -107,7 +133,12 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
             )}
           </div>
           {isOwner && isTeamSubscription && totalSpots !== null && (
-            <SeatManager currentSeats={totalSpots} usedSeats={members.length} />
+            <SeatManager
+              currentSeats={totalSpots}
+              usedSeats={members.length}
+              scheduledPlanName={scheduledPlanName}
+              scheduledChangeDate={scheduledChangeDisplay}
+            />
           )}
         </div>
         <OrgMemberList
@@ -154,44 +185,27 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
         </section>
       )}
 
-      {isOwner && (
-        <section className="rounded-lg border border-red-200 bg-white p-6 shadow-sm">
-          {transferCandidates.length > 0 && (
-            <div className="mb-6">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900">
-                {t("transferOwnership")}
-              </h2>
-              <TransferOwnershipForm
-                orgId={org.id}
-                candidates={transferCandidates}
-                label={t("transferOwnership")}
-                selectLabel={t("selectNewOwner")}
-                confirmTitle={t("transferOwnershipConfirmTitle")}
-                confirmBody={t("transferOwnershipConfirmBody", {
-                  name: "{name}",
-                })}
-                confirmAction={tCommon("confirm")}
-                confirmDismiss={tCommon("cancel")}
-              />
-            </div>
-          )}
-          <div
-            className={
-              transferCandidates.length > 0
-                ? "border-t border-gray-200 pt-6"
-                : ""
-            }
-          >
-            <h2 className="mb-2 text-lg font-semibold text-red-600">
-              {t("deleteOrg")}
-            </h2>
-            <p className="mb-4 text-sm text-gray-600">
-              {t("deleteOrgDescription")}
-            </p>
-            <DeleteOrgDialog orgId={org.id} orgName={org.name} />
-          </div>
+      {isOwner && transferCandidates.length > 0 && (
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">
+            {t("transferOwnership")}
+          </h2>
+          <TransferOwnershipForm
+            orgId={org.id}
+            candidates={transferCandidates}
+            label={t("transferOwnership")}
+            selectLabel={t("selectNewOwner")}
+            confirmTitle={t("transferOwnershipConfirmTitle")}
+            confirmBody={t("transferOwnershipConfirmBody", {
+              name: "{name}",
+            })}
+            confirmAction={tCommon("confirm")}
+            confirmDismiss={tCommon("cancel")}
+          />
         </section>
       )}
+
+      {isOwner && <DeleteOrgZone orgId={org.id} orgName={org.name} />}
     </div>
   );
 }

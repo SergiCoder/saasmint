@@ -6,6 +6,7 @@ export { FormattedDate, type FormattedDateProps } from "./FormattedDate";
 export { FullPageSpinner } from "./FullPageSpinner";
 export { GitHubIcon, type GitHubIconProps } from "./GitHubIcon";
 export { GoogleIcon, type GoogleIconProps } from "./GoogleIcon";
+export { HoneypotInput } from "./HoneypotInput";
 export { SectionLabel, type SectionLabelProps } from "./SectionLabel";
 export { Button, type ButtonProps } from "./Button";
 export { Input, type InputProps } from "./Input";

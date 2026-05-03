@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Repoyu fork'layın, markayı özelleştirin ve yayınlayın. Ücretsiz ve açık kaynak.",
     "ctaSectionPlaceholder": "sen@sirket.com.tr",
     "ctaSectionButton": "İnşa etmeye başla →",
+    "ctaSectionSuccessTitle": "Kaydolduğunuz için teşekkürler!",
+    "ctaSectionSuccessBody": "Yakında sizinle iletişime geçeceğiz.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Kullanıcılar",
     "dashUptimeVal": "1,248",
@@ -85,6 +87,7 @@
       "noAccount": "Hesabınız yok mu?",
       "register": "Kaydol",
       "registered": "Hesap oluşturuldu! Hesabınızı doğrulamak için e-postanızı kontrol edin.",
+      "invited": "Ekibe katıldınız! Giriş yapmadan önce hesabınızı doğrulamak için e-postanızı kontrol edin.",
       "accountDeleted": "Hesabınız silindi. Gittiğinizi görmek bizi üzüyor.",
       "errorNoSession": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
       "errorEmailNotVerified": "Giriş yapmadan önce e-posta adresinizi doğrulayın. Gelen kutunuzu kontrol edin.",
@@ -92,6 +95,7 @@
       "errorAccountDeactivated": "Bu hesap devre dışı bırakılmıştır.",
       "errorBackendRejected": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin.",
       "errorOAuth": "Sosyal giriş başarısız oldu. Lütfen tekrar deneyin.",
+      "errorOAuthEmailUnverifiedCollision": "Sosyal hesabınız burada zaten şifreli bir hesabı olan bir e-posta adresiyle kayıtlı. Önce şifrenizle giriş yapın; sosyal sağlayıcıyı daha sonra bağlayabilirsiniz.",
       "forgotPassword": "Şifrenizi mi unuttunuz?"
     },
     "forgotPassword": {
@@ -178,12 +182,18 @@
   "billing": {
     "title": "Faturalandırma",
     "currentPlan": "Mevcut plan",
+    "currentPersonalPlan": "Mevcut kişisel plan",
+    "currentTeamPlan": "Mevcut takım planı",
     "upgrade": "Yükselt",
+    "upgradeTo": "{plan} planına yükselt",
     "cancel": "Abonelik dönem sonunda iptal edilecek",
     "cancelRenewal": "Yenilemeyi iptal et",
     "cancelRenewalTitle": "Yenileme iptal edilsin mi?",
     "cancelRenewalBody": "Aboneliğiniz {date} tarihine kadar etkin kalacak. Ardından ücretli özelliklere erişiminizi kaybedeceksiniz.",
     "cancelRenewalKeep": "Aboneliği koru",
+    "cancelRenewalTeamTitle": "Takım aboneliği iptal edilsin mi?",
+    "cancelRenewalTeamBody": "Takım aboneliğiniz mevcut dönemin sonunda ({date}) iptal edilecektir. O zaman organizasyonunuz, tüm üyeler ve bekleyen davetler kaldırılacaktır. Bu işlem geri alınamaz.",
+    "cancelRenewalTeam": "Takım aboneliğini iptal et",
     "resumeSubscription": "Aboneliği devam ettir",
     "changePlan": "Plan değiştir",
     "applyPromo": "Promosyon kodu uygula",
@@ -191,6 +201,7 @@
     "success": "Ödeme başarılı!",
     "successDesc": "Aboneliğiniz güncellendi.",
     "renewsOn": "Yenilenme tarihi",
+    "cancelsOn": "İptal tarihi",
     "endsOn": "Bitiş tarihi",
     "billedMonthly": "Aylık faturalandırma",
     "billedYearly": "Yıllık faturalandırma",
@@ -198,6 +209,14 @@
     "seats": "koltuk",
     "products": "Kredi paketleri",
     "credits": "kredi",
+    "creditBalanceLabel": "Kredi bakiyesi",
+    "creditBalancePersonalDescription": "Hesabınıza bağlı krediler.",
+    "creditBalanceOrgDescription": "Ekibinizle paylaşılır — her üye harcayabilir.",
+    "creditBalancePersonalBadge": "Bireysel",
+    "creditBalanceOrgBadge": "Ekip",
+    "productCheckoutContextLabel": "Kredi alıcısı",
+    "productCheckoutContextPersonal": "Kişisel hesabım",
+    "productCheckoutContextTeam": "Ekip {orgName}",
     "buy": "Satın al",
     "getStarted": "Başlayın",
     "select": "Seç",
@@ -214,8 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "{name} tarafından yönetiliyor",
-    "teamPlanReadonly": "Ekip aboneliğiniz kuruluş sahibi tarafından yönetilmektedir.",
-    "checkout": "Ödeme"
+    "checkout": "Ödeme",
+    "personalSubAutoCancelNotice": "Bu takım planı faturalandırılmaya başladığında kişisel aboneliğiniz {date} tarihinde sona erecek. O tarihe kadar kişisel özellikleri kullanmaya devam edeceksiniz.",
+    "keepPersonalSubscription": "Kişisel aboneliğimi takım planıyla birlikte çalışır durumda tut.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Ayarlar",
@@ -224,6 +254,7 @@
     "email": "E-posta",
     "preferredLocale": "Dil",
     "preferredCurrency": "Para birimi",
+    "currencyLockedNote": "Faturalandırma para biriminiz ilk aboneliğinizde belirlenir ve sonradan değiştirilemez.",
     "phonePrefix": "Ülke kodu",
     "phone": "Telefon",
     "phoneNumberRequired": "Lütfen bir telefon numarası girin",
@@ -246,7 +277,7 @@
     "deleteAccount": "Hesabı sil",
     "deleteConfirm": "Bu işlem hesabınızı ve tüm verilerinizi kalıcı olarak silecektir.",
     "deleteDialogTitle": "Emin misiniz?",
-    "deleteDialogDescription": "Bu işlem geri alınamaz. Onaylamak için e-posta adresinizi yazın.",
+    "deleteDialogDescription": "Bu işlem geri alınamaz. Aktif aboneliğiniz hemen iptal edilecek ve erişiminiz şimdi sona erecek. Onaylamak için e-posta adresinizi yazın.",
     "deleteDialogLabel": "E-posta adresi",
     "deleteDialogPlaceholder": "you@example.com",
     "deleteDialogCancel": "İptal",
@@ -254,7 +285,6 @@
     "deleteDialogMismatch": "E-posta adresi hesabınızla eşleşmiyor.",
     "deleteDialogError": "Hesap silinemedi. Lütfen tekrar deneyin.",
     "deleteBlockedOwner": "Bir organizasyonun sahibisiniz. Hesabınızı silmeden önce sahipliği devredin veya organizasyonu silin.",
-    "deleteBlockedMember": "Bir takıma aitsiniz. Önce çıkarılmak için lütfen takım sahibinizle iletişime geçin.",
     "pronounsHeHim": "O (erkek)",
     "pronounsSheHer": "O (kadın)",
     "pronounsTheyThem": "O (nötr)",
@@ -305,11 +335,12 @@
     "deleteOrg": "Organizasyonu sil",
     "deleteOrgDescription": "Bu organizasyonu kalıcı olarak sil. Tüm üyeler kaldırılacak, bekleyen davetler iptal edilecek ve aboneliğiniz iade yapılmadan hemen iptal edilecek.",
     "deleteOrgDialogTitle": "Bu organizasyonu sil?",
-    "deleteOrgDialogDescription": "Bu işlem geri alınamaz. Eğer bu tek organizasyonunuzsa, hesabınız da silinecek.",
+    "deleteOrgDialogDescription": "Bu işlem geri alınamaz. Takım aboneliği hemen iptal edilecek ve üyeler erişimi kaybedecek. Onaylamak için organizasyon adını yazın.",
     "deleteOrgDialogLabel": "Onaylamak için {name} yazın",
     "deleteOrgDialogCancel": "İptal",
     "deleteOrgDialogSubmit": "Organizasyonu kalıcı olarak sil",
-    "deleteOrgDialogMismatch": "Organizasyon adı eşleşmiyor."
+    "deleteOrgDialogMismatch": "Organizasyon adı eşleşmiyor.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Yükleniyor...",
@@ -323,6 +354,7 @@
     "unknownError": "Bilinmeyen hata"
   },
   "actionErrors": {
+    "context_required": "Lütfen yönetilecek aboneliği belirtin.",
     "current_password_required": "Mevcut şifre gereklidir",
     "email_and_password_required": "E-posta ve şifre gereklidir",
     "email_required": "E-posta gereklidir",
@@ -336,19 +368,26 @@
     "no_subscription": "Aktif abonelik yok",
     "not_authorized": "Bu işlemi gerçekleştirme yetkiniz yok",
     "not_billing_member": "Faturalandırmayı yönetme izniniz yok",
+    "org_already_owned": "Zaten bir organizasyona sahipsiniz — başka bir ekip aboneliği başlatamazsınız.",
     "passwords_do_not_match": "Şifreler eşleşmiyor",
     "password_too_short": "Parola en az 10 karakter olmalıdır",
     "profile_load_failed": "Profil yüklenemedi",
     "session_expired": "Oturumun süresi doldu. Lütfen tekrar giriş yapın.",
     "unknown_error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
-    "unsupported_image": "Desteklenmeyen görsel türü"
+    "unsupported_image": "Desteklenmeyen görsel türü",
+    "message_required": "Lütfen bir mesaj ekleyin.",
+    "message_too_long": "Mesaj çok uzun (maks. 5000 karakter).",
+    "HTTP_429": "Çok fazla istek. Lütfen daha sonra tekrar deneyin.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Bize ulaşın",
     "description": "Bir sorunuz mu var veya yardıma mı ihtiyacınız var? Sizden haber almak isteriz.",
     "placeholder": "E-posta adresiniz",
     "submit": "Gönder",
-    "messagePlaceholder": "Mesajınız"
+    "messagePlaceholder": "Mesajınız",
+    "successTitle": "Mesaj gönderildi",
+    "successBody": "Bize ulaştığınız için teşekkürler. En kısa sürede yanıtlayacağız."
   },
   "about": {
     "title": "Bu proje hakkında",
@@ -403,7 +442,8 @@
     "fullName": "Ad soyad",
     "password": "Şifre",
     "accept": "Daveti kabul et",
-    "decline": "Daveti reddet"
+    "decline": "Daveti reddet",
+    "concurrentSubscriptionNotice": "Şu anda kişisel bir aboneliğiniz var. Takım üyeliğinizle birlikte faturalandırılmaya devam edecek. Artık ihtiyacınız yoksa abonelik sayfanızdan iptal edin."
   },
   "plans": {
     "personal": {

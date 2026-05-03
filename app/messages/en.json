@@ -60,6 +60,8 @@
     "ctaSectionSubtitle": "Fork the repo, customize the branding, and launch. Free and open-source.",
     "ctaSectionPlaceholder": "you@company.com",
     "ctaSectionButton": "Start building →",
+    "ctaSectionSuccessTitle": "Thanks for signing up!",
+    "ctaSectionSuccessBody": "We'll be in touch shortly.",
     "dashUrl": "your-app.com/dashboard",
     "dashUptime": "Users",
     "dashUptimeVal": "1,248",
@@ -92,6 +94,7 @@
       "noAccount": "Don't have an account?",
       "register": "Sign up",
       "registered": "Account created! Check your email to verify your account.",
+      "invited": "You've joined the team! Check your email to verify your account before signing in.",
       "accountDeleted": "Your account has been deleted. We're sorry to see you go.",
       "errorNoSession": "Your session has expired. Please sign in again.",
       "errorEmailNotVerified": "Please verify your email address before signing in. Check your inbox for a verification link.",
@@ -99,6 +102,7 @@
       "errorAccountDeactivated": "This account has been deactivated.",
       "errorBackendRejected": "Authentication failed. Please try signing in again.",
       "errorOAuth": "Social login failed. Please try again.",
+      "errorOAuthEmailUnverifiedCollision": "Your social account is registered with an email address that already has a password account here. Please sign in with your password first; you can link the social provider afterwards.",
       "forgotPassword": "Forgot password?"
     },
     "forgotPassword": {
@@ -178,12 +182,18 @@
   "billing": {
     "title": "Billing",
     "currentPlan": "Current Plan",
+    "currentPersonalPlan": "Current Personal Plan",
+    "currentTeamPlan": "Current Team Plan",
     "upgrade": "Upgrade",
+    "upgradeTo": "Upgrade to {plan}",
     "cancel": "Subscription will cancel at end of period",
     "cancelRenewal": "Cancel renewal",
     "cancelRenewalTitle": "Cancel renewal?",
     "cancelRenewalBody": "Your subscription will remain active until {date}. After that, you'll lose access to paid features.",
     "cancelRenewalKeep": "Keep subscription",
+    "cancelRenewalTeamTitle": "Cancel team subscription?",
+    "cancelRenewalTeamBody": "Your team subscription will be cancelled at the end of the current period ({date}). At that point your organization, all members, and pending invitations will be removed. This is irreversible.",
+    "cancelRenewalTeam": "Cancel team subscription",
     "resumeSubscription": "Resume subscription",
     "changePlan": "Change plan",
     "applyPromo": "Apply promo code",
@@ -191,6 +201,7 @@
     "success": "Payment successful!",
     "successDesc": "Your subscription has been updated.",
     "renewsOn": "Renews on",
+    "cancelsOn": "Cancels on",
     "endsOn": "Ends on",
     "billedMonthly": "Billed monthly",
     "billedYearly": "Billed yearly",
@@ -198,6 +209,14 @@
     "seats": "seats",
     "products": "Credit packs",
     "credits": "credits",
+    "creditBalanceLabel": "Credit balance",
+    "creditBalancePersonalDescription": "Credits attached to your account.",
+    "creditBalanceOrgDescription": "Shared with your team — any member can spend.",
+    "creditBalancePersonalBadge": "Personal",
+    "creditBalanceOrgBadge": "Team",
+    "productCheckoutContextLabel": "Buy credits for",
+    "productCheckoutContextPersonal": "My personal account",
+    "productCheckoutContextTeam": "Team {orgName}",
     "buy": "Buy",
     "getStarted": "Get started",
     "select": "Select",
@@ -214,8 +233,22 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Managed by {name}",
-    "teamPlanReadonly": "Your team subscription is managed by the organization owner.",
-    "checkout": "Checkout"
+    "checkout": "Checkout",
+    "personalSubAutoCancelNotice": "Your personal subscription will end on {date} when this team plan starts billing. You'll keep personal features until then.",
+    "keepPersonalSubscription": "Keep my personal subscription running alongside the team plan.",
+    "scheduledDowngradeHeadline": "Downgrading to {plan} on {date}",
+    "scheduledDowngradeBody": "You'll keep all {plan} features until then.",
+    "keepCurrentPlan": "Keep {plan}",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Profile",
@@ -223,6 +256,7 @@
     "email": "Email",
     "preferredLocale": "Language",
     "preferredCurrency": "Currency",
+    "currencyLockedNote": "Your billing currency is set when you first subscribe and can't be changed afterwards.",
     "phonePrefix": "Country code",
     "phone": "Phone number",
     "phoneNumberRequired": "Please enter a phone number",
@@ -245,7 +279,7 @@
     "deleteAccount": "Delete account",
     "deleteConfirm": "This will permanently delete your account and all data.",
     "deleteDialogTitle": "Are you sure?",
-    "deleteDialogDescription": "This action cannot be undone. Type your email address to confirm.",
+    "deleteDialogDescription": "This action cannot be undone. Your active subscription will be cancelled immediately and access ends now. Type your email address to confirm.",
     "deleteDialogLabel": "Email address",
     "deleteDialogPlaceholder": "you@example.com",
     "deleteDialogCancel": "Cancel",
@@ -253,7 +287,6 @@
     "deleteDialogMismatch": "Email does not match your account email.",
     "deleteDialogError": "Failed to delete account. Please try again.",
     "deleteBlockedOwner": "You own an organization. Transfer ownership or delete the organization before deleting your account.",
-    "deleteBlockedMember": "You belong to a team. Please contact your team owner to be removed first.",
     "pronounsHeHim": "He/Him",
     "pronounsSheHer": "She/Her",
     "pronounsTheyThem": "They/Them",
@@ -305,11 +338,12 @@
     "deleteOrg": "Delete organization",
     "deleteOrgDescription": "Permanently delete this organization. All members will be removed, pending invitations cancelled, and your subscription cancelled immediately with no refund.",
     "deleteOrgDialogTitle": "Delete this organization?",
-    "deleteOrgDialogDescription": "This action cannot be undone. If this is your only organization, your account will also be deleted.",
+    "deleteOrgDialogDescription": "This action cannot be undone. The team subscription will be cancelled immediately and members will lose access. Type the organization name to confirm.",
     "deleteOrgDialogLabel": "Type {name} to confirm",
     "deleteOrgDialogCancel": "Cancel",
     "deleteOrgDialogSubmit": "Permanently delete organization",
-    "deleteOrgDialogMismatch": "Organization name does not match."
+    "deleteOrgDialogMismatch": "Organization name does not match.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "invitation": {
     "title": "You've been invited",
@@ -317,7 +351,8 @@
     "fullName": "Full name",
     "password": "Password",
     "accept": "Accept invitation",
-    "decline": "Decline invitation"
+    "decline": "Decline invitation",
+    "concurrentSubscriptionNotice": "You currently have a personal subscription. It will continue to bill alongside your team membership. Cancel it from your subscription page if you no longer need it."
   },
   "plans": {
     "personal": {
@@ -362,6 +397,7 @@
     "unknownError": "Unknown error"
   },
   "actionErrors": {
+    "context_required": "Please specify which subscription to manage.",
     "current_password_required": "Current password is required",
     "email_and_password_required": "Email and password are required",
     "email_required": "Email is required",
@@ -375,19 +411,26 @@
     "no_subscription": "No active subscription",
     "not_authorized": "You are not authorized to perform this action",
     "not_billing_member": "You do not have permission to manage billing",
+    "org_already_owned": "You already own an organisation — you can't start a second team subscription.",
     "passwords_do_not_match": "Passwords do not match",
     "password_too_short": "Password must be at least 10 characters",
     "profile_load_failed": "Failed to load profile",
     "session_expired": "Session expired. Please log in again.",
     "unknown_error": "Something went wrong. Please try again.",
-    "unsupported_image": "Unsupported image type"
+    "unsupported_image": "Unsupported image type",
+    "message_required": "Please include a message.",
+    "message_too_long": "Message is too long (max 5000 characters).",
+    "HTTP_429": "Too many requests. Please try again later.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Contact us",
     "description": "Have a question or need help? We'd love to hear from you.",
     "placeholder": "Your email address",
     "submit": "Send",
-    "messagePlaceholder": "Your message"
+    "messagePlaceholder": "Your message",
+    "successTitle": "Message sent",
+    "successBody": "Thanks for reaching out — we'll reply as soon as we can."
   },
   "about": {
     "title": "About this project",

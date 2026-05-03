@@ -1,6 +1,10 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { MarketingLayout } from "@/presentation/components/templates/MarketingLayout";
+import { APP_VERSION, getReleaseUrl } from "@/lib/appVersion";
+import { findTeamSubscription } from "@/domain/models/Subscription";
+import { getSubscriptions } from "../(app)/_data/getSubscriptions";
+import { getUserOrgs } from "../(app)/_data/getUserOrgs";
 import { getOptionalUser } from "./_data/getOptionalUser";
 import { SignOutButton } from "../_components/SignOutButton";
 
@@ -25,6 +29,16 @@ export default async function MarketingLayoutRoute({
     getTranslations("footer"),
     getOptionalUser(),
   ]);
+
+  const [subscriptions, userOrgs] = user
+    ? await Promise.all([
+        getSubscriptions(user.preferredCurrency),
+        getUserOrgs(),
+      ])
+    : [[], []];
+
+  const hasOrg =
+    findTeamSubscription(subscriptions) !== null || userOrgs.length > 0;
 
   const navLinks = [
     { href: "/", label: t("home") },
@@ -72,6 +86,7 @@ export default async function MarketingLayoutRoute({
         { href: "/dashboard", label: t("dashboard") },
         { href: "/profile", label: t("profile") },
         { href: "/subscription", label: t("subscription") },
+        ...(hasOrg ? [{ href: "/org", label: t("org") }] : []),
       ]
     : undefined;
 
@@ -88,6 +103,10 @@ export default async function MarketingLayoutRoute({
       toggleNavLabel={tCommon("toggleNav")}
       footerSections={footerSections}
       copyright={tFooter("copyright")}
+      footerVersion={{
+        label: `v${APP_VERSION}`,
+        href: getReleaseUrl(APP_VERSION),
+      }}
     >
       {children}
     </MarketingLayout>
