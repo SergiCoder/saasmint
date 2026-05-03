@@ -42,7 +42,7 @@ export default async function DashboardPage({ params }: Props) {
   ]);
 
   const teamSubscription = findTeamSubscription(subscriptions);
-  const totalSpots = teamSubscription?.quantity ?? null;
+  const totalSpots = teamSubscription?.seatLimit ?? null;
 
   // Only fetch per-org member counts when we actually render a spotsLabel
   // (team subscriptions). Otherwise we pay for N roundtrips we never display.

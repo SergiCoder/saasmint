@@ -231,7 +231,7 @@ describe("DashboardPage", () => {
   describe("team-subscription spots label", () => {
     function makeSub(
       context: "personal" | "team",
-      quantity: number,
+      seatLimit: number,
     ): Subscription {
       return {
         id: `sub_${context}`,
@@ -245,7 +245,8 @@ describe("DashboardPage", () => {
           interval: "month",
           price: null,
         },
-        quantity,
+        seatLimit,
+        seatsUsed: 1,
         trialEndsAt: null,
         currentPeriodStart: "2026-01-01T00:00:00Z",
         currentPeriodEnd: "2026-02-01T00:00:00Z",

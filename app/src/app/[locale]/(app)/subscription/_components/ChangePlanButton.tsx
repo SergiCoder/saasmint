@@ -2,18 +2,24 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "@/lib/i18n/navigation";
-import { cancelRenewal } from "@/app/actions/billing";
+import { changePlan } from "@/app/actions/billing";
 import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
+import { Button } from "@/presentation/components/atoms/Button";
 import {
   ConfirmDialog,
   type ConfirmDialogHandle,
 } from "@/presentation/components/molecules/ConfirmDialog";
 
-interface CancelRenewalButtonProps {
-  label: string;
+interface ChangePlanButtonProps {
+  children: React.ReactNode;
+  planPriceId: string;
+  /** True when target price < current price — backend defers to period end. */
+  isDeferred: boolean;
+  highlighted?: boolean;
+  fullWidth?: boolean;
   confirmTitle: string;
-  /** Already-interpolated confirmation body (the caller substitutes the period-end date). */
+  /** Already-interpolated body (caller substitutes plan name, price, period-end date). */
   confirmBody: string;
   confirmAction: string;
   confirmDismiss: string;
@@ -25,14 +31,18 @@ interface CancelRenewalButtonProps {
   context?: SubscriptionContext;
 }
 
-export function CancelRenewalButton({
-  label,
+export function ChangePlanButton({
+  children,
+  planPriceId,
+  isDeferred,
+  highlighted = false,
+  fullWidth = false,
   confirmTitle,
   confirmBody,
   confirmAction,
   confirmDismiss,
   context,
-}: CancelRenewalButtonProps) {
+}: ChangePlanButtonProps) {
   const router = useRouter();
   const translateError = useActionErrorMessage();
   const confirmRef = useRef<ConfirmDialogHandle>(null);
@@ -46,13 +56,12 @@ export function CancelRenewalButton({
 
   const confirm = () => {
     startTransition(async () => {
-      const result = await cancelRenewal(context);
+      const result = await changePlan(planPriceId, context);
       if (result.ok) {
         confirmRef.current?.close();
         // Action calls revalidatePath, but a Server Component re-render only
         // happens once the client triggers it — without router.refresh the
-        // card keeps showing the active-renewal state instead of transitioning
-        // to the scheduled-cancel banner.
+        // user sees stale plan data until they reload manually.
         router.refresh();
       } else {
         setError(translateError(result));
@@ -62,21 +71,22 @@ export function CancelRenewalButton({
 
   return (
     <>
-      {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
-      <button
+      <Button
         type="button"
+        variant={highlighted ? "primary" : "secondary"}
+        className={fullWidth ? "w-full" : ""}
         onClick={open}
-        className="ml-auto cursor-pointer text-sm text-gray-500 underline-offset-2 hover:text-gray-700 hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400"
       >
-        {label}
-      </button>
+        {children}
+      </Button>
+      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
       <ConfirmDialog
         ref={confirmRef}
         title={confirmTitle}
         body={confirmBody}
         confirmLabel={confirmAction}
         cancelLabel={confirmDismiss}
-        variant="danger"
+        variant="primary"
         loading={isPending}
         onConfirm={confirm}
         onClose={() => setError(null)}

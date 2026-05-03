@@ -29,7 +29,7 @@ describe("BillingPortalButton", () => {
     // backend doesn't fall back to its account-type default and route a
     // "manage personal" click into the team customer's portal.
     const { container } = render(
-      <BillingPortalButton context="team">Upgrade</BillingPortalButton>,
+      <BillingPortalButton context="team">Manage</BillingPortalButton>,
     );
     const hidden = container.querySelector(
       'input[name="context"]',
@@ -38,59 +38,11 @@ describe("BillingPortalButton", () => {
     expect(hidden?.value).toBe("team");
   });
 
-  it("renders the secondary variant by default", () => {
+  it("renders the secondary variant", () => {
     render(<BillingPortalButton>Manage</BillingPortalButton>);
     expect(screen.getByRole("button")).toHaveAttribute(
       "data-variant",
       "secondary",
     );
-  });
-
-  it("flips to the primary variant when highlighted", () => {
-    render(<BillingPortalButton highlighted>Upgrade</BillingPortalButton>);
-    expect(screen.getByRole("button")).toHaveAttribute(
-      "data-variant",
-      "primary",
-    );
-  });
-
-  it("forwards flow + planPriceId as hidden inputs for deep-link upgrades", () => {
-    const { container } = render(
-      <BillingPortalButton
-        flow="subscription_update_confirm"
-        planPriceId="price_123"
-      >
-        Upgrade to Pro
-      </BillingPortalButton>,
-    );
-    const flowInput = container.querySelector(
-      'input[name="flow"]',
-    ) as HTMLInputElement | null;
-    const planInput = container.querySelector(
-      'input[name="planPriceId"]',
-    ) as HTMLInputElement | null;
-    expect(flowInput?.value).toBe("subscription_update_confirm");
-    expect(planInput?.value).toBe("price_123");
-  });
-
-  it("omits planPriceId when flow is not set", () => {
-    const { container } = render(
-      <BillingPortalButton planPriceId="price_123">Manage</BillingPortalButton>,
-    );
-    expect(
-      container.querySelector('input[name="flow"]'),
-    ).not.toBeInTheDocument();
-    expect(
-      container.querySelector('input[name="planPriceId"]'),
-    ).not.toBeInTheDocument();
-  });
-
-  it("applies the full-width class only when fullWidth is set", () => {
-    const { rerender } = render(
-      <BillingPortalButton>Manage</BillingPortalButton>,
-    );
-    expect(screen.getByRole("button").className).not.toMatch(/\bw-full\b/);
-    rerender(<BillingPortalButton fullWidth>Upgrade</BillingPortalButton>);
-    expect(screen.getByRole("button").className).toMatch(/\bw-full\b/);
   });
 });

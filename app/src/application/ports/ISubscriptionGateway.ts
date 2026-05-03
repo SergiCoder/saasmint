@@ -2,7 +2,8 @@ import type { Subscription } from "@/domain/models/Subscription";
 
 export interface CheckoutSessionInput {
   planPriceId: string;
-  quantity?: number;
+  /** Team-only: purchased seat count. Renamed from `quantity` in backend v0.8.0. */
+  seatLimit?: number;
   orgName?: string;
   /**
    * Team-context only: when the caller has an active personal subscription,
@@ -14,13 +15,6 @@ export interface CheckoutSessionInput {
   cancelUrl: string;
 }
 
-/**
- * Portal deep-link flow. Currently the only supported value;
- * lands the user on Stripe's plan-switch confirmation screen for
- * `planPriceId`.
- */
-export type BillingPortalFlow = "subscription_update_confirm";
-
 export interface BillingPortalInput {
   returnUrl: string;
   /**
@@ -31,16 +25,6 @@ export interface BillingPortalInput {
    * callers can omit it.
    */
   context?: SubscriptionContext;
-  /**
-   * Deep-link the portal into a focused flow. Omit for the default landing
-   * (current subscription / payment / invoices). Pair with `planPriceId`.
-   */
-  flow?: BillingPortalFlow;
-  /**
-   * Target `PlanPrice.id` for `flow=subscription_update_confirm`. Ignored
-   * when `flow` is unset.
-   */
-  planPriceId?: string;
 }
 
 /**
@@ -62,6 +46,17 @@ export interface ISubscriptionGateway {
   createBillingPortalSession(
     input: BillingPortalInput,
   ): Promise<{ url: string }>;
+  /**
+   * PATCH /billing/subscriptions/me/ with `{ plan_price_id }`. Backend
+   * applies upgrades/same-amount switches immediately and defers downgrades
+   * to period end (returns the sub with `scheduledPlan` + `scheduledChangeAt`
+   * set). Throws `ApiError(409, code="already_on_plan")` when the target
+   * matches the current price.
+   */
+  changePlan(
+    planPriceId: string,
+    context?: SubscriptionContext,
+  ): Promise<Subscription>;
   /** Schedule the subscription to cancel at the end of the current period. */
   cancelSubscription(context?: SubscriptionContext): Promise<void>;
   /** Undo a pending cancellation so the subscription renews normally. */
@@ -73,6 +68,6 @@ export interface ISubscriptionGateway {
    * other mutating subscription endpoints.
    */
   releaseScheduledChange(context?: SubscriptionContext): Promise<void>;
-  /** Update the seat count on a team subscription. */
-  updateSeats(quantity: number, context?: SubscriptionContext): Promise<void>;
+  /** Update the purchased seat count on a team subscription. */
+  updateSeats(seatLimit: number, context?: SubscriptionContext): Promise<void>;
 }

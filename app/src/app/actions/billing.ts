@@ -6,13 +6,9 @@ import { BillingError } from "@/domain/errors/BillingError";
 import {
   findPersonalSubscription,
   findTeamSubscription,
-  MAX_SEATS,
   type Subscription,
 } from "@/domain/models/Subscription";
-import type {
-  BillingPortalFlow,
-  SubscriptionContext,
-} from "@/application/ports/ISubscriptionGateway";
+import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
 import {
   authGateway,
   productGateway,
@@ -117,11 +113,11 @@ export async function startCheckout(
   const planPriceId = getString(formData, "planPriceId");
   if (!planPriceId) return fail("invalid_input");
 
-  const rawQuantity = getInt(formData, "quantity");
-  const quantity =
-    rawQuantity && rawQuantity > 0
-      ? Math.min(rawQuantity, MAX_SEATS)
-      : undefined;
+  // Form field name `seatLimit` mirrors the new backend wire field
+  // (`seat_limit`, renamed from `quantity` in v0.8.0). Backend enforces
+  // bounds (1–10000); the action just forwards a positive integer.
+  const rawSeatLimit = getInt(formData, "seatLimit");
+  const seatLimit = rawSeatLimit && rawSeatLimit > 0 ? rawSeatLimit : undefined;
   const orgName = getNonEmptyString(formData, "orgName");
   const keepPersonalSubscription =
     formData.get("keepPersonalSubscription") === "on";
@@ -130,7 +126,7 @@ export async function startCheckout(
   try {
     const session = await subscriptionGateway.createCheckoutSession({
       planPriceId,
-      ...(quantity ? { quantity } : {}),
+      ...(seatLimit ? { seatLimit } : {}),
       ...(orgName ? { orgName, keepPersonalSubscription } : {}),
       successUrl: `${APP_ORIGIN}/subscription?status=success`,
       cancelUrl: `${APP_ORIGIN}/subscription`,
@@ -151,19 +147,12 @@ export async function openBillingPortal(formData?: FormData) {
   // ("team" for org members, "personal" otherwise) would route a "manage
   // personal" click into the team portal. Single-context callers omit it.
   const context = formData ? parseContext(formData) : undefined;
-  const flow = formData ? parseFlow(formData) : undefined;
-  // `flow` is only set when `formData` is — but TS still needs the explicit
-  // narrowing here since `formData` is the optional outer parameter.
-  const planPriceId =
-    flow && formData ? getString(formData, "planPriceId") : undefined;
   let url: string | null = null;
   try {
     await assertCanManageBilling(context);
     const session = await subscriptionGateway.createBillingPortalSession({
       returnUrl: `${APP_ORIGIN}/subscription`,
       ...(context ? { context } : {}),
-      ...(flow ? { flow } : {}),
-      ...(planPriceId ? { planPriceId } : {}),
     });
     assertTrustedRedirect(session.url);
     url = session.url;
@@ -187,11 +176,6 @@ function normalizeContext(value: unknown): SubscriptionContext | undefined {
 
 function parseContext(formData: FormData): SubscriptionContext | undefined {
   return normalizeContext(getString(formData, "context"));
-}
-
-function parseFlow(formData: FormData): BillingPortalFlow | undefined {
-  const value = getString(formData, "flow");
-  return value === "subscription_update_confirm" ? value : undefined;
 }
 
 /** Schedule the subscription to end at the current period's close. */
@@ -227,6 +211,33 @@ export async function resumeSubscription(
 }
 
 /**
+ * Switch the active subscription to `planPriceId`. Backend applies upgrades
+ * and same-amount switches immediately; downgrades are deferred to period
+ * end and surface as `scheduledPlan` + `scheduledChangeAt` on the returned
+ * subscription. Returns `fail("already_on_plan")` when the target equals
+ * the current price (HTTP 409).
+ */
+export async function changePlan(
+  planPriceId: string,
+  context?: SubscriptionContext,
+): Promise<ActionResult<{ deferred: boolean }>> {
+  if (!planPriceId) return fail("invalid_input");
+  const safeContext = normalizeContext(context);
+  try {
+    await assertCanManageBilling(safeContext);
+    const updated = await subscriptionGateway.changePlan(
+      planPriceId,
+      safeContext,
+    );
+    revalidatePath("/subscription", "layout");
+    return ok({ deferred: updated.scheduledChangeAt !== null });
+  } catch (err) {
+    console.error("Failed to change plan", err);
+    return toActionError(err);
+  }
+}
+
+/**
  * Release a pending deferred plan change so the current plan keeps running.
  * Backend is idempotent — calling this when no schedule exists is a no-op.
  */
@@ -249,15 +260,18 @@ export async function updateSeats(
   _prevState: unknown,
   formData: FormData,
 ): Promise<ActionResult> {
-  const quantity = getInt(formData, "quantity");
-  if (quantity === undefined || quantity < 1 || quantity > MAX_SEATS) {
+  // Form field name `seatLimit` matches the new backend wire field. Lower
+  // bound 1 stays client-side because submitting 0/negative is a UI bug;
+  // upper bound is the backend's call (no hard-coded constant on FE).
+  const seatLimit = getInt(formData, "seatLimit");
+  if (seatLimit === undefined || seatLimit < 1) {
     return fail("invalid_seat_count");
   }
   const context = parseContext(formData);
 
   try {
     await assertCanManageBilling(context);
-    await subscriptionGateway.updateSeats(quantity, context);
+    await subscriptionGateway.updateSeats(seatLimit, context);
   } catch (err) {
     console.error("Failed to update seats", err);
     return toActionError(err);

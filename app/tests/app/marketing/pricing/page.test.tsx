@@ -167,6 +167,32 @@ vi.mock(
   }),
 );
 
+vi.mock(
+  "@/app/[locale]/(app)/subscription/_components/ChangePlanButton",
+  () => ({
+    ChangePlanButton: ({
+      children,
+      context,
+      isDeferred,
+    }: {
+      children: React.ReactNode;
+      context?: "personal" | "team";
+      isDeferred?: boolean;
+    }) =>
+      React.createElement(
+        "button",
+        {
+          "data-testid": "change-plan-button",
+          "data-cta": "change-plan",
+          "data-context": context ?? "",
+          "data-deferred": isDeferred ? "true" : "false",
+          type: "button",
+        },
+        children,
+      ),
+  }),
+);
+
 // --- Import under test (after mocks) -------------------------------------
 
 const { default: PricingPage } =
@@ -268,16 +294,23 @@ describe("Marketing PricingPage — synthetic free plan", () => {
     expect(link).toHaveAttribute("href", "/signup");
   });
 
-  it("suppresses the Free plan CTA for signed-in users (no downgrade CTA convention)", async () => {
+  it("renders a 'Current Plan' label (no actionable CTA) on the Free card for a signed-in user with no paid personal sub", async () => {
+    // The synthetic Free plan ID never matches a real subscription ID, so
+    // `isCurrent` is false from buildPlanCardGroups' perspective. Page-level
+    // logic recognises "signed-in + no paid personal sub + Free card" as the
+    // user's effective current plan and surfaces the label without offering
+    // a sign-up link.
     mockGetOptionalUser.mockResolvedValue(makeUser());
 
     await renderPage();
 
     const freeGroup = screen.getByTestId("group-personal-1");
-    // Both monthly and yearly variants render with no CTA element.
-    expect(freeGroup).toHaveAttribute("data-has-monthly-cta", "false");
-    expect(freeGroup).toHaveAttribute("data-has-yearly-cta", "false");
+    expect(freeGroup).toHaveAttribute("data-has-monthly-cta", "true");
+    expect(freeGroup).toHaveAttribute("data-has-yearly-cta", "true");
+    // Non-actionable label — no link, no button.
     expect(freeGroup.querySelector("a")).toBeNull();
+    expect(freeGroup.querySelector("button")).toBeNull();
+    expect(freeGroup.textContent).toMatch(/currentPlan/);
   });
 
   it("calls subscriptionGateway.listSubscriptions for signed-in users (envelope-based fetch)", async () => {
@@ -323,7 +356,7 @@ describe("Marketing PricingPage — credit-purchase context picker (rule 5b)", (
       id: `sub_${context}`,
       status: "active",
       plan: { id: `plan_${context}`, context, tier: 2, interval: "month" },
-      quantity: 1,
+      seatLimit: 1,
       trialEndsAt: null,
       currentPeriodStart: "2026-01-01T00:00:00Z",
       currentPeriodEnd: "2026-02-01T00:00:00Z",
@@ -463,7 +496,7 @@ describe("Marketing PricingPage — upgrade CTA routing", () => {
           currency: "usd",
         },
       },
-      quantity: 1,
+      seatLimit: 1,
       trialEndsAt: null,
       currentPeriodStart: "2026-01-01T00:00:00Z",
       currentPeriodEnd: "2026-02-01T00:00:00Z",
@@ -529,13 +562,13 @@ describe("Marketing PricingPage — upgrade CTA routing", () => {
     const teamProCta = screen
       .getByTestId("group-team-3")
       .querySelector("[data-cta]") as HTMLElement | null;
-    expect(teamProCta?.getAttribute("data-cta")).toBe("portal");
+    expect(teamProCta?.getAttribute("data-cta")).toBe("change-plan");
     expect(teamProCta?.getAttribute("data-context")).toBe("team");
 
     const personalProCta = screen
       .getByTestId("group-personal-3")
       .querySelector("[data-cta]") as HTMLElement | null;
-    expect(personalProCta?.getAttribute("data-cta")).toBe("portal");
+    expect(personalProCta?.getAttribute("data-cta")).toBe("change-plan");
     expect(personalProCta?.getAttribute("data-context")).toBe("personal");
   });
 
@@ -561,12 +594,12 @@ describe("Marketing PricingPage — upgrade CTA routing", () => {
     const teamProSlot = screen.getByTestId("group-team-3");
     expect(teamProSlot.querySelector("[data-cta]")).toBeNull();
 
-    // Personal upgrade still routes through the portal — that's the
-    // user's own sub.
+    // Personal upgrade still routes through the in-app change-plan
+    // dialog — that's the user's own sub.
     const personalProCta = screen
       .getByTestId("group-personal-3")
       .querySelector("[data-cta]") as HTMLElement | null;
-    expect(personalProCta?.getAttribute("data-cta")).toBe("portal");
+    expect(personalProCta?.getAttribute("data-cta")).toBe("change-plan");
   });
 
   it("uses the first-time team-checkout CTA when a signed-in user has no team sub and no org", async () => {

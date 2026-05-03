@@ -87,6 +87,7 @@
       "noAccount": "ليس لديك حساب؟",
       "register": "إنشاء حساب",
       "registered": "تم إنشاء الحساب! تحقق من بريدك الإلكتروني لتأكيد حسابك.",
+      "invited": "لقد انضممت إلى الفريق! تحقق من بريدك الإلكتروني لتأكيد حسابك قبل تسجيل الدخول.",
       "accountDeleted": "تم حذف حسابك. نأسف لرؤيتك تغادر.",
       "errorNoSession": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
       "errorEmailNotVerified": "يرجى التحقق من عنوان بريدك الإلكتروني قبل تسجيل الدخول. تحقق من صندوق الوارد.",
@@ -184,6 +185,7 @@
     "currentPersonalPlan": "الخطة الشخصية الحالية",
     "currentTeamPlan": "خطة الفريق الحالية",
     "upgrade": "ترقية",
+    "upgradeTo": "الترقية إلى {plan}",
     "cancel": "سيتم إلغاء الاشتراك في نهاية الفترة",
     "cancelRenewal": "إلغاء التجديد",
     "cancelRenewalTitle": "إلغاء التجديد؟",
@@ -231,10 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "تتم الإدارة بواسطة {name}",
-    "teamPlanReadonly": "يتم إدارة اشتراك فريقك بواسطة مالك المؤسسة.",
     "checkout": "الدفع",
     "personalSubAutoCancelNotice": "سينتهي اشتراكك الشخصي في {date} عندما تبدأ فوترة خطة الفريق هذه. ستحتفظ بالميزات الشخصية حتى ذلك الحين.",
-    "keepPersonalSubscription": "احتفظ باشتراكي الشخصي جنبًا إلى جنب مع خطة الفريق."
+    "keepPersonalSubscription": "احتفظ باشتراكي الشخصي جنبًا إلى جنب مع خطة الفريق.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "الإعدادات",
@@ -328,7 +339,8 @@
     "deleteOrgDialogLabel": "اكتب {name} للتأكيد",
     "deleteOrgDialogCancel": "إلغاء",
     "deleteOrgDialogSubmit": "حذف المنظمة نهائيًا",
-    "deleteOrgDialogMismatch": "اسم المنظمة غير متطابق."
+    "deleteOrgDialogMismatch": "اسم المنظمة غير متطابق.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "جارٍ التحميل...",
@@ -365,7 +377,8 @@
     "unsupported_image": "نوع الصورة غير مدعوم",
     "message_required": "يرجى تضمين رسالة.",
     "message_too_long": "الرسالة طويلة جداً (حد أقصى 5000 حرف).",
-    "HTTP_429": "طلبات كثيرة جداً. يرجى المحاولة مرة أخرى لاحقاً."
+    "HTTP_429": "طلبات كثيرة جداً. يرجى المحاولة مرة أخرى لاحقاً.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "اتصل بنا",

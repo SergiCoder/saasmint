@@ -32,6 +32,7 @@ interface Props {
   searchParams: Promise<{
     error?: string;
     registered?: string;
+    invited?: string;
     deleted?: string;
     plan?: string;
     context?: string;
@@ -42,10 +43,8 @@ export default async function LoginPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, { error, registered, deleted, plan, context }] = await Promise.all([
-    getTranslations("auth.login"),
-    searchParams,
-  ]);
+  const [t, { error, registered, invited, deleted, plan, context }] =
+    await Promise.all([getTranslations("auth.login"), searchParams]);
   const isTeam = context === "team";
 
   const errorKey = error ? ERROR_KEYS[error] : undefined;
@@ -85,7 +84,12 @@ export default async function LoginPage({ params, searchParams }: Props) {
                 {t(errorKey)}
               </AlertBanner>
             )}
-            {registered && (
+            {invited && (
+              <AlertBanner variant="success" className="mb-4">
+                {t("invited")}
+              </AlertBanner>
+            )}
+            {registered && !invited && (
               <AlertBanner variant="success" className="mb-4">
                 {t("registered")}
               </AlertBanner>

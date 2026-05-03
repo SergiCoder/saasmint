@@ -87,6 +87,7 @@
       "noAccount": "Har du ikke en konto?",
       "register": "Opret konto",
       "registered": "Konto oprettet! Tjek din e-mail for at bekræfte din konto.",
+      "invited": "Du er kommet med på holdet! Tjek din e-mail for at bekræfte din konto, før du logger ind.",
       "accountDeleted": "Din konto er blevet slettet. Vi er kede af at se dig gå.",
       "errorNoSession": "Din session er udløbet. Log venligst ind igen.",
       "errorEmailNotVerified": "Bekræft din e-mailadresse, før du logger ind. Tjek din indbakke.",
@@ -184,6 +185,7 @@
     "currentPersonalPlan": "Nuværende personligt abonnement",
     "currentTeamPlan": "Nuværende team-abonnement",
     "upgrade": "Opgrader",
+    "upgradeTo": "Opgrader til {plan}",
     "cancel": "Abonnementet annulleres ved periodens udløb",
     "cancelRenewal": "Annuller fornyelse",
     "cancelRenewalTitle": "Annuller fornyelse?",
@@ -231,10 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Administreret af {name}",
-    "teamPlanReadonly": "Dit teamabonnement administreres af organisationens ejer.",
     "checkout": "Betaling",
     "personalSubAutoCancelNotice": "Dit personlige abonnement slutter den {date}, når dette team-abonnement begynder at blive faktureret. Du beholder de personlige funktioner indtil da.",
-    "keepPersonalSubscription": "Behold mit personlige abonnement sideløbende med team-abonnementet."
+    "keepPersonalSubscription": "Behold mit personlige abonnement sideløbende med team-abonnementet.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Indstillinger",
@@ -328,7 +339,8 @@
     "deleteOrgDialogLabel": "Skriv {name} for at bekræfte",
     "deleteOrgDialogCancel": "Annullér",
     "deleteOrgDialogSubmit": "Slet organisation permanent",
-    "deleteOrgDialogMismatch": "Organisationens navn stemmer ikke overens."
+    "deleteOrgDialogMismatch": "Organisationens navn stemmer ikke overens.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Indlæser...",
@@ -365,7 +377,8 @@
     "unsupported_image": "Billedtypen understøttes ikke",
     "message_required": "Tilføj venligst en besked.",
     "message_too_long": "Beskeden er for lang (maks. 5000 tegn).",
-    "HTTP_429": "For mange forespørgsler. Prøv igen senere."
+    "HTTP_429": "For mange forespørgsler. Prøv igen senere.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Kontakt os",

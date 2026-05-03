@@ -87,6 +87,7 @@
       "noAccount": "Har du inget konto?",
       "register": "Registrera dig",
       "registered": "Konto skapat! Kontrollera din e-post för att verifiera ditt konto.",
+      "invited": "Du har gått med i teamet! Kontrollera din e-post för att verifiera ditt konto innan du loggar in.",
       "accountDeleted": "Ditt konto har raderats. Vi är ledsna att se dig gå.",
       "errorNoSession": "Din session har löpt ut. Logga in igen.",
       "errorEmailNotVerified": "Verifiera din e-postadress innan du loggar in. Kontrollera din inkorg.",
@@ -184,6 +185,7 @@
     "currentPersonalPlan": "Nuvarande personlig prenumeration",
     "currentTeamPlan": "Nuvarande team-prenumeration",
     "upgrade": "Uppgradera",
+    "upgradeTo": "Uppgradera till {plan}",
     "cancel": "Prenumerationen avslutas vid periodens slut",
     "cancelRenewal": "Avbryt förnyelse",
     "cancelRenewalTitle": "Avbryta förnyelse?",
@@ -231,10 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Hanteras av {name}",
-    "teamPlanReadonly": "Ditt teamprenumeration hanteras av organisationens ägare.",
     "checkout": "Betalning",
     "personalSubAutoCancelNotice": "Din personliga prenumeration upphör den {date} när detta team-abonnemang börjar faktureras. Du behåller de personliga funktionerna fram till dess.",
-    "keepPersonalSubscription": "Behåll min personliga prenumeration parallellt med team-abonnemanget."
+    "keepPersonalSubscription": "Behåll min personliga prenumeration parallellt med team-abonnemanget.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Inställningar",
@@ -328,7 +339,8 @@
     "deleteOrgDialogLabel": "Skriv {name} för att bekräfta",
     "deleteOrgDialogCancel": "Avbryt",
     "deleteOrgDialogSubmit": "Ta bort organisation permanent",
-    "deleteOrgDialogMismatch": "Organisationens namn stämmer inte."
+    "deleteOrgDialogMismatch": "Organisationens namn stämmer inte.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Laddar...",
@@ -365,7 +377,8 @@
     "unsupported_image": "Bildtypen stöds inte",
     "message_required": "Inkludera ett meddelande.",
     "message_too_long": "Meddelandet är för långt (max 5000 tecken).",
-    "HTTP_429": "För många förfrågningar. Försök igen senare."
+    "HTTP_429": "För många förfrågningar. Försök igen senare.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Kontakta oss",

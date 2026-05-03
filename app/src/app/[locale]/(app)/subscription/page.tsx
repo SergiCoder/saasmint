@@ -85,7 +85,6 @@ export default async function BillingPage({
     ? "year"
     : "month";
   const selectedInterval = parseIntervalParam(query.interval, defaultInterval);
-  const isTeamSubscription = teamSubscription !== null;
   const teamCanManage =
     teamSubscription !== null && canManageById[teamSubscription.id] === true;
   const personalCanManage =
@@ -136,6 +135,9 @@ export default async function BillingPage({
         teamSubscription,
         personalCanManage,
         teamCanManage,
+        locale,
+        tBilling: t,
+        tPlans,
       });
     },
   });
@@ -169,17 +171,58 @@ export default async function BillingPage({
         />
       ) : (
         <div className="space-y-4">
-          {subscriptions.map((s) => (
-            <CurrentSubscriptionCard
-              key={s.id}
-              subscription={s}
-              locale={locale}
-              planName={translatePlanName(tPlans, s.plan)}
-              canManage={canManageById[s.id] === true}
-              teamOwnerName={s.plan.context === "team" ? teamOwnerName : null}
-              isConcurrent={isConcurrent}
-            />
-          ))}
+          {subscriptions.map((s) => {
+            // Build "Upgrade to {plan}" CTAs for higher-tier plans in the
+            // same context+interval. Reuses renderPlanUpgradeCta so the
+            // banner shortcut routes through the same ChangePlan confirm
+            // dialog as the plan grid below — single source of truth for
+            // the upgrade flow.
+            const upgradeTargets = plans.filter(
+              (p) =>
+                p.context === s.plan.context &&
+                p.interval === s.plan.interval &&
+                p.tier > s.plan.tier,
+            );
+            const upgradeCtas = upgradeTargets
+              .map((p) => {
+                const targetName = translatePlanName(tPlans, p);
+                return renderPlanUpgradeCta({
+                  plan: p,
+                  isUpgrade: true,
+                  isCurrent: false,
+                  isTeam: s.plan.context === "team",
+                  upgradeLabel: t("upgradeTo", { plan: targetName }),
+                  changePlanLabel: t("changePlan"),
+                  hasOrg,
+                  personalSubscription,
+                  teamSubscription,
+                  personalCanManage,
+                  teamCanManage,
+                  locale,
+                  tBilling: t,
+                  tPlans,
+                  fullWidth: false,
+                });
+              })
+              .filter((node): node is React.ReactNode => node !== null);
+            return (
+              <CurrentSubscriptionCard
+                key={s.id}
+                subscription={s}
+                locale={locale}
+                planName={translatePlanName(tPlans, s.plan)}
+                canManage={canManageById[s.id] === true}
+                teamOwnerName={s.plan.context === "team" ? teamOwnerName : null}
+                teamOrgSlug={
+                  s.plan.context === "team"
+                    ? (userOrgs.at(0)?.slug ?? null)
+                    : null
+                }
+                isConcurrent={isConcurrent}
+                upgradeCtas={upgradeCtas}
+              />
+            );
+          })}
         </div>
       )}
 
@@ -211,9 +254,7 @@ export default async function BillingPage({
         </div>
       )}
 
-      {isTeamSubscription && !teamCanManage && !personalSubscription ? (
-        <p className="text-sm text-gray-500">{t("teamPlanReadonly")}</p>
-      ) : groups.length === 0 ? (
+      {groups.length === 0 ? (
         <p className="text-sm text-gray-500">{t("changePlan")}</p>
       ) : (
         <>

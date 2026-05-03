@@ -252,6 +252,34 @@ vi.mock(
 );
 
 vi.mock(
+  "@/app/[locale]/(app)/subscription/_components/ChangePlanButton",
+  async () => {
+    const React = await import("react");
+    return {
+      ChangePlanButton: ({
+        children,
+        context,
+        isDeferred,
+      }: {
+        children: React.ReactNode;
+        context?: "personal" | "team";
+        isDeferred?: boolean;
+      }) =>
+        React.createElement(
+          "button",
+          {
+            type: "button",
+            "data-cta": "change-plan",
+            "data-context": context ?? "",
+            "data-deferred": isDeferred ? "true" : "false",
+          },
+          children,
+        ),
+    };
+  },
+);
+
+vi.mock(
   "@/app/[locale]/(app)/subscription/_components/CancelRenewalButton",
   async () => {
     const React = await import("react");
@@ -428,7 +456,8 @@ describe("BillingPage (subscription/page)", () => {
           interval: "month",
           price: null,
         },
-        quantity: 1,
+        seatLimit: 1,
+        seatsUsed: 1,
         trialEndsAt: null,
         currentPeriodStart: "2026-01-01T00:00:00Z",
         currentPeriodEnd: "2026-02-01T00:00:00Z",
@@ -550,7 +579,8 @@ describe("BillingPage (subscription/page)", () => {
           interval: "month",
           price: null,
         },
-        quantity: 1,
+        seatLimit: 1,
+        seatsUsed: 1,
         trialEndsAt: null,
         currentPeriodStart: "2026-01-01T00:00:00Z",
         currentPeriodEnd: "2026-02-01T00:00:00Z",
@@ -599,82 +629,6 @@ describe("BillingPage (subscription/page)", () => {
     });
   });
 
-  describe("teamPlanReadonly notice (org members on a team-only sub they can't manage)", () => {
-    function makeSub(id: string, context: "personal" | "team"): Subscription {
-      return {
-        id,
-        status: "active",
-        plan: {
-          id: `${id}-plan`,
-          name: "Pro",
-          description: "",
-          context,
-          tier: 3,
-          interval: "month",
-          price: null,
-        },
-        quantity: 1,
-        trialEndsAt: null,
-        currentPeriodStart: "2026-01-01T00:00:00Z",
-        currentPeriodEnd: "2026-02-01T00:00:00Z",
-        cancelAt: null,
-        canceledAt: null,
-        scheduledPlan: null,
-        scheduledChangeAt: null,
-        createdAt: "2026-01-01T00:00:00Z",
-      };
-    }
-
-    it("renders the teamPlanReadonly notice when the only sub is team and the caller can't manage it", async () => {
-      // Org member viewing the page: team sub exists, they can't manage it,
-      // and they have no personal sub of their own. Plan options are
-      // suppressed — the team owner controls billing.
-      mockGetSubscriptions.mockResolvedValueOnce([makeSub("sub_t", "team")]);
-      mockCanManageBilling.mockResolvedValue(false);
-
-      await renderPage({});
-
-      expect(screen.getByText("teamPlanReadonly")).toBeInTheDocument();
-    });
-
-    it("does NOT render the teamPlanReadonly notice when the caller has a personal sub alongside an unmanageable team sub", async () => {
-      // Concurrent personal+team — even if the team sub is owner-managed
-      // (caller can't), the caller can still upgrade/downgrade their own
-      // personal plan, so plan options must remain visible.
-      mockGetSubscriptions.mockResolvedValueOnce([
-        makeSub("sub_p", "personal"),
-        makeSub("sub_t", "team"),
-      ]);
-      mockCanManageBilling.mockImplementation(
-        async (_user, sub) => sub.plan.context === "personal",
-      );
-
-      await renderPage({});
-
-      expect(screen.queryByText("teamPlanReadonly")).not.toBeInTheDocument();
-    });
-
-    it("does NOT render the teamPlanReadonly notice when the caller CAN manage the team sub", async () => {
-      mockGetSubscriptions.mockResolvedValueOnce([makeSub("sub_t", "team")]);
-      mockCanManageBilling.mockResolvedValue(true);
-
-      await renderPage({});
-
-      expect(screen.queryByText("teamPlanReadonly")).not.toBeInTheDocument();
-    });
-
-    it("does NOT render the teamPlanReadonly notice when the only sub is personal", async () => {
-      mockGetSubscriptions.mockResolvedValueOnce([
-        makeSub("sub_p", "personal"),
-      ]);
-      mockCanManageBilling.mockResolvedValue(false);
-
-      await renderPage({});
-
-      expect(screen.queryByText("teamPlanReadonly")).not.toBeInTheDocument();
-    });
-  });
-
   describe("upgrade CTA routing", () => {
     // Two-context subscriber on basic in both. Targeted at the bug where the
     // team-pro upgrade CTA was being suppressed by an `if (hasOrg) return null`
@@ -706,7 +660,8 @@ describe("BillingPage (subscription/page)", () => {
             currency: "usd",
           },
         },
-        quantity: 1,
+        seatLimit: 1,
+        seatsUsed: 1,
         trialEndsAt: null,
         currentPeriodStart: "2026-01-01T00:00:00Z",
         currentPeriodEnd: "2026-02-01T00:00:00Z",
@@ -739,7 +694,7 @@ describe("BillingPage (subscription/page)", () => {
       };
     }
 
-    it("renders a portal-routing CTA on the team-pro card for an existing team-basic subscriber (regression: button was missing)", async () => {
+    it("renders a change-plan CTA on the team-pro card for an existing team-basic subscriber (regression: button was missing)", async () => {
       mockGetSubscriptions.mockResolvedValueOnce([
         makeSub("sub_p", "personal", 2),
         makeSub("sub_t", "team", 2),
@@ -754,23 +709,24 @@ describe("BillingPage (subscription/page)", () => {
 
       await renderPage({});
 
-      // Team-pro card: actionable upgrade CTA wired to the billing portal
-      // with `?context=team`. Backend rule 8 would 409 a fresh team checkout
-      // here; portal is the only legal upgrade route.
+      // Team-pro card: actionable upgrade CTA wired to the in-app
+      // change-plan dialog with `context=team`. Backend rule 8 would 409 a
+      // fresh team checkout here; PATCH /subscriptions/me/ is the only
+      // legal change-plan route.
       const teamProCta = screen
         .getByTestId("plan-team-3-monthly")
         .querySelector("[data-cta]") as HTMLElement | null;
       expect(teamProCta).not.toBeNull();
-      expect(teamProCta?.getAttribute("data-cta")).toBe("portal");
+      expect(teamProCta?.getAttribute("data-cta")).toBe("change-plan");
       expect(teamProCta?.getAttribute("data-context")).toBe("team");
 
-      // Personal-pro card stays on the same portal route — Stripe handles
-      // proration in place; posting a fresh personal Checkout would create
-      // a parallel sub.
+      // Personal-pro card stays on the same in-app change-plan route —
+      // backend prorates upgrades in place; a fresh personal Checkout would
+      // create a parallel sub.
       const personalProCta = screen
         .getByTestId("plan-personal-3-monthly")
         .querySelector("[data-cta]") as HTMLElement | null;
-      expect(personalProCta?.getAttribute("data-cta")).toBe("portal");
+      expect(personalProCta?.getAttribute("data-cta")).toBe("change-plan");
       expect(personalProCta?.getAttribute("data-context")).toBe("personal");
     });
 

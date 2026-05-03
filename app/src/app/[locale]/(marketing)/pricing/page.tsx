@@ -153,6 +153,21 @@ export default async function PricingPage({ params, searchParams }: Props) {
       currency,
       ctaLabel,
     }) => {
+      // Synthetic personal-Free card flags as current for any signed-in
+      // user with no paid personal sub — the synthetic plan ID never
+      // matches `currentPlanIds`, but the user is functionally on Free.
+      const isFreeCurrent =
+        plan.tier === PLAN_TIER_FREE &&
+        plan.context === "personal" &&
+        user !== null &&
+        personalSubscription === null;
+      if (isCurrent || isFreeCurrent) {
+        return (
+          <p className="text-center text-sm font-medium text-gray-500">
+            {t("currentPlan")}
+          </p>
+        );
+      }
       if (plan.tier === PLAN_TIER_FREE) {
         // Free is the entry tier: signed-out visitors get a "select" CTA to
         // /signup; signed-in users would be downgrading and per the marketing
@@ -173,7 +188,6 @@ export default async function PricingPage({ params, searchParams }: Props) {
           </GetStartedButton>
         );
       }
-      if (isCurrent) return null;
       return renderPlanUpgradeCta({
         plan,
         isUpgrade,
@@ -186,6 +200,9 @@ export default async function PricingPage({ params, searchParams }: Props) {
         teamSubscription,
         personalCanManage,
         teamCanManage,
+        locale,
+        tBilling: t,
+        tPlans,
       });
     },
   });

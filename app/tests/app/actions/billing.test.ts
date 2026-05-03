@@ -22,6 +22,7 @@ const mockResumeSubscription = vi.fn();
 const mockUpdateSeats = vi.fn();
 const mockCreateProductCheckoutSession = vi.fn();
 const mockReleaseScheduledChange = vi.fn();
+const mockChangePlan = vi.fn();
 
 vi.mock("@/infrastructure/registry", () => ({
   authGateway: { getCurrentUser: mockGetCurrentUser },
@@ -33,6 +34,7 @@ vi.mock("@/infrastructure/registry", () => ({
     resumeSubscription: mockResumeSubscription,
     updateSeats: mockUpdateSeats,
     releaseScheduledChange: mockReleaseScheduledChange,
+    changePlan: mockChangePlan,
   },
   productGateway: {
     createCheckoutSession: mockCreateProductCheckoutSession,
@@ -53,6 +55,7 @@ let cancelRenewal: typeof import("@/app/actions/billing").cancelRenewal;
 let resumeSubscription: typeof import("@/app/actions/billing").resumeSubscription;
 let updateSeats: typeof import("@/app/actions/billing").updateSeats;
 let releaseScheduledChange: typeof import("@/app/actions/billing").releaseScheduledChange;
+let changePlan: typeof import("@/app/actions/billing").changePlan;
 
 beforeEach(async () => {
   vi.clearAllMocks();
@@ -64,6 +67,7 @@ beforeEach(async () => {
   resumeSubscription = mod.resumeSubscription;
   updateSeats = mod.updateSeats;
   releaseScheduledChange = mod.releaseScheduledChange;
+  changePlan = mod.changePlan;
 });
 
 describe("billing server actions", () => {
@@ -104,13 +108,13 @@ describe("billing server actions", () => {
 
       const formData = new FormData();
       formData.set("planPriceId", "price_team");
-      formData.set("quantity", "5");
+      formData.set("seatLimit", "5");
 
       await expect(startCheckout(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
       expect(mockCreateCheckoutSession).toHaveBeenCalledWith(
-        expect.objectContaining({ planPriceId: "price_team", quantity: 5 }),
+        expect.objectContaining({ planPriceId: "price_team", seatLimit: 5 }),
       );
     });
 
@@ -121,7 +125,7 @@ describe("billing server actions", () => {
 
       const formData = new FormData();
       formData.set("planPriceId", "price_team");
-      formData.set("quantity", "3");
+      formData.set("seatLimit", "3");
       formData.set("orgName", "Acme Corp");
 
       await expect(startCheckout(undefined, formData)).rejects.toThrow(
@@ -130,7 +134,7 @@ describe("billing server actions", () => {
       expect(mockCreateCheckoutSession).toHaveBeenCalledWith(
         expect.objectContaining({
           planPriceId: "price_team",
-          quantity: 3,
+          seatLimit: 3,
           orgName: "Acme Corp",
         }),
       );
@@ -144,14 +148,14 @@ describe("billing server actions", () => {
       const formData = new FormData();
       formData.set("planPriceId", "price_team");
       formData.set("orgName", "");
-      formData.set("quantity", "0");
+      formData.set("seatLimit", "0");
 
       await expect(startCheckout(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
       const callArgs = mockCreateCheckoutSession.mock.calls[0]![0];
       expect(callArgs.orgName).toBeUndefined();
-      expect(callArgs.quantity).toBeUndefined();
+      expect(callArgs.seatLimit).toBeUndefined();
     });
 
     it("returns unknown_error when gateway throws a generic error", async () => {
@@ -193,7 +197,7 @@ describe("billing server actions", () => {
 
       const formData = new FormData();
       formData.set("planPriceId", "price_team");
-      formData.set("quantity", "3");
+      formData.set("seatLimit", "3");
       formData.set("orgName", "Acme Corp");
       formData.set("keepPersonalSubscription", "on");
 
@@ -203,7 +207,7 @@ describe("billing server actions", () => {
       expect(mockCreateCheckoutSession).toHaveBeenCalledWith(
         expect.objectContaining({
           planPriceId: "price_team",
-          quantity: 3,
+          seatLimit: 3,
           orgName: "Acme Corp",
           keepPersonalSubscription: true,
         }),
@@ -217,7 +221,7 @@ describe("billing server actions", () => {
 
       const formData = new FormData();
       formData.set("planPriceId", "price_team");
-      formData.set("quantity", "3");
+      formData.set("seatLimit", "3");
       formData.set("orgName", "Acme Corp");
       // keepPersonalSubscription is intentionally not set — unchecked checkboxes
       // are absent from FormData.
@@ -424,36 +428,15 @@ describe("billing server actions", () => {
       });
     });
 
-    it("forwards flow + planPriceId for a deep-link upgrade", async () => {
-      // The upgrade CTA on /subscription deep-links the portal into Stripe's
-      // plan-switch confirm screen instead of the portal home — needs both
-      // flow=subscription_update_confirm and the target plan_price_id.
-      mockCreateBillingPortalSession.mockResolvedValue({
-        url: "https://billing.stripe.com/portal_upgrade",
-      });
-      const formData = new FormData();
-      formData.set("flow", "subscription_update_confirm");
-      formData.set("planPriceId", "price_pro_monthly");
-
-      await expect(openBillingPortal(formData)).rejects.toThrow(
-        "NEXT_REDIRECT",
-      );
-
-      expect(mockCreateBillingPortalSession).toHaveBeenCalledWith({
-        returnUrl: `${APP_URL}/subscription`,
-        flow: "subscription_update_confirm",
-        planPriceId: "price_pro_monthly",
-      });
-    });
-
-    it("drops an unknown flow value and ignores planPriceId", async () => {
-      // Server actions are RPCs — only the literal union is forwarded so a
-      // hostile caller can't smuggle other Stripe portal flows.
+    it("never forwards flow or planPriceId — portal is now vanilla manage-billing only", async () => {
+      // Backend removed deep-link plan-switch support; the portal is reduced
+      // to payment method / invoices / cancel. `openBillingPortal` must drop
+      // any `flow` or `planPriceId` form fields a caller might still send.
       mockCreateBillingPortalSession.mockResolvedValue({
         url: "https://billing.stripe.com/portal_default",
       });
       const formData = new FormData();
-      formData.set("flow", "subscription_cancel");
+      formData.set("flow", "subscription_update_confirm");
       formData.set("planPriceId", "price_pro_monthly");
 
       await expect(openBillingPortal(formData)).rejects.toThrow(
@@ -794,7 +777,7 @@ describe("billing server actions", () => {
       mockUpdateSeats.mockResolvedValue(undefined);
 
       const formData = new FormData();
-      formData.set("quantity", "5");
+      formData.set("seatLimit", "5");
 
       const result = await updateSeats(undefined, formData);
       expect(mockUpdateSeats).toHaveBeenCalledWith(5, undefined);
@@ -806,7 +789,7 @@ describe("billing server actions", () => {
       mockUpdateSeats.mockResolvedValue(undefined);
 
       const formData = new FormData();
-      formData.set("quantity", "5");
+      formData.set("seatLimit", "5");
       formData.set("context", "team");
 
       const result = await updateSeats(undefined, formData);
@@ -818,7 +801,7 @@ describe("billing server actions", () => {
       mockUpdateSeats.mockResolvedValue(undefined);
 
       const formData = new FormData();
-      formData.set("quantity", "5");
+      formData.set("seatLimit", "5");
       formData.set("context", "admin");
 
       const result = await updateSeats(undefined, formData);
@@ -833,7 +816,7 @@ describe("billing server actions", () => {
       mockUpdateSeats.mockResolvedValue(undefined);
 
       const formData = new FormData();
-      formData.set("quantity", "5");
+      formData.set("seatLimit", "5");
       formData.set("context", "team");
 
       await updateSeats(undefined, formData);
@@ -842,10 +825,13 @@ describe("billing server actions", () => {
       expect(mockUpdateSeats).toHaveBeenCalledWith(5, "team");
     });
 
-    it("returns invalid_seat_count when quantity is missing, 0, NaN, or too large", async () => {
-      for (const raw of ["", "0", "abc", "999999"]) {
+    it("returns invalid_seat_count when seatLimit is missing, 0, or NaN", async () => {
+      // No client-side upper bound — backend (1–10000 per Stripe) is the
+      // authority. Lower bound stays here because submitting 0/negative is
+      // a UI bug we can short-circuit before a wasted roundtrip.
+      for (const raw of ["", "0", "abc"]) {
         const fd = new FormData();
-        if (raw !== "") fd.set("quantity", raw);
+        if (raw !== "") fd.set("seatLimit", raw);
         const result = await updateSeats(undefined, fd);
         expect(result).toEqual({ ok: false, code: "invalid_seat_count" });
       }
@@ -857,7 +843,7 @@ describe("billing server actions", () => {
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const fd = new FormData();
-      fd.set("quantity", "5");
+      fd.set("seatLimit", "5");
 
       const result = await updateSeats(undefined, fd);
       expect(result).toEqual({ ok: false, code: "not_billing_member" });
@@ -872,7 +858,7 @@ describe("billing server actions", () => {
       mockListSubscriptions.mockResolvedValue([personalSub, teamSub]);
 
       const fd = new FormData();
-      fd.set("quantity", "5");
+      fd.set("seatLimit", "5");
 
       const result = await updateSeats(undefined, fd);
       expect(result).toEqual({ ok: false, code: "context_required" });
@@ -886,12 +872,172 @@ describe("billing server actions", () => {
       mockListSubscriptions.mockResolvedValue([personalSub, teamSub]);
 
       const fd = new FormData();
-      fd.set("quantity", "5");
+      fd.set("seatLimit", "5");
       fd.set("context", "admin");
 
       const result = await updateSeats(undefined, fd);
       expect(result).toEqual({ ok: false, code: "context_required" });
       expect(mockUpdateSeats).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("changePlan", () => {
+    const user = { id: "u1" };
+    const subscription = {
+      id: "s1",
+      plan: { context: "personal" },
+      scheduledChangeAt: null,
+    };
+
+    beforeEach(() => {
+      mockGetCurrentUser.mockResolvedValue(user);
+      mockListSubscriptions.mockResolvedValue([subscription]);
+      mockCanManageBilling.mockResolvedValue(true);
+    });
+
+    it("returns invalid_input when planPriceId is falsy", async () => {
+      const result = await changePlan("");
+      expect(result).toEqual({ ok: false, code: "invalid_input" });
+      expect(mockChangePlan).not.toHaveBeenCalled();
+    });
+
+    it("calls changePlan gateway with planPriceId and revalidates on success", async () => {
+      mockChangePlan.mockResolvedValueOnce({
+        ...subscription,
+        scheduledChangeAt: null,
+      });
+
+      const result = await changePlan("price_pro_monthly");
+
+      expect(mockChangePlan).toHaveBeenCalledWith(
+        "price_pro_monthly",
+        undefined,
+      );
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        "/subscription",
+        "layout",
+      );
+      expect(result).toEqual({ ok: true, data: { deferred: false } });
+    });
+
+    it("returns deferred=true when the response has a scheduledChangeAt (downgrade)", async () => {
+      mockChangePlan.mockResolvedValueOnce({
+        ...subscription,
+        scheduledChangeAt: "2024-02-01T00:00:00Z",
+      });
+
+      const result = await changePlan("price_basic_monthly");
+
+      expect(result).toEqual({ ok: true, data: { deferred: true } });
+    });
+
+    it("forwards context=personal to assertCanManageBilling and the gateway", async () => {
+      const personalSub = {
+        id: "sub_p",
+        plan: { context: "personal" },
+        scheduledChangeAt: null,
+      };
+      const teamSub = {
+        id: "sub_t",
+        plan: { context: "team" },
+        scheduledChangeAt: null,
+      };
+      mockListSubscriptions.mockResolvedValue([personalSub, teamSub]);
+      mockChangePlan.mockResolvedValueOnce(personalSub);
+
+      const result = await changePlan("price_basic", "personal");
+
+      expect(mockCanManageBilling).toHaveBeenCalledWith(user, personalSub);
+      expect(mockChangePlan).toHaveBeenCalledWith("price_basic", "personal");
+      expect(result.ok).toBe(true);
+    });
+
+    it("forwards context=team to the gateway", async () => {
+      const personalSub = {
+        id: "sub_p",
+        plan: { context: "personal" },
+        scheduledChangeAt: null,
+      };
+      const teamSub = {
+        id: "sub_t",
+        plan: { context: "team" },
+        scheduledChangeAt: null,
+      };
+      mockListSubscriptions.mockResolvedValue([personalSub, teamSub]);
+      mockChangePlan.mockResolvedValueOnce(teamSub);
+
+      await changePlan("price_team_pro", "team");
+
+      expect(mockCanManageBilling).toHaveBeenCalledWith(user, teamSub);
+      expect(mockChangePlan).toHaveBeenCalledWith("price_team_pro", "team");
+    });
+
+    it("normalizes a tampered context arg to undefined", async () => {
+      mockChangePlan.mockResolvedValueOnce(subscription);
+
+      await changePlan("price_pro", "../admin" as unknown as "personal");
+
+      expect(mockChangePlan).toHaveBeenCalledWith("price_pro", undefined);
+    });
+
+    it("returns not_billing_member when caller cannot manage billing", async () => {
+      mockCanManageBilling.mockResolvedValue(false);
+
+      const result = await changePlan("price_pro_monthly");
+
+      expect(result).toEqual({ ok: false, code: "not_billing_member" });
+      expect(mockChangePlan).not.toHaveBeenCalled();
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+    });
+
+    it("returns no_subscription when no subscription exists", async () => {
+      mockListSubscriptions.mockResolvedValue([]);
+
+      const result = await changePlan("price_pro_monthly");
+
+      expect(result).toEqual({ ok: false, code: "no_subscription" });
+      expect(mockChangePlan).not.toHaveBeenCalled();
+    });
+
+    it("returns context_required when both subs exist and no context is supplied", async () => {
+      const personalSub = {
+        id: "sub_p",
+        plan: { context: "personal" },
+        scheduledChangeAt: null,
+      };
+      const teamSub = {
+        id: "sub_t",
+        plan: { context: "team" },
+        scheduledChangeAt: null,
+      };
+      mockListSubscriptions.mockResolvedValue([personalSub, teamSub]);
+
+      const result = await changePlan("price_pro_monthly");
+
+      expect(result).toEqual({ ok: false, code: "context_required" });
+      expect(mockChangePlan).not.toHaveBeenCalled();
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+    });
+
+    it("does not revalidate when the gateway throws", async () => {
+      mockChangePlan.mockRejectedValueOnce(new Error("network failure"));
+
+      const result = await changePlan("price_pro_monthly");
+
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
+    });
+
+    it("maps an ApiError 409 code to the error envelope", async () => {
+      const { ApiError } = await import("@/domain/errors/ApiError");
+      mockChangePlan.mockRejectedValueOnce(
+        new ApiError(409, { code: "already_on_plan" }),
+      );
+
+      const result = await changePlan("price_current");
+
+      expect(result).toEqual({ ok: false, code: "already_on_plan" });
+      expect(mockRevalidatePath).not.toHaveBeenCalled();
     });
   });
 });

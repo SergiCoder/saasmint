@@ -1,8 +1,7 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/lib/i18n/navigation";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { PasswordRequirements } from "@/presentation/components/molecules/PasswordRequirements";
@@ -18,24 +17,7 @@ interface AcceptInvitationFormProps {
 export function AcceptInvitationForm({ token }: AcceptInvitationFormProps) {
   const t = useTranslations("invitation");
   const translateError = useActionErrorMessage();
-  const router = useRouter();
   const [state, formAction, pending] = useActionState(acceptInvitation, null);
-  // One-shot guard: the `state.ok` flag persists across renders until unmount,
-  // so we need to ensure `router.push` fires exactly once — not on every
-  // subsequent render that happens before the navigation completes.
-  const navigated = useRef(false);
-
-  // Navigate client-side after the server action sets auth cookies. Doing the
-  // navigation from the client (rather than server-side redirect inside the
-  // action) lets the Set-Cookie response commit before the new page renders,
-  // which avoids Next.js's RSC-prefetch "redirect count exceeded" race when
-  // the invitee was already authenticated as a different user.
-  useEffect(() => {
-    if (state?.ok && !navigated.current) {
-      navigated.current = true;
-      router.push(state.data.redirectTo);
-    }
-  }, [state, router]);
 
   return (
     <>

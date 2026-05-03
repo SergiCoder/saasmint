@@ -18,11 +18,6 @@ vi.mock("@/infrastructure/registry", () => ({
   },
 }));
 
-const mockSetAuthCookies = vi.fn();
-vi.mock("@/infrastructure/auth/cookies", () => ({
-  setAuthCookies: (...args: unknown[]) => mockSetAuthCookies(...args),
-}));
-
 let acceptInvitation: typeof import("@/app/actions/invitation").acceptInvitation;
 let declineInvitation: typeof import("@/app/actions/invitation").declineInvitation;
 
@@ -35,25 +30,24 @@ beforeEach(async () => {
 
 describe("invitation server actions", () => {
   describe("acceptInvitation", () => {
-    it("accepts invitation, sets cookies, and returns a client-side redirect target", async () => {
-      mockAccept.mockResolvedValue({ accessToken: "at", refreshToken: "rt" });
+    it("accepts invitation and redirects to /login?invited=true", async () => {
+      // Backend creates the user as unverified and emails a verification
+      // link instead of issuing tokens — the gateway resolves to void.
+      mockAccept.mockResolvedValue(undefined);
 
       const formData = new FormData();
       formData.set("token", "abc123");
       formData.set("fullName", "Bob Smith");
       formData.set("password", "secret1234");
 
-      const result = await acceptInvitation(null, formData);
+      await expect(acceptInvitation(null, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
       expect(mockAccept).toHaveBeenCalledWith("abc123", {
         fullName: "Bob Smith",
         password: "secret1234",
       });
-      expect(mockSetAuthCookies).toHaveBeenCalledWith("at", "rt");
-      expect(result).toEqual({ ok: true, data: { redirectTo: "/dashboard" } });
-      // Server-side redirect would race with Set-Cookie propagation during
-      // Next.js's RSC prefetch; the action deliberately lets the client
-      // navigate instead.
-      expect(mockRedirect).not.toHaveBeenCalled();
+      expect(mockRedirect).toHaveBeenCalledWith("/login?invited=true");
     });
 
     it("returns invalid_input when required fields are missing", async () => {
@@ -98,7 +92,7 @@ describe("invitation server actions", () => {
       expect(mockAccept).not.toHaveBeenCalled();
     });
 
-    it("returns an envelope error and does not set cookies when gateway throws", async () => {
+    it("returns an envelope error and does not redirect when gateway throws", async () => {
       mockAccept.mockRejectedValue(new Error("token expired"));
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -109,7 +103,7 @@ describe("invitation server actions", () => {
 
       const result = await acceptInvitation(null, formData);
       expect(result).toEqual({ ok: false, code: "unknown_error" });
-      expect(mockSetAuthCookies).not.toHaveBeenCalled();
+      expect(mockRedirect).not.toHaveBeenCalled();
       expect(errSpy).toHaveBeenCalled();
       errSpy.mockRestore();
     });

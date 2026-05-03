@@ -6,6 +6,7 @@ import type { Subscription } from "@/domain/models/Subscription";
 vi.mock("@/app/actions/billing", () => ({
   openBillingPortal: vi.fn(),
   startCheckout: vi.fn(),
+  changePlan: vi.fn(),
 }));
 
 import { renderPlanUpgradeCta } from "@/app/[locale]/(app)/subscription/_lib/renderPlanUpgradeCta";
@@ -37,7 +38,8 @@ function makeSubscription(context: "personal" | "team"): Subscription {
     id: `sub-${context}`,
     status: "active",
     plan,
-    quantity: 1,
+    seatLimit: 1,
+    seatsUsed: 1,
     trialEndsAt: null,
     currentPeriodStart: "2024-01-01T00:00:00Z",
     currentPeriodEnd: "2024-02-01T00:00:00Z",
@@ -48,6 +50,16 @@ function makeSubscription(context: "personal" | "team"): Subscription {
     createdAt: "2024-01-01T00:00:00Z",
   };
 }
+
+// Echo-style test stubs matching the global next-intl stub: return the key
+// and append params so assertions can detect interpolation when needed.
+const tBilling = (key: string, values?: Record<string, string | number>) =>
+  values
+    ? `${key}|${Object.entries(values)
+        .map(([k, v]) => `${k}=${v}`)
+        .join(",")}`
+    : key;
+const tPlans = (key: string) => key;
 
 const defaultOpts = {
   isUpgrade: true,
@@ -60,6 +72,11 @@ const defaultOpts = {
   teamSubscription: null,
   personalCanManage: true,
   teamCanManage: true,
+  locale: "en",
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  tBilling: tBilling as any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  tPlans: tPlans as any,
 };
 
 // ---------------------------------------------------------------------------
@@ -73,7 +90,7 @@ describe("renderPlanUpgradeCta — guard rails", () => {
     expect(result).toBeNull();
   });
 
-  it("returns null when isUpgrade is false", () => {
+  it("returns null when isUpgrade is false and there is no sub in context", () => {
     const plan = makePlan({ id: "p1" });
     const result = renderPlanUpgradeCta({
       ...defaultOpts,
@@ -108,12 +125,21 @@ describe("renderPlanUpgradeCta — personal first-time checkout", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Personal plan — existing subscription → BillingPortalButton
+// Personal plan — existing subscription → ChangePlanButton (in-app confirm)
 // ---------------------------------------------------------------------------
 
-describe("renderPlanUpgradeCta — personal upgrade via portal", () => {
-  it("renders a BillingPortalButton with context=personal when a personal sub exists", () => {
-    const plan = makePlan({ id: "personal-pro", context: "personal" });
+describe("renderPlanUpgradeCta — personal change-plan via in-app confirm", () => {
+  it("renders a ChangePlanButton when a personal sub exists and target price > current", () => {
+    const plan = makePlan({
+      id: "personal-pro",
+      context: "personal",
+      price: {
+        id: "price_pro",
+        amount: 4900,
+        displayAmount: 49,
+        currency: "usd",
+      },
+    });
     const personalSub = makeSubscription("personal");
     const { container } = render(
       <>
@@ -126,21 +152,13 @@ describe("renderPlanUpgradeCta — personal upgrade via portal", () => {
         })}
       </>,
     );
-    const hidden = container.querySelector(
-      'input[name="context"]',
-    ) as HTMLInputElement | null;
-    expect(hidden?.value).toBe("personal");
-    // Deep-link the portal directly into Stripe's plan-switch confirm screen
-    // for the target plan price, instead of dropping the user on the portal
-    // home (current sub / payment / invoices).
-    const flow = container.querySelector(
-      'input[name="flow"]',
-    ) as HTMLInputElement | null;
-    const planPriceId = container.querySelector(
-      'input[name="planPriceId"]',
-    ) as HTMLInputElement | null;
-    expect(flow?.value).toBe("subscription_update_confirm");
-    expect(planPriceId?.value).toBe("price_1");
+    // No portal form/hidden inputs — the in-app dialog is the new path.
+    expect(
+      container.querySelector('input[name="flow"]'),
+    ).not.toBeInTheDocument();
+    expect(
+      container.querySelector('input[name="planPriceId"]'),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Upgrade" })).toBeInTheDocument();
   });
 
@@ -155,6 +173,37 @@ describe("renderPlanUpgradeCta — personal upgrade via portal", () => {
       personalCanManage: false,
     });
     expect(result).toBeNull();
+  });
+
+  it("renders a 'Scheduled' status label (no actionable CTA) when a schedule already targets this exact plan", () => {
+    // The undo lives on the *current* plan card's banner ("Keep current
+    // plan"); rendering a Switch button here would be a confusing second
+    // way to undo. Instead, the target card gets a non-actionable
+    // "Scheduled — {date}" label so the user sees which plan they're
+    // moving to.
+    const plan = makePlan({
+      id: "personal-basic",
+      context: "personal",
+      tier: 2,
+    });
+    const sub: Subscription = {
+      ...makeSubscription("personal"),
+      scheduledPlan: plan,
+      scheduledChangeAt: "2024-02-01T00:00:00Z",
+    };
+    const result = renderPlanUpgradeCta({
+      ...defaultOpts,
+      plan,
+      isTeam: false,
+      personalSubscription: sub,
+      personalCanManage: true,
+    });
+    const { container } = render(<>{result}</>);
+    // Echo-format from the test stub: `key:date=<formatted>`.
+    expect(container.textContent).toMatch(/scheduledPlanLabel/);
+    // No interactive control on the scheduled-target card.
+    expect(container.querySelector("button")).toBeNull();
+    expect(container.querySelector("a")).toBeNull();
   });
 });
 
@@ -192,14 +241,24 @@ describe("renderPlanUpgradeCta — team first-time checkout", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Team plan — existing subscription → BillingPortalButton
+// Team plan — existing subscription → ChangePlanButton (in-app confirm)
 // ---------------------------------------------------------------------------
 
-describe("renderPlanUpgradeCta — team upgrade via portal", () => {
-  it("renders a BillingPortalButton with context=team when a team sub exists", () => {
-    const plan = makePlan({ id: "team-pro", context: "team", tier: 3 });
+describe("renderPlanUpgradeCta — team change-plan via in-app confirm", () => {
+  it("renders a ChangePlanButton when a team sub exists", () => {
+    const plan = makePlan({
+      id: "team-pro",
+      context: "team",
+      tier: 3,
+      price: {
+        id: "price_team_pro",
+        amount: 9900,
+        displayAmount: 99,
+        currency: "usd",
+      },
+    });
     const teamSub = makeSubscription("team");
-    const { container } = render(
+    render(
       <>
         {renderPlanUpgradeCta({
           ...defaultOpts,
@@ -210,18 +269,6 @@ describe("renderPlanUpgradeCta — team upgrade via portal", () => {
         })}
       </>,
     );
-    const hidden = container.querySelector(
-      'input[name="context"]',
-    ) as HTMLInputElement | null;
-    expect(hidden?.value).toBe("team");
-    const flow = container.querySelector(
-      'input[name="flow"]',
-    ) as HTMLInputElement | null;
-    const planPriceId = container.querySelector(
-      'input[name="planPriceId"]',
-    ) as HTMLInputElement | null;
-    expect(flow?.value).toBe("subscription_update_confirm");
-    expect(planPriceId?.value).toBe("price_1");
     expect(screen.getByRole("button", { name: "Upgrade" })).toBeInTheDocument();
   });
 

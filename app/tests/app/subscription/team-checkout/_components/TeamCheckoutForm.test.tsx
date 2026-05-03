@@ -89,7 +89,7 @@ describe("TeamCheckoutForm", () => {
       'input[type="hidden"][name="planPriceId"]',
     ) as HTMLInputElement;
     const qtyInput = container.querySelector(
-      'input[type="hidden"][name="quantity"]',
+      'input[type="hidden"][name="seatLimit"]',
     ) as HTMLInputElement;
     expect(planInput.value).toBe("price_team_1");
     expect(qtyInput.value).toBe("2");

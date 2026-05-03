@@ -23,6 +23,7 @@ const EXPECTED_USE_CLIENT_FILES: readonly string[] = [
   "src/app/[locale]/(app)/profile/_components/DeleteAccountDialog.tsx",
   "src/app/[locale]/(app)/profile/_components/ProfileForm.tsx",
   "src/app/[locale]/(app)/subscription/_components/CancelRenewalButton.tsx",
+  "src/app/[locale]/(app)/subscription/_components/ChangePlanButton.tsx",
   "src/app/[locale]/(app)/subscription/_components/CheckoutButton.tsx",
   "src/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection.tsx",
   "src/app/[locale]/(app)/subscription/_components/ReleaseScheduledChangeButton.tsx",

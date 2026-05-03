@@ -87,7 +87,7 @@ describe("SeatManager", () => {
     // useActionState invokes the action with (prevState, formData).
     const formData = mockUpdateSeats.mock.calls[0]![1] as FormData;
     expect(formData.get("context")).toBe("team");
-    expect(formData.get("quantity")).toBe("6");
+    expect(formData.get("seatLimit")).toBe("6");
   });
 
   it("opens confirm dialog when decreasing seats", async () => {
@@ -102,8 +102,11 @@ describe("SeatManager", () => {
     expect(screen.getByText("removeSeatConfirmBody")).toBeInTheDocument();
   });
 
-  it("disables increase button at max seats (100)", () => {
-    render(<SeatManager currentSeats={100} usedSeats={50} />);
-    expect(screen.getByLabelText("addSeat")).toBeDisabled();
+  it("never disables the increase button on a static cap — backend enforces 1–10000", () => {
+    // No client-side hard-coded MAX_SEATS constant. The `+` button stays
+    // enabled regardless of current seat count; the backend rejects with
+    // a stable error code if the user submits past the real cap.
+    render(<SeatManager currentSeats={9999} usedSeats={50} />);
+    expect(screen.getByLabelText("addSeat")).not.toBeDisabled();
   });
 });

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { invitationGateway } from "@/infrastructure/registry";
 import { findTeamSubscription } from "@/domain/models/Subscription";
+import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { getCurrentUser } from "../../_data/getCurrentUser";
 import { getOrgMembers } from "../../_data/getOrgMembers";
 import { getSubscriptions } from "../../_data/getSubscriptions";
@@ -27,9 +28,10 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
   // argument matches the (app) layout's React.cache key so layout + page
   // share a single subscription roundtrip.
   const userPromise = getCurrentUser();
-  const [t, tCommon, user, orgs, subscriptions] = await Promise.all([
+  const [t, tCommon, tPlans, user, orgs, subscriptions] = await Promise.all([
     getTranslations("org"),
     getTranslations("common"),
+    getTranslations("plans"),
     userPromise,
     getUserOrgs(),
     userPromise.then((u) => getSubscriptions(u.preferredCurrency)),
@@ -45,7 +47,24 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
 
   const teamSubscription = findTeamSubscription(subscriptions);
   const isTeamSubscription = teamSubscription !== null;
-  const totalSpots = teamSubscription?.quantity ?? null;
+  const totalSpots = teamSubscription?.seatLimit ?? null;
+  // Pre-compute the scheduled plan-switch context for the seat-update
+  // success message. The seat update itself is always immediate; this info
+  // describes a *separate* pending plan downgrade that may still apply at
+  // period end. SeatManager only renders it when both facts coincide.
+  const scheduledPlanName =
+    teamSubscription?.scheduledPlan != null
+      ? translatePlanName(tPlans, teamSubscription.scheduledPlan)
+      : null;
+  const scheduledChangeAtIso = teamSubscription?.scheduledChangeAt ?? null;
+  const scheduledChangeDate =
+    scheduledChangeAtIso !== null ? new Date(scheduledChangeAtIso) : null;
+  const scheduledChangeDisplay =
+    scheduledChangeDate !== null && !Number.isNaN(scheduledChangeDate.getTime())
+      ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(
+          scheduledChangeDate,
+        )
+      : null;
 
   const me = members.find((m) => m.user.id === user.id);
   const isOwner = me?.role === "owner";
@@ -114,7 +133,12 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
             )}
           </div>
           {isOwner && isTeamSubscription && totalSpots !== null && (
-            <SeatManager currentSeats={totalSpots} usedSeats={members.length} />
+            <SeatManager
+              currentSeats={totalSpots}
+              usedSeats={members.length}
+              scheduledPlanName={scheduledPlanName}
+              scheduledChangeDate={scheduledChangeDisplay}
+            />
           )}
         </div>
         <OrgMemberList

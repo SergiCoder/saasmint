@@ -16,6 +16,6 @@ export interface IInvitationGateway {
   acceptInvitation(
     token: string,
     input: { fullName: string; password: string },
-  ): Promise<{ accessToken: string; refreshToken: string }>;
+  ): Promise<void>;
   declineInvitation(token: string): Promise<void>;
 }

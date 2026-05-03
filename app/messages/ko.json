@@ -87,6 +87,7 @@
       "noAccount": "계정이 없으신가요?",
       "register": "회원가입",
       "registered": "계정이 생성되었습니다! 이메일을 확인하여 계정을 인증해 주세요.",
+      "invited": "팀에 합류했습니다! 로그인하기 전에 이메일을 확인하여 계정을 인증해 주세요.",
       "accountDeleted": "계정이 삭제되었습니다. 이용해 주셔서 감사합니다.",
       "errorNoSession": "세션이 만료되었습니다. 다시 로그인해 주세요.",
       "errorEmailNotVerified": "로그인하기 전에 이메일 주소를 인증해 주세요. 받은 편지함을 확인하세요.",
@@ -184,6 +185,7 @@
     "currentPersonalPlan": "현재 개인 플랜",
     "currentTeamPlan": "현재 팀 플랜",
     "upgrade": "업그레이드",
+    "upgradeTo": "{plan}(으)로 업그레이드",
     "cancel": "구독은 기간 종료 시 취소됩니다",
     "cancelRenewal": "갱신 취소",
     "cancelRenewalTitle": "갱신을 취소하시겠습니까?",
@@ -231,10 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "{name}이(가) 관리",
-    "teamPlanReadonly": "팀 구독은 조직 소유자가 관리합니다.",
     "checkout": "결제",
     "personalSubAutoCancelNotice": "이 팀 플랜의 청구가 시작되는 {date}에 개인 구독이 종료됩니다. 그때까지 개인 기능을 계속 사용할 수 있습니다.",
-    "keepPersonalSubscription": "팀 플랜과 함께 개인 구독을 계속 유지합니다."
+    "keepPersonalSubscription": "팀 플랜과 함께 개인 구독을 계속 유지합니다.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "설정",
@@ -328,7 +339,8 @@
     "deleteOrgDialogLabel": "확인하려면 {name}을(를) 입력하세요",
     "deleteOrgDialogCancel": "취소",
     "deleteOrgDialogSubmit": "조직 영구 삭제",
-    "deleteOrgDialogMismatch": "조직 이름이 일치하지 않습니다."
+    "deleteOrgDialogMismatch": "조직 이름이 일치하지 않습니다.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "로딩 중...",
@@ -365,7 +377,8 @@
     "unsupported_image": "지원되지 않는 이미지 형식입니다",
     "message_required": "메시지를 입력해 주세요.",
     "message_too_long": "메시지가 너무 깁니다 (최대 5000자).",
-    "HTTP_429": "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요."
+    "HTTP_429": "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "문의하기",

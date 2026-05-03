@@ -87,6 +87,7 @@
       "noAccount": "Нет аккаунта?",
       "register": "Зарегистрироваться",
       "registered": "Аккаунт создан! Проверьте электронную почту для подтверждения.",
+      "invited": "Вы присоединились к команде! Проверьте электронную почту, чтобы подтвердить аккаунт перед входом.",
       "accountDeleted": "Ваш аккаунт был удалён. Нам жаль, что вы уходите.",
       "errorNoSession": "Ваша сессия истекла. Пожалуйста, войдите снова.",
       "errorEmailNotVerified": "Подтвердите адрес электронной почты перед входом. Проверьте папку «Входящие».",
@@ -184,6 +185,7 @@
     "currentPersonalPlan": "Текущий личный тариф",
     "currentTeamPlan": "Текущий тариф для команды",
     "upgrade": "Улучшить",
+    "upgradeTo": "Перейти на {plan}",
     "cancel": "Подписка будет отменена в конце периода",
     "cancelRenewal": "Отменить продление",
     "cancelRenewalTitle": "Отменить продление?",
@@ -231,10 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Управляется {name}",
-    "teamPlanReadonly": "Подписка вашей команды управляется владельцем организации.",
     "checkout": "Оплата",
     "personalSubAutoCancelNotice": "Ваша личная подписка завершится {date}, когда начнётся оплата этого тарифа для команды. До этого момента вы сохраните личные возможности.",
-    "keepPersonalSubscription": "Сохранить мою личную подписку параллельно с тарифом для команды."
+    "keepPersonalSubscription": "Сохранить мою личную подписку параллельно с тарифом для команды.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Настройки",
@@ -328,7 +339,8 @@
     "deleteOrgDialogLabel": "Введите {name} для подтверждения",
     "deleteOrgDialogCancel": "Отмена",
     "deleteOrgDialogSubmit": "Удалить организацию навсегда",
-    "deleteOrgDialogMismatch": "Название организации не совпадает."
+    "deleteOrgDialogMismatch": "Название организации не совпадает.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Загрузка...",
@@ -365,7 +377,8 @@
     "unsupported_image": "Неподдерживаемый тип изображения",
     "message_required": "Пожалуйста, добавьте сообщение.",
     "message_too_long": "Сообщение слишком длинное (макс. 5000 символов).",
-    "HTTP_429": "Слишком много запросов. Попробуйте позже."
+    "HTTP_429": "Слишком много запросов. Попробуйте позже.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Связаться с нами",

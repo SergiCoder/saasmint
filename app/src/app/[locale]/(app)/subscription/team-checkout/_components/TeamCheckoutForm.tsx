@@ -6,7 +6,6 @@ import { Input } from "@/presentation/components/atoms/Input";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { startCheckout } from "@/app/actions/billing";
-import { MAX_SEATS } from "@/domain/models/Subscription";
 import { formatCurrency } from "@/lib/formatCurrency";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 
@@ -56,7 +55,7 @@ export function TeamCheckoutForm({
   return (
     <form action={action} className="space-y-6">
       <input type="hidden" name="planPriceId" value={planPriceId} />
-      <input type="hidden" name="quantity" value={quantity} />
+      <input type="hidden" name="seatLimit" value={quantity} />
 
       <div>
         <h2 className="text-lg font-semibold text-gray-900">{planName}</h2>
@@ -98,7 +97,6 @@ export function TeamCheckoutForm({
             id="seats"
             type="number"
             min={minSeats}
-            max={MAX_SEATS}
             value={quantity}
             onChange={(e) =>
               setQuantity(

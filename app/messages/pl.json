@@ -87,6 +87,7 @@
       "noAccount": "Nie masz konta?",
       "register": "Zarejestruj się",
       "registered": "Konto utworzone! Sprawdź e-mail, aby zweryfikować konto.",
+      "invited": "Dołączyłeś do zespołu! Sprawdź e-mail, aby zweryfikować konto przed zalogowaniem.",
       "accountDeleted": "Twoje konto zostało usunięte. Przykro nam, że odchodzisz.",
       "errorNoSession": "Twoja sesja wygasła. Zaloguj się ponownie.",
       "errorEmailNotVerified": "Zweryfikuj swój adres e-mail przed zalogowaniem. Sprawdź skrzynkę odbiorczą.",
@@ -184,6 +185,7 @@
     "currentPersonalPlan": "Aktualny plan osobisty",
     "currentTeamPlan": "Aktualny plan zespołowy",
     "upgrade": "Uaktualnij",
+    "upgradeTo": "Uaktualnij do {plan}",
     "cancel": "Subskrypcja zostanie anulowana na koniec okresu",
     "cancelRenewal": "Anuluj odnowienie",
     "cancelRenewalTitle": "Anulować odnowienie?",
@@ -231,10 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Zarządzane przez {name}",
-    "teamPlanReadonly": "Subskrypcja Twojego zespołu jest zarządzana przez właściciela organizacji.",
     "checkout": "Płatność",
     "personalSubAutoCancelNotice": "Twoja subskrypcja osobista zakończy się {date}, gdy ten plan zespołowy rozpocznie naliczanie. Do tego czasu zachowasz funkcje osobiste.",
-    "keepPersonalSubscription": "Zachowaj moją subskrypcję osobistą równolegle z planem zespołowym."
+    "keepPersonalSubscription": "Zachowaj moją subskrypcję osobistą równolegle z planem zespołowym.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Ustawienia",
@@ -328,7 +339,8 @@
     "deleteOrgDialogLabel": "Wpisz {name}, aby potwierdzić",
     "deleteOrgDialogCancel": "Anuluj",
     "deleteOrgDialogSubmit": "Trwale usuń organizację",
-    "deleteOrgDialogMismatch": "Nazwa organizacji nie zgadza się."
+    "deleteOrgDialogMismatch": "Nazwa organizacji nie zgadza się.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Ładowanie...",
@@ -365,7 +377,8 @@
     "unsupported_image": "Nieobsługiwany typ obrazu",
     "message_required": "Dołącz wiadomość.",
     "message_too_long": "Wiadomość jest za długa (maks. 5000 znaków).",
-    "HTTP_429": "Zbyt wiele żądań. Spróbuj ponownie później."
+    "HTTP_429": "Zbyt wiele żądań. Spróbuj ponownie później.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Kontakt",

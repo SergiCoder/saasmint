@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import type { Subscription } from "@/domain/models/Subscription";
+import { Link } from "@/lib/i18n/navigation";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { SubscriptionCard } from "@/presentation/components/organisms/SubscriptionCard";
@@ -8,6 +9,12 @@ import { CancelRenewalButton } from "./CancelRenewalButton";
 import { ReleaseScheduledChangeButton } from "./ReleaseScheduledChangeButton";
 import { ResumeSubscriptionButton } from "./ResumeSubscriptionButton";
 
+function formatLongDate(date: Date, locale: string): string {
+  return !Number.isNaN(date.getTime())
+    ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(date)
+    : "";
+}
+
 interface CurrentSubscriptionCardProps {
   subscription: Subscription;
   locale: string;
@@ -15,20 +22,33 @@ interface CurrentSubscriptionCardProps {
   canManage: boolean;
   teamOwnerName: string | null;
   /**
+   * Slug of the team subscription's org. When set on a team card, the seats
+   * row deep-links to `/org/{slug}` so the billing member can jump straight
+   * to the seat-management page. Ignored on personal cards.
+   */
+  teamOrgSlug?: string | null;
+  /**
    * Set to `true` when the user has both a personal and a team subscription
    * (rule 5 concurrent billing). Drives explicit `?context=` plumbing on
-   * cancel/resume so the right sub is targeted, and lets the eyebrow label
-   * disambiguate the cards visually. Single-sub callers can omit it.
+   * cancel/resume so the right sub is targeted. Single-sub callers can omit it.
    */
   isConcurrent?: boolean;
+  /**
+   * Upgrade CTAs for higher-tier plans in this subscription's context.
+   * Rendered in the active-renewing banner alongside Cancel renewal so
+   * upgrade paths are reachable without scrolling to the plan grid.
+   * Empty/omitted on Pro (no higher tier) or for non-billing members.
+   */
+  upgradeCtas?: React.ReactNode[];
 }
 
 /**
- * Server-rendered card summarising the user's active subscription, with
- * Billing-Portal / Cancel-Renewal / Resume actions when the caller is the
- * billing member. The period end is always a real Stripe date — backend
- * v0.7.0 dropped the free-tier placeholder row, so this component only ever
- * renders for users with a real paid subscription.
+ * Server-rendered card summarising the user's active subscription. Layout
+ * collapses management actions to two zones: a "Manage billing" button in
+ * the top-right (next to the status badge), and an inline "Cancel renewal"
+ * link on the date row. Scheduled-cancel and scheduled-downgrade promote to
+ * full-width banners that own their respective primary action ("Resume" /
+ * "Keep current plan") plus the cancel-renewal action when relevant.
  */
 export async function CurrentSubscriptionCard({
   subscription,
@@ -36,7 +56,9 @@ export async function CurrentSubscriptionCard({
   planName,
   canManage,
   teamOwnerName,
+  teamOrgSlug,
   isConcurrent = false,
+  upgradeCtas = [],
 }: CurrentSubscriptionCardProps) {
   const [t, tPlans] = await Promise.all([
     getTranslations("billing"),
@@ -45,14 +67,6 @@ export async function CurrentSubscriptionCard({
 
   const plan = subscription.plan;
   const isTeam = plan.context === "team";
-  // Three terminal states for the date row:
-  //  - status=canceled: sub fully ended; show `canceledAt` with "Ends on".
-  //  - cancelAt set on an active sub: scheduled to cancel; show `cancelAt`
-  //    with "Cancels on" and offer Resume.
-  //  - else: active and renewing; show `currentPeriodEnd` with "Renews on"
-  //    and offer Cancel-renewal.
-  // `current_period_end` is no longer used for cancel-date display since the
-  // backend now mirrors Stripe's `cancel_at` directly (Dahlia-era field).
   const isFullyCanceled = subscription.status === "canceled";
   const isScheduledToCancel =
     !isFullyCanceled && subscription.cancelAt !== null;
@@ -92,77 +106,131 @@ export async function CurrentSubscriptionCard({
       : plan.interval === "month"
         ? t("billedMonthly")
         : undefined;
-  const seatsLabel = isTeam
-    ? `${subscription.quantity} ${subscription.quantity === 1 ? t("seat") : t("seats")}`
-    : undefined;
-  const subtitle = [seatsLabel, intervalLabel].filter(Boolean).join(" · ");
+  const seatsText = isTeam
+    ? t("seatsOfMax", {
+        count: subscription.seatsUsed,
+        max: subscription.seatLimit,
+      })
+    : null;
+  const seatsNode =
+    seatsText && teamOrgSlug ? (
+      <Link
+        href={`/org/${teamOrgSlug}`}
+        className="text-primary-600 hover:text-primary-700 underline-offset-2 hover:underline"
+      >
+        {seatsText}
+      </Link>
+    ) : seatsText ? (
+      <span>{seatsText}</span>
+    ) : null;
+  const subtitle =
+    seatsNode || intervalLabel ? (
+      <>
+        {seatsNode}
+        {seatsNode && intervalLabel ? <span> · </span> : null}
+        {intervalLabel ? <span>{intervalLabel}</span> : null}
+      </>
+    ) : null;
 
   // The cancel-confirm dialog quotes the period end (when the cancel will
   // take effect for a live cancel-renewal click), not `cancel_at` — which
   // is unset until the user clicks the very button the dialog gates.
   const periodEndDate = new Date(subscription.currentPeriodEnd);
-  const periodEndDisplay = !Number.isNaN(periodEndDate.getTime())
-    ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(
-        periodEndDate,
+  const periodEndDisplay = formatLongDate(periodEndDate, locale);
+
+  const cancelRenewalAction =
+    canManage && !isScheduledToCancel && !isFullyCanceled ? (
+      isTeam ? (
+        <CancelRenewalButton
+          label={t("cancelRenewal")}
+          confirmTitle={t("cancelRenewalTeamTitle")}
+          confirmBody={t("cancelRenewalTeamBody", { date: periodEndDisplay })}
+          confirmAction={t("cancelRenewalTeam")}
+          confirmDismiss={t("cancelRenewalKeep")}
+          context={buttonContext}
+        />
+      ) : (
+        <CancelRenewalButton
+          label={t("cancelRenewal")}
+          confirmTitle={t("cancelRenewalTitle")}
+          confirmBody={t("cancelRenewalBody", { date: periodEndDisplay })}
+          confirmAction={t("cancelRenewal")}
+          confirmDismiss={t("cancelRenewalKeep")}
+          context={buttonContext}
+        />
       )
-    : "";
+    ) : null;
 
-  const manageAction = canManage ? (
-    isScheduledToCancel || isFullyCanceled ? (
-      // Resume only makes sense while the sub is still active (Stripe rejects
-      // resume on a fully-canceled sub); the button is hidden post-cancel
-      // and the user must start a new checkout instead.
-      isScheduledToCancel ? (
-        <ResumeSubscriptionButton context={buttonContext}>
-          {t("resumeSubscription")}
-        </ResumeSubscriptionButton>
-      ) : null
-    ) : isTeam ? (
-      <CancelRenewalButton
-        label={t("cancelRenewal")}
-        confirmTitle={t("cancelRenewalTeamTitle")}
-        confirmBody={t("cancelRenewalTeamBody", { date: periodEndDisplay })}
-        confirmAction={t("cancelRenewalTeam")}
-        confirmDismiss={t("cancelRenewalKeep")}
-        context={buttonContext}
-      />
-    ) : (
-      <CancelRenewalButton
-        label={t("cancelRenewal")}
-        confirmTitle={t("cancelRenewalTitle")}
-        confirmBody={t("cancelRenewalBody", { date: periodEndDisplay })}
-        confirmAction={t("cancelRenewal")}
-        confirmDismiss={t("cancelRenewalKeep")}
-        context={buttonContext}
-      />
-    )
-  ) : null;
+  const eyebrowLabel = isTeam ? t("currentTeamPlan") : t("currentPersonalPlan");
 
-  // Disambiguate the card eyebrow when the user has both subs side-by-side.
-  const eyebrowLabel = isConcurrent
-    ? isTeam
-      ? t("currentTeamPlan")
-      : t("currentPersonalPlan")
-    : t("currentPlan");
+  const headerAction =
+    canManage && !isFullyCanceled ? (
+      <BillingPortalButton context={buttonContext}>
+        {t("portal")}
+      </BillingPortalButton>
+    ) : null;
 
+  // Banner content. Mutually exclusive: cancel banner > downgrade banner >
+  // active-renewal banner. Cancel takes precedence over downgrade because
+  // Stripe releases the schedule on cancel; downgrade takes precedence over
+  // active-renewal because both states already host Cancel renewal.
   const scheduledChangeDate = subscription.scheduledChangeAt
     ? new Date(subscription.scheduledChangeAt)
     : null;
   const scheduledChangeDisplay =
-    isScheduledDowngrade &&
-    scheduledChangeDate &&
-    !Number.isNaN(scheduledChangeDate.getTime())
-      ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(
-          scheduledChangeDate,
-        )
+    isScheduledDowngrade && scheduledChangeDate
+      ? formatLongDate(scheduledChangeDate, locale)
       : "";
   const scheduledPlanName =
     isScheduledDowngrade && scheduledPlan
       ? translatePlanName(tPlans, scheduledPlan)
       : "";
 
-  const downgradeBanner =
-    isScheduledDowngrade && canManage ? (
+  // Cancel banner quotes `cancelAt` (the actual scheduled cutover, set by
+  // Stripe when the user clicked cancel-renewal), not `currentPeriodEnd` —
+  // they can differ when the sub was scheduled to cancel mid-period.
+  const cancelAtDate = subscription.cancelAt
+    ? new Date(subscription.cancelAt)
+    : null;
+  const cancelAtDisplay = cancelAtDate
+    ? formatLongDate(cancelAtDate, locale)
+    : "";
+
+  const isActivelyRenewing =
+    !isFullyCanceled && !isScheduledToCancel && !isScheduledDowngrade;
+  const hasUpgradeCtas = upgradeCtas.length > 0;
+  // Active-renewal banner only fires when there are upgrade CTAs to show.
+  // On Pro (no higher tier) the banner would be a mostly-empty box with
+  // a stranded Cancel renewal button — drop it and fall back to the
+  // inline date-row link, which integrates cleanly with the renewal date.
+  const showActiveRenewalBanner =
+    isActivelyRenewing && canManage && hasUpgradeCtas;
+  // Inline date-row Cancel renewal: shown for actively-renewing subs that
+  // don't get the banner treatment (i.e. top-tier subs with no upgrades).
+  const dateAction =
+    isActivelyRenewing && canManage && !hasUpgradeCtas
+      ? cancelRenewalAction
+      : null;
+
+  let banner: React.ReactNode = null;
+  if (isScheduledToCancel && canManage) {
+    banner = (
+      <AlertBanner variant="warning">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <p className="font-medium">
+              {t("scheduledCancelHeadline", { date: cancelAtDisplay })}
+            </p>
+            <p className="text-xs">{t("scheduledCancelBody")}</p>
+          </div>
+          <ResumeSubscriptionButton context={buttonContext}>
+            {t("resumeSubscription")}
+          </ResumeSubscriptionButton>
+        </div>
+      </AlertBanner>
+    );
+  } else if (isScheduledDowngrade && canManage) {
+    banner = (
       <AlertBanner variant="info">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
@@ -176,48 +244,58 @@ export async function CurrentSubscriptionCard({
               {t("scheduledDowngradeBody", { plan: planName })}
             </p>
           </div>
-          <ReleaseScheduledChangeButton context={buttonContext}>
-            {t("keepCurrentPlan", { plan: planName })}
-          </ReleaseScheduledChangeButton>
+          <div className="flex flex-shrink-0 items-center gap-3">
+            {cancelRenewalAction}
+            <ReleaseScheduledChangeButton context={buttonContext}>
+              {t("keepCurrentPlan", { plan: planName })}
+            </ReleaseScheduledChangeButton>
+          </div>
         </div>
       </AlertBanner>
-    ) : null;
+    );
+  } else if (showActiveRenewalBanner) {
+    banner = (
+      <AlertBanner variant="neutral">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-2">
+            {upgradeCtas.map((cta, i) => (
+              <span key={i}>{cta}</span>
+            ))}
+          </div>
+          {cancelRenewalAction && (
+            <div className="flex flex-shrink-0 items-center">
+              {cancelRenewalAction}
+            </div>
+          )}
+        </div>
+      </AlertBanner>
+    );
+  }
 
-  const card = (
+  // The cancel/downgrade banners restate the cutover date in their
+  // headline, so suppressing the date row keeps the card from repeating
+  // itself. The active-renewal banner does NOT mention the renewal date,
+  // so we keep the date row visible alongside it.
+  const showDateRow = hasValidDate && (!banner || showActiveRenewalBanner);
+
+  return (
     <SubscriptionCard
       eyebrowLabel={eyebrowLabel}
       planName={planName}
       status={subscription.status}
       statusLabel={subscription.status}
-      subtitle={subtitle || undefined}
-      currentPeriodEndIso={hasValidDate ? dateValue.toISOString() : undefined}
+      subtitle={subtitle ?? undefined}
+      currentPeriodEndIso={showDateRow ? dateValue.toISOString() : undefined}
       periodEndLocale={locale}
-      periodEndLabel={hasValidDate ? dateLabel : undefined}
-      cancelAtPeriodEnd={isScheduledToCancel}
-      cancelLabel={isScheduledToCancel ? t("cancel") : undefined}
+      periodEndLabel={showDateRow ? dateLabel : undefined}
+      headerAction={headerAction ?? undefined}
+      dateAction={dateAction ?? undefined}
+      banner={banner ?? undefined}
       footer={
         isTeam && !canManage && teamOwnerName
           ? t("managedBy", { name: teamOwnerName })
           : undefined
       }
-      actions={
-        canManage && manageAction ? (
-          <div className="flex w-full flex-wrap items-center gap-x-4 gap-y-2">
-            <BillingPortalButton context={buttonContext}>
-              {t("portal")}
-            </BillingPortalButton>
-            {manageAction}
-          </div>
-        ) : undefined
-      }
     />
-  );
-
-  if (!downgradeBanner) return card;
-  return (
-    <div className="space-y-3">
-      {downgradeBanner}
-      {card}
-    </div>
   );
 }

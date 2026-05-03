@@ -87,6 +87,7 @@
       "noAccount": "还没有账户？",
       "register": "注册",
       "registered": "账户已创建！请检查您的邮箱以验证账户。",
+      "invited": "您已加入团队！登录前请检查您的邮箱以验证账户。",
       "accountDeleted": "您的账户已被删除。很遗憾看到您离开。",
       "errorNoSession": "您的会话已过期，请重新登录。",
       "errorEmailNotVerified": "登录前请验证您的邮箱地址。请检查您的收件箱。",
@@ -184,6 +185,7 @@
     "currentPersonalPlan": "当前个人计划",
     "currentTeamPlan": "当前团队计划",
     "upgrade": "升级",
+    "upgradeTo": "升级到 {plan}",
     "cancel": "订阅将在当前周期结束时取消",
     "cancelRenewal": "取消续订",
     "cancelRenewalTitle": "取消续订？",
@@ -231,10 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "由 {name} 管理",
-    "teamPlanReadonly": "您的团队订阅由组织所有者管理。",
     "checkout": "结账",
     "personalSubAutoCancelNotice": "您的个人订阅将在 {date} 结束，届时此团队计划开始计费。在此之前您将保留个人功能。",
-    "keepPersonalSubscription": "保留我的个人订阅与团队计划并行。"
+    "keepPersonalSubscription": "保留我的个人订阅与团队计划并行。",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "设置",
@@ -328,7 +339,8 @@
     "deleteOrgDialogLabel": "输入 {name} 以确认",
     "deleteOrgDialogCancel": "取消",
     "deleteOrgDialogSubmit": "永久删除组织",
-    "deleteOrgDialogMismatch": "组织名称不匹配。"
+    "deleteOrgDialogMismatch": "组织名称不匹配。",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "加载中...",
@@ -365,7 +377,8 @@
     "unsupported_image": "不支持的图片类型",
     "message_required": "请输入消息内容。",
     "message_too_long": "消息过长（最多 5000 个字符）。",
-    "HTTP_429": "请求过多，请稍后再试。"
+    "HTTP_429": "请求过多，请稍后再试。",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "联系我们",

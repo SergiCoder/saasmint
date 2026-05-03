@@ -87,6 +87,7 @@
       "noAccount": "Nog geen account?",
       "register": "Registreren",
       "registered": "Account aangemaakt! Controleer uw e-mail om uw account te verifiëren.",
+      "invited": "U bent lid geworden van het team! Controleer uw e-mail om uw account te verifiëren voordat u inlogt.",
       "accountDeleted": "Uw account is verwijderd. Het spijt ons u te zien gaan.",
       "errorNoSession": "Uw sessie is verlopen. Log opnieuw in.",
       "errorEmailNotVerified": "Verifieer uw e-mailadres voordat u inlogt. Controleer uw inbox.",
@@ -184,6 +185,7 @@
     "currentPersonalPlan": "Huidig persoonlijk abonnement",
     "currentTeamPlan": "Huidig teamabonnement",
     "upgrade": "Upgraden",
+    "upgradeTo": "Upgraden naar {plan}",
     "cancel": "Abonnement wordt opgezegd aan het einde van de periode",
     "cancelRenewal": "Verlenging annuleren",
     "cancelRenewalTitle": "Verlenging annuleren?",
@@ -231,10 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Beheerd door {name}",
-    "teamPlanReadonly": "Het teamabonnement wordt beheerd door de eigenaar van de organisatie.",
     "checkout": "Afrekenen",
     "personalSubAutoCancelNotice": "Uw persoonlijke abonnement eindigt op {date} wanneer dit teamplan in rekening wordt gebracht. Tot die tijd behoudt u de persoonlijke functies.",
-    "keepPersonalSubscription": "Mijn persoonlijke abonnement naast het teamplan laten doorlopen."
+    "keepPersonalSubscription": "Mijn persoonlijke abonnement naast het teamplan laten doorlopen.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Instellingen",
@@ -328,7 +339,8 @@
     "deleteOrgDialogLabel": "Typ {name} om te bevestigen",
     "deleteOrgDialogCancel": "Annuleren",
     "deleteOrgDialogSubmit": "Organisatie permanent verwijderen",
-    "deleteOrgDialogMismatch": "De naam van de organisatie komt niet overeen."
+    "deleteOrgDialogMismatch": "De naam van de organisatie komt niet overeen.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Laden...",
@@ -365,7 +377,8 @@
     "unsupported_image": "Niet-ondersteund afbeeldingstype",
     "message_required": "Voeg een bericht toe.",
     "message_too_long": "Bericht is te lang (max. 5000 tekens).",
-    "HTTP_429": "Te veel verzoeken. Probeer het later opnieuw."
+    "HTTP_429": "Te veel verzoeken. Probeer het later opnieuw.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Contact",

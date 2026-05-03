@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "@/lib/i18n/navigation";
 import { Button } from "@/presentation/components/atoms/Button";
 import { resumeSubscription } from "@/app/actions/billing";
 import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
@@ -20,6 +21,7 @@ export function ResumeSubscriptionButton({
   children,
   context,
 }: ResumeSubscriptionButtonProps) {
+  const router = useRouter();
   const translateError = useActionErrorMessage();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +30,9 @@ export function ResumeSubscriptionButton({
     setError(null);
     startTransition(async () => {
       const result = await resumeSubscription(context);
-      if (!result.ok) {
+      if (result.ok) {
+        router.refresh();
+      } else {
         setError(translateError(result));
       }
     });

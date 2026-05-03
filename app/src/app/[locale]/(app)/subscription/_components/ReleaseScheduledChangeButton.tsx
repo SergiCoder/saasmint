@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "@/lib/i18n/navigation";
 import { Button } from "@/presentation/components/atoms/Button";
 import { releaseScheduledChange } from "@/app/actions/billing";
 import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
@@ -15,6 +16,7 @@ export function ReleaseScheduledChangeButton({
   children,
   context,
 }: ReleaseScheduledChangeButtonProps) {
+  const router = useRouter();
   const translateError = useActionErrorMessage();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +25,9 @@ export function ReleaseScheduledChangeButton({
     setError(null);
     startTransition(async () => {
       const result = await releaseScheduledChange(context);
-      if (!result.ok) {
+      if (result.ok) {
+        router.refresh();
+      } else {
         setError(translateError(result));
       }
     });

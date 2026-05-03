@@ -87,6 +87,7 @@
       "noAccount": "Belum punya akun?",
       "register": "Daftar",
       "registered": "Akun dibuat! Periksa email Anda untuk memverifikasi akun.",
+      "invited": "Anda telah bergabung dengan tim! Periksa email Anda untuk memverifikasi akun sebelum masuk.",
       "accountDeleted": "Akun Anda telah dihapus. Kami menyesal melihat Anda pergi.",
       "errorNoSession": "Sesi Anda telah berakhir. Silakan masuk kembali.",
       "errorEmailNotVerified": "Verifikasi alamat email Anda sebelum masuk. Periksa kotak masuk Anda.",
@@ -184,6 +185,7 @@
     "currentPersonalPlan": "Paket pribadi saat ini",
     "currentTeamPlan": "Paket tim saat ini",
     "upgrade": "Tingkatkan",
+    "upgradeTo": "Tingkatkan ke {plan}",
     "cancel": "Langganan akan dibatalkan pada akhir periode",
     "cancelRenewal": "Batalkan perpanjangan",
     "cancelRenewalTitle": "Batalkan perpanjangan?",
@@ -231,10 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Dikelola oleh {name}",
-    "teamPlanReadonly": "Langganan tim Anda dikelola oleh pemilik organisasi.",
     "checkout": "Pembayaran",
     "personalSubAutoCancelNotice": "Langganan pribadi Anda akan berakhir pada {date} saat paket tim ini mulai ditagih. Anda akan tetap memiliki fitur pribadi hingga saat itu.",
-    "keepPersonalSubscription": "Pertahankan langganan pribadi saya berjalan bersama paket tim."
+    "keepPersonalSubscription": "Pertahankan langganan pribadi saya berjalan bersama paket tim.",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Pengaturan",
@@ -328,7 +339,8 @@
     "deleteOrgDialogLabel": "Ketik {name} untuk konfirmasi",
     "deleteOrgDialogCancel": "Batal",
     "deleteOrgDialogSubmit": "Hapus organisasi secara permanen",
-    "deleteOrgDialogMismatch": "Nama organisasi tidak cocok."
+    "deleteOrgDialogMismatch": "Nama organisasi tidak cocok.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "Memuat...",
@@ -365,7 +377,8 @@
     "unsupported_image": "Tipe gambar tidak didukung",
     "message_required": "Mohon sertakan pesan.",
     "message_too_long": "Pesan terlalu panjang (maks. 5000 karakter).",
-    "HTTP_429": "Terlalu banyak permintaan. Silakan coba lagi nanti."
+    "HTTP_429": "Terlalu banyak permintaan. Silakan coba lagi nanti.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Hubungi kami",

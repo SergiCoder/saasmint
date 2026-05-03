@@ -94,6 +94,7 @@
       "noAccount": "Don't have an account?",
       "register": "Sign up",
       "registered": "Account created! Check your email to verify your account.",
+      "invited": "You've joined the team! Check your email to verify your account before signing in.",
       "accountDeleted": "Your account has been deleted. We're sorry to see you go.",
       "errorNoSession": "Your session has expired. Please sign in again.",
       "errorEmailNotVerified": "Please verify your email address before signing in. Check your inbox for a verification link.",
@@ -184,6 +185,7 @@
     "currentPersonalPlan": "Current Personal Plan",
     "currentTeamPlan": "Current Team Plan",
     "upgrade": "Upgrade",
+    "upgradeTo": "Upgrade to {plan}",
     "cancel": "Subscription will cancel at end of period",
     "cancelRenewal": "Cancel renewal",
     "cancelRenewalTitle": "Cancel renewal?",
@@ -231,13 +233,22 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "Managed by {name}",
-    "teamPlanReadonly": "Your team subscription is managed by the organization owner.",
     "checkout": "Checkout",
     "personalSubAutoCancelNotice": "Your personal subscription will end on {date} when this team plan starts billing. You'll keep personal features until then.",
     "keepPersonalSubscription": "Keep my personal subscription running alongside the team plan.",
     "scheduledDowngradeHeadline": "Downgrading to {plan} on {date}",
     "scheduledDowngradeBody": "You'll keep all {plan} features until then.",
-    "keepCurrentPlan": "Keep {plan}"
+    "keepCurrentPlan": "Keep {plan}",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "Profile",
@@ -331,7 +342,8 @@
     "deleteOrgDialogLabel": "Type {name} to confirm",
     "deleteOrgDialogCancel": "Cancel",
     "deleteOrgDialogSubmit": "Permanently delete organization",
-    "deleteOrgDialogMismatch": "Organization name does not match."
+    "deleteOrgDialogMismatch": "Organization name does not match.",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "invitation": {
     "title": "You've been invited",
@@ -408,7 +420,8 @@
     "unsupported_image": "Unsupported image type",
     "message_required": "Please include a message.",
     "message_too_long": "Message is too long (max 5000 characters).",
-    "HTTP_429": "Too many requests. Please try again later."
+    "HTTP_429": "Too many requests. Please try again later.",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "Contact us",

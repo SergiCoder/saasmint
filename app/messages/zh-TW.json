@@ -87,6 +87,7 @@
       "noAccount": "還沒有帳戶？",
       "register": "註冊",
       "registered": "帳戶已建立！請檢查您的電子郵件以驗證帳戶。",
+      "invited": "您已加入團隊！登入前請檢查您的電子郵件以驗證帳戶。",
       "accountDeleted": "您的帳戶已被刪除。很遺憾看到您離開。",
       "errorNoSession": "您的工作階段已過期，請重新登入。",
       "errorEmailNotVerified": "登入前請驗證您的電子郵件地址。請檢查您的收件匣。",
@@ -184,6 +185,7 @@
     "currentPersonalPlan": "目前個人方案",
     "currentTeamPlan": "目前團隊方案",
     "upgrade": "升級",
+    "upgradeTo": "升級到 {plan}",
     "cancel": "訂閱將在當前週期結束時取消",
     "cancelRenewal": "取消續訂",
     "cancelRenewalTitle": "取消續訂？",
@@ -231,10 +233,19 @@
     "teamCheckout": "Team checkout",
     "checkoutError": "Failed to start checkout. Please try again.",
     "managedBy": "由 {name} 管理",
-    "teamPlanReadonly": "您的團隊訂閱由組織擁有者管理。",
     "checkout": "結帳",
     "personalSubAutoCancelNotice": "您的個人訂閱將於 {date} 結束，屆時此團隊方案開始計費。在此之前您將保留個人功能。",
-    "keepPersonalSubscription": "保留我的個人訂閱與團隊方案並行。"
+    "keepPersonalSubscription": "保留我的個人訂閱與團隊方案並行。",
+    "changePlanConfirmTitleImmediate": "Switch to {plan}?",
+    "changePlanConfirmTitleDeferred": "Switch to {plan} at period end?",
+    "changePlanConfirmBodyImmediate": "Your plan will switch to {plan} ({price}) immediately. We'll prorate the difference on your next invoice.",
+    "changePlanConfirmBodyDeferred": "You'll keep your current plan until {date}, then switch to {plan} ({price}). You can undo this any time before then.",
+    "changePlanConfirmAction": "Confirm switch",
+    "changePlanConfirmDismiss": "Cancel",
+    "seatsOfMax": "{count} of {max} seats",
+    "scheduledCancelHeadline": "Cancels on {date}",
+    "scheduledCancelBody": "You can resume any time before then to keep this plan.",
+    "scheduledPlanLabel": "Scheduled — switching here on {date}"
   },
   "profile": {
     "title": "設定",
@@ -328,7 +339,8 @@
     "deleteOrgDialogLabel": "輸入 {name} 以確認",
     "deleteOrgDialogCancel": "取消",
     "deleteOrgDialogSubmit": "永久刪除組織",
-    "deleteOrgDialogMismatch": "組織名稱不相符。"
+    "deleteOrgDialogMismatch": "組織名稱不相符。",
+    "seatsUpdatedWithPendingPlanChange": "Seats updated. Note: still scheduled to switch to {plan} on {date}."
   },
   "common": {
     "loading": "載入中...",
@@ -365,7 +377,8 @@
     "unsupported_image": "不支援的圖片類型",
     "message_required": "請輸入訊息內容。",
     "message_too_long": "訊息過長（最多 5000 個字元）。",
-    "HTTP_429": "請求過多，請稍後再試。"
+    "HTTP_429": "請求過多，請稍後再試。",
+    "already_on_plan": "You're already on this plan."
   },
   "contact": {
     "title": "聯絡我們",

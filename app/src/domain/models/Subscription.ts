@@ -10,14 +10,24 @@ export type SubscriptionStatus =
   | "incomplete_expired"
   | "paused";
 
-/** Maximum number of seats allowed on a team subscription. */
-export const MAX_SEATS = 100;
-
 export interface Subscription {
   readonly id: string;
   readonly status: SubscriptionStatus;
   readonly plan: Plan;
-  readonly quantity: number;
+  /**
+   * Purchased seat capacity. Personal subs always 1; team subs are the
+   * count the billing member paid for. Authoritative source for the seat
+   * cap — frontend no longer hard-codes a constant. Renamed from
+   * `quantity` in backend v0.8.0 (DB column `seat_limit`).
+   */
+  readonly seatLimit: number;
+  /**
+   * Seats currently in use. Personal subs always 1 (the owning user);
+   * team subs count accepted `OrgMember` rows on the org tied to the
+   * sub's Stripe customer (pending invitations don't count). Always at
+   * least 1.
+   */
+  readonly seatsUsed: number;
   readonly trialEndsAt: string | null;
   readonly currentPeriodStart: string;
   readonly currentPeriodEnd: string;
