@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { AuthError } from "@/domain/errors/AuthError";
 import { authGateway, userGateway } from "@/infrastructure/registry";
-import { routing } from "@/lib/i18n/routing";
+import { isLocale } from "@/lib/i18n/routing";
 import {
   ok,
   fail,
@@ -92,7 +92,7 @@ export async function updatePreferredLocale(locale: string): Promise<void> {
   // Validate against the supported-locale allow-list: this is a server action
   // callable by any authenticated client, so we must not forward arbitrary
   // strings to the backend / storage.
-  if (!(routing.locales as readonly string[]).includes(locale)) {
+  if (!isLocale(locale)) {
     return;
   }
   try {

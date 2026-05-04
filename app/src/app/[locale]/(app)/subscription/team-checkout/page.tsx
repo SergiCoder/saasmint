@@ -30,7 +30,7 @@ export default async function TeamCheckoutPage({
   ]);
 
   if (!planPriceId) {
-    redirect("/subscription");
+    redirect(`/${locale}/subscription`);
   }
 
   const currency = user.preferredCurrency;
@@ -43,7 +43,7 @@ export default async function TeamCheckoutPage({
   const plan = plans.find((p) => p.price?.id === planPriceId);
 
   if (!plan || !plan.price || plan.context !== "team") {
-    redirect("/subscription");
+    redirect(`/${locale}/subscription`);
   }
 
   // Show the auto-cancel notice + opt-out checkbox only when the user has a

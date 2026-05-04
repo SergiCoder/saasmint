@@ -29,6 +29,8 @@ Core types in `src/domain/models/`. All fields `readonly` — treat domain objec
 
 Domain errors in `src/domain/errors/`: `AuthError`, `BillingError`, `ApiError` (carries `status`, `body`, `detail` getter), `NetworkError` (carries `cause`). All have a `code: string`. `ApiError.code` resolution: explicit arg → `body.code` → `HTTP_<status>`. Server actions translate thrown errors via `toActionError()`; clients resolve codes through `actionErrors.<code>` next-intl namespace via `useActionErrorMessage`.
 
+Static reference data lives in `src/domain/data/` as generated constants — not behind a gateway. `PHONE_PREFIXES` (`src/domain/data/phonePrefixes.ts`) is regenerated from the backend via `pnpm sync:phone-prefixes` (script in `scripts/sync-phone-prefixes.ts`); commit the diff. Use this pattern only for data that is effectively immutable and small enough to ship in the bundle.
+
 ## Infrastructure
 
 `src/infrastructure/` organised by provider:
@@ -71,7 +73,9 @@ Django issues JWTs directly — no third-party provider.
 - **Tokens**: access (15 min) + refresh (7 days) in HTTP-only secure cookies.
 - **Login/Signup**: server actions call `POST /auth/login/`, `POST /auth/register/`.
 - **OAuth**: server action sets short-lived `oauth_in_progress` flow cookie + redirects to `GET /auth/oauth/{provider}/`. Django redirects back to `/auth/callback#code=<opaque>`. Client strips fragment via `history.replaceState` and calls `exchangeOAuthCode` server action → `POST /auth/oauth/exchange/`. Post-login redirect targets validated against an allowlist (`src/lib/oauthNext.ts`).
-- **Middleware (`src/proxy.ts`)**: on routes that read the session user, decodes the access token JWT (base64 only), refreshes via `POST /auth/refresh/` when expired/missing. Anonymous-only routes skip the refresh. On 401, clears stale cookies on both request and response. Forwards pathname as `x-pathname` (`PATHNAME_HEADER` in `src/lib/pathname.ts`); read on the server via `getPathname()` / `getPathnameWithoutLocale()`.
+- **Middleware (`src/proxy.ts`)**: on routes that read the session user, decodes the access token JWT (base64 only), refreshes via `POST /auth/refresh/` when expired/missing. Anonymous-only routes skip the refresh. On 401, clears stale cookies on both request and response. Forwards pathname as `x-pathname` (`PATHNAME_HEADER` in `src/lib/pathname.ts`); read on the server via `getPathname()` / `getPathnameWithoutLocale()` / `getLocale()`.
+- **Locale-prefixed redirects**: always use a locale-prefixed path — `redirect(`/${locale}/dashboard`)` not `redirect("/dashboard")`. A bare redirect strips the locale segment, breaking the next-intl router and causing a client-side hydration mismatch on cross-redirect chains. In **server actions** obtain the locale with `const locale = await getLocale()` (from `@/lib/pathname`), which reads the `x-pathname` header forwarded by middleware and falls back to the default locale when absent. In **page components** and **layouts**, the locale is already available from `await params` — use it directly.
+- **`NEXT_LOCALE` cookie sync**: next-intl's own middleware writes the `NEXT_LOCALE` cookie automatically on every locale-redirect response. The `(app)` layout does **not** write this cookie directly — `cookies().set()` throws outside a Server Action or Route Handler context (a layout render is neither). The redirect the layout issues when `user.preferredLocale !== locale` lands on a URL that next-intl's middleware then processes, which is where the cookie gets updated. Do not clear this cookie on sign-out.
 - **API calls**: `apiClient.ts` reads `access_token` cookie, sends `Authorization: Bearer`.
 
 ## Component Design

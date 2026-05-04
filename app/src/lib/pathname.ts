@@ -1,5 +1,10 @@
 import { headers } from "next/headers";
-import { stripLocalePrefix } from "@/lib/i18n/routing";
+import {
+  isLocale,
+  routing,
+  stripLocalePrefix,
+  type Locale,
+} from "@/lib/i18n/routing";
 
 export const PATHNAME_HEADER = "x-pathname";
 
@@ -20,4 +25,18 @@ export async function getPathname(): Promise<string> {
  */
 export async function getPathnameWithoutLocale(): Promise<string> {
   return stripLocalePrefix(await getPathname());
+}
+
+/**
+ * Resolves the active locale for the current request. Reads the locale from
+ * the pathname forwarded by the proxy middleware; falls back to the default
+ * locale when the pathname has no recognised prefix. Use in server actions
+ * that need to build locale-prefixed redirects — `redirect("/dashboard")`
+ * loses the locale and breaks the next-intl + Next.js client router on
+ * cross-redirect chains.
+ */
+export async function getLocale(): Promise<Locale> {
+  const pathname = await getPathname();
+  const segment = pathname.split("/")[1] ?? "";
+  return isLocale(segment) ? segment : routing.defaultLocale;
 }

@@ -7,6 +7,15 @@ import { AuthError } from "@/domain/errors/AuthError";
 
 // --- Mocks ---------------------------------------------------------------
 
+const mockRedirect = vi.fn((path: string) => {
+  const err = new Error("NEXT_REDIRECT");
+  (err as Error & { path: string }).path = path;
+  throw err;
+});
+vi.mock("next/navigation", () => ({
+  redirect: (path: string) => mockRedirect(path),
+}));
+
 const setRequestLocaleMock = vi.fn();
 const mockTranslate = vi.fn((key: string, params?: Record<string, unknown>) =>
   params ? `${key} ${Object.values(params).join(" ")}` : key,
@@ -166,6 +175,35 @@ describe("InvitationPage", () => {
     mockGetByToken.mockRejectedValue(new Error("Not found"));
 
     await expect(renderPage("bad_token")).rejects.toThrow("Not found");
+  });
+
+  it("redirects to /{locale}/dashboard when the invitation resolves to null (token already consumed or 404)", async () => {
+    // The page catches ApiError 404 from the gateway and coerces it to null,
+    // then immediately redirects to keep the RSC re-render after acceptInvitation
+    // from briefly showing the error boundary.
+    const { ApiError } = await import("@/domain/errors/ApiError");
+    mockGetByToken.mockRejectedValue(
+      new ApiError(404, { detail: "Not found." }),
+    );
+
+    await expect(renderPage("consumed_token")).rejects.toThrow("NEXT_REDIRECT");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/dashboard");
+  });
+
+  it("uses the locale from params when building the post-consume redirect", async () => {
+    // The redirect target must be locale-prefixed so the next-intl router and
+    // Next.js client don't lose the active locale on cross-redirect chains.
+    const { ApiError } = await import("@/domain/errors/ApiError");
+    mockGetByToken.mockRejectedValue(
+      new ApiError(404, { detail: "Not found." }),
+    );
+
+    await expect(
+      InvitationPage({
+        params: Promise.resolve({ locale: "es", token: "consumed_token" }),
+      }),
+    ).rejects.toThrow("NEXT_REDIRECT");
+    expect(mockRedirect).toHaveBeenCalledWith("/es/dashboard");
   });
 
   describe("concurrent-billing notice", () => {

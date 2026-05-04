@@ -14,7 +14,7 @@ import { updateProfile, updateAvatarUrl } from "@/app/actions/user";
 import { LOCALES } from "@/lib/i18n/locales";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 import type { User } from "@/domain/models/User";
-import type { PhonePrefix } from "@/domain/models/PhonePrefix";
+import { PHONE_PREFIXES } from "@/domain/data/phonePrefixes";
 
 const SUPPORTED_CURRENCIES = [
   { value: "usd", label: "USD — US Dollar" },
@@ -41,7 +41,6 @@ const SUPPORTED_CURRENCIES = [
 
 interface ProfileFormProps {
   user: User;
-  phonePrefixes: PhonePrefix[];
   timezones: readonly string[];
   /**
    * When `true`, the currency picker shows a locked-at-first-purchase note
@@ -53,7 +52,6 @@ interface ProfileFormProps {
 
 export function ProfileForm({
   user,
-  phonePrefixes,
   timezones,
   currencyLocked = false,
 }: ProfileFormProps) {
@@ -178,7 +176,7 @@ export function ProfileForm({
               className="focus:border-primary-500 focus:ring-primary-500 w-full min-w-0 truncate rounded-md border border-gray-300 py-2 pr-8 pl-3 text-sm shadow-sm transition-colors focus:ring-2 focus:ring-offset-0 focus:outline-none"
             >
               <option value="">{t("phonePrefix")}</option>
-              {phonePrefixes.map((p) => (
+              {PHONE_PREFIXES.map((p) => (
                 <option key={p.prefix} value={p.prefix}>
                   {p.label} ({p.prefix})
                 </option>

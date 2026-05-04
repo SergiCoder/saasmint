@@ -26,6 +26,7 @@ import {
   type ActionResult,
 } from "@/lib/actions/ActionResult";
 import { getString } from "@/lib/actions/parseFormData";
+import { getLocale } from "@/lib/pathname";
 import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
 
 interface TokenResponse {
@@ -128,6 +129,7 @@ export async function signIn(
 
   await setAuthCookies(data.access_token, data.refresh_token);
 
+  const locale = await getLocale();
   const plan = formData.get("plan");
   if (isValidPlanSlug(plan)) {
     const routing = await resolvePlanRouting(plan);
@@ -136,11 +138,11 @@ export async function signIn(
         routing.context === "team"
           ? "/subscription/team-checkout"
           : "/subscription/checkout";
-      redirect(`${checkoutPath}?plan=${encodeURIComponent(plan)}`);
+      redirect(`/${locale}${checkoutPath}?plan=${encodeURIComponent(plan)}`);
     }
   }
 
-  redirect("/dashboard");
+  redirect(`/${locale}/dashboard`);
 }
 
 export async function signUp(
@@ -187,7 +189,8 @@ export async function signUp(
   if (isTeam) {
     loginParams.set("context", "team");
   }
-  redirect(`/login?${loginParams.toString()}`);
+  const locale = await getLocale();
+  redirect(`/${locale}/login?${loginParams.toString()}`);
 }
 
 export async function resetPassword(
@@ -344,11 +347,12 @@ export async function exchangeOAuthCode(
 }
 
 export async function signOut() {
+  const locale = await getLocale();
   try {
     await authGateway.signOut();
   } catch {
     // Session already expired — clear cookies and redirect anyway
     await clearAuthCookies();
   }
-  redirect("/login");
+  redirect(`/${locale}/login`);
 }

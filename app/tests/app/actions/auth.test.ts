@@ -40,6 +40,12 @@ vi.mock("@/infrastructure/registry", () => ({
   planGateway: { listPlans: mockListPlans },
 }));
 
+// Default: tests run as if the request came from /en/* — actions read the
+// locale via getLocale() to build locale-prefixed redirects.
+vi.mock("@/lib/pathname", () => ({
+  getLocale: vi.fn().mockResolvedValue("en"),
+}));
+
 let signIn: typeof import("@/app/actions/auth").signIn;
 let signUp: typeof import("@/app/actions/auth").signUp;
 let signOut: typeof import("@/app/actions/auth").signOut;
@@ -109,7 +115,7 @@ describe("auth server actions", () => {
         }),
       });
       expect(mockSetAuthCookies).toHaveBeenCalledWith("tok_abc", "ref_abc");
-      expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
+      expect(mockRedirect).toHaveBeenCalledWith("/en/dashboard");
     });
 
     it("returns ApiError envelope with detail when login fails", async () => {
@@ -159,7 +165,7 @@ describe("auth server actions", () => {
         "NEXT_REDIRECT",
       );
       expect(mockRedirect).toHaveBeenCalledWith(
-        "/subscription/checkout?plan=price_pro_monthly",
+        "/en/subscription/checkout?plan=price_pro_monthly",
       );
     });
 
@@ -180,7 +186,31 @@ describe("auth server actions", () => {
       await expect(signIn(undefined, formData)).rejects.toThrow(
         "NEXT_REDIRECT",
       );
-      expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
+      expect(mockRedirect).toHaveBeenCalledWith("/en/dashboard");
+    });
+
+    it("redirects to /dashboard and logs when planGateway.listPlans throws during plan resolution", async () => {
+      // resolvePlanRouting swallows catalog outages so sign-in still succeeds
+      // as a personal flow, but logs the failure server-side.
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_abc",
+        refresh_token: "ref_abc",
+      });
+      mockListPlans.mockRejectedValue(new Error("catalog unavailable"));
+
+      const formData = new FormData();
+      formData.set("email", "user@example.com");
+      formData.set("password", "secret123");
+      formData.set("plan", "price_pro_monthly");
+
+      await expect(signIn(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(vi.mocked(console.error)).toHaveBeenCalledWith(
+        "resolvePlanRouting failed",
+        expect.any(Error),
+      );
+      expect(mockRedirect).toHaveBeenCalledWith("/en/dashboard");
     });
 
     it("redirects to team checkout when plan resolves to a team plan", async () => {
@@ -198,7 +228,7 @@ describe("auth server actions", () => {
         "NEXT_REDIRECT",
       );
       expect(mockRedirect).toHaveBeenCalledWith(
-        "/subscription/team-checkout?plan=price_team_pro",
+        "/en/subscription/team-checkout?plan=price_team_pro",
       );
     });
 
@@ -223,6 +253,27 @@ describe("auth server actions", () => {
         }),
       });
     });
+
+    it("uses the active locale from getLocale() in the post-login redirect", async () => {
+      // The redirect must honour the locale currently active in the request
+      // (read from the x-pathname header via getLocale). A French-locale user
+      // should land on /fr/dashboard, not the default /en/dashboard.
+      const { getLocale } = await import("@/lib/pathname");
+      vi.mocked(getLocale).mockResolvedValueOnce("fr");
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_abc",
+        refresh_token: "ref_abc",
+      });
+
+      const formData = new FormData();
+      formData.set("email", "user@example.com");
+      formData.set("password", "secret123");
+
+      await expect(signIn(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockRedirect).toHaveBeenCalledWith("/fr/dashboard");
+    });
   });
 
   describe("signUp", () => {
@@ -245,7 +296,7 @@ describe("auth server actions", () => {
           full_name: "Jane Doe",
         }),
       });
-      expect(mockRedirect).toHaveBeenCalledWith("/login?registered=true");
+      expect(mockRedirect).toHaveBeenCalledWith("/en/login?registered=true");
     });
 
     it("returns ApiError envelope with detail when registration fails", async () => {
@@ -298,7 +349,7 @@ describe("auth server actions", () => {
         "/auth/register/",
         expect.objectContaining({ method: "POST" }),
       );
-      expect(mockRedirect).toHaveBeenCalledWith("/login?registered=true");
+      expect(mockRedirect).toHaveBeenCalledWith("/en/login?registered=true");
     });
 
     it("uses /auth/register/ for team plans and remembers the team checkout context", async () => {
@@ -323,7 +374,7 @@ describe("auth server actions", () => {
       );
       expect(mockSetPendingPlan).toHaveBeenCalledWith("price_team_pro", true);
       expect(mockRedirect).toHaveBeenCalledWith(
-        "/login?registered=true&plan=price_team_pro&context=team",
+        "/en/login?registered=true&plan=price_team_pro&context=team",
       );
     });
 
@@ -647,7 +698,7 @@ describe("auth server actions", () => {
 
       await expect(signOut()).rejects.toThrow("NEXT_REDIRECT");
       expect(mockSignOut).toHaveBeenCalledOnce();
-      expect(mockRedirect).toHaveBeenCalledWith("/login");
+      expect(mockRedirect).toHaveBeenCalledWith("/en/login");
     });
 
     it("clears cookies and redirects when gateway throws", async () => {
@@ -655,7 +706,19 @@ describe("auth server actions", () => {
 
       await expect(signOut()).rejects.toThrow("NEXT_REDIRECT");
       expect(mockClearAuthCookies).toHaveBeenCalledOnce();
-      expect(mockRedirect).toHaveBeenCalledWith("/login");
+      expect(mockRedirect).toHaveBeenCalledWith("/en/login");
+    });
+
+    it("redirects to the active locale's /login when the request locale is not the default", async () => {
+      // getLocale() reads the locale from the x-pathname header forwarded by
+      // middleware. When the user is on /es/settings and signs out, the redirect
+      // must land on /es/login rather than the default /en/login.
+      const { getLocale } = await import("@/lib/pathname");
+      vi.mocked(getLocale).mockResolvedValueOnce("es");
+      mockSignOut.mockResolvedValue(undefined);
+
+      await expect(signOut()).rejects.toThrow("NEXT_REDIRECT");
+      expect(mockRedirect).toHaveBeenCalledWith("/es/login");
     });
   });
 
@@ -673,11 +736,11 @@ describe("auth server actions", () => {
       // redirect lands on /subscription/team-checkout.
       const result = await startOAuth(
         "github",
-        "/subscription/team-checkout?plan=price_team_pro",
+        "/en/subscription/team-checkout?plan=price_team_pro",
       );
 
       expect(mockSetOAuthFlowCookies).toHaveBeenCalledWith(
-        "/subscription/team-checkout?plan=price_team_pro",
+        "/en/subscription/team-checkout?plan=price_team_pro",
       );
       expect(new URL(result.redirectUrl).search).toBe("");
     });

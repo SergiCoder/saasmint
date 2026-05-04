@@ -21,11 +21,11 @@ export default async function OrgListPage({ params }: Props) {
   const [t, orgs] = await Promise.all([getTranslations("org"), getUserOrgs()]);
 
   if (orgs.length === 0) {
-    redirect("/subscription");
+    redirect(`/${locale}/subscription`);
   }
 
   if (orgs.length === 1 && orgs[0]) {
-    redirect(`/org/${orgs[0].slug}`);
+    redirect(`/${locale}/org/${orgs[0].slug}`);
   }
 
   return (

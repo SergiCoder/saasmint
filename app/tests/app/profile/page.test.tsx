@@ -1,7 +1,6 @@
 import { render } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { User } from "@/domain/models/User";
-import type { PhonePrefix } from "@/domain/models/PhonePrefix";
 import type { Subscription } from "@/domain/models/Subscription";
 import type { OrgMember } from "@/domain/models/OrgMember";
 import { translate } from "../../_helpers/translate";
@@ -14,10 +13,8 @@ vi.mock("next-intl/server", () => ({
 }));
 
 const mockGetProfile = vi.fn<() => Promise<User>>();
-const mockGetPhonePrefixes = vi.fn<() => Promise<PhonePrefix[]>>();
 vi.mock("@/infrastructure/registry", () => ({
   userGateway: { getProfile: () => mockGetProfile() },
-  referenceGateway: { getPhonePrefixes: () => mockGetPhonePrefixes() },
 }));
 
 const mockGetMyOrgRole = vi.fn<() => Promise<OrgMember["role"] | null>>();
@@ -148,7 +145,6 @@ describe("ProfilePage (currency-locked wiring)", () => {
     vi.clearAllMocks();
     mockGetCurrentUser.mockResolvedValue(makeUser());
     mockGetProfile.mockResolvedValue(makeUser());
-    mockGetPhonePrefixes.mockResolvedValue([]);
     mockGetMyOrgRole.mockResolvedValue(null);
     mockGetSubscriptions.mockResolvedValue([]);
   });

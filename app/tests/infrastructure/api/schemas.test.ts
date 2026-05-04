@@ -5,7 +5,6 @@ import {
   InvitationSchema,
   OrgMemberSchema,
   OrgSchema,
-  PhonePrefixSchema,
   PlanSchema,
   ProductSchema,
   SubscriptionListResponseSchema,
@@ -546,19 +545,3 @@ describe("SubscriptionListResponseSchema", () => {
   });
 });
 
-describe("PhonePrefixSchema", () => {
-  it("accepts a valid phone prefix", () => {
-    expect(PhonePrefixSchema.parse({ prefix: "+1", label: "US" })).toEqual({
-      prefix: "+1",
-      label: "US",
-    });
-  });
-
-  it("rejects when prefix is missing", () => {
-    expect(() => PhonePrefixSchema.parse({ label: "US" })).toThrow();
-  });
-
-  it("rejects when label is not a string", () => {
-    expect(() => PhonePrefixSchema.parse({ prefix: "+1", label: 1 })).toThrow();
-  });
-});

@@ -8,6 +8,7 @@ import {
   type ActionResult,
 } from "@/lib/actions/ActionResult";
 import { getString } from "@/lib/actions/parseFormData";
+import { getLocale } from "@/lib/pathname";
 import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
 
 // Backend creates the invitee as unverified and emails a verification link
@@ -38,7 +39,8 @@ export async function acceptInvitation(
     console.error("Failed to accept invitation", err);
     return toActionError(err);
   }
-  redirect("/login?invited=true");
+  const locale = await getLocale();
+  redirect(`/${locale}/login?invited=true`);
 }
 
 // Fire-and-forget: consumed via `<form action={fn}>` which requires
@@ -54,5 +56,6 @@ export async function declineInvitation(formData: FormData): Promise<void> {
     console.error("Failed to decline invitation", err);
     return;
   }
-  redirect("/dashboard");
+  const locale = await getLocale();
+  redirect(`/${locale}/dashboard`);
 }

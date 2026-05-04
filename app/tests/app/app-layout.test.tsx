@@ -61,15 +61,17 @@ vi.mock("@/presentation/components/templates/AppLayout", async () => {
     AppLayout: ({
       navLinks,
       userMenuItems,
+      user,
       children,
     }: {
       navLinks: { href: string; label: string }[];
       userMenuItems?: { href: string; label: string }[];
+      user: { fullName: string };
       children: React.ReactNode;
     }) =>
       React.createElement(
         "div",
-        { "data-testid": "app-layout" },
+        { "data-testid": "app-layout", "data-username": user.fullName },
         React.createElement(
           "ul",
           { "data-testid": "nav-links" },
@@ -279,6 +281,26 @@ describe("(app)/layout", () => {
 
     await renderLayout("en");
 
+    expect(redirectMock).not.toHaveBeenCalled();
+  });
+
+  it("falls back to user.email when fullName is null", async () => {
+    // The AppLayout receives `fullName: user.fullName ?? user.email`.
+    // When fullName is null, the email must be used instead so the nav bar
+    // always has a displayable name for the user avatar/menu.
+    mockGetCurrentUser.mockResolvedValue(
+      makeUser({
+        fullName: null as unknown as string,
+        email: "no-name@example.com",
+      }),
+    );
+
+    await renderLayout("en");
+
+    expect(screen.getByTestId("app-layout")).toHaveAttribute(
+      "data-username",
+      "no-name@example.com",
+    );
     expect(redirectMock).not.toHaveBeenCalled();
   });
 });

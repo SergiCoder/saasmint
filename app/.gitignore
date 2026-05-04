@@ -8,6 +8,9 @@ out/
 next-env.d.ts
 tsconfig.tsbuildinfo
 
+# test coverage
+coverage/
+
 # env
 .env
 .env.local

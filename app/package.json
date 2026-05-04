@@ -1,6 +1,6 @@
 {
   "name": "saasmint-app",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "private": true,
   "license": "MIT",
   "engines": {
@@ -17,7 +17,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "sync:phone-prefixes": "node --experimental-strip-types --no-warnings scripts/sync-phone-prefixes.ts"
   },
   "dependencies": {
     "@stripe/stripe-js": "^9.4.0",
@@ -27,7 +28,7 @@
     "next-intl": "^4.11.0",
     "react": "19.2.5",
     "react-dom": "19.2.5",
-    "zod": "^4.4.2"
+    "zod": "^4.4.3"
   },
   "//": "pnpm.overrides pins transitive deps above their CVE ranges: vite (8.0.0-8.0.4) and postcss (<8.5.10, pulled in by next@16.2.4). Drop entries once their parents bump.",
   "pnpm": {

@@ -262,6 +262,21 @@ describe("user server actions", () => {
 
       await expect(updatePreferredLocale("fr")).resolves.toBeUndefined();
     });
+
+    it("does not call the gateway for an invalid locale string", async () => {
+      // isLocale() rejects values not in the supported-locale allow-list.
+      // The action must not forward arbitrary client-supplied strings to the
+      // backend, so it returns early without touching the gateway.
+      await updatePreferredLocale("xx");
+
+      expect(mockUpdateProfile).not.toHaveBeenCalled();
+    });
+
+    it("does not call the gateway for an empty locale string", async () => {
+      await updatePreferredLocale("");
+
+      expect(mockUpdateProfile).not.toHaveBeenCalled();
+    });
   });
 
   describe("deleteAccount", () => {

@@ -158,7 +158,7 @@ describe("TeamCheckoutPage", () => {
 
   it("redirects to /subscription when the plan query param is missing", async () => {
     await expect(renderPage({})).rejects.toThrow(/NEXT_REDIRECT/);
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
     // Don't hit the API for plans until we know the plan id is present.
     expect(mockListPlans).not.toHaveBeenCalled();
   });
@@ -169,7 +169,7 @@ describe("TeamCheckoutPage", () => {
     await expect(renderPage({ plan: "price_does_not_exist" })).rejects.toThrow(
       /NEXT_REDIRECT/,
     );
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
   });
 
   it("redirects to /subscription when the matched plan has personal context", async () => {
@@ -187,7 +187,7 @@ describe("TeamCheckoutPage", () => {
     await expect(
       renderPage({ plan: "price_personal_pro_month" }),
     ).rejects.toThrow(/NEXT_REDIRECT/);
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
   });
 
   it("passes the user's preferred currency through to planGateway.listPlans", async () => {

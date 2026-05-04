@@ -1,6 +1,6 @@
 import { inter } from "@/lib/fonts";
-import { routing, RTL_LOCALES, isLocale } from "@/lib/i18n/routing";
-import { getPathname } from "@/lib/pathname";
+import { RTL_LOCALES } from "@/lib/i18n/routing";
+import { getLocale } from "@/lib/pathname";
 import "./globals.css";
 
 interface RootLayoutProps {
@@ -8,9 +8,7 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const pathname = await getPathname();
-  const segment = pathname.split("/")[1] ?? "";
-  const locale = isLocale(segment) ? segment : routing.defaultLocale;
+  const locale = await getLocale();
   const dir = RTL_LOCALES.has(locale) ? "rtl" : "ltr";
 
   return (

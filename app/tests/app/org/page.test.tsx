@@ -93,7 +93,7 @@ describe("OrgListPage", () => {
       OrgListPage({ params: Promise.resolve({ locale: "en" }) }),
     ).rejects.toThrow("NEXT_REDIRECT");
 
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
   });
 
   it("redirects to /org/{slug} when the user has exactly one org", async () => {
@@ -105,7 +105,7 @@ describe("OrgListPage", () => {
       OrgListPage({ params: Promise.resolve({ locale: "en" }) }),
     ).rejects.toThrow("NEXT_REDIRECT");
 
-    expect(mockRedirect).toHaveBeenCalledWith("/org/acme");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/org/acme");
   });
 
   it("renders the org list when the user belongs to multiple orgs", async () => {

@@ -116,7 +116,7 @@ describe("CheckoutPage", () => {
 
   it("redirects to /subscription when the plan query param is missing", async () => {
     await expect(renderPage({})).rejects.toThrow(/NEXT_REDIRECT/);
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
     // Don't hit the API for plans until we know the plan id is present.
     expect(mockListPlans).not.toHaveBeenCalled();
   });
@@ -125,7 +125,7 @@ describe("CheckoutPage", () => {
     await expect(renderPage({ plan: "price_does_not_exist" })).rejects.toThrow(
       /NEXT_REDIRECT/,
     );
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
   });
 
   it("redirects to /subscription when the matched plan has team context", async () => {
@@ -144,7 +144,7 @@ describe("CheckoutPage", () => {
     await expect(renderPage({ plan: "price_team_pro_month" })).rejects.toThrow(
       /NEXT_REDIRECT/,
     );
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
   });
 
   it("does NOT create a Stripe session on GET — no subscription gateway is imported", async () => {

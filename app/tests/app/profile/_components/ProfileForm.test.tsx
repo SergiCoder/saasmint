@@ -2,7 +2,6 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { User } from "@/domain/models/User";
-import type { PhonePrefix } from "@/domain/models/PhonePrefix";
 
 // --- Mocks ---------------------------------------------------------------
 
@@ -36,6 +35,15 @@ vi.mock("@/lib/i18n/locales", () => ({
   ],
 }));
 
+// Keep the phone-prefix list short and predictable — the component now
+// imports PHONE_PREFIXES directly from the domain data layer.
+vi.mock("@/domain/data/phonePrefixes", () => ({
+  PHONE_PREFIXES: [
+    { prefix: "+1", label: "US" },
+    { prefix: "+34", label: "ES" },
+  ],
+}));
+
 const { ProfileForm } =
   await import("@/app/[locale]/(app)/profile/_components/ProfileForm");
 
@@ -64,11 +72,6 @@ function makeUser(overrides: Partial<User> = {}): User {
   };
 }
 
-const phonePrefixes: PhonePrefix[] = [
-  { prefix: "+1", label: "US" },
-  { prefix: "+34", label: "ES" },
-];
-
 function renderForm(
   userOverrides: Partial<User> = {},
   extra: { currencyLocked?: boolean } = {},
@@ -76,7 +79,6 @@ function renderForm(
   return render(
     <ProfileForm
       user={makeUser(userOverrides)}
-      phonePrefixes={phonePrefixes}
       timezones={["UTC", "Europe/Madrid"]}
       currencyLocked={extra.currencyLocked}
     />,
@@ -197,12 +199,13 @@ describe("ProfileForm", () => {
     expect(values).toEqual(["UTC", "Europe/Madrid"]);
   });
 
-  it("includes the supplied phone prefixes in the phonePrefix select", () => {
+  it("renders PHONE_PREFIXES in the phonePrefix select", () => {
     renderForm();
 
     const select = screen.getByLabelText("phonePrefix") as HTMLSelectElement;
     const values = Array.from(select.options).map((o) => o.value);
-    // First entry is the empty/placeholder option; rest match the prop.
+    // First entry is the empty/placeholder option; rest come from PHONE_PREFIXES
+    // (mocked to ["+1", "+34"] above for a deterministic, short list).
     expect(values).toEqual(["", "+1", "+34"]);
   });
 

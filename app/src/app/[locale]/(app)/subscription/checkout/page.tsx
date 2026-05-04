@@ -27,14 +27,14 @@ export default async function CheckoutPage({
   ]);
 
   if (!planPriceId) {
-    redirect("/subscription");
+    redirect(`/${locale}/subscription`);
   }
 
   const plans = await planGateway.listPlans(user.preferredCurrency);
   const plan = plans.find((p) => p.price?.id === planPriceId);
 
   if (!plan || !plan.price || plan.context !== "personal") {
-    redirect("/subscription");
+    redirect(`/${locale}/subscription`);
   }
 
   const intervalLabel =

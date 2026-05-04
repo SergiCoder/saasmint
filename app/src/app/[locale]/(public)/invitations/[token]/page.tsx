@@ -57,7 +57,7 @@ export default async function InvitationPage({ params }: InvitationPageProps) {
     }),
   ]);
 
-  if (invitation === null) redirect("/dashboard");
+  if (invitation === null) redirect(`/${locale}/dashboard`);
 
   const showConcurrentBillingNotice =
     findPersonalSubscription(subscriptions) !== null;

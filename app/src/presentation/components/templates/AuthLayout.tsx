@@ -1,4 +1,5 @@
 import { Logo } from "../atoms/Logo";
+import { LocaleDropdown } from "../atoms/LocaleDropdown";
 
 export interface AuthLayoutProps {
   appName: string;
@@ -14,7 +15,10 @@ export function AuthLayout({
   children,
 }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 pt-12 pb-32 sm:px-6 lg:px-8">
+    <div className="relative flex min-h-screen items-center justify-center bg-gray-50 px-4 pt-12 pb-32 sm:px-6 lg:px-8">
+      <div className="absolute top-4 right-4">
+        <LocaleDropdown />
+      </div>
       <div className="w-full max-w-md">
         <div className="text-center">
           <Logo appName={appName} className="text-2xl" />
