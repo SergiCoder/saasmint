@@ -42,19 +42,9 @@ const SUPPORTED_CURRENCIES = [
 interface ProfileFormProps {
   user: User;
   timezones: readonly string[];
-  /**
-   * When `true`, the currency picker shows a locked-at-first-purchase note
-   * below the select. Stripe locks the customer's currency at first
-   * purchase, so changes to `preferredCurrency` no longer affect billing.
-   */
-  currencyLocked?: boolean;
 }
 
-export function ProfileForm({
-  user,
-  timezones,
-  currencyLocked = false,
-}: ProfileFormProps) {
+export function ProfileForm({ user, timezones }: ProfileFormProps) {
   const t = useTranslations("profile");
   const translateError = useActionErrorMessage();
   const [state, formAction, pending] = useActionState(updateProfile, null);
@@ -237,9 +227,6 @@ export function ProfileForm({
               </option>
             ))}
           </select>
-          {currencyLocked && (
-            <p className="text-xs text-gray-500">{t("currencyLockedNote")}</p>
-          )}
         </div>
         <div className="space-y-1">
           <Label htmlFor="timezone">{t("timezone")}</Label>

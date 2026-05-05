@@ -254,7 +254,6 @@
     "email": "E-Mail",
     "preferredLocale": "Sprache",
     "preferredCurrency": "Währung",
-    "currencyLockedNote": "Ihre Abrechnungswährung wird bei Ihrem ersten Abonnement festgelegt und kann anschließend nicht mehr geändert werden.",
     "phonePrefix": "Ländervorwahl",
     "phone": "Telefonnummer",
     "phoneNumberRequired": "Bitte geben Sie eine Telefonnummer ein",

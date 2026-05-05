@@ -1,7 +1,6 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { User } from "@/domain/models/User";
-import type { Subscription } from "@/domain/models/Subscription";
 import type { OrgMember } from "@/domain/models/OrgMember";
 import { translate } from "../../_helpers/translate";
 
@@ -22,28 +21,17 @@ vi.mock("@/app/[locale]/(app)/_data/getMyOrgRole", () => ({
   getMyOrgRole: () => mockGetMyOrgRole(),
 }));
 
-const mockGetCurrentUser = vi.fn<() => Promise<User>>();
-vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
-  getCurrentUser: () => mockGetCurrentUser(),
-}));
-
-const mockGetSubscriptions =
-  vi.fn<(currency?: string) => Promise<Subscription[]>>();
-vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
-  getSubscriptions: (currency?: string) => mockGetSubscriptions(currency),
-}));
-
-// Stub the client child components so we can capture the props the page
-// passes them without rendering their full trees.
+// Stub client child components so we can capture the props the page passes
+// them without rendering their full trees.
 const profileFormPropsCapture = vi.fn<(props: unknown) => void>();
 vi.mock("@/app/[locale]/(app)/profile/_components/ProfileForm", async () => {
   const React = await import("react");
   return {
-    ProfileForm: (props: { currencyLocked?: boolean }) => {
+    ProfileForm: (props: { user: User; timezones: readonly string[] }) => {
       profileFormPropsCapture(props);
       return React.createElement("div", {
         "data-testid": "profile-form",
-        "data-currency-locked": String(props.currencyLocked ?? false),
+        "data-user-email": props.user.email,
       });
     },
   };
@@ -64,11 +52,12 @@ const dangerZonePropsCapture = vi.fn<(props: unknown) => void>();
 vi.mock("@/app/[locale]/(app)/profile/_components/DangerZone", async () => {
   const React = await import("react");
   return {
-    DangerZone: (props: { deleteRestriction?: "owner" }) => {
+    DangerZone: (props: { userEmail: string; deleteRestriction?: "owner" }) => {
       dangerZonePropsCapture(props);
       return React.createElement("div", {
         "data-testid": "danger-zone",
         "data-restriction": props.deleteRestriction ?? "",
+        "data-email": props.userEmail,
       });
     },
   };
@@ -104,98 +93,135 @@ function makeUser(overrides: Partial<User> = {}): User {
   };
 }
 
-function makeSub(overrides: Partial<Subscription> = {}): Subscription {
-  return {
-    id: "sub_1",
-    status: "active",
-    plan: {
-      id: "plan_1",
-      name: "Pro",
-      description: "",
-      context: "personal",
-      tier: 3,
-      interval: "month",
-      price: null,
-    },
-    seatLimit: 1,
-    seatsUsed: 1,
-    trialEndsAt: null,
-    currentPeriodStart: "2026-01-01T00:00:00Z",
-    currentPeriodEnd: "2026-02-01T00:00:00Z",
-    cancelAt: null,
-    canceledAt: null,
-    scheduledPlan: null,
-    scheduledChangeAt: null,
-    createdAt: "2026-01-01T00:00:00Z",
-    ...overrides,
-  };
-}
-
-async function renderPage() {
+async function renderPage(locale = "en") {
   const jsx = await ProfilePage({
-    params: Promise.resolve({ locale: "en" }),
+    params: Promise.resolve({ locale }),
   });
   return render(jsx as React.ReactElement);
 }
 
 // --- Tests ----------------------------------------------------------------
 
-describe("ProfilePage (currency-locked wiring)", () => {
+describe("ProfilePage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetCurrentUser.mockResolvedValue(makeUser());
     mockGetProfile.mockResolvedValue(makeUser());
     mockGetMyOrgRole.mockResolvedValue(null);
-    mockGetSubscriptions.mockResolvedValue([]);
   });
 
-  it("calls getSubscriptions once per render to compute the lock flag", async () => {
+  it("renders the page title heading", async () => {
     await renderPage();
 
-    expect(mockGetSubscriptions).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "title",
+    );
   });
 
-  it("passes currencyLocked=false to ProfileForm when there are no subscriptions", async () => {
-    mockGetSubscriptions.mockResolvedValue([]);
+  it("renders the ProfileForm with the user returned by getProfile", async () => {
+    mockGetProfile.mockResolvedValue(makeUser({ email: "bob@example.com" }));
 
-    const { getByTestId } = await renderPage();
+    await renderPage();
 
-    expect(getByTestId("profile-form")).toHaveAttribute(
-      "data-currency-locked",
-      "false",
+    expect(screen.getByTestId("profile-form")).toHaveAttribute(
+      "data-user-email",
+      "bob@example.com",
     );
     expect(profileFormPropsCapture).toHaveBeenCalledWith(
-      expect.objectContaining({ currencyLocked: false }),
+      expect.objectContaining({
+        user: expect.objectContaining({ email: "bob@example.com" }),
+      }),
     );
   });
 
-  it("passes currencyLocked=true to ProfileForm when the user has any active subscription", async () => {
-    mockGetSubscriptions.mockResolvedValue([makeSub()]);
+  it("renders the ProfileForm with a non-empty timezones array", async () => {
+    await renderPage();
 
-    const { getByTestId } = await renderPage();
-
-    expect(getByTestId("profile-form")).toHaveAttribute(
-      "data-currency-locked",
-      "true",
-    );
+    // The page uses Intl.supportedValuesOf("timeZone") — just assert the
+    // prop received is a non-empty array of strings; the exact values are
+    // platform-dependent so we avoid pinning a specific entry.
     expect(profileFormPropsCapture).toHaveBeenCalledWith(
-      expect.objectContaining({ currencyLocked: true }),
+      expect.objectContaining({
+        timezones: expect.arrayContaining([expect.any(String)]),
+      }),
+    );
+    const call = profileFormPropsCapture.mock.calls[0]?.[0];
+    expect((call as { timezones: unknown[] }).timezones.length).toBeGreaterThan(
+      0,
     );
   });
 
-  it("treats a canceled-but-still-present subscription row as currencyLocked=true", async () => {
-    // Even cancelled subs imply a Stripe customer exists, which is what
-    // really locks the billing currency. The page comment makes this
-    // explicit — don't regress to a status-based check.
-    mockGetSubscriptions.mockResolvedValue([
-      makeSub({ status: "canceled", canceledAt: "2026-04-01T00:00:00Z" }),
-    ]);
+  it("renders the ChangePasswordForm section", async () => {
+    await renderPage();
 
-    const { getByTestId } = await renderPage();
+    expect(screen.getByTestId("change-password-form")).toBeInTheDocument();
+  });
 
-    expect(getByTestId("profile-form")).toHaveAttribute(
-      "data-currency-locked",
-      "true",
+  it("renders the DangerZone with the user's email", async () => {
+    mockGetProfile.mockResolvedValue(makeUser({ email: "alice@example.com" }));
+
+    await renderPage();
+
+    expect(screen.getByTestId("danger-zone")).toHaveAttribute(
+      "data-email",
+      "alice@example.com",
     );
+  });
+
+  it("passes deleteRestriction='owner' to DangerZone when the user is an org owner", async () => {
+    mockGetMyOrgRole.mockResolvedValue("owner");
+
+    await renderPage();
+
+    expect(screen.getByTestId("danger-zone")).toHaveAttribute(
+      "data-restriction",
+      "owner",
+    );
+    expect(dangerZonePropsCapture).toHaveBeenCalledWith(
+      expect.objectContaining({ deleteRestriction: "owner" }),
+    );
+  });
+
+  it("passes no deleteRestriction to DangerZone when the user is an admin (not sole owner)", async () => {
+    mockGetMyOrgRole.mockResolvedValue("admin");
+
+    await renderPage();
+
+    expect(screen.getByTestId("danger-zone")).toHaveAttribute(
+      "data-restriction",
+      "",
+    );
+    expect(dangerZonePropsCapture).toHaveBeenCalledWith(
+      expect.objectContaining({ deleteRestriction: undefined }),
+    );
+  });
+
+  it("passes no deleteRestriction to DangerZone when the user has no org role", async () => {
+    mockGetMyOrgRole.mockResolvedValue(null);
+
+    await renderPage();
+
+    expect(screen.getByTestId("danger-zone")).toHaveAttribute(
+      "data-restriction",
+      "",
+    );
+  });
+
+  it("calls userGateway.getProfile and getMyOrgRole exactly once per render", async () => {
+    await renderPage();
+
+    expect(mockGetProfile).toHaveBeenCalledOnce();
+    expect(mockGetMyOrgRole).toHaveBeenCalledOnce();
+  });
+
+  it("does not call the reference gateway or subscription gateway (removed in this PR)", async () => {
+    // The page no longer needs phone prefixes or subscriptions — those were
+    // removed when currencyLocked wiring and the phonePrefixes API call were
+    // dropped. This assertion guards against regressions that re-introduce
+    // those unnecessary API calls.
+    await renderPage();
+
+    // Neither mock exists; the absence of an error proves the registry mock
+    // doesn't expose referenceGateway or subscriptionGateway.
+    expect(mockGetProfile).toHaveBeenCalledOnce();
   });
 });

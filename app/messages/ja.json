@@ -254,7 +254,6 @@
     "email": "メール",
     "preferredLocale": "言語",
     "preferredCurrency": "通貨",
-    "currencyLockedNote": "請求通貨は最初のサブスクリプション時に設定され、後で変更することはできません。",
     "phonePrefix": "国番号",
     "phone": "電話番号",
     "phoneNumberRequired": "電話番号を入力してください",

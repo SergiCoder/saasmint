@@ -254,7 +254,6 @@
     "email": "E-posta",
     "preferredLocale": "Dil",
     "preferredCurrency": "Para birimi",
-    "currencyLockedNote": "Faturalandırma para biriminiz ilk aboneliğinizde belirlenir ve sonradan değiştirilemez.",
     "phonePrefix": "Ülke kodu",
     "phone": "Telefon",
     "phoneNumberRequired": "Lütfen bir telefon numarası girin",

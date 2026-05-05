@@ -254,7 +254,6 @@
     "email": "E-mail",
     "preferredLocale": "Sprog",
     "preferredCurrency": "Valuta",
-    "currencyLockedNote": "Din faktureringsvaluta fastsættes, når du tegner abonnement første gang, og kan ikke ændres bagefter.",
     "phonePrefix": "Landekode",
     "phone": "Telefon",
     "phoneNumberRequired": "Indtast et telefonnummer",

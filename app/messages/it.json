@@ -254,7 +254,6 @@
     "email": "Email",
     "preferredLocale": "Lingua",
     "preferredCurrency": "Valuta",
-    "currencyLockedNote": "La valuta di fatturazione viene impostata al primo abbonamento e non può essere modificata in seguito.",
     "phonePrefix": "Prefisso paese",
     "phone": "Telefono",
     "phoneNumberRequired": "Inserisci un numero di telefono",

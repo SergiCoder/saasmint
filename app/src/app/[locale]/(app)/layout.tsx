@@ -35,19 +35,20 @@ export default async function AppLayoutRoute({
     getUserOrgs(),
   ]);
 
+  const preferredLocale =
+    user.preferredLocale && isLocale(user.preferredLocale)
+      ? user.preferredLocale
+      : null;
+
   // If the user has a preferred locale that differs from the current URL,
   // redirect server-side before we render. Saves a client-side flash.
   // next-intl's middleware syncs the NEXT_LOCALE cookie on the redirect
   // target, so we don't need a separate cookie write here — and we cannot
   // do one anyway: cookies().set() throws outside Server Action / Route
   // Handler contexts (a layout render is neither).
-  if (
-    user.preferredLocale &&
-    user.preferredLocale !== locale &&
-    isLocale(user.preferredLocale)
-  ) {
+  if (preferredLocale && preferredLocale !== locale) {
     const pathname = await getPathnameWithoutLocale();
-    redirect({ href: pathname, locale: user.preferredLocale });
+    redirect({ href: pathname, locale: preferredLocale });
   }
 
   const hasOrg =

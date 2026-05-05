@@ -254,7 +254,6 @@
     "email": "邮箱",
     "preferredLocale": "语言",
     "preferredCurrency": "货币",
-    "currencyLockedNote": "您的结算货币在首次订阅时设定，之后无法更改。",
     "phonePrefix": "国家代码",
     "phone": "电话号码",
     "phoneNumberRequired": "请输入电话号码",

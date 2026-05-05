@@ -254,7 +254,6 @@
     "email": "E-mail",
     "preferredLocale": "Idioma",
     "preferredCurrency": "Moeda",
-    "currencyLockedNote": "A moeda de faturação é definida na primeira subscrição e não pode ser alterada posteriormente.",
     "phonePrefix": "Código do país",
     "phone": "Telefone",
     "phoneNumberRequired": "Introduza um número de telefone",

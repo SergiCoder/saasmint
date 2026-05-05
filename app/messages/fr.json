@@ -254,7 +254,6 @@
     "email": "E-mail",
     "preferredLocale": "Langue",
     "preferredCurrency": "Devise",
-    "currencyLockedNote": "Votre devise de facturation est définie lors de votre premier abonnement et ne peut pas être modifiée par la suite.",
     "phonePrefix": "Indicatif pays",
     "phone": "Téléphone",
     "phoneNumberRequired": "Veuillez saisir un numéro de téléphone",

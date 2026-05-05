@@ -4,427 +4,427 @@ import type { PhonePrefix } from "@/domain/models/PhonePrefix";
 
 export const PHONE_PREFIXES: readonly PhonePrefix[] = [
   {
-    "prefix": "+1",
-    "label": "🇺🇸 US/CA"
+    prefix: "+1",
+    label: "🇺🇸 US/CA",
   },
   {
-    "prefix": "+7",
-    "label": "🇷🇺 RU/KZ"
+    prefix: "+7",
+    label: "🇷🇺 RU/KZ",
   },
   {
-    "prefix": "+20",
-    "label": "🇪🇬 EG"
+    prefix: "+20",
+    label: "🇪🇬 EG",
   },
   {
-    "prefix": "+27",
-    "label": "🇿🇦 ZA"
+    prefix: "+27",
+    label: "🇿🇦 ZA",
   },
   {
-    "prefix": "+30",
-    "label": "🇬🇷 GR"
+    prefix: "+30",
+    label: "🇬🇷 GR",
   },
   {
-    "prefix": "+31",
-    "label": "🇳🇱 NL"
+    prefix: "+31",
+    label: "🇳🇱 NL",
   },
   {
-    "prefix": "+32",
-    "label": "🇧🇪 BE"
+    prefix: "+32",
+    label: "🇧🇪 BE",
   },
   {
-    "prefix": "+33",
-    "label": "🇫🇷 FR"
+    prefix: "+33",
+    label: "🇫🇷 FR",
   },
   {
-    "prefix": "+34",
-    "label": "🇪🇸 ES"
+    prefix: "+34",
+    label: "🇪🇸 ES",
   },
   {
-    "prefix": "+36",
-    "label": "🇭🇺 HU"
+    prefix: "+36",
+    label: "🇭🇺 HU",
   },
   {
-    "prefix": "+39",
-    "label": "🇮🇹 IT"
+    prefix: "+39",
+    label: "🇮🇹 IT",
   },
   {
-    "prefix": "+40",
-    "label": "🇷🇴 RO"
+    prefix: "+40",
+    label: "🇷🇴 RO",
   },
   {
-    "prefix": "+41",
-    "label": "🇨🇭 CH"
+    prefix: "+41",
+    label: "🇨🇭 CH",
   },
   {
-    "prefix": "+43",
-    "label": "🇦🇹 AT"
+    prefix: "+43",
+    label: "🇦🇹 AT",
   },
   {
-    "prefix": "+44",
-    "label": "🇬🇧 GB"
+    prefix: "+44",
+    label: "🇬🇧 GB",
   },
   {
-    "prefix": "+45",
-    "label": "🇩🇰 DK"
+    prefix: "+45",
+    label: "🇩🇰 DK",
   },
   {
-    "prefix": "+46",
-    "label": "🇸🇪 SE"
+    prefix: "+46",
+    label: "🇸🇪 SE",
   },
   {
-    "prefix": "+47",
-    "label": "🇳🇴 NO"
+    prefix: "+47",
+    label: "🇳🇴 NO",
   },
   {
-    "prefix": "+48",
-    "label": "🇵🇱 PL"
+    prefix: "+48",
+    label: "🇵🇱 PL",
   },
   {
-    "prefix": "+49",
-    "label": "🇩🇪 DE"
+    prefix: "+49",
+    label: "🇩🇪 DE",
   },
   {
-    "prefix": "+51",
-    "label": "🇵🇪 PE"
+    prefix: "+51",
+    label: "🇵🇪 PE",
   },
   {
-    "prefix": "+52",
-    "label": "🇲🇽 MX"
+    prefix: "+52",
+    label: "🇲🇽 MX",
   },
   {
-    "prefix": "+53",
-    "label": "🇨🇺 CU"
+    prefix: "+53",
+    label: "🇨🇺 CU",
   },
   {
-    "prefix": "+54",
-    "label": "🇦🇷 AR"
+    prefix: "+54",
+    label: "🇦🇷 AR",
   },
   {
-    "prefix": "+55",
-    "label": "🇧🇷 BR"
+    prefix: "+55",
+    label: "🇧🇷 BR",
   },
   {
-    "prefix": "+56",
-    "label": "🇨🇱 CL"
+    prefix: "+56",
+    label: "🇨🇱 CL",
   },
   {
-    "prefix": "+57",
-    "label": "🇨🇴 CO"
+    prefix: "+57",
+    label: "🇨🇴 CO",
   },
   {
-    "prefix": "+58",
-    "label": "🇻🇪 VE"
+    prefix: "+58",
+    label: "🇻🇪 VE",
   },
   {
-    "prefix": "+60",
-    "label": "🇲🇾 MY"
+    prefix: "+60",
+    label: "🇲🇾 MY",
   },
   {
-    "prefix": "+61",
-    "label": "🇦🇺 AU"
+    prefix: "+61",
+    label: "🇦🇺 AU",
   },
   {
-    "prefix": "+62",
-    "label": "🇮🇩 ID"
+    prefix: "+62",
+    label: "🇮🇩 ID",
   },
   {
-    "prefix": "+63",
-    "label": "🇵🇭 PH"
+    prefix: "+63",
+    label: "🇵🇭 PH",
   },
   {
-    "prefix": "+64",
-    "label": "🇳🇿 NZ"
+    prefix: "+64",
+    label: "🇳🇿 NZ",
   },
   {
-    "prefix": "+65",
-    "label": "🇸🇬 SG"
+    prefix: "+65",
+    label: "🇸🇬 SG",
   },
   {
-    "prefix": "+66",
-    "label": "🇹🇭 TH"
+    prefix: "+66",
+    label: "🇹🇭 TH",
   },
   {
-    "prefix": "+81",
-    "label": "🇯🇵 JP"
+    prefix: "+81",
+    label: "🇯🇵 JP",
   },
   {
-    "prefix": "+82",
-    "label": "🇰🇷 KR"
+    prefix: "+82",
+    label: "🇰🇷 KR",
   },
   {
-    "prefix": "+84",
-    "label": "🇻🇳 VN"
+    prefix: "+84",
+    label: "🇻🇳 VN",
   },
   {
-    "prefix": "+86",
-    "label": "🇨🇳 CN"
+    prefix: "+86",
+    label: "🇨🇳 CN",
   },
   {
-    "prefix": "+90",
-    "label": "🇹🇷 TR"
+    prefix: "+90",
+    label: "🇹🇷 TR",
   },
   {
-    "prefix": "+91",
-    "label": "🇮🇳 IN"
+    prefix: "+91",
+    label: "🇮🇳 IN",
   },
   {
-    "prefix": "+92",
-    "label": "🇵🇰 PK"
+    prefix: "+92",
+    label: "🇵🇰 PK",
   },
   {
-    "prefix": "+93",
-    "label": "🇦🇫 AF"
+    prefix: "+93",
+    label: "🇦🇫 AF",
   },
   {
-    "prefix": "+94",
-    "label": "🇱🇰 LK"
+    prefix: "+94",
+    label: "🇱🇰 LK",
   },
   {
-    "prefix": "+95",
-    "label": "🇲🇲 MM"
+    prefix: "+95",
+    label: "🇲🇲 MM",
   },
   {
-    "prefix": "+212",
-    "label": "🇲🇦 MA"
+    prefix: "+212",
+    label: "🇲🇦 MA",
   },
   {
-    "prefix": "+213",
-    "label": "🇩🇿 DZ"
+    prefix: "+213",
+    label: "🇩🇿 DZ",
   },
   {
-    "prefix": "+216",
-    "label": "🇹🇳 TN"
+    prefix: "+216",
+    label: "🇹🇳 TN",
   },
   {
-    "prefix": "+218",
-    "label": "🇱🇾 LY"
+    prefix: "+218",
+    label: "🇱🇾 LY",
   },
   {
-    "prefix": "+220",
-    "label": "🇬🇲 GM"
+    prefix: "+220",
+    label: "🇬🇲 GM",
   },
   {
-    "prefix": "+221",
-    "label": "🇸🇳 SN"
+    prefix: "+221",
+    label: "🇸🇳 SN",
   },
   {
-    "prefix": "+234",
-    "label": "🇳🇬 NG"
+    prefix: "+234",
+    label: "🇳🇬 NG",
   },
   {
-    "prefix": "+249",
-    "label": "🇸🇩 SD"
+    prefix: "+249",
+    label: "🇸🇩 SD",
   },
   {
-    "prefix": "+251",
-    "label": "🇪🇹 ET"
+    prefix: "+251",
+    label: "🇪🇹 ET",
   },
   {
-    "prefix": "+254",
-    "label": "🇰🇪 KE"
+    prefix: "+254",
+    label: "🇰🇪 KE",
   },
   {
-    "prefix": "+255",
-    "label": "🇹🇿 TZ"
+    prefix: "+255",
+    label: "🇹🇿 TZ",
   },
   {
-    "prefix": "+256",
-    "label": "🇺🇬 UG"
+    prefix: "+256",
+    label: "🇺🇬 UG",
   },
   {
-    "prefix": "+260",
-    "label": "🇿🇲 ZM"
+    prefix: "+260",
+    label: "🇿🇲 ZM",
   },
   {
-    "prefix": "+263",
-    "label": "🇿🇼 ZW"
+    prefix: "+263",
+    label: "🇿🇼 ZW",
   },
   {
-    "prefix": "+351",
-    "label": "🇵🇹 PT"
+    prefix: "+351",
+    label: "🇵🇹 PT",
   },
   {
-    "prefix": "+352",
-    "label": "🇱🇺 LU"
+    prefix: "+352",
+    label: "🇱🇺 LU",
   },
   {
-    "prefix": "+353",
-    "label": "🇮🇪 IE"
+    prefix: "+353",
+    label: "🇮🇪 IE",
   },
   {
-    "prefix": "+354",
-    "label": "🇮🇸 IS"
+    prefix: "+354",
+    label: "🇮🇸 IS",
   },
   {
-    "prefix": "+355",
-    "label": "🇦🇱 AL"
+    prefix: "+355",
+    label: "🇦🇱 AL",
   },
   {
-    "prefix": "+356",
-    "label": "🇲🇹 MT"
+    prefix: "+356",
+    label: "🇲🇹 MT",
   },
   {
-    "prefix": "+358",
-    "label": "🇫🇮 FI"
+    prefix: "+358",
+    label: "🇫🇮 FI",
   },
   {
-    "prefix": "+359",
-    "label": "🇧🇬 BG"
+    prefix: "+359",
+    label: "🇧🇬 BG",
   },
   {
-    "prefix": "+370",
-    "label": "🇱🇹 LT"
+    prefix: "+370",
+    label: "🇱🇹 LT",
   },
   {
-    "prefix": "+371",
-    "label": "🇱🇻 LV"
+    prefix: "+371",
+    label: "🇱🇻 LV",
   },
   {
-    "prefix": "+372",
-    "label": "🇪🇪 EE"
+    prefix: "+372",
+    label: "🇪🇪 EE",
   },
   {
-    "prefix": "+380",
-    "label": "🇺🇦 UA"
+    prefix: "+380",
+    label: "🇺🇦 UA",
   },
   {
-    "prefix": "+381",
-    "label": "🇷🇸 RS"
+    prefix: "+381",
+    label: "🇷🇸 RS",
   },
   {
-    "prefix": "+385",
-    "label": "🇭🇷 HR"
+    prefix: "+385",
+    label: "🇭🇷 HR",
   },
   {
-    "prefix": "+386",
-    "label": "🇸🇮 SI"
+    prefix: "+386",
+    label: "🇸🇮 SI",
   },
   {
-    "prefix": "+387",
-    "label": "🇧🇦 BA"
+    prefix: "+387",
+    label: "🇧🇦 BA",
   },
   {
-    "prefix": "+420",
-    "label": "🇨🇿 CZ"
+    prefix: "+420",
+    label: "🇨🇿 CZ",
   },
   {
-    "prefix": "+421",
-    "label": "🇸🇰 SK"
+    prefix: "+421",
+    label: "🇸🇰 SK",
   },
   {
-    "prefix": "+852",
-    "label": "🇭🇰 HK"
+    prefix: "+852",
+    label: "🇭🇰 HK",
   },
   {
-    "prefix": "+853",
-    "label": "🇲🇴 MO"
+    prefix: "+853",
+    label: "🇲🇴 MO",
   },
   {
-    "prefix": "+855",
-    "label": "🇰🇭 KH"
+    prefix: "+855",
+    label: "🇰🇭 KH",
   },
   {
-    "prefix": "+856",
-    "label": "🇱🇦 LA"
+    prefix: "+856",
+    label: "🇱🇦 LA",
   },
   {
-    "prefix": "+880",
-    "label": "🇧🇩 BD"
+    prefix: "+880",
+    label: "🇧🇩 BD",
   },
   {
-    "prefix": "+886",
-    "label": "🇹🇼 TW"
+    prefix: "+886",
+    label: "🇹🇼 TW",
   },
   {
-    "prefix": "+960",
-    "label": "🇲🇻 MV"
+    prefix: "+960",
+    label: "🇲🇻 MV",
   },
   {
-    "prefix": "+961",
-    "label": "🇱🇧 LB"
+    prefix: "+961",
+    label: "🇱🇧 LB",
   },
   {
-    "prefix": "+962",
-    "label": "🇯🇴 JO"
+    prefix: "+962",
+    label: "🇯🇴 JO",
   },
   {
-    "prefix": "+963",
-    "label": "🇸🇾 SY"
+    prefix: "+963",
+    label: "🇸🇾 SY",
   },
   {
-    "prefix": "+964",
-    "label": "🇮🇶 IQ"
+    prefix: "+964",
+    label: "🇮🇶 IQ",
   },
   {
-    "prefix": "+965",
-    "label": "🇰🇼 KW"
+    prefix: "+965",
+    label: "🇰🇼 KW",
   },
   {
-    "prefix": "+966",
-    "label": "🇸🇦 SA"
+    prefix: "+966",
+    label: "🇸🇦 SA",
   },
   {
-    "prefix": "+967",
-    "label": "🇾🇪 YE"
+    prefix: "+967",
+    label: "🇾🇪 YE",
   },
   {
-    "prefix": "+968",
-    "label": "🇴🇲 OM"
+    prefix: "+968",
+    label: "🇴🇲 OM",
   },
   {
-    "prefix": "+970",
-    "label": "🇵🇸 PS"
+    prefix: "+970",
+    label: "🇵🇸 PS",
   },
   {
-    "prefix": "+971",
-    "label": "🇦🇪 AE"
+    prefix: "+971",
+    label: "🇦🇪 AE",
   },
   {
-    "prefix": "+972",
-    "label": "🇮🇱 IL"
+    prefix: "+972",
+    label: "🇮🇱 IL",
   },
   {
-    "prefix": "+973",
-    "label": "🇧🇭 BH"
+    prefix: "+973",
+    label: "🇧🇭 BH",
   },
   {
-    "prefix": "+974",
-    "label": "🇶🇦 QA"
+    prefix: "+974",
+    label: "🇶🇦 QA",
   },
   {
-    "prefix": "+975",
-    "label": "🇧🇹 BT"
+    prefix: "+975",
+    label: "🇧🇹 BT",
   },
   {
-    "prefix": "+976",
-    "label": "🇲🇳 MN"
+    prefix: "+976",
+    label: "🇲🇳 MN",
   },
   {
-    "prefix": "+977",
-    "label": "🇳🇵 NP"
+    prefix: "+977",
+    label: "🇳🇵 NP",
   },
   {
-    "prefix": "+992",
-    "label": "🇹🇯 TJ"
+    prefix: "+992",
+    label: "🇹🇯 TJ",
   },
   {
-    "prefix": "+993",
-    "label": "🇹🇲 TM"
+    prefix: "+993",
+    label: "🇹🇲 TM",
   },
   {
-    "prefix": "+994",
-    "label": "🇦🇿 AZ"
+    prefix: "+994",
+    label: "🇦🇿 AZ",
   },
   {
-    "prefix": "+995",
-    "label": "🇬🇪 GE"
+    prefix: "+995",
+    label: "🇬🇪 GE",
   },
   {
-    "prefix": "+996",
-    "label": "🇰🇬 KG"
+    prefix: "+996",
+    label: "🇰🇬 KG",
   },
   {
-    "prefix": "+998",
-    "label": "🇺🇿 UZ"
-  }
+    prefix: "+998",
+    label: "🇺🇿 UZ",
+  },
 ];

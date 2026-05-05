@@ -544,4 +544,3 @@ describe("SubscriptionListResponseSchema", () => {
     ).toThrow();
   });
 });
-

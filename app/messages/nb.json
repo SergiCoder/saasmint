@@ -254,7 +254,6 @@
     "email": "E-post",
     "preferredLocale": "Språk",
     "preferredCurrency": "Valuta",
-    "currencyLockedNote": "Faktureringsvalutaen din settes når du abonnerer første gang og kan ikke endres senere.",
     "phonePrefix": "Landskode",
     "phone": "Telefon",
     "phoneNumberRequired": "Skriv inn et telefonnummer",

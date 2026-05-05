@@ -254,7 +254,6 @@
     "email": "Email",
     "preferredLocale": "Bahasa",
     "preferredCurrency": "Mata uang",
-    "currencyLockedNote": "Mata uang penagihan Anda ditetapkan saat pertama kali berlangganan dan tidak dapat diubah setelahnya.",
     "phonePrefix": "Kode negara",
     "phone": "Telepon",
     "phoneNumberRequired": "Masukkan nomor telepon",
