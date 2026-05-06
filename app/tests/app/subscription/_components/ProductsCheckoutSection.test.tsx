@@ -110,4 +110,30 @@ describe("ProductsCheckoutSection", () => {
 
     expect(container).toBeEmptyDOMElement();
   });
+
+  it("forwards priceSubLabels to ProductsGrid so the local-currency sub-label appears", () => {
+    // When the backend returns a product priced in USD but the user's
+    // preferred currency is CHF, the page builds a priceSubLabels map via
+    // buildProductPriceSubLabels and passes it here. This section must
+    // forward it to ProductsGrid without losing the entry.
+    render(
+      <ProductsCheckoutSection
+        {...baseProps}
+        showPicker={false}
+        priceSubLabels={{ prod1: "≈ CHF 18.45 — billed in USD" }}
+      />,
+    );
+
+    expect(screen.getByText("≈ CHF 18.45 — billed in USD")).toBeInTheDocument();
+  });
+
+  it("does not render a sub-label when priceSubLabels is omitted", () => {
+    // Omitting the prop (null localCurrency case) must not produce any
+    // disclosure text beneath the price.
+    render(<ProductsCheckoutSection {...baseProps} showPicker={false} />);
+
+    // The only price-related text should be the formatted amount itself.
+    // No "billed in" disclosure should appear.
+    expect(screen.queryByText(/billed in/i)).not.toBeInTheDocument();
+  });
 });

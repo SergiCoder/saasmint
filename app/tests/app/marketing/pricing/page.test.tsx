@@ -31,11 +31,13 @@ vi.mock("@/app/[locale]/(marketing)/_data/getOptionalUser", () => ({
 
 const mockListPlans = vi.fn<(currency?: string) => Promise<Plan[]>>();
 const mockListSubscriptions = vi.fn(() => Promise.resolve([] as unknown[]));
-const mockListProducts = vi.fn(() => Promise.resolve([]));
+const mockListProducts = vi.fn<(currency?: string) => Promise<unknown[]>>(() =>
+  Promise.resolve([]),
+);
 vi.mock("@/infrastructure/registry", () => ({
   planGateway: { listPlans: (c?: string) => mockListPlans(c) },
   subscriptionGateway: { listSubscriptions: () => mockListSubscriptions() },
-  productGateway: { listProducts: () => mockListProducts() },
+  productGateway: { listProducts: (c?: string) => mockListProducts(c) },
 }));
 
 // Stub heavy presentational organisms — we want to inspect the CTAs the page
@@ -71,18 +73,23 @@ vi.mock("@/presentation/components/organisms/PricingSection", () => ({
 
 // `ProductsCheckoutSection` replaced the bare `ProductsGrid` here so the
 // pricing page picks up the rule-5b context picker (matches /subscription).
-// The mock surfaces the picker-gate props for assertions.
+// The mock surfaces the picker-gate props for assertions, including the
+// dual-currency priceSubLabels map emitted by buildProductPriceSubLabels.
 vi.mock(
   "@/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection",
   () => ({
     ProductsCheckoutSection: (props: {
       showPicker: boolean;
       teamOptionLabel: string;
+      priceSubLabels?: Record<string, string>;
     }) =>
       React.createElement("div", {
         "data-testid": "products-checkout-section",
         "data-show-picker": props.showPicker ? "true" : "false",
         "data-team-option-label": props.teamOptionLabel,
+        "data-has-price-sub-labels": props.priceSubLabels
+          ? Object.keys(props.priceSubLabels).join(",")
+          : "",
       }),
   }),
 );
@@ -658,5 +665,83 @@ describe("Marketing PricingPage — upgrade CTA routing", () => {
     expect(
       screen.getByTestId("group-personal-3").querySelector("a"),
     ).not.toBeNull();
+  });
+});
+
+describe("Marketing PricingPage — product priceSubLabels forwarding", () => {
+  // When the backend returns a product priced in a currency different from
+  // the user's preferred one, the page must call buildProductPriceSubLabels
+  // and forward its output to ProductsCheckoutSection so the dual-currency
+  // disclosure appears on the product card.
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockListPlans.mockResolvedValue([
+      makePaidPlan({ id: "basic-m", tier: 2, interval: "month" }),
+    ]);
+  });
+
+  it("forwards a non-empty priceSubLabels map when a product has a different local currency", async () => {
+    const user = makeUser();
+    mockGetOptionalUser.mockResolvedValue(user);
+    mockListSubscriptions.mockResolvedValue([]);
+    mockListProducts.mockResolvedValueOnce([
+      {
+        id: "prod_chf",
+        name: "200 Credits",
+        type: "one_time",
+        credits: 200,
+        price: {
+          id: "pp_chf",
+          amount: 1999,
+          displayAmount: 19.99,
+          currency: "usd",
+          // localCurrency differs from billed currency → sub-label emitted
+          localDisplayAmount: 18.45,
+          localCurrency: "chf",
+        },
+      },
+    ]);
+
+    await renderPage();
+
+    const section = screen.getByTestId("products-checkout-section");
+    // The mock captures priceSubLabels keys as a comma-joined string.
+    expect(section.getAttribute("data-has-price-sub-labels")).toBe("prod_chf");
+  });
+
+  it("forwards an empty priceSubLabels map when product currencies match", async () => {
+    const user = makeUser();
+    mockGetOptionalUser.mockResolvedValue(user);
+    mockListSubscriptions.mockResolvedValue([]);
+    mockListProducts.mockResolvedValueOnce([
+      {
+        id: "prod_usd",
+        name: "100 Credits",
+        type: "one_time",
+        credits: 100,
+        price: {
+          id: "pp_usd",
+          amount: 999,
+          displayAmount: 9.99,
+          currency: "usd",
+          localDisplayAmount: 9.99,
+          localCurrency: "usd", // same as billed → no sub-label
+        },
+      },
+    ]);
+
+    await renderPage();
+
+    const section = screen.getByTestId("products-checkout-section");
+    expect(section.getAttribute("data-has-price-sub-labels")).toBe("");
+  });
+
+  it("does not call productGateway for anonymous visitors", async () => {
+    mockGetOptionalUser.mockResolvedValue(null);
+
+    await renderPage();
+
+    expect(mockListProducts).not.toHaveBeenCalled();
   });
 });

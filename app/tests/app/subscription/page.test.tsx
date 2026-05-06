@@ -75,9 +75,12 @@ vi.mock("@/app/[locale]/(app)/subscription/_data/canManageBilling", () => ({
 const mockListPlans = vi.fn<(currency?: string) => Promise<unknown[]>>(() =>
   Promise.resolve([]),
 );
+const mockListProducts = vi.fn<(currency?: string) => Promise<unknown[]>>(() =>
+  Promise.resolve([]),
+);
 vi.mock("@/infrastructure/registry", () => ({
   planGateway: { listPlans: (c?: string) => mockListPlans(c) },
-  productGateway: { listProducts: () => Promise.resolve([]) },
+  productGateway: { listProducts: (c?: string) => mockListProducts(c) },
 }));
 
 // Stub presentation organisms/molecules that would otherwise pull in a full
@@ -131,6 +134,7 @@ vi.mock(
       ProductsCheckoutSection: (props: {
         showPicker: boolean;
         teamOptionLabel: string;
+        priceSubLabels?: Record<string, string>;
       }) =>
         React.createElement(
           "div",
@@ -138,6 +142,9 @@ vi.mock(
             "data-testid": "products-checkout-section",
             "data-show-picker": props.showPicker ? "true" : "false",
             "data-team-option-label": props.teamOptionLabel,
+            "data-has-price-sub-labels": props.priceSubLabels
+              ? Object.keys(props.priceSubLabels).join(",")
+              : "",
           },
           "products-checkout-section",
         ),
@@ -791,6 +798,65 @@ describe("BillingPage (subscription/page)", () => {
 
       const teamProSlot = screen.getByTestId("plan-team-3-monthly");
       expect(teamProSlot.querySelector("[data-cta]")).toBeNull();
+    });
+  });
+
+  describe("product priceSubLabels forwarding", () => {
+    // When the backend returns a product whose billed currency differs from
+    // the user's preferred locale currency, buildProductPriceSubLabels emits
+    // a disclosure string and the page must forward it to
+    // ProductsCheckoutSection so the dual-currency label reaches the card.
+
+    it("forwards a non-empty priceSubLabels map when a product has a different local currency", async () => {
+      mockListProducts.mockResolvedValueOnce([
+        {
+          id: "prod_chf",
+          name: "200 Credits",
+          type: "one_time",
+          credits: 200,
+          price: {
+            id: "pp_chf",
+            amount: 1999,
+            displayAmount: 19.99,
+            currency: "usd",
+            // localCurrency differs from billed currency → sub-label emitted
+            localDisplayAmount: 18.45,
+            localCurrency: "chf",
+          },
+        },
+      ]);
+
+      await renderPage({});
+
+      const section = screen.getByTestId("products-checkout-section");
+      // The mock captures priceSubLabels keys as a comma-joined string.
+      expect(section.getAttribute("data-has-price-sub-labels")).toBe(
+        "prod_chf",
+      );
+    });
+
+    it("forwards an empty priceSubLabels map when products have matching currencies", async () => {
+      mockListProducts.mockResolvedValueOnce([
+        {
+          id: "prod_usd",
+          name: "100 Credits",
+          type: "one_time",
+          credits: 100,
+          price: {
+            id: "pp_usd",
+            amount: 999,
+            displayAmount: 9.99,
+            currency: "usd",
+            localDisplayAmount: 9.99,
+            localCurrency: "usd", // same as billed → no sub-label
+          },
+        },
+      ]);
+
+      await renderPage({});
+
+      const section = screen.getByTestId("products-checkout-section");
+      expect(section.getAttribute("data-has-price-sub-labels")).toBe("");
     });
   });
 });
