@@ -228,6 +228,8 @@
     "endsOn": "ينتهي في",
     "billedMonthly": "فوترة شهرية",
     "billedYearly": "فوترة سنوية",
+    "billedInLocalMonthly": "≈ {amount} — تُحصَّل بعملة {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/شهر، تُحصَّل سنويًا بعملة {currency}",
     "seat": "مقعد",
     "seats": "مقاعد",
     "products": "حزم الرصيد",

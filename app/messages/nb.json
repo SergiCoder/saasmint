@@ -228,6 +228,8 @@
     "endsOn": "Avsluttes den",
     "billedMonthly": "Fakturert månedlig",
     "billedYearly": "Fakturert årlig",
+    "billedInLocalMonthly": "≈ {amount} — faktureres i {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/måned, faktureres årlig i {currency}",
     "seat": "plass",
     "seats": "plasser",
     "products": "Kredittpakker",

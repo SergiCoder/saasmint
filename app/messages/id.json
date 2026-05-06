@@ -228,6 +228,8 @@
     "endsOn": "Berakhir pada",
     "billedMonthly": "Ditagih bulanan",
     "billedYearly": "Ditagih tahunan",
+    "billedInLocalMonthly": "≈ {amount} — ditagih dalam {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/bulan, ditagih tahunan dalam {currency}",
     "seat": "kursi",
     "seats": "kursi",
     "products": "Paket kredit",

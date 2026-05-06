@@ -44,6 +44,38 @@ export function buildProductTranslations(
   );
 }
 
+/**
+ * Build a `productId → priceSubLabel` map for the dual-currency disclosure
+ * shown beneath one-time product prices. Only emits an entry when the
+ * backend returned a non-null `localCurrency` that differs from the billed
+ * currency; products without a price or with matching currencies are
+ * omitted.
+ */
+export function buildProductPriceSubLabels(
+  products: Product[],
+  locale: string,
+  format: (params: { localAmount: string; billedCurrency: string }) => string,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const product of products) {
+    const price = product.price;
+    if (!price) continue;
+    const { localDisplayAmount, localCurrency, currency } = price;
+    if (
+      localDisplayAmount === null ||
+      localCurrency === null ||
+      localCurrency.toLowerCase() === currency.toLowerCase()
+    ) {
+      continue;
+    }
+    out[product.id] = format({
+      localAmount: formatCurrency(localDisplayAmount, localCurrency, locale),
+      billedCurrency: currency.toUpperCase(),
+    });
+  }
+  return out;
+}
+
 export interface PlanCardLabels {
   upgrade: string;
   /** Singular noun for one seat (e.g. "seat"). Used in team interval labels. */
@@ -116,6 +148,20 @@ export interface BuildPlanCardGroupsOptions {
     currency: string;
     ctaLabel: string;
   }) => React.ReactNode;
+  /**
+   * Composes the price sub-label when the user's preferred currency differs
+   * from the billed one. Receives pre-formatted amounts so callers only need
+   * to weave them into a localised template (`billedInLocalMonthly` /
+   * `billedInLocalYearly`). When omitted, the helper falls back to the
+   * monolingual yearly sub-label and renders nothing for monthly.
+   */
+  formatPriceSubLabelLocal?: (ctx: {
+    interval: "month" | "year";
+    isTeam: boolean;
+    localAmount: string;
+    monthlyEquivalent: string;
+    billedCurrency: string;
+  }) => string;
 }
 
 /**
@@ -168,6 +214,7 @@ export function buildPlanCardGroups({
   planNames,
   planDescriptions,
   renderCta,
+  formatPriceSubLabelLocal,
 }: BuildPlanCardGroupsOptions): PlanCardGroup[] {
   const currentPlanIds = new Set(currentPlans.map((p) => p.id));
   const currentByContext: Record<Plan["context"], Plan | undefined> = {
@@ -211,7 +258,24 @@ export function buildPlanCardGroups({
       : plan.interval;
 
     let priceSubLabel: string | undefined;
-    if (plan.interval === "year" && displayAmount > 0) {
+    const localDisplayAmount = plan.price?.localDisplayAmount ?? null;
+    const localCurrency = plan.price?.localCurrency ?? null;
+    const hasLocal =
+      localDisplayAmount !== null &&
+      localCurrency !== null &&
+      localCurrency.toLowerCase() !== currency.toLowerCase();
+
+    if (hasLocal && formatPriceSubLabelLocal && displayAmount > 0) {
+      const monthlyEqDisplay =
+        plan.interval === "year" ? displayAmount / 12 : displayAmount;
+      priceSubLabel = formatPriceSubLabelLocal({
+        interval: plan.interval,
+        isTeam,
+        localAmount: formatCurrency(localDisplayAmount, localCurrency, locale),
+        monthlyEquivalent: formatCurrency(monthlyEqDisplay, currency, locale),
+        billedCurrency: currency.toUpperCase(),
+      });
+    } else if (plan.interval === "year" && displayAmount > 0) {
       const monthlyEqDisplay = displayAmount / 12;
       const formatted = formatCurrency(monthlyEqDisplay, currency, locale);
       priceSubLabel = isTeam

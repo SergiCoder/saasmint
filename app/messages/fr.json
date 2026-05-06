@@ -228,6 +228,8 @@
     "endsOn": "Se termine le",
     "billedMonthly": "Facturation mensuelle",
     "billedYearly": "Facturation annuelle",
+    "billedInLocalMonthly": "≈ {amount} — facturé en {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/mois, facturé annuellement en {currency}",
     "seat": "place",
     "seats": "places",
     "products": "Packs de crédits",

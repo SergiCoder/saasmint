@@ -228,6 +228,8 @@
     "endsOn": "Ends on",
     "billedMonthly": "Billed monthly",
     "billedYearly": "Billed yearly",
+    "billedInLocalMonthly": "≈ {amount} — billed in {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/month, billed yearly in {currency}",
     "seat": "seat",
     "seats": "seats",
     "products": "Credit packs",

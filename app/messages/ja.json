@@ -228,6 +228,8 @@
     "endsOn": "終了日",
     "billedMonthly": "月額請求",
     "billedYearly": "年額請求",
+    "billedInLocalMonthly": "≈ {amount}（{currency}で請求）",
+    "billedInLocalYearly": "≈ {amount}（{monthly}/月、{currency}で年額請求）",
     "seat": "シート",
     "seats": "シート",
     "products": "クレジットパック",

@@ -228,6 +228,8 @@
     "endsOn": "Endet am",
     "billedMonthly": "Monatlich abgerechnet",
     "billedYearly": "Jährlich abgerechnet",
+    "billedInLocalMonthly": "≈ {amount} — Abrechnung in {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/Monat, jährliche Abrechnung in {currency}",
     "seat": "Platz",
     "seats": "Plätze",
     "products": "Guthaben-Pakete",

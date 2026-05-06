@@ -16,6 +16,7 @@ import { getOptionalUser } from "../_data/getOptionalUser";
 import {
   buildPlanCardGroups,
   buildPlanTranslations,
+  buildProductPriceSubLabels,
   buildProductTranslations,
   splitPlanGroupsByContext,
 } from "@/app/[locale]/_lib/buildPlanCards";
@@ -145,6 +146,22 @@ export default async function PricingPage({ params, searchParams }: Props) {
     },
     planNames,
     planDescriptions,
+    formatPriceSubLabelLocal: ({
+      interval,
+      localAmount,
+      monthlyEquivalent,
+      billedCurrency,
+    }) =>
+      interval === "year"
+        ? t("billedInLocalYearly", {
+            amount: localAmount,
+            monthly: monthlyEquivalent,
+            currency: billedCurrency,
+          })
+        : t("billedInLocalMonthly", {
+            amount: localAmount,
+            currency: billedCurrency,
+          }),
     renderCta: ({
       plan,
       isCurrent,
@@ -270,6 +287,15 @@ export default async function PricingPage({ params, searchParams }: Props) {
           title={t("products")}
           products={products}
           productNames={buildProductTranslations(products, tProducts)}
+          priceSubLabels={buildProductPriceSubLabels(
+            products,
+            locale,
+            ({ localAmount, billedCurrency }) =>
+              t("billedInLocalMonthly", {
+                amount: localAmount,
+                currency: billedCurrency,
+              }),
+          )}
           creditsLabel={t("credits")}
           buyLabel={t("buy")}
           locale={locale}

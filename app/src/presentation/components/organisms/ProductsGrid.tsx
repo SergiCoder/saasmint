@@ -7,6 +7,12 @@ export interface ProductsGridProps {
   productNames?: Record<number, string>;
   creditsLabel: string;
   locale: string;
+  /**
+   * Pre-rendered local-currency disclosure keyed by product id. Only present
+   * when the user's preferred currency differs from the billed one — see
+   * `buildProductPriceSubLabels`.
+   */
+  priceSubLabels?: Record<string, string>;
   renderCta: (product: Product) => React.ReactNode;
   className?: string;
 }
@@ -17,6 +23,7 @@ export function ProductsGrid({
   productNames,
   creditsLabel,
   locale,
+  priceSubLabels,
   renderCta,
   className = "",
 }: ProductsGridProps) {
@@ -46,6 +53,11 @@ export function ProductsGrid({
                     locale,
                   )}
                 </p>
+                {priceSubLabels?.[product.id] && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    {priceSubLabels[product.id]}
+                  </p>
+                )}
                 <div className="mt-4">{renderCta(product)}</div>
               </>
             )}

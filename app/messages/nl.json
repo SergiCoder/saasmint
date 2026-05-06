@@ -228,6 +228,8 @@
     "endsOn": "Eindigt op",
     "billedMonthly": "Maandelijks gefactureerd",
     "billedYearly": "Jaarlijks gefactureerd",
+    "billedInLocalMonthly": "≈ {amount} — gefactureerd in {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/maand, jaarlijks gefactureerd in {currency}",
     "seat": "stoel",
     "seats": "stoelen",
     "products": "Creditpakketten",

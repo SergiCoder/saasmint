@@ -228,6 +228,8 @@
     "endsOn": "Slutter den",
     "billedMonthly": "Faktureret månedligt",
     "billedYearly": "Faktureret årligt",
+    "billedInLocalMonthly": "≈ {amount} — faktureres i {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/måned, faktureres årligt i {currency}",
     "seat": "plads",
     "seats": "pladser",
     "products": "Kreditpakker",

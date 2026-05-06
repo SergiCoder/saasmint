@@ -228,6 +228,8 @@
     "endsOn": "Bitiş tarihi",
     "billedMonthly": "Aylık faturalandırma",
     "billedYearly": "Yıllık faturalandırma",
+    "billedInLocalMonthly": "≈ {amount} — {currency} olarak tahsil edilir",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/ay, yıllık olarak {currency} ile tahsil edilir",
     "seat": "koltuk",
     "seats": "koltuk",
     "products": "Kredi paketleri",
