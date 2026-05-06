@@ -58,6 +58,7 @@ let verifyEmail: typeof import("@/app/actions/auth").verifyEmail;
 let startOAuth: typeof import("@/app/actions/auth").startOAuth;
 let exchangeOAuthCode: typeof import("@/app/actions/auth").exchangeOAuthCode;
 let resendVerificationEmail: typeof import("@/app/actions/auth").resendVerificationEmail;
+let confirmOAuthLink: typeof import("@/app/actions/auth").confirmOAuthLink;
 
 function mockPlans(): void {
   // Backend v0.7.0 dropped the personal-free plan row; the catalog now only
@@ -94,6 +95,7 @@ beforeEach(async () => {
   startOAuth = mod.startOAuth;
   exchangeOAuthCode = mod.exchangeOAuthCode;
   resendVerificationEmail = mod.resendVerificationEmail;
+  confirmOAuthLink = mod.confirmOAuthLink;
 });
 
 describe("auth server actions", () => {
@@ -955,6 +957,70 @@ describe("auth server actions", () => {
         "Resend-verification failed",
         expect.any(Error),
       );
+    });
+  });
+
+  describe("confirmOAuthLink", () => {
+    it("posts to /auth/oauth/confirm-link/, sets cookies with expires_in, returns ok", async () => {
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_link",
+        refresh_token: "ref_link",
+        token_type: "Bearer",
+        expires_in: 900,
+      });
+
+      const result = await confirmOAuthLink("link-token-abc");
+      expect(mockPublicApiFetch).toHaveBeenCalledWith(
+        "/auth/oauth/confirm-link/",
+        {
+          method: "POST",
+          body: JSON.stringify({ token: "link-token-abc" }),
+        },
+      );
+      expect(mockSetAuthCookies).toHaveBeenCalledWith(
+        "tok_link",
+        "ref_link",
+        900,
+      );
+      expect(result).toEqual({ ok: true });
+    });
+
+    it("returns invalid_token when token is empty without calling the API", async () => {
+      const result = await confirmOAuthLink("");
+      expect(result).toEqual({ ok: false, code: "invalid_token" });
+      expect(mockPublicApiFetch).not.toHaveBeenCalled();
+      expect(mockSetAuthCookies).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ["token_used", 401],
+      ["token_expired", 401],
+      ["invalid_token", 401],
+      ["user_not_found", 403],
+      ["social_account_collision", 409],
+    ])(
+      "maps backend code %s (HTTP %i) into the action envelope without setting cookies",
+      async (code, status) => {
+        mockPublicApiFetch.mockRejectedValue(
+          new ApiError(status, { detail: "nope", code }),
+        );
+
+        const result = await confirmOAuthLink("link-token-abc");
+        expect(result).toEqual({ ok: false, code, message: "nope" });
+        expect(mockSetAuthCookies).not.toHaveBeenCalled();
+        expect(vi.mocked(console.error)).toHaveBeenCalledWith(
+          "OAuth confirm-link failed",
+          expect.any(ApiError),
+        );
+      },
+    );
+
+    it("returns unknown_error on non-ApiError throwables", async () => {
+      mockPublicApiFetch.mockRejectedValue(new Error("network down"));
+
+      const result = await confirmOAuthLink("link-token-abc");
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
+      expect(mockSetAuthCookies).not.toHaveBeenCalled();
     });
   });
 });
