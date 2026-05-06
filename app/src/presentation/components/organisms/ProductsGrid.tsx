@@ -33,36 +33,39 @@ export function ProductsGrid({
     <div className={`space-y-4 ${className}`}>
       <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
       <div className="grid gap-4 sm:grid-cols-2">
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
-          >
-            <h3 className="font-semibold text-gray-900">
-              {productNames?.[product.credits] ?? product.name}
-            </h3>
-            <p className="mt-1 text-sm text-gray-500">
-              {product.credits} {creditsLabel}
-            </p>
-            {product.price && (
-              <>
-                <p className="mt-2 text-2xl font-bold text-gray-900">
-                  {formatCurrency(
-                    product.price.displayAmount,
-                    product.price.currency,
-                    locale,
-                  )}
-                </p>
-                {priceSubLabels?.[product.id] && (
-                  <p className="mt-1 text-sm text-gray-500">
-                    {priceSubLabels[product.id]}
+        {products.map((product) => {
+          const priceSubLabel = priceSubLabels?.[product.id];
+          return (
+            <div
+              key={product.id}
+              className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+            >
+              <h3 className="font-semibold text-gray-900">
+                {productNames?.[product.credits] ?? product.name}
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                {product.credits} {creditsLabel}
+              </p>
+              {product.price && (
+                <>
+                  <p className="mt-2 text-2xl font-bold text-gray-900">
+                    {formatCurrency(
+                      product.price.displayAmount,
+                      product.price.currency,
+                      locale,
+                    )}
                   </p>
-                )}
-                <div className="mt-4">{renderCta(product)}</div>
-              </>
-            )}
-          </div>
-        ))}
+                  {priceSubLabel && (
+                    <p className="mt-1 text-sm text-gray-500">
+                      {priceSubLabel}
+                    </p>
+                  )}
+                  <div className="mt-4">{renderCta(product)}</div>
+                </>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
