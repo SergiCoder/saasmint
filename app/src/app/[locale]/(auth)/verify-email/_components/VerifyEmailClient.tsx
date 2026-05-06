@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Link, useRouter } from "@/lib/i18n/navigation";
+import { useRouter } from "@/lib/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
+import { AuthErrorBanner } from "@/presentation/components/molecules/AuthErrorBanner";
 import { Spinner } from "@/presentation/components/atoms/Spinner";
 import { verifyEmail } from "@/app/actions/auth";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
@@ -49,19 +49,7 @@ export function VerifyEmailClient({ token }: VerifyEmailClientProps) {
 
   if (error) {
     return (
-      <>
-        <AlertBanner variant="error" className="mb-4">
-          {error}
-        </AlertBanner>
-        <p className="text-center text-sm text-gray-600">
-          <Link
-            href="/login"
-            className="text-primary-600 hover:text-primary-500 font-medium"
-          >
-            {t("backToLogin")}
-          </Link>
-        </p>
-      </>
+      <AuthErrorBanner message={error} backToLoginLabel={t("backToLogin")} />
     );
   }
 

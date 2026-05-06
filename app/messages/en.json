@@ -149,6 +149,27 @@
       "noscript": "JavaScript is required to complete sign-in.",
       "backToLogin": "Return to sign-in"
     },
+    "linkEmailSent": {
+      "pageTitle": "Check your email",
+      "title": "Check your inbox",
+      "body": "We've sent a confirmation link to the email on your existing account. Open it to finish linking your account. The link expires in 15 minutes."
+    },
+    "confirmLink": {
+      "pageTitle": "Confirm linking",
+      "title": "Confirm linking your account",
+      "body": "Click below to finish linking your social account.",
+      "button": "Confirm linking",
+      "verifying": "Linking your account…",
+      "backToLogin": "Back to sign in",
+      "error": {
+        "used": "This link has already been used.",
+        "expired": "This link has expired — try signing in with the provider again.",
+        "invalid": "This link is invalid.",
+        "inactive": "Your account is no longer active.",
+        "collision": "That provider account is already linked elsewhere.",
+        "generic": "We couldn't link your account. Please try again."
+      }
+    },
     "register": {
       "title": "Create your account",
       "pageTitle": "Sign up",

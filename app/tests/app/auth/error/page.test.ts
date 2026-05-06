@@ -63,6 +63,19 @@ describe("AuthErrorPage (Django OAuth failure landing)", () => {
     );
   });
 
+  it("passes oauth_email_unverified_collision through to /login (defense-in-depth)", async () => {
+    // The backend now redirects collision cases to /auth/link-email-sent
+    // instead of emitting this code, but the passthrough remains so a stale
+    // link or backend regression still surfaces the right login banner
+    // rather than collapsing to the generic oauth_error.
+    await expect(
+      renderPage({ error: "oauth_email_unverified_collision" }),
+    ).rejects.toThrow(/NEXT_REDIRECT/);
+    expect(mockRedirect).toHaveBeenCalledWith(
+      "/login?error=oauth_email_unverified_collision",
+    );
+  });
+
   it("redirects missing error to /login with generic oauth_error", async () => {
     await expect(renderPage({})).rejects.toThrow(/NEXT_REDIRECT/);
     expect(mockRedirect).toHaveBeenCalledWith("/login?error=oauth_error");

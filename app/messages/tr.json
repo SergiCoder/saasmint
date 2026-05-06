@@ -125,6 +125,27 @@
       "noscript": "Oturum açmayı tamamlamak için JavaScript gerekli.",
       "backToLogin": "Oturum açmaya dön"
     },
+    "linkEmailSent": {
+      "pageTitle": "E-postanızı kontrol edin",
+      "title": "Gelen kutunuzu kontrol edin",
+      "body": "Mevcut hesabınızın e-posta adresine bir onay bağlantısı gönderdik. Hesabınızı bağlamayı tamamlamak için bağlantıyı açın. Bağlantı 15 dakika içinde geçerliliğini yitirir."
+    },
+    "confirmLink": {
+      "pageTitle": "Bağlamayı onayla",
+      "title": "Hesabınızı bağlamayı onaylayın",
+      "body": "Sosyal hesabınızı bağlamayı tamamlamak için aşağıya tıklayın.",
+      "button": "Bağlamayı onayla",
+      "verifying": "Hesabınız bağlanıyor…",
+      "backToLogin": "Oturum açmaya dön",
+      "error": {
+        "used": "Bu bağlantı zaten kullanılmış.",
+        "expired": "Bu bağlantının süresi doldu — sağlayıcıyla tekrar oturum açmayı deneyin.",
+        "invalid": "Bu bağlantı geçersiz.",
+        "inactive": "Hesabınız artık aktif değil.",
+        "collision": "Bu sağlayıcı hesabı zaten başka bir yere bağlı.",
+        "generic": "Hesabınızı bağlayamadık. Lütfen tekrar deneyin."
+      }
+    },
     "register": {
       "title": "Hesabınızı oluşturun",
       "pageTitle": "Kayıt ol",

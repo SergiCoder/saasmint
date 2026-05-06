@@ -125,6 +125,27 @@
       "noscript": "Se requiere JavaScript para completar el inicio de sesión.",
       "backToLogin": "Volver a iniciar sesión"
     },
+    "linkEmailSent": {
+      "pageTitle": "Revisa tu correo",
+      "title": "Revisa tu bandeja de entrada",
+      "body": "Hemos enviado un enlace de confirmación al correo de tu cuenta existente. Ábrelo para terminar de vincular tu cuenta. El enlace caduca en 15 minutos."
+    },
+    "confirmLink": {
+      "pageTitle": "Confirmar vinculación",
+      "title": "Confirma la vinculación de tu cuenta",
+      "body": "Haz clic abajo para terminar de vincular tu cuenta social.",
+      "button": "Confirmar vinculación",
+      "verifying": "Vinculando tu cuenta…",
+      "backToLogin": "Volver a iniciar sesión",
+      "error": {
+        "used": "Este enlace ya se ha utilizado.",
+        "expired": "Este enlace ha caducado — vuelve a iniciar sesión con el proveedor.",
+        "invalid": "Este enlace no es válido.",
+        "inactive": "Tu cuenta ya no está activa.",
+        "collision": "Esa cuenta del proveedor ya está vinculada en otro lugar.",
+        "generic": "No pudimos vincular tu cuenta. Por favor, inténtalo de nuevo."
+      }
+    },
     "register": {
       "title": "Crea tu cuenta",
       "pageTitle": "Registrarse",

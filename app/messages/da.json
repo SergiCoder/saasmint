@@ -125,6 +125,27 @@
       "noscript": "JavaScript kræves for at fuldføre loginnet.",
       "backToLogin": "Tilbage til login"
     },
+    "linkEmailSent": {
+      "pageTitle": "Tjek din e-mail",
+      "title": "Tjek din indbakke",
+      "body": "Vi har sendt et bekræftelseslink til e-mailen på din eksisterende konto. Åbn det for at færdiggøre sammenkædningen af din konto. Linket udløber om 15 minutter."
+    },
+    "confirmLink": {
+      "pageTitle": "Bekræft sammenkædning",
+      "title": "Bekræft sammenkædning af din konto",
+      "body": "Klik nedenfor for at færdiggøre sammenkædningen af din sociale konto.",
+      "button": "Bekræft sammenkædning",
+      "verifying": "Sammenkæder din konto…",
+      "backToLogin": "Tilbage til login",
+      "error": {
+        "used": "Dette link er allerede brugt.",
+        "expired": "Dette link er udløbet — prøv at logge ind med udbyderen igen.",
+        "invalid": "Dette link er ugyldigt.",
+        "inactive": "Din konto er ikke længere aktiv.",
+        "collision": "Den udbyderkonto er allerede sammenkædet andetsteds.",
+        "generic": "Vi kunne ikke sammenkæde din konto. Prøv venligst igen."
+      }
+    },
     "register": {
       "title": "Opret din konto",
       "pageTitle": "Opret konto",

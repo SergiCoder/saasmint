@@ -125,6 +125,27 @@
       "noscript": "JavaScript wird benötigt, um die Anmeldung abzuschließen.",
       "backToLogin": "Zurück zur Anmeldung"
     },
+    "linkEmailSent": {
+      "pageTitle": "Prüfen Sie Ihre E-Mails",
+      "title": "Prüfen Sie Ihren Posteingang",
+      "body": "Wir haben einen Bestätigungslink an die E-Mail-Adresse Ihres bestehenden Kontos gesendet. Öffnen Sie ihn, um die Verknüpfung Ihres Kontos abzuschließen. Der Link läuft in 15 Minuten ab."
+    },
+    "confirmLink": {
+      "pageTitle": "Verknüpfung bestätigen",
+      "title": "Verknüpfung Ihres Kontos bestätigen",
+      "body": "Klicken Sie unten, um die Verknüpfung Ihres sozialen Kontos abzuschließen.",
+      "button": "Verknüpfung bestätigen",
+      "verifying": "Ihr Konto wird verknüpft…",
+      "backToLogin": "Zurück zur Anmeldung",
+      "error": {
+        "used": "Dieser Link wurde bereits verwendet.",
+        "expired": "Dieser Link ist abgelaufen — bitte versuchen Sie erneut, sich beim Anbieter anzumelden.",
+        "invalid": "Dieser Link ist ungültig.",
+        "inactive": "Ihr Konto ist nicht mehr aktiv.",
+        "collision": "Dieses Anbieter-Konto ist bereits anderweitig verknüpft.",
+        "generic": "Wir konnten Ihr Konto nicht verknüpfen. Bitte versuchen Sie es erneut."
+      }
+    },
     "register": {
       "title": "Konto erstellen",
       "pageTitle": "Registrieren",

@@ -125,6 +125,27 @@
       "noscript": "JavaScript è necessario per completare l'accesso.",
       "backToLogin": "Torna all'accesso"
     },
+    "linkEmailSent": {
+      "pageTitle": "Controlla la tua email",
+      "title": "Controlla la tua casella di posta",
+      "body": "Abbiamo inviato un link di conferma all'email del tuo account esistente. Aprilo per completare il collegamento del tuo account. Il link scade tra 15 minuti."
+    },
+    "confirmLink": {
+      "pageTitle": "Conferma collegamento",
+      "title": "Conferma il collegamento del tuo account",
+      "body": "Clicca qui sotto per completare il collegamento del tuo account social.",
+      "button": "Conferma collegamento",
+      "verifying": "Collegamento del tuo account in corso…",
+      "backToLogin": "Torna all'accesso",
+      "error": {
+        "used": "Questo link è già stato utilizzato.",
+        "expired": "Questo link è scaduto — prova a effettuare nuovamente l'accesso con il provider.",
+        "invalid": "Questo link non è valido.",
+        "inactive": "Il tuo account non è più attivo.",
+        "collision": "Quell'account del provider è già collegato altrove.",
+        "generic": "Non siamo riusciti a collegare il tuo account. Riprova."
+      }
+    },
     "register": {
       "title": "Crea il tuo account",
       "pageTitle": "Registrati",

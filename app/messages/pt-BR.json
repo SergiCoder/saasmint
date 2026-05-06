@@ -125,6 +125,27 @@
       "noscript": "JavaScript é necessário para concluir o login.",
       "backToLogin": "Voltar ao login"
     },
+    "linkEmailSent": {
+      "pageTitle": "Verifique seu e-mail",
+      "title": "Verifique sua caixa de entrada",
+      "body": "Enviamos um link de confirmação para o e-mail da sua conta existente. Abra-o para concluir a vinculação da conta. O link expira em 15 minutos."
+    },
+    "confirmLink": {
+      "pageTitle": "Confirmar vinculação",
+      "title": "Confirme a vinculação da sua conta",
+      "body": "Clique abaixo para concluir a vinculação da sua conta social.",
+      "button": "Confirmar vinculação",
+      "verifying": "Vinculando sua conta…",
+      "backToLogin": "Voltar ao login",
+      "error": {
+        "used": "Este link já foi usado.",
+        "expired": "Este link expirou — tente entrar novamente com o provedor.",
+        "invalid": "Este link é inválido.",
+        "inactive": "Sua conta não está mais ativa.",
+        "collision": "Essa conta do provedor já está vinculada em outro lugar.",
+        "generic": "Não conseguimos vincular sua conta. Por favor, tente novamente."
+      }
+    },
     "register": {
       "title": "Crie sua conta",
       "pageTitle": "Cadastrar",
