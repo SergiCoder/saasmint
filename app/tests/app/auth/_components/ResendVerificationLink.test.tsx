@@ -201,3 +201,33 @@ describe("ResendVerificationLink — without email prop", () => {
     });
   });
 });
+
+// ---------------------------------------------------------------------------
+// Edge cases — email prop is provided as an empty string
+// ---------------------------------------------------------------------------
+
+describe("ResendVerificationLink — with empty string email prop", () => {
+  it("renders the button (email prop path) but keeps it disabled when email is empty string", () => {
+    // email="" satisfies `email !== undefined`, so we get the single-button
+    // variant, but `!email.trim()` evaluates to true which disables the button.
+    render(<ResendVerificationLink email="" />);
+
+    expect(
+      screen.getByRole("button", { name: "resendVerification" }),
+    ).toBeDisabled();
+    // No separate text input — we are in the known-email branch.
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+  });
+
+  it("does not call hook submit when the button is clicked with an empty email prop", async () => {
+    const user = userEvent.setup();
+    render(<ResendVerificationLink email="" />);
+
+    const button = screen.getByRole("button", { name: "resendVerification" });
+    // HTML disabled prevents the event from firing naturally; userEvent
+    // respects disabled — the mock should never be called.
+    await user.click(button);
+
+    expect(mockSubmit).not.toHaveBeenCalled();
+  });
+});

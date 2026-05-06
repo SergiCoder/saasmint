@@ -159,4 +159,20 @@ describe("ConfirmLinkClient", () => {
       expect(mockConfirmOAuthLink).toHaveBeenCalledTimes(1);
     });
   });
+
+  it("shows error.generic and re-enables retry when confirmOAuthLink throws unexpectedly", async () => {
+    // The catch {} block in handleConfirm catches network-level or other
+    // unexpected throws from the server action — not just action-result failures.
+    const user = userEvent.setup();
+    mockConfirmOAuthLink.mockRejectedValue(new Error("network error"));
+
+    render(<ConfirmLinkClient token="link-tok" />);
+    await user.click(screen.getByRole("button", { name: "button" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("error.generic")).toBeInTheDocument();
+    });
+    // Must not redirect on a throw.
+    expect(mockRouterReplace).not.toHaveBeenCalled();
+  });
 });
