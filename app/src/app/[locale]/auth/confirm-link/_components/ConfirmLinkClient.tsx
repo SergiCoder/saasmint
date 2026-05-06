@@ -2,8 +2,8 @@
 
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Link, useRouter } from "@/lib/i18n/navigation";
-import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
+import { useRouter } from "@/lib/i18n/navigation";
+import { AuthErrorBanner } from "@/presentation/components/molecules/AuthErrorBanner";
 import { Button } from "@/presentation/components/atoms/Button";
 import { confirmOAuthLink } from "@/app/actions/auth";
 
@@ -45,33 +45,26 @@ export function ConfirmLinkClient({ token }: ConfirmLinkClientProps) {
     setSubmitting(true);
     setError(null);
 
-    const result = await confirmOAuthLink(token);
-    if (result.ok) {
-      router.replace("/dashboard");
-      return;
-    }
+    try {
+      const result = await confirmOAuthLink(token);
+      if (result.ok) {
+        router.replace("/dashboard");
+        return;
+      }
 
-    const key = ERROR_CODE_TO_KEY[result.code];
-    setError(key ? t(`error.${key}`) : t("error.generic"));
-    firedRef.current = false;
-    setSubmitting(false);
+      const key = ERROR_CODE_TO_KEY[result.code];
+      setError(key ? t(`error.${key}`) : t("error.generic"));
+    } catch {
+      setError(t("error.generic"));
+    } finally {
+      firedRef.current = false;
+      setSubmitting(false);
+    }
   }
 
   if (error) {
     return (
-      <>
-        <AlertBanner variant="error" className="mb-4">
-          {error}
-        </AlertBanner>
-        <p className="text-center text-sm text-gray-600">
-          <Link
-            href="/login"
-            className="text-primary-600 hover:text-primary-500 font-medium"
-          >
-            {t("backToLogin")}
-          </Link>
-        </p>
-      </>
+      <AuthErrorBanner message={error} backToLoginLabel={t("backToLogin")} />
     );
   }
 

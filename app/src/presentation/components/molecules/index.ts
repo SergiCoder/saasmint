@@ -1,4 +1,5 @@
 export { AlertBanner, type AlertBannerProps } from "./AlertBanner";
+export { AuthErrorBanner, type AuthErrorBannerProps } from "./AuthErrorBanner";
 export {
   ConfirmDialog,
   type ConfirmDialogProps,
