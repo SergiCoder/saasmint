@@ -125,6 +125,27 @@
       "noscript": "Do dokończenia logowania wymagany jest JavaScript.",
       "backToLogin": "Wróć do logowania"
     },
+    "linkEmailSent": {
+      "pageTitle": "Sprawdź e-mail",
+      "title": "Sprawdź swoją skrzynkę odbiorczą",
+      "body": "Wysłaliśmy link potwierdzający na adres e-mail Twojego istniejącego konta. Otwórz go, aby dokończyć łączenie konta. Link wygasa po 15 minutach."
+    },
+    "confirmLink": {
+      "pageTitle": "Potwierdź połączenie",
+      "title": "Potwierdź połączenie konta",
+      "body": "Kliknij poniżej, aby dokończyć łączenie konta społecznościowego.",
+      "button": "Potwierdź połączenie",
+      "verifying": "Łączenie konta…",
+      "backToLogin": "Wróć do logowania",
+      "error": {
+        "used": "Ten link został już użyty.",
+        "expired": "Ten link wygasł — spróbuj zalogować się ponownie u dostawcy.",
+        "invalid": "Ten link jest nieprawidłowy.",
+        "inactive": "Twoje konto nie jest już aktywne.",
+        "collision": "To konto dostawcy jest już połączone gdzie indziej.",
+        "generic": "Nie udało się połączyć konta. Spróbuj ponownie."
+      }
+    },
     "register": {
       "title": "Utwórz konto",
       "pageTitle": "Rejestracja",

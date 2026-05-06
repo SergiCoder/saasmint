@@ -125,6 +125,27 @@
       "noscript": "完成登入需要 JavaScript。",
       "backToLogin": "返回登入"
     },
+    "linkEmailSent": {
+      "pageTitle": "請查收郵件",
+      "title": "請查看您的收件匣",
+      "body": "我們已向您現有帳戶的電子郵件寄送確認連結。開啟連結以完成帳戶連結。連結將在 15 分鐘後失效。"
+    },
+    "confirmLink": {
+      "pageTitle": "確認連結",
+      "title": "確認連結您的帳戶",
+      "body": "點擊下方按鈕，完成與社交帳戶的連結。",
+      "button": "確認連結",
+      "verifying": "正在連結您的帳戶…",
+      "backToLogin": "返回登入",
+      "error": {
+        "used": "此連結已被使用。",
+        "expired": "此連結已過期 —— 請重新透過該服務商登入。",
+        "invalid": "此連結無效。",
+        "inactive": "您的帳戶已不再處於啟用狀態。",
+        "collision": "該服務商帳戶已與其他帳戶連結。",
+        "generic": "無法連結您的帳戶。請再試一次。"
+      }
+    },
     "register": {
       "title": "建立您的帳戶",
       "pageTitle": "註冊",

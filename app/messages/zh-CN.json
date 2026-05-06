@@ -125,6 +125,27 @@
       "noscript": "完成登录需要 JavaScript。",
       "backToLogin": "返回登录"
     },
+    "linkEmailSent": {
+      "pageTitle": "请查收邮件",
+      "title": "请查看您的收件箱",
+      "body": "我们已向您现有账户的邮箱发送了确认链接。打开链接以完成账户关联。链接将在 15 分钟后失效。"
+    },
+    "confirmLink": {
+      "pageTitle": "确认关联",
+      "title": "确认关联您的账户",
+      "body": "点击下方按钮，完成与社交账户的关联。",
+      "button": "确认关联",
+      "verifying": "正在关联您的账户…",
+      "backToLogin": "返回登录",
+      "error": {
+        "used": "此链接已被使用。",
+        "expired": "此链接已过期 —— 请重新通过该服务商登录。",
+        "invalid": "此链接无效。",
+        "inactive": "您的账户已不再处于活跃状态。",
+        "collision": "该服务商账户已与其他账户关联。",
+        "generic": "无法关联您的账户。请重试。"
+      }
+    },
     "register": {
       "title": "创建您的账户",
       "pageTitle": "注册",

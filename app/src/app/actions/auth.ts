@@ -372,6 +372,40 @@ export async function exchangeOAuthCode(
   return { ok: true, next: validateNext(next, APP_URL) };
 }
 
+/**
+ * Cross-provider OAuth account-linking confirmation.
+ *
+ * The Django callback emails the existing account a single-use token when a
+ * second OAuth provider's email matches an unverified-trust scenario (e.g.
+ * Microsoft without `xms_edov`). This action posts that token back to
+ * `/auth/oauth/confirm-link/` and, on success, mints the same token envelope
+ * `/auth/oauth/exchange/` returns. Unlike `exchangeOAuthCode`, no
+ * `oauth_in_progress` cookie is required — the email click happens in a
+ * different session (often a different device) — so the caller redirects to
+ * the OAUTH_NEXT_FALLBACK destination on success.
+ */
+export async function confirmOAuthLink(
+  token: string,
+): Promise<ActionResult<void>> {
+  if (typeof token !== "string" || !token) {
+    return fail("invalid_token");
+  }
+
+  let data: OAuthExchangeResponse;
+  try {
+    data = await publicApiFetch<OAuthExchangeResponse>(
+      "/auth/oauth/confirm-link/",
+      { method: "POST", body: JSON.stringify({ token }) },
+    );
+  } catch (err) {
+    console.error("OAuth confirm-link failed", err);
+    return toActionError(err);
+  }
+
+  await setAuthCookies(data.access_token, data.refresh_token, data.expires_in);
+  return ok();
+}
+
 export async function signOut() {
   const locale = await getLocale();
   try {

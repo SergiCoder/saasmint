@@ -125,6 +125,27 @@
       "noscript": "É necessário JavaScript para concluir o início de sessão.",
       "backToLogin": "Voltar ao início de sessão"
     },
+    "linkEmailSent": {
+      "pageTitle": "Verifique o seu e-mail",
+      "title": "Verifique a sua caixa de entrada",
+      "body": "Enviámos uma ligação de confirmação para o e-mail da sua conta existente. Abra-a para concluir a associação da conta. A ligação expira em 15 minutos."
+    },
+    "confirmLink": {
+      "pageTitle": "Confirmar associação",
+      "title": "Confirme a associação da sua conta",
+      "body": "Clique abaixo para concluir a associação da sua conta social.",
+      "button": "Confirmar associação",
+      "verifying": "A associar a sua conta…",
+      "backToLogin": "Voltar ao início de sessão",
+      "error": {
+        "used": "Esta ligação já foi utilizada.",
+        "expired": "Esta ligação expirou — tente iniciar sessão novamente com o fornecedor.",
+        "invalid": "Esta ligação não é válida.",
+        "inactive": "A sua conta já não está ativa.",
+        "collision": "Essa conta do fornecedor já está associada noutro local.",
+        "generic": "Não conseguimos associar a sua conta. Por favor, tente novamente."
+      }
+    },
     "register": {
       "title": "Crie a sua conta",
       "pageTitle": "Registar",

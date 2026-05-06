@@ -125,6 +125,27 @@
       "noscript": "JavaScript is vereist om het aanmelden te voltooien.",
       "backToLogin": "Terug naar aanmelden"
     },
+    "linkEmailSent": {
+      "pageTitle": "Controleer uw e-mail",
+      "title": "Controleer uw inbox",
+      "body": "We hebben een bevestigingslink gestuurd naar het e-mailadres van uw bestaande account. Open de link om het koppelen van uw account te voltooien. De link verloopt over 15 minuten."
+    },
+    "confirmLink": {
+      "pageTitle": "Koppeling bevestigen",
+      "title": "Bevestig de koppeling van uw account",
+      "body": "Klik hieronder om het koppelen van uw social account te voltooien.",
+      "button": "Koppeling bevestigen",
+      "verifying": "Uw account wordt gekoppeld…",
+      "backToLogin": "Terug naar aanmelden",
+      "error": {
+        "used": "Deze link is al gebruikt.",
+        "expired": "Deze link is verlopen — probeer opnieuw in te loggen via de provider.",
+        "invalid": "Deze link is ongeldig.",
+        "inactive": "Uw account is niet langer actief.",
+        "collision": "Dat provideraccount is al elders gekoppeld.",
+        "generic": "We konden uw account niet koppelen. Probeer het opnieuw."
+      }
+    },
     "register": {
       "title": "Maak uw account aan",
       "pageTitle": "Registreren",

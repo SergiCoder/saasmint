@@ -125,6 +125,27 @@
       "noscript": "JavaScript est requis pour terminer la connexion.",
       "backToLogin": "Retour à la connexion"
     },
+    "linkEmailSent": {
+      "pageTitle": "Consultez votre e-mail",
+      "title": "Consultez votre boîte de réception",
+      "body": "Nous avons envoyé un lien de confirmation à l'adresse e-mail de votre compte existant. Ouvrez-le pour terminer l'association de votre compte. Le lien expire dans 15 minutes."
+    },
+    "confirmLink": {
+      "pageTitle": "Confirmer l'association",
+      "title": "Confirmez l'association de votre compte",
+      "body": "Cliquez ci-dessous pour terminer l'association de votre compte social.",
+      "button": "Confirmer l'association",
+      "verifying": "Association de votre compte…",
+      "backToLogin": "Retour à la connexion",
+      "error": {
+        "used": "Ce lien a déjà été utilisé.",
+        "expired": "Ce lien a expiré — réessayez de vous connecter avec le fournisseur.",
+        "invalid": "Ce lien n'est pas valide.",
+        "inactive": "Votre compte n'est plus actif.",
+        "collision": "Ce compte de fournisseur est déjà associé ailleurs.",
+        "generic": "Nous n'avons pas pu associer votre compte. Veuillez réessayer."
+      }
+    },
     "register": {
       "title": "Créez votre compte",
       "pageTitle": "Inscription",

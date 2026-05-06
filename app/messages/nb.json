@@ -125,6 +125,27 @@
       "noscript": "JavaScript kreves for å fullføre innloggingen.",
       "backToLogin": "Tilbake til innlogging"
     },
+    "linkEmailSent": {
+      "pageTitle": "Sjekk e-posten din",
+      "title": "Sjekk innboksen din",
+      "body": "Vi har sendt en bekreftelseslenke til e-postadressen på din eksisterende konto. Åpne den for å fullføre kobling av kontoen din. Lenken utløper om 15 minutter."
+    },
+    "confirmLink": {
+      "pageTitle": "Bekreft kobling",
+      "title": "Bekreft kobling av kontoen din",
+      "body": "Klikk nedenfor for å fullføre koblingen av den sosiale kontoen din.",
+      "button": "Bekreft kobling",
+      "verifying": "Kobler kontoen din…",
+      "backToLogin": "Tilbake til innlogging",
+      "error": {
+        "used": "Denne lenken er allerede brukt.",
+        "expired": "Denne lenken er utløpt — prøv å logge inn med leverandøren igjen.",
+        "invalid": "Denne lenken er ugyldig.",
+        "inactive": "Kontoen din er ikke lenger aktiv.",
+        "collision": "Den leverandørkontoen er allerede koblet et annet sted.",
+        "generic": "Vi kunne ikke koble kontoen din. Prøv igjen."
+      }
+    },
     "register": {
       "title": "Opprett kontoen din",
       "pageTitle": "Registrer deg",

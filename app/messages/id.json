@@ -125,6 +125,27 @@
       "noscript": "JavaScript diperlukan untuk menyelesaikan login.",
       "backToLogin": "Kembali ke login"
     },
+    "linkEmailSent": {
+      "pageTitle": "Periksa email Anda",
+      "title": "Periksa kotak masuk Anda",
+      "body": "Kami telah mengirim tautan konfirmasi ke email pada akun Anda yang sudah ada. Buka tautan tersebut untuk menyelesaikan penautan akun. Tautan akan kedaluwarsa dalam 15 menit."
+    },
+    "confirmLink": {
+      "pageTitle": "Konfirmasi penautan",
+      "title": "Konfirmasi penautan akun Anda",
+      "body": "Klik di bawah untuk menyelesaikan penautan akun sosial Anda.",
+      "button": "Konfirmasi penautan",
+      "verifying": "Menautkan akun Anda…",
+      "backToLogin": "Kembali ke login",
+      "error": {
+        "used": "Tautan ini sudah pernah digunakan.",
+        "expired": "Tautan ini telah kedaluwarsa — coba masuk kembali melalui penyedia.",
+        "invalid": "Tautan ini tidak valid.",
+        "inactive": "Akun Anda tidak lagi aktif.",
+        "collision": "Akun penyedia tersebut sudah ditautkan di tempat lain.",
+        "generic": "Kami tidak dapat menautkan akun Anda. Silakan coba lagi."
+      }
+    },
     "register": {
       "title": "Buat akun Anda",
       "pageTitle": "Daftar",

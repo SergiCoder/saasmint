@@ -125,6 +125,27 @@
       "noscript": "JavaScript krävs för att slutföra inloggningen.",
       "backToLogin": "Tillbaka till inloggning"
     },
+    "linkEmailSent": {
+      "pageTitle": "Kontrollera din e-post",
+      "title": "Kontrollera din inkorg",
+      "body": "Vi har skickat en bekräftelselänk till e-postadressen för ditt befintliga konto. Öppna den för att slutföra länkningen av kontot. Länken upphör att gälla om 15 minuter."
+    },
+    "confirmLink": {
+      "pageTitle": "Bekräfta länkning",
+      "title": "Bekräfta länkning av ditt konto",
+      "body": "Klicka nedan för att slutföra länkningen av ditt sociala konto.",
+      "button": "Bekräfta länkning",
+      "verifying": "Länkar ditt konto…",
+      "backToLogin": "Tillbaka till inloggning",
+      "error": {
+        "used": "Den här länken har redan använts.",
+        "expired": "Den här länken har upphört att gälla — försök att logga in via leverantören igen.",
+        "invalid": "Den här länken är ogiltig.",
+        "inactive": "Ditt konto är inte längre aktivt.",
+        "collision": "Det leverantörskontot är redan länkat någon annanstans.",
+        "generic": "Vi kunde inte länka ditt konto. Försök igen."
+      }
+    },
     "register": {
       "title": "Skapa ditt konto",
       "pageTitle": "Registrera",
