@@ -21,6 +21,8 @@ const priceSchema = z.object({
   amount: z.number(),
   displayAmount: z.number(),
   currency: z.string(),
+  localDisplayAmount: z.number().nullable(),
+  localCurrency: nullableString,
 });
 
 export const UserSchema = z.object({

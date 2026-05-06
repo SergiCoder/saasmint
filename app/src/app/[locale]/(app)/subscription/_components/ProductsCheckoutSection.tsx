@@ -11,6 +11,7 @@ interface ProductsCheckoutSectionProps {
   title: string;
   products: Product[];
   productNames?: Record<number, string>;
+  priceSubLabels?: Record<string, string>;
   creditsLabel: string;
   buyLabel: string;
   locale: string;
@@ -31,6 +32,7 @@ export function ProductsCheckoutSection({
   title,
   products,
   productNames,
+  priceSubLabels,
   creditsLabel,
   buyLabel,
   locale,
@@ -89,6 +91,7 @@ export function ProductsCheckoutSection({
         title={title}
         products={products}
         productNames={productNames}
+        priceSubLabels={priceSubLabels}
         creditsLabel={creditsLabel}
         locale={locale}
         renderCta={(product) =>

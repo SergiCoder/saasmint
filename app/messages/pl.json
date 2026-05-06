@@ -228,6 +228,8 @@
     "endsOn": "Kończy się",
     "billedMonthly": "Rozliczane miesięcznie",
     "billedYearly": "Rozliczane rocznie",
+    "billedInLocalMonthly": "≈ {amount} — rozliczane w {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/miesiąc, rozliczane rocznie w {currency}",
     "seat": "miejsce",
     "seats": "miejsca",
     "products": "Pakiety kredytów",

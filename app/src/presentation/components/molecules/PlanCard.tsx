@@ -45,7 +45,7 @@ export function PlanCard({
         <span className="text-sm text-gray-500">/{interval}</span>
       </p>
       {priceSubLabel && (
-        <p className="mt-1 text-xs text-gray-500">{priceSubLabel}</p>
+        <p className="mt-1 text-sm text-gray-500">{priceSubLabel}</p>
       )}
       {description && (
         <p className="mt-4 text-sm text-gray-500">{description}</p>

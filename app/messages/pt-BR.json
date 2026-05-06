@@ -228,6 +228,8 @@
     "endsOn": "Termina em",
     "billedMonthly": "Cobrança mensal",
     "billedYearly": "Cobrança anual",
+    "billedInLocalMonthly": "≈ {amount} — cobrado em {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/mês, cobrado anualmente em {currency}",
     "seat": "assento",
     "seats": "assentos",
     "products": "Pacotes de créditos",

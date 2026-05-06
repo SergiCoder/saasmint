@@ -21,6 +21,8 @@ const products: Product[] = [
       amount: 999,
       displayAmount: 9.99,
       currency: "usd",
+      localDisplayAmount: null,
+      localCurrency: null,
     },
   },
 ];

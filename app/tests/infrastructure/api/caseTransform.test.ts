@@ -159,7 +159,13 @@ describe("keysToCamelWithPrice", () => {
     expect(keysToCamelWithPrice(input)).toEqual({
       id: "p1",
       planName: "Pro",
-      price: { id: "pp1", displayAmount: 1900, currency: "eur" },
+      price: {
+        id: "pp1",
+        displayAmount: 1900,
+        currency: "eur",
+        localDisplayAmount: null,
+        localCurrency: null,
+      },
     });
   });
 
@@ -170,7 +176,14 @@ describe("keysToCamelWithPrice", () => {
     };
     expect(keysToCamelWithPrice(input)).toEqual({
       id: "p1",
-      price: { id: "pp1", amount: 1900, displayAmount: 19, currency: "usd" },
+      price: {
+        id: "pp1",
+        amount: 1900,
+        displayAmount: 19,
+        currency: "usd",
+        localDisplayAmount: null,
+        localCurrency: null,
+      },
     });
   });
 
@@ -181,7 +194,14 @@ describe("keysToCamelWithPrice", () => {
     };
     expect(keysToCamelWithPrice(input)).toEqual({
       id: "p1",
-      price: { id: "pp1", amount: 1900, displayAmount: 19.0, currency: "eur" },
+      price: {
+        id: "pp1",
+        amount: 1900,
+        displayAmount: 19.0,
+        currency: "eur",
+        localDisplayAmount: null,
+        localCurrency: null,
+      },
     });
   });
 
@@ -192,7 +212,14 @@ describe("keysToCamelWithPrice", () => {
     };
     expect(keysToCamelWithPrice(input, "eur")).toEqual({
       id: "p1",
-      price: { id: "pp1", amount: 1700, displayAmount: 17, currency: "eur" },
+      price: {
+        id: "pp1",
+        amount: 1700,
+        displayAmount: 17,
+        currency: "eur",
+        localDisplayAmount: null,
+        localCurrency: null,
+      },
     });
   });
 
@@ -219,7 +246,13 @@ describe("keysToCamelWithPrice", () => {
     };
     expect(keysToCamelWithPrice(input)).toEqual({
       id: "p1",
-      price: { id: "pp1", amount: "1900", currency: "eur" },
+      price: {
+        id: "pp1",
+        amount: "1900",
+        currency: "eur",
+        localDisplayAmount: null,
+        localCurrency: null,
+      },
     });
   });
 });

@@ -76,7 +76,14 @@ const expectedPersonal = {
     context: "personal",
     tier: 3,
     interval: "month",
-    price: { id: "pp1", amount: 1900, displayAmount: 19, currency: "usd" },
+    price: {
+      id: "pp1",
+      amount: 1900,
+      displayAmount: 19,
+      currency: "usd",
+      localDisplayAmount: null,
+      localCurrency: null,
+    },
   },
   seatLimit: 1,
   seatsUsed: 1,
@@ -423,6 +430,8 @@ describe("DjangoApiSubscriptionGateway", () => {
           amount: 900,
           displayAmount: 9,
           currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
         },
       });
     });
@@ -542,6 +551,8 @@ describe("DjangoApiSubscriptionGateway", () => {
         amount: 1900,
         displayAmount: 19,
         currency: "usd",
+        localDisplayAmount: null,
+        localCurrency: null,
       });
     });
 
@@ -571,6 +582,8 @@ describe("DjangoApiSubscriptionGateway", () => {
           amount: 900,
           displayAmount: 9,
           currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
         },
       });
     });

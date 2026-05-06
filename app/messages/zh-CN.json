@@ -228,6 +228,8 @@
     "endsOn": "结束日期",
     "billedMonthly": "按月计费",
     "billedYearly": "按年计费",
+    "billedInLocalMonthly": "≈ {amount}（以 {currency} 计费）",
+    "billedInLocalYearly": "≈ {amount}（{monthly}/月，按年以 {currency} 计费）",
     "seat": "席位",
     "seats": "席位",
     "products": "积分包",

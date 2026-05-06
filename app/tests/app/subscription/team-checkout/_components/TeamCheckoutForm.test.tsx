@@ -12,6 +12,8 @@ const defaultProps = {
   planName: "Pro",
   displayAmount: 10,
   currency: "usd",
+  localDisplayAmount: null,
+  localCurrency: null,
   locale: "en-US",
   interval: "month",
   labels: {

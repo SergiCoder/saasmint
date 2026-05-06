@@ -83,6 +83,12 @@ export function applyPriceDefaults(
   if (camelPrice.currency === undefined) {
     camelPrice.currency = fallbackCurrency;
   }
+  if (camelPrice.localDisplayAmount === undefined) {
+    camelPrice.localDisplayAmount = null;
+  }
+  if (camelPrice.localCurrency === undefined) {
+    camelPrice.localCurrency = null;
+  }
 }
 
 /**

@@ -228,6 +228,8 @@
     "endsOn": "Заканчивается",
     "billedMonthly": "Ежемесячная оплата",
     "billedYearly": "Годовая оплата",
+    "billedInLocalMonthly": "≈ {amount} — списание в {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/мес, годовая оплата в {currency}",
     "seat": "место",
     "seats": "мест",
     "products": "Пакеты кредитов",

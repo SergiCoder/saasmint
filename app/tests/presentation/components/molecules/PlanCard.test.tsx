@@ -114,4 +114,23 @@ describe("PlanCard", () => {
     const card = container.firstChild as HTMLElement;
     expect(card.className).toContain("col-span-2");
   });
+
+  describe("priceSubLabel", () => {
+    it("renders the dual-currency disclosure when provided", () => {
+      render(
+        <PlanCard
+          {...defaultProps}
+          priceSubLabel="≈ CHF 17.42 — billed in USD"
+        />,
+      );
+      expect(
+        screen.getByText("≈ CHF 17.42 — billed in USD"),
+      ).toBeInTheDocument();
+    });
+
+    it("does not render a sub-label paragraph when omitted", () => {
+      const { container } = render(<PlanCard {...defaultProps} />);
+      expect(container.querySelectorAll("p")).toHaveLength(1);
+    });
+  });
 });

@@ -228,6 +228,8 @@
     "endsOn": "종료일",
     "billedMonthly": "월간 청구",
     "billedYearly": "연간 청구",
+    "billedInLocalMonthly": "≈ {amount} — {currency}로 청구",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/월, {currency}로 연간 청구",
     "seat": "좌석",
     "seats": "좌석",
     "products": "크레딧 팩",
