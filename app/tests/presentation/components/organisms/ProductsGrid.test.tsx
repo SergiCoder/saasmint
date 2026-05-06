@@ -8,13 +8,27 @@ const products: Product[] = [
     id: "p1",
     name: "Starter Pack",
     credits: 100,
-    price: { id: "price_1", amount: 1000, displayAmount: 10, currency: "usd" },
+    price: {
+      id: "price_1",
+      amount: 1000,
+      displayAmount: 10,
+      currency: "usd",
+      localDisplayAmount: null,
+      localCurrency: null,
+    },
   } as Product,
   {
     id: "p2",
     name: "Pro Pack",
     credits: 500,
-    price: { id: "price_2", amount: 5000, displayAmount: 50, currency: "usd" },
+    price: {
+      id: "price_2",
+      amount: 5000,
+      displayAmount: 50,
+      currency: "usd",
+      localDisplayAmount: null,
+      localCurrency: null,
+    },
   } as Product,
 ];
 
@@ -104,6 +118,24 @@ describe("ProductsGrid", () => {
     expect(
       screen.queryByRole("button", { name: "Buy" }),
     ).not.toBeInTheDocument();
+  });
+
+  it("renders the priceSubLabel for products that have one", () => {
+    render(
+      <ProductsGrid
+        title="Credit packs"
+        products={products}
+        creditsLabel="credits"
+        locale="en-US"
+        priceSubLabels={{ p1: "≈ CHF 9.16 — billed in USD" }}
+        renderCta={(p) => <button>Buy {p.name}</button>}
+      />,
+    );
+    expect(screen.getByText("≈ CHF 9.16 — billed in USD")).toBeInTheDocument();
+    // The other product (p2) has no entry in the map → no sub-label rendered.
+    expect(screen.queryByText(/billed in/)).toHaveTextContent(
+      "≈ CHF 9.16 — billed in USD",
+    );
   });
 
   it("forwards a custom className to the wrapper", () => {

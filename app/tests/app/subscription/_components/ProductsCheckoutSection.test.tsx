@@ -16,7 +16,14 @@ const product: Product = {
   name: "200 Credits",
   type: "one_time",
   credits: 200,
-  price: { id: "pp1", amount: 1999, displayAmount: 19.99, currency: "usd" },
+  price: {
+    id: "pp1",
+    amount: 1999,
+    displayAmount: 19.99,
+    currency: "usd",
+    localDisplayAmount: null,
+    localCurrency: null,
+  },
 };
 
 const baseProps = {

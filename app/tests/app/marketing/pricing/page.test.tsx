@@ -236,6 +236,8 @@ function makePaidPlan(overrides: Partial<Plan> & { id: string }): Plan {
       amount: 1900,
       displayAmount: 19,
       currency: "usd",
+      localDisplayAmount: null,
+      localCurrency: null,
     },
   };
 }
@@ -264,6 +266,8 @@ describe("Marketing PricingPage — synthetic free plan", () => {
           amount: 19000,
           displayAmount: 190,
           currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
         },
       }),
     ]);
@@ -494,6 +498,8 @@ describe("Marketing PricingPage — upgrade CTA routing", () => {
           amount: tier === 2 ? 1000 : 3000,
           displayAmount: tier === 2 ? 10 : 30,
           currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
         },
       },
       seatLimit: 1,
@@ -525,6 +531,8 @@ describe("Marketing PricingPage — upgrade CTA routing", () => {
           amount: 3000,
           displayAmount: 30,
           currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
         },
       }),
       makePaidPlan({ id: "t_basic", tier: 2, context: "team" }),
@@ -537,6 +545,8 @@ describe("Marketing PricingPage — upgrade CTA routing", () => {
           amount: 3000,
           displayAmount: 30,
           currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
         },
       }),
     ]);

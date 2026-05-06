@@ -97,6 +97,8 @@ describe("DjangoApiPlanGateway", () => {
         amount: 999,
         displayAmount: 9.99,
         currency: "usd",
+        localDisplayAmount: null,
+        localCurrency: null,
       });
     });
 
@@ -121,6 +123,8 @@ describe("DjangoApiPlanGateway", () => {
         amount: 1500,
         displayAmount: 15,
         currency: "eur",
+        localDisplayAmount: null,
+        localCurrency: null,
       });
     });
 

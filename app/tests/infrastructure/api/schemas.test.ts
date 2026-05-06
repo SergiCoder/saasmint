@@ -82,6 +82,8 @@ const validPlan = {
     amount: 1900,
     displayAmount: 19,
     currency: "usd",
+    localDisplayAmount: null,
+    localCurrency: null,
   },
 };
 
@@ -95,6 +97,8 @@ const validProduct = {
     amount: 500,
     displayAmount: 5,
     currency: "usd",
+    localDisplayAmount: null,
+    localCurrency: null,
   },
 };
 
@@ -287,6 +291,37 @@ describe("PlanSchema", () => {
       PlanSchema.parse({ ...validPlan, context: "enterprise" }),
     ).toThrow();
   });
+
+  it("preserves localDisplayAmount and localCurrency when populated", () => {
+    const parsed = PlanSchema.parse({
+      ...validPlan,
+      price: {
+        id: "pp1",
+        amount: 1900,
+        displayAmount: 19,
+        currency: "usd",
+        localDisplayAmount: 17.42,
+        localCurrency: "chf",
+      },
+    });
+    expect(parsed.price?.localDisplayAmount).toBe(17.42);
+    expect(parsed.price?.localCurrency).toBe("chf");
+  });
+
+  it("preserves null local-currency fields", () => {
+    const parsed = PlanSchema.parse(validPlan);
+    expect(parsed.price?.localDisplayAmount).toBeNull();
+    expect(parsed.price?.localCurrency).toBeNull();
+  });
+
+  it("rejects when localDisplayAmount is not a number or null", () => {
+    expect(() =>
+      PlanSchema.parse({
+        ...validPlan,
+        price: { ...validPlan.price, localDisplayAmount: "17.42" },
+      }),
+    ).toThrow();
+  });
 });
 
 describe("ProductSchema", () => {
@@ -309,6 +344,28 @@ describe("ProductSchema", () => {
     expect(() =>
       ProductSchema.parse({ ...validProduct, credits: "100" }),
     ).toThrow();
+  });
+
+  it("preserves localDisplayAmount and localCurrency when populated", () => {
+    const parsed = ProductSchema.parse({
+      ...validProduct,
+      price: {
+        id: "pp2",
+        amount: 500,
+        displayAmount: 5,
+        currency: "usd",
+        localDisplayAmount: 4.55,
+        localCurrency: "chf",
+      },
+    });
+    expect(parsed.price?.localDisplayAmount).toBe(4.55);
+    expect(parsed.price?.localCurrency).toBe("chf");
+  });
+
+  it("preserves null local-currency fields", () => {
+    const parsed = ProductSchema.parse(validProduct);
+    expect(parsed.price?.localDisplayAmount).toBeNull();
+    expect(parsed.price?.localCurrency).toBeNull();
   });
 });
 

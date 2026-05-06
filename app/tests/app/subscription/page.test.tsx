@@ -658,6 +658,8 @@ describe("BillingPage (subscription/page)", () => {
             amount: tier === 2 ? 1000 : 3000,
             displayAmount: tier === 2 ? 10 : 30,
             currency: "usd",
+            localDisplayAmount: null,
+            localCurrency: null,
           },
         },
         seatLimit: 1,
@@ -690,6 +692,8 @@ describe("BillingPage (subscription/page)", () => {
           amount: tier === 2 ? 1000 : 3000,
           displayAmount: tier === 2 ? 10 : 30,
           currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
         },
       };
     }

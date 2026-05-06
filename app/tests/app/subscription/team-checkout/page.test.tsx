@@ -99,6 +99,8 @@ function makeTeamPlan(overrides: Partial<Plan> = {}): Plan {
       amount: 48000,
       displayAmount: 480,
       currency: "usd",
+      localDisplayAmount: null,
+      localCurrency: null,
     },
     ...overrides,
   };
@@ -122,6 +124,8 @@ function makePersonalSubscription(
         amount: 1900,
         displayAmount: 19,
         currency: "usd",
+        localDisplayAmount: null,
+        localCurrency: null,
       },
     },
     seatLimit: 1,
@@ -180,6 +184,8 @@ describe("TeamCheckoutPage", () => {
         amount: 1900,
         displayAmount: 19,
         currency: "usd",
+        localDisplayAmount: null,
+        localCurrency: null,
       },
     });
     mockListPlans.mockResolvedValue([personal]);
