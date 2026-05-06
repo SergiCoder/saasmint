@@ -54,7 +54,7 @@ export function ProductsGrid({
                   )}
                 </p>
                 {priceSubLabels?.[product.id] && (
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="mt-1 text-sm text-gray-500">
                     {priceSubLabels[product.id]}
                   </p>
                 )}
