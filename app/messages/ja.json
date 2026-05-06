@@ -96,7 +96,9 @@
       "errorBackendRejected": "認証に失敗しました。再度ログインしてください。",
       "errorOAuth": "ソーシャルログインに失敗しました。もう一度お試しください。",
       "errorOAuthEmailUnverifiedCollision": "ソーシャルアカウントは、こちらで既にパスワードアカウントを持っているメールアドレスで登録されています。最初にパスワードでサインインしてください。その後でソーシャルプロバイダーを連携できます。",
-      "forgotPassword": "パスワードを忘れましたか？"
+      "forgotPassword": "パスワードを忘れましたか？",
+      "resendVerification": "確認メールを再送信",
+      "verificationEmailSent": "確認メールを送信しました。受信トレイをご確認ください。"
     },
     "forgotPassword": {
       "pageTitle": "パスワードを忘れた場合",
@@ -252,6 +254,9 @@
     "profile": "プロフィール",
     "fullName": "氏名",
     "email": "メール",
+    "emailNotVerified": "メールアドレスはまだ確認されていません。",
+    "resendVerification": "確認メールを再送信",
+    "verificationEmailSent": "確認メールを送信しました。受信トレイをご確認ください。",
     "preferredLocale": "言語",
     "preferredCurrency": "通貨",
     "phonePrefix": "国番号",

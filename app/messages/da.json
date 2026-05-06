@@ -96,7 +96,9 @@
       "errorBackendRejected": "Godkendelse mislykkedes. Prøv at logge ind igen.",
       "errorOAuth": "Socialt login mislykkedes. Prøv venligst igen.",
       "errorOAuthEmailUnverifiedCollision": "Din sociale konto er registreret med en e-mailadresse, der allerede har en adgangskode-konto her. Log venligst ind med din adgangskode først; du kan tilknytte den sociale udbyder bagefter.",
-      "forgotPassword": "Glemt adgangskode?"
+      "forgotPassword": "Glemt adgangskode?",
+      "resendVerification": "Send bekræftelsesmail igen",
+      "verificationEmailSent": "Bekræftelsesmail sendt. Tjek din indbakke."
     },
     "forgotPassword": {
       "pageTitle": "Glemt adgangskode",
@@ -252,6 +254,9 @@
     "profile": "Profil",
     "fullName": "Fulde navn",
     "email": "E-mail",
+    "emailNotVerified": "Din e-mailadresse er endnu ikke bekræftet.",
+    "resendVerification": "Send bekræftelsesmail igen",
+    "verificationEmailSent": "Bekræftelsesmail sendt. Tjek din indbakke.",
     "preferredLocale": "Sprog",
     "preferredCurrency": "Valuta",
     "phonePrefix": "Landekode",

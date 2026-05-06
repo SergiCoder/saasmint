@@ -103,7 +103,9 @@
       "errorBackendRejected": "Authentication failed. Please try signing in again.",
       "errorOAuth": "Social login failed. Please try again.",
       "errorOAuthEmailUnverifiedCollision": "Your social account is registered with an email address that already has a password account here. Please sign in with your password first; you can link the social provider afterwards.",
-      "forgotPassword": "Forgot password?"
+      "forgotPassword": "Forgot password?",
+      "resendVerification": "Resend verification email",
+      "verificationEmailSent": "Verification email sent. Check your inbox."
     },
     "forgotPassword": {
       "pageTitle": "Forgot password",
@@ -254,6 +256,9 @@
     "title": "Profile",
     "fullName": "Full name",
     "email": "Email",
+    "emailNotVerified": "Your email address is not verified yet.",
+    "resendVerification": "Resend verification email",
+    "verificationEmailSent": "Verification email sent. Check your inbox.",
     "preferredLocale": "Language",
     "preferredCurrency": "Currency",
     "phonePrefix": "Country code",

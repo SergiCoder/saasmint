@@ -96,7 +96,9 @@
       "errorBackendRejected": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin.",
       "errorOAuth": "Sosyal giriş başarısız oldu. Lütfen tekrar deneyin.",
       "errorOAuthEmailUnverifiedCollision": "Sosyal hesabınız burada zaten şifreli bir hesabı olan bir e-posta adresiyle kayıtlı. Önce şifrenizle giriş yapın; sosyal sağlayıcıyı daha sonra bağlayabilirsiniz.",
-      "forgotPassword": "Şifrenizi mi unuttunuz?"
+      "forgotPassword": "Şifrenizi mi unuttunuz?",
+      "resendVerification": "Doğrulama e-postasını yeniden gönder",
+      "verificationEmailSent": "Doğrulama e-postası gönderildi. Gelen kutunuzu kontrol edin."
     },
     "forgotPassword": {
       "pageTitle": "Şifremi unuttum",
@@ -252,6 +254,9 @@
     "profile": "Profil",
     "fullName": "Ad soyad",
     "email": "E-posta",
+    "emailNotVerified": "E-posta adresiniz henüz doğrulanmadı.",
+    "resendVerification": "Doğrulama e-postasını yeniden gönder",
+    "verificationEmailSent": "Doğrulama e-postası gönderildi. Gelen kutunuzu kontrol edin.",
     "preferredLocale": "Dil",
     "preferredCurrency": "Para birimi",
     "phonePrefix": "Ülke kodu",

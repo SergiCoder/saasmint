@@ -96,7 +96,9 @@
       "errorBackendRejected": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
       "errorOAuth": "Social-Login fehlgeschlagen. Bitte versuchen Sie es erneut.",
       "errorOAuthEmailUnverifiedCollision": "Ihr Social-Konto ist mit einer E-Mail-Adresse registriert, die hier bereits ein Passwort-Konto hat. Bitte melden Sie sich zuerst mit Ihrem Passwort an; danach können Sie den Social-Anbieter verknüpfen.",
-      "forgotPassword": "Passwort vergessen?"
+      "forgotPassword": "Passwort vergessen?",
+      "resendVerification": "Bestätigungs-E-Mail erneut senden",
+      "verificationEmailSent": "Bestätigungs-E-Mail gesendet. Bitte prüfen Sie Ihren Posteingang."
     },
     "forgotPassword": {
       "pageTitle": "Passwort vergessen",
@@ -252,6 +254,9 @@
     "profile": "Profil",
     "fullName": "Vollständiger Name",
     "email": "E-Mail",
+    "emailNotVerified": "Ihre E-Mail-Adresse ist noch nicht bestätigt.",
+    "resendVerification": "Bestätigungs-E-Mail erneut senden",
+    "verificationEmailSent": "Bestätigungs-E-Mail gesendet. Bitte prüfen Sie Ihren Posteingang.",
     "preferredLocale": "Sprache",
     "preferredCurrency": "Währung",
     "phonePrefix": "Ländervorwahl",

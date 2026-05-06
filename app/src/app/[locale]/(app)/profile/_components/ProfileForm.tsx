@@ -13,6 +13,7 @@ import { compressImage } from "@/lib/compressImage";
 import { updateProfile, updateAvatarUrl } from "@/app/actions/user";
 import { LOCALES } from "@/lib/i18n/locales";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
+import { useResendVerification } from "@/lib/actions/useResendVerification";
 import type { User } from "@/domain/models/User";
 import { PHONE_PREFIXES } from "@/domain/data/phonePrefixes";
 
@@ -56,6 +57,12 @@ export function ProfileForm({ user, timezones }: ProfileFormProps) {
   const [phonePrefix, setPhonePrefix] = useState(user.phonePrefix || "");
   const [phone, setPhone] = useState(user.phone || "");
   const [lastActionState, setLastActionState] = useState(state);
+  const {
+    pending: resendPending,
+    status: resendStatus,
+    errorMessage: resendError,
+    submit: submitResend,
+  } = useResendVerification();
 
   if (state !== lastActionState) {
     setLastActionState(state);
@@ -116,6 +123,28 @@ export function ProfileForm({ user, timezones }: ProfileFormProps) {
         <AlertBanner variant="error">{translateError(state)}</AlertBanner>
       )}
       {saved && <AlertBanner variant="success">{t("saved")}</AlertBanner>}
+
+      {!user.isVerified && resendStatus !== "sent" && (
+        <AlertBanner variant="warning">
+          <span className="mr-2">{t("emailNotVerified")}</span>
+          <button
+            type="button"
+            onClick={() => submitResend(user.email)}
+            disabled={resendPending}
+            className="text-primary-700 hover:text-primary-800 font-medium underline underline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {t("resendVerification")}
+          </button>
+        </AlertBanner>
+      )}
+      {resendStatus === "sent" && (
+        <AlertBanner variant="success">
+          {t("verificationEmailSent")}
+        </AlertBanner>
+      )}
+      {resendStatus === "error" && resendError && (
+        <AlertBanner variant="error">{resendError}</AlertBanner>
+      )}
 
       <AvatarUpload
         currentSrc={avatarUrl}

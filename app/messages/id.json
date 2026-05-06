@@ -96,7 +96,9 @@
       "errorBackendRejected": "Autentikasi gagal. Silakan coba masuk kembali.",
       "errorOAuth": "Login sosial gagal. Silakan coba lagi.",
       "errorOAuthEmailUnverifiedCollision": "Akun sosial Anda terdaftar dengan alamat email yang sudah memiliki akun dengan kata sandi di sini. Harap masuk dengan kata sandi Anda terlebih dahulu; Anda dapat menautkan penyedia sosial setelahnya.",
-      "forgotPassword": "Lupa kata sandi?"
+      "forgotPassword": "Lupa kata sandi?",
+      "resendVerification": "Kirim ulang email verifikasi",
+      "verificationEmailSent": "Email verifikasi telah dikirim. Periksa kotak masuk Anda."
     },
     "forgotPassword": {
       "pageTitle": "Lupa kata sandi",
@@ -252,6 +254,9 @@
     "profile": "Profil",
     "fullName": "Nama lengkap",
     "email": "Email",
+    "emailNotVerified": "Alamat email Anda belum diverifikasi.",
+    "resendVerification": "Kirim ulang email verifikasi",
+    "verificationEmailSent": "Email verifikasi telah dikirim. Periksa kotak masuk Anda.",
     "preferredLocale": "Bahasa",
     "preferredCurrency": "Mata uang",
     "phonePrefix": "Kode negara",

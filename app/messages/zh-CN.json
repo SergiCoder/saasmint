@@ -96,7 +96,9 @@
       "errorBackendRejected": "身份验证失败。请重新登录。",
       "errorOAuth": "社交登录失败。请重试。",
       "errorOAuthEmailUnverifiedCollision": "您的社交账户使用的电子邮件地址在此已有密码账户。请先使用密码登录，之后可以关联社交账户。",
-      "forgotPassword": "忘记密码？"
+      "forgotPassword": "忘记密码？",
+      "resendVerification": "重新发送验证邮件",
+      "verificationEmailSent": "验证邮件已发送，请查看您的收件箱。"
     },
     "forgotPassword": {
       "pageTitle": "忘记密码",
@@ -252,6 +254,9 @@
     "profile": "个人资料",
     "fullName": "全名",
     "email": "邮箱",
+    "emailNotVerified": "您的邮箱地址尚未验证。",
+    "resendVerification": "重新发送验证邮件",
+    "verificationEmailSent": "验证邮件已发送，请查看您的收件箱。",
     "preferredLocale": "语言",
     "preferredCurrency": "货币",
     "phonePrefix": "国家代码",

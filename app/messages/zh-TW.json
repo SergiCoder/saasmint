@@ -96,7 +96,9 @@
       "errorBackendRejected": "驗證失敗。請重新登入。",
       "errorOAuth": "社群登入失敗。請重試。",
       "errorOAuthEmailUnverifiedCollision": "您的社交帳戶使用的電子郵件地址在此已有密碼帳戶。請先使用密碼登入，之後可以關聯社交帳戶。",
-      "forgotPassword": "忘記密碼？"
+      "forgotPassword": "忘記密碼？",
+      "resendVerification": "重新發送驗證郵件",
+      "verificationEmailSent": "驗證郵件已發送，請查看您的收件匣。"
     },
     "forgotPassword": {
       "pageTitle": "忘記密碼",
@@ -252,6 +254,9 @@
     "profile": "個人資料",
     "fullName": "全名",
     "email": "電子郵件",
+    "emailNotVerified": "您的電子郵件地址尚未驗證。",
+    "resendVerification": "重新發送驗證郵件",
+    "verificationEmailSent": "驗證郵件已發送，請查看您的收件匣。",
     "preferredLocale": "語言",
     "preferredCurrency": "貨幣",
     "phonePrefix": "國碼",

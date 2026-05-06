@@ -1,9 +1,38 @@
-import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { ActionResult } from "@/lib/actions/ActionResult";
+
+// Stub ResendVerificationLink so AuthForm tests don't exercise the sub-component
+// in detail — that component has its own test file.
+vi.mock("@/app/[locale]/(auth)/_components/ResendVerificationLink", () => ({
+  ResendVerificationLink: ({ email }: { email?: string }) => (
+    <div data-testid="resend-link" data-email={email ?? ""} />
+  ),
+}));
+
+// Stub useActionState so tests can drive the form's rendered state through
+// the success/error branches without invoking any server action.
+const mockState = vi.hoisted(
+  () => ({ value: null }) as { value: ActionResult | null },
+);
+
+vi.mock("react", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("react")>();
+  return {
+    ...actual,
+    useActionState: <S, P>(_action: unknown, _initial: S) =>
+      [mockState.value as S, (_payload: P) => {}, false] as const,
+  };
+});
 
 import { AuthForm } from "@/app/[locale]/(auth)/_components/AuthForm";
 
 const noopAction = vi.fn(async () => undefined);
+
+beforeEach(() => {
+  mockState.value = null;
+});
 
 /**
  * These tests query by input `name` attributes and link `href`s rather than
@@ -167,5 +196,93 @@ describe("AuthForm", () => {
     );
 
     expect(screen.getByTestId("server-alert")).toBeInTheDocument();
+  });
+
+  it("renders an error banner (and hides serverAlerts) when the action returns a failure", () => {
+    mockState.value = {
+      ok: false,
+      code: "invalid_credentials",
+      message: "Invalid credentials.",
+    };
+
+    render(
+      <AuthForm
+        action={noopAction}
+        translationNamespace="login"
+        passwordAutoComplete="current-password"
+        serverAlerts={<div data-testid="server-alert">server hint</div>}
+        footerLink={{
+          href: "/signup",
+          textKey: "noAccount",
+          linkKey: "signUp",
+        }}
+      />,
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent("Invalid credentials.");
+    expect(screen.queryByTestId("server-alert")).not.toBeInTheDocument();
+  });
+
+  it("renders ResendVerificationLink inside the error banner when code is email_not_verified", async () => {
+    mockState.value = {
+      ok: false,
+      code: "email_not_verified",
+      message: "Please verify your email.",
+    };
+
+    const user = userEvent.setup();
+    const { container } = render(
+      <AuthForm
+        action={noopAction}
+        translationNamespace="login"
+        passwordAutoComplete="current-password"
+        footerLink={{
+          href: "/signup",
+          textKey: "noAccount",
+          linkKey: "signUp",
+        }}
+      />,
+    );
+
+    // The ResendVerificationLink stub must appear inside the alert.
+    const resendLink = screen.getByTestId("resend-link");
+    expect(resendLink).toBeInTheDocument();
+
+    // Email state is forwarded to ResendVerificationLink as the email prop.
+    // Type into the email field and verify it propagates.
+    const emailInput = container.querySelector<HTMLInputElement>(
+      'input[name="email"]',
+    )!;
+    await user.type(emailInput, "user@example.com");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("resend-link")).toHaveAttribute(
+        "data-email",
+        "user@example.com",
+      );
+    });
+  });
+
+  it("does not render ResendVerificationLink for other error codes", () => {
+    mockState.value = {
+      ok: false,
+      code: "invalid_credentials",
+      message: "Bad password.",
+    };
+
+    render(
+      <AuthForm
+        action={noopAction}
+        translationNamespace="login"
+        passwordAutoComplete="current-password"
+        footerLink={{
+          href: "/signup",
+          textKey: "noAccount",
+          linkKey: "signUp",
+        }}
+      />,
+    );
+
+    expect(screen.queryByTestId("resend-link")).not.toBeInTheDocument();
   });
 });

@@ -5,6 +5,7 @@ import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { OAuthButtons } from "@/presentation/components/molecules/OAuthButtons";
 import { signIn } from "@/app/actions/auth";
 import { AuthForm } from "../_components/AuthForm";
+import { ResendVerificationLink } from "../_components/ResendVerificationLink";
 
 export async function generateMetadata({
   params,
@@ -82,6 +83,7 @@ export default async function LoginPage({ params, searchParams }: Props) {
                 className="mb-4"
               >
                 {t(errorKey)}
+                {error === "email_not_verified" && <ResendVerificationLink />}
               </AlertBanner>
             )}
             {invited && (

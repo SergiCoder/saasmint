@@ -96,7 +96,9 @@
       "errorBackendRejected": "Autentisering misslyckades. Försök logga in igen.",
       "errorOAuth": "Social inloggning misslyckades. Försök igen.",
       "errorOAuthEmailUnverifiedCollision": "Ditt sociala konto är registrerat med en e-postadress som redan har ett lösenordskonto här. Logga in med ditt lösenord först; du kan koppla den sociala leverantören efteråt.",
-      "forgotPassword": "Glömt lösenord?"
+      "forgotPassword": "Glömt lösenord?",
+      "resendVerification": "Skicka verifieringsmejlet igen",
+      "verificationEmailSent": "Verifieringsmejl skickat. Kontrollera din inkorg."
     },
     "forgotPassword": {
       "pageTitle": "Glömt lösenord",
@@ -252,6 +254,9 @@
     "profile": "Profil",
     "fullName": "Fullständigt namn",
     "email": "E-post",
+    "emailNotVerified": "Din e-postadress är inte verifierad ännu.",
+    "resendVerification": "Skicka verifieringsmejlet igen",
+    "verificationEmailSent": "Verifieringsmejl skickat. Kontrollera din inkorg.",
     "preferredLocale": "Språk",
     "preferredCurrency": "Valuta",
     "phonePrefix": "Landskod",

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { User } from "@/domain/models/User";
@@ -12,6 +12,20 @@ const mockDeleteAvatar = vi.fn();
 const mockCompressImage = vi.fn(
   async (file: File) => new File([file], "compressed.webp"),
 );
+
+// Controllable stub for the useResendVerification hook so tests can drive
+// the resend banner state without invoking the real server action.
+const mockSubmitResend = vi.fn();
+const mockResendHook = vi.hoisted(() => ({
+  pending: false,
+  status: "idle" as "idle" | "sent" | "error",
+  errorMessage: null as string | null,
+  submit: (...args: unknown[]) => mockSubmitResend(...args),
+}));
+
+vi.mock("@/lib/actions/useResendVerification", () => ({
+  useResendVerification: () => mockResendHook,
+}));
 
 vi.mock("@/app/actions/user", () => ({
   updateProfile: (...args: unknown[]) => mockUpdateProfile(...args),
@@ -83,6 +97,10 @@ function renderForm(userOverrides: Partial<User> = {}) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // Reset hook state to idle defaults before each test.
+  mockResendHook.pending = false;
+  mockResendHook.status = "idle";
+  mockResendHook.errorMessage = null;
 });
 
 // --- Tests ----------------------------------------------------------------
@@ -255,5 +273,68 @@ describe("ProfileForm", () => {
     expect(await screen.findByText("delete failed")).toBeInTheDocument();
     // If the API call failed, we must NOT persist a null avatarUrl.
     expect(mockUpdateAvatarUrl).not.toHaveBeenCalled();
+  });
+
+  describe("email-not-verified banner", () => {
+    it("shows the warning banner with a resend button when user.isVerified is false", () => {
+      renderForm({ isVerified: false });
+
+      // The banner must be visible and contain a resend affordance.
+      expect(screen.getByText("emailNotVerified")).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "resendVerification" }),
+      ).toBeInTheDocument();
+    });
+
+    it("does not show the email-not-verified banner when the user is already verified", () => {
+      renderForm({ isVerified: true });
+
+      expect(screen.queryByText("emailNotVerified")).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: "resendVerification" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("calls hook submit with the user's email when the resend button is clicked", async () => {
+      const user = userEvent.setup();
+
+      renderForm({ isVerified: false, email: "alice@example.com" });
+      await user.click(
+        screen.getByRole("button", { name: "resendVerification" }),
+      );
+
+      expect(mockSubmitResend).toHaveBeenCalledWith("alice@example.com");
+    });
+
+    it("shows the success banner and hides the warning when hook status is sent", () => {
+      mockResendHook.status = "sent";
+
+      renderForm({ isVerified: false });
+
+      expect(screen.getByText("verificationEmailSent")).toBeInTheDocument();
+      // Warning banner is hidden when status is sent.
+      expect(screen.queryByText("emailNotVerified")).not.toBeInTheDocument();
+    });
+
+    it("renders an error banner when hook status is error", () => {
+      mockResendHook.status = "error";
+      mockResendHook.errorMessage = "Too many requests.";
+
+      renderForm({ isVerified: false });
+
+      expect(screen.getByText("Too many requests.")).toBeInTheDocument();
+      // Warning banner stays visible so the user can retry.
+      expect(screen.getByText("emailNotVerified")).toBeInTheDocument();
+    });
+
+    it("disables the resend button while hook pending is true", () => {
+      mockResendHook.pending = true;
+
+      renderForm({ isVerified: false });
+
+      expect(
+        screen.getByRole("button", { name: "resendVerification" }),
+      ).toBeDisabled();
+    });
   });
 });

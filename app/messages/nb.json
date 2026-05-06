@@ -96,7 +96,9 @@
       "errorBackendRejected": "Autentisering mislyktes. Prøv å logge inn igjen.",
       "errorOAuth": "Sosial pålogging mislyktes. Vennligst prøv igjen.",
       "errorOAuthEmailUnverifiedCollision": "Den sosiale kontoen din er registrert med en e-postadresse som allerede har en passordkonto her. Logg inn med passordet ditt først; du kan koble den sosiale leverandøren etterpå.",
-      "forgotPassword": "Glemt passord?"
+      "forgotPassword": "Glemt passord?",
+      "resendVerification": "Send bekreftelses-e-post på nytt",
+      "verificationEmailSent": "Bekreftelses-e-post sendt. Sjekk innboksen din."
     },
     "forgotPassword": {
       "pageTitle": "Glemt passord",
@@ -252,6 +254,9 @@
     "profile": "Profil",
     "fullName": "Fullt navn",
     "email": "E-post",
+    "emailNotVerified": "E-postadressen din er ikke bekreftet ennå.",
+    "resendVerification": "Send bekreftelses-e-post på nytt",
+    "verificationEmailSent": "Bekreftelses-e-post sendt. Sjekk innboksen din.",
     "preferredLocale": "Språk",
     "preferredCurrency": "Valuta",
     "phonePrefix": "Landskode",

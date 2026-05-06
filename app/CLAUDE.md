@@ -21,7 +21,7 @@ Strict hexagonal layers:
 
 Core types in `src/domain/models/`. All fields `readonly` — treat domain objects as immutable.
 
-- `User`, `Org`, `OrgMember` (role: `owner | admin | member`, `isBilling` flag), `Invitation`, `PhonePrefix`
+- `User` (`isVerified` — email confirmed; drives profile warning and login `email_not_verified` error with resend link), `Org`, `OrgMember` (role: `owner | admin | member`, `isBilling` flag), `Invitation`, `PhonePrefix`
 - `Plan` — `(context: personal|team, tier: 1=free|2=basic|3=pro, interval: month|year)` + single `price`. Backend returns paid plans only; the personal-free card is synthesised client-side where needed.
 - `PlanPrice`, `Product` (one-time), `ProductPrice`
 - `Subscription` — Stripe-mirrored row. `GET /billing/subscriptions/me/` returns a paginated envelope with 0–2 rows. Use `findPersonalSubscription()` / `findTeamSubscription()` to pick a row. `seatLimit` = purchased seat capacity (authoritative cap — do not hardcode a constant); `seatsUsed` = accepted members currently occupying seats. "Scheduled to cancel" UI = `cancelAt` is set; `canceledAt` only flips after the sub actually ends. `scheduledPlan` + `scheduledChangeAt` are set together when a downgrade is deferred to period end (upgrades apply immediately and leave both `null`); cleared when the user releases the schedule via `releaseScheduledChange()` or it applies. Mutating endpoints accept `?context=personal|team` (required when both rows exist; backend defaults to `team` for org members, `personal` otherwise).
@@ -71,7 +71,7 @@ Public env vars validated once at module load in `src/lib/env.ts` (`NEXT_PUBLIC_
 Django issues JWTs directly — no third-party provider.
 
 - **Tokens**: access (15 min) + refresh (7 days) in HTTP-only secure cookies.
-- **Login/Signup**: server actions call `POST /auth/login/`, `POST /auth/register/`.
+- **Login/Signup**: server actions call `POST /auth/login/`, `POST /auth/register/`. After registration the user is redirected to `/login?registered=true` — email must be verified before the first login. A failed login with code `email_not_verified` surfaces a resend link via `ResendVerificationLink` (calls `resendVerificationEmail` action → `POST /auth/resend-verification/`; fire-and-forget, always returns success to avoid email enumeration). Email verification itself is `verifyEmail` action → `POST /auth/verify-email/`.
 - **OAuth**: server action sets short-lived `oauth_in_progress` flow cookie + redirects to `GET /auth/oauth/{provider}/`. Django redirects back to `/auth/callback#code=<opaque>`. Client strips fragment via `history.replaceState` and calls `exchangeOAuthCode` server action → `POST /auth/oauth/exchange/`. Post-login redirect targets validated against an allowlist (`src/lib/oauthNext.ts`).
 - **Middleware (`src/proxy.ts`)**: on routes that read the session user, decodes the access token JWT (base64 only), refreshes via `POST /auth/refresh/` when expired/missing. Anonymous-only routes skip the refresh. On 401, clears stale cookies on both request and response. Forwards pathname as `x-pathname` (`PATHNAME_HEADER` in `src/lib/pathname.ts`); read on the server via `getPathname()` / `getPathnameWithoutLocale()` / `getLocale()`.
 - **Locale-prefixed redirects**: always use a locale-prefixed path — `redirect(`/${locale}/dashboard`)` not `redirect("/dashboard")`. A bare redirect strips the locale segment, breaking the next-intl router and causing a client-side hydration mismatch on cross-redirect chains. In **server actions** obtain the locale with `const locale = await getLocale()` (from `@/lib/pathname`), which reads the `x-pathname` header forwarded by middleware and falls back to the default locale when absent. In **page components** and **layouts**, the locale is already available from `await params` — use it directly.
@@ -123,7 +123,7 @@ Route-specific clients in co-located `_components/`; shared server fetchers in `
 
 ## Committing
 
-Always use `/commit`. Never commit manually.
+Always use `/commit`. Never commit manually. Do **not** add `Co-Authored-By:` trailers (or any other AI attribution) to commit messages — keep authorship clean.
 
 ## Running
 

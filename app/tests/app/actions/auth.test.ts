@@ -10,9 +10,11 @@ vi.mock("next/navigation", () => ({
 }));
 
 const mockPublicApiFetch = vi.fn();
+const mockPublicApiFetchVoid = vi.fn();
 const mockApiFetch = vi.fn();
 vi.mock("@/infrastructure/api/apiClient", () => ({
   publicApiFetch: (...args: unknown[]) => mockPublicApiFetch(...args),
+  publicApiFetchVoid: (...args: unknown[]) => mockPublicApiFetchVoid(...args),
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
 }));
 
@@ -55,6 +57,7 @@ let changePassword: typeof import("@/app/actions/auth").changePassword;
 let verifyEmail: typeof import("@/app/actions/auth").verifyEmail;
 let startOAuth: typeof import("@/app/actions/auth").startOAuth;
 let exchangeOAuthCode: typeof import("@/app/actions/auth").exchangeOAuthCode;
+let resendVerificationEmail: typeof import("@/app/actions/auth").resendVerificationEmail;
 
 function mockPlans(): void {
   // Backend v0.7.0 dropped the personal-free plan row; the catalog now only
@@ -90,6 +93,7 @@ beforeEach(async () => {
   verifyEmail = mod.verifyEmail;
   startOAuth = mod.startOAuth;
   exchangeOAuthCode = mod.exchangeOAuthCode;
+  resendVerificationEmail = mod.resendVerificationEmail;
 });
 
 describe("auth server actions", () => {
@@ -853,6 +857,7 @@ describe("auth server actions", () => {
     });
 
     // Defense in depth for the open-redirect class of attacks: even though
+
     // the attacker would already need to control the flow cookie, the
     // `next` we return gets fed straight into a client-side router.replace
     // by AuthCallbackClient, so any payload that slipped past cookie
@@ -881,5 +886,75 @@ describe("auth server actions", () => {
         expect(result).toEqual({ ok: true, next: "/dashboard" });
       },
     );
+  });
+
+  describe("resendVerificationEmail", () => {
+    it("posts to /auth/resend-verification/ with normalized email and returns ok", async () => {
+      mockPublicApiFetchVoid.mockResolvedValue(undefined);
+
+      const result = await resendVerificationEmail("User@Example.COM");
+      expect(result).toEqual({ ok: true });
+      expect(mockPublicApiFetchVoid).toHaveBeenCalledWith(
+        "/auth/resend-verification/",
+        {
+          method: "POST",
+          body: JSON.stringify({ email: "user@example.com" }),
+        },
+      );
+    });
+
+    it("trims whitespace and lowercases the email before sending", async () => {
+      mockPublicApiFetchVoid.mockResolvedValue(undefined);
+
+      await resendVerificationEmail("  Alice@Example.COM  ");
+      expect(mockPublicApiFetchVoid).toHaveBeenCalledWith(
+        "/auth/resend-verification/",
+        expect.objectContaining({
+          body: JSON.stringify({ email: "alice@example.com" }),
+        }),
+      );
+    });
+
+    it("returns email_required when the email is an empty string", async () => {
+      const result = await resendVerificationEmail("");
+      expect(result).toEqual({ ok: false, code: "email_required" });
+      expect(mockPublicApiFetchVoid).not.toHaveBeenCalled();
+    });
+
+    it("returns email_required when the email is only whitespace", async () => {
+      const result = await resendVerificationEmail("   ");
+      expect(result).toEqual({ ok: false, code: "email_required" });
+      expect(mockPublicApiFetchVoid).not.toHaveBeenCalled();
+    });
+
+    it("swallows API errors and still returns ok (fire-and-forget — avoids leaking email existence)", async () => {
+      // Same semantics as resetPassword: never reveal whether the email
+      // exists or is already verified, so the action always succeeds
+      // from the caller's perspective even when the backend rejects.
+      mockPublicApiFetchVoid.mockRejectedValue(
+        new ApiError(429, {
+          detail: "Too many requests.",
+          code: "rate_limited",
+        }),
+      );
+
+      const result = await resendVerificationEmail("user@example.com");
+      expect(result).toEqual({ ok: true });
+      expect(vi.mocked(console.error)).toHaveBeenCalledWith(
+        "Resend-verification failed",
+        expect.any(ApiError),
+      );
+    });
+
+    it("swallows non-ApiError throwables and still returns ok", async () => {
+      mockPublicApiFetchVoid.mockRejectedValue(new Error("network down"));
+
+      const result = await resendVerificationEmail("user@example.com");
+      expect(result).toEqual({ ok: true });
+      expect(vi.mocked(console.error)).toHaveBeenCalledWith(
+        "Resend-verification failed",
+        expect.any(Error),
+      );
+    });
   });
 });

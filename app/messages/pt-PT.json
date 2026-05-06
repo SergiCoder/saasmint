@@ -96,7 +96,9 @@
       "errorBackendRejected": "Falha na autenticação. Tente iniciar sessão novamente.",
       "errorOAuth": "Início de sessão social falhou. Por favor, tente novamente.",
       "errorOAuthEmailUnverifiedCollision": "A sua conta social está registada com um endereço de e-mail que já tem uma conta com palavra-passe aqui. Inicie sessão com a sua palavra-passe primeiro; pode associar o fornecedor social depois.",
-      "forgotPassword": "Esqueceu a palavra-passe?"
+      "forgotPassword": "Esqueceu a palavra-passe?",
+      "resendVerification": "Reenviar e-mail de verificação",
+      "verificationEmailSent": "E-mail de verificação enviado. Verifique a sua caixa de entrada."
     },
     "forgotPassword": {
       "pageTitle": "Esqueci a palavra-passe",
@@ -252,6 +254,9 @@
     "profile": "Perfil",
     "fullName": "Nome completo",
     "email": "E-mail",
+    "emailNotVerified": "O seu endereço de e-mail ainda não foi verificado.",
+    "resendVerification": "Reenviar e-mail de verificação",
+    "verificationEmailSent": "E-mail de verificação enviado. Verifique a sua caixa de entrada.",
     "preferredLocale": "Idioma",
     "preferredCurrency": "Moeda",
     "phonePrefix": "Código do país",

@@ -96,7 +96,9 @@
       "errorBackendRejected": "Authenticatie mislukt. Probeer opnieuw in te loggen.",
       "errorOAuth": "Sociale login mislukt. Probeer het opnieuw.",
       "errorOAuthEmailUnverifiedCollision": "Uw sociale account is geregistreerd met een e-mailadres dat hier al een wachtwoordaccount heeft. Log eerst in met uw wachtwoord; u kunt de sociale provider daarna koppelen.",
-      "forgotPassword": "Wachtwoord vergeten?"
+      "forgotPassword": "Wachtwoord vergeten?",
+      "resendVerification": "Verificatie-e-mail opnieuw verzenden",
+      "verificationEmailSent": "Verificatie-e-mail verzonden. Controleer je inbox."
     },
     "forgotPassword": {
       "pageTitle": "Wachtwoord vergeten",
@@ -252,6 +254,9 @@
     "profile": "Profiel",
     "fullName": "Volledige naam",
     "email": "E-mail",
+    "emailNotVerified": "Je e-mailadres is nog niet geverifieerd.",
+    "resendVerification": "Verificatie-e-mail opnieuw verzenden",
+    "verificationEmailSent": "Verificatie-e-mail verzonden. Controleer je inbox.",
     "preferredLocale": "Taal",
     "preferredCurrency": "Valuta",
     "phonePrefix": "Landcode",

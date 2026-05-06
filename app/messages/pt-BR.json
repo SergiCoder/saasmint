@@ -96,7 +96,9 @@
       "errorBackendRejected": "Falha na autenticação. Tente fazer login novamente.",
       "errorOAuth": "Login social falhou. Por favor, tente novamente.",
       "errorOAuthEmailUnverifiedCollision": "Sua conta social está registrada com um endereço de e-mail que já possui uma conta com senha aqui. Faça login com sua senha primeiro; você poderá vincular o provedor social depois.",
-      "forgotPassword": "Esqueceu a senha?"
+      "forgotPassword": "Esqueceu a senha?",
+      "resendVerification": "Reenviar e-mail de verificação",
+      "verificationEmailSent": "E-mail de verificação enviado. Confira sua caixa de entrada."
     },
     "forgotPassword": {
       "pageTitle": "Esqueci a senha",
@@ -252,6 +254,9 @@
     "profile": "Perfil",
     "fullName": "Nome completo",
     "email": "E-mail",
+    "emailNotVerified": "Seu endereço de e-mail ainda não foi verificado.",
+    "resendVerification": "Reenviar e-mail de verificação",
+    "verificationEmailSent": "E-mail de verificação enviado. Confira sua caixa de entrada.",
     "preferredLocale": "Idioma",
     "preferredCurrency": "Moeda",
     "phonePrefix": "Código do país",

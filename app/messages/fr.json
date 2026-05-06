@@ -96,7 +96,9 @@
       "errorBackendRejected": "Échec de l'authentification. Veuillez réessayer.",
       "errorOAuth": "La connexion sociale a échoué. Veuillez réessayer.",
       "errorOAuthEmailUnverifiedCollision": "Votre compte social est enregistré avec une adresse e-mail qui a déjà un compte avec mot de passe ici. Veuillez vous connecter avec votre mot de passe d'abord ; vous pourrez ensuite associer le fournisseur social.",
-      "forgotPassword": "Mot de passe oublié ?"
+      "forgotPassword": "Mot de passe oublié ?",
+      "resendVerification": "Renvoyer l’e-mail de vérification",
+      "verificationEmailSent": "E-mail de vérification envoyé. Vérifiez votre boîte de réception."
     },
     "forgotPassword": {
       "pageTitle": "Mot de passe oublié",
@@ -252,6 +254,9 @@
     "profile": "Profil",
     "fullName": "Nom complet",
     "email": "E-mail",
+    "emailNotVerified": "Votre adresse e-mail n’est pas encore vérifiée.",
+    "resendVerification": "Renvoyer l’e-mail de vérification",
+    "verificationEmailSent": "E-mail de vérification envoyé. Vérifiez votre boîte de réception.",
     "preferredLocale": "Langue",
     "preferredCurrency": "Devise",
     "phonePrefix": "Indicatif pays",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
 import { FormField } from "@/presentation/components/molecules/FormField";
@@ -10,6 +10,7 @@ import { Button } from "@/presentation/components/atoms/Button";
 import type { ActionResult } from "@/lib/actions/ActionResult";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
+import { ResendVerificationLink } from "./ResendVerificationLink";
 
 interface AuthFormProps {
   action: (prev: unknown, fd: FormData) => Promise<ActionResult | undefined>;
@@ -35,13 +36,17 @@ export function AuthForm({
   const t = useTranslations(translationNamespace);
   const translateError = useActionErrorMessage();
   const [state, formAction, pending] = useActionState(action, null);
+  const [email, setEmail] = useState("");
   const errorMessage = state && !state.ok ? translateError(state) : null;
+  const showResendLink =
+    state && !state.ok && state.code === "email_not_verified";
 
   return (
     <>
       {errorMessage ? (
         <AlertBanner variant="error" className="mb-4">
           {errorMessage}
+          {showResendLink && <ResendVerificationLink email={email} />}
         </AlertBanner>
       ) : (
         serverAlerts
@@ -67,6 +72,8 @@ export function AuthForm({
           type="email"
           required
           autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <FormField
           label={t("password")}

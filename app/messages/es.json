@@ -96,7 +96,9 @@
       "errorBackendRejected": "Error de autenticación. Intenta iniciar sesión de nuevo.",
       "errorOAuth": "El inicio de sesión social falló. Por favor, inténtalo de nuevo.",
       "errorOAuthEmailUnverifiedCollision": "Tu cuenta social está registrada con una dirección de correo electrónico que ya tiene una cuenta con contraseña aquí. Inicia sesión con tu contraseña primero; podrás vincular el proveedor social después.",
-      "forgotPassword": "¿Olvidaste tu contraseña?"
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "resendVerification": "Reenviar correo de verificación",
+      "verificationEmailSent": "Correo de verificación enviado. Revisa tu bandeja de entrada."
     },
     "forgotPassword": {
       "pageTitle": "Olvidé mi contraseña",
@@ -252,6 +254,9 @@
     "profile": "Perfil",
     "fullName": "Nombre completo",
     "email": "Correo electrónico",
+    "emailNotVerified": "Tu dirección de correo electrónico aún no está verificada.",
+    "resendVerification": "Reenviar correo de verificación",
+    "verificationEmailSent": "Correo de verificación enviado. Revisa tu bandeja de entrada.",
     "preferredLocale": "Idioma",
     "preferredCurrency": "Moneda",
     "phonePrefix": "Código de país",

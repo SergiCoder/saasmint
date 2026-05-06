@@ -96,7 +96,9 @@
       "errorBackendRejected": "Autenticazione fallita. Riprova ad accedere.",
       "errorOAuth": "Accesso social non riuscito. Riprova.",
       "errorOAuthEmailUnverifiedCollision": "Il tuo account social è registrato con un indirizzo email che ha già un account con password qui. Accedi prima con la tua password; potrai collegare il provider social in seguito.",
-      "forgotPassword": "Password dimenticata?"
+      "forgotPassword": "Password dimenticata?",
+      "resendVerification": "Invia di nuovo l’email di verifica",
+      "verificationEmailSent": "Email di verifica inviata. Controlla la tua casella di posta."
     },
     "forgotPassword": {
       "pageTitle": "Password dimenticata",
@@ -252,6 +254,9 @@
     "profile": "Profilo",
     "fullName": "Nome completo",
     "email": "Email",
+    "emailNotVerified": "Il tuo indirizzo email non è ancora verificato.",
+    "resendVerification": "Invia di nuovo l’email di verifica",
+    "verificationEmailSent": "Email di verifica inviata. Controlla la tua casella di posta.",
     "preferredLocale": "Lingua",
     "preferredCurrency": "Valuta",
     "phonePrefix": "Prefisso paese",

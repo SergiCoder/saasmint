@@ -1,7 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { apiFetch, publicApiFetch } from "@/infrastructure/api/apiClient";
+import {
+  apiFetch,
+  publicApiFetch,
+  publicApiFetchVoid,
+} from "@/infrastructure/api/apiClient";
 import { ApiError } from "@/domain/errors/ApiError";
 import { authGateway, planGateway } from "@/infrastructure/registry";
 import {
@@ -269,6 +273,28 @@ export async function changePassword(
   }
 
   await setAuthCookies(data.access_token, data.refresh_token);
+  return ok();
+}
+
+export async function resendVerificationEmail(
+  email: string,
+): Promise<ActionResult> {
+  if (typeof email !== "string" || !email.trim()) {
+    return fail("email_required");
+  }
+
+  // Fire-and-forget: always return success to avoid leaking whether the email
+  // exists or is already verified — same pattern as resetPassword.
+  try {
+    await publicApiFetchVoid("/auth/resend-verification/", {
+      method: "POST",
+      body: JSON.stringify({ email: email.trim().toLowerCase() }),
+    });
+  } catch (err) {
+    // Swallow errors — never reveal whether the email exists or is already verified
+    console.error("Resend-verification failed", err);
+  }
+
   return ok();
 }
 
