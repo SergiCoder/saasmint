@@ -138,6 +138,7 @@ export default async function PricingPage({ params, searchParams }: Props) {
     plans: allPlans,
     currentPlans,
     locale,
+    fallbackCurrency: plans.find((p) => p.price)?.price?.currency ?? currency,
     labels: {
       upgrade: t("upgrade"),
       seat: t("seat"),

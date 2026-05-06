@@ -92,6 +92,12 @@ export interface BuildPlanCardGroupsOptions {
    */
   currentPlans?: Plan[];
   locale: string;
+  /**
+   * Currency used to format priceless plans (e.g. the synthesised personal-free
+   * card on the marketing page). When omitted, falls back to USD — keep the
+   * same currency the surrounding paid plans use to avoid mixed-currency rows.
+   */
+  fallbackCurrency?: string;
   labels: PlanCardLabels;
   /** Translated plan names keyed by "{context}.{tier}", e.g. "personal.1". */
   planNames: Record<string, string>;
@@ -157,6 +163,7 @@ export function buildPlanCardGroups({
   plans,
   currentPlans = [],
   locale,
+  fallbackCurrency,
   labels,
   planNames,
   planDescriptions,
@@ -185,7 +192,7 @@ export function buildPlanCardGroups({
 
   const buildVariant = (plan: Plan): PlanVariantView => {
     const displayAmount = plan.price?.displayAmount ?? 0;
-    const currency = plan.price?.currency ?? "usd";
+    const currency = plan.price?.currency ?? fallbackCurrency ?? "usd";
     const isTeam = plan.context === "team";
     const isCurrent = currentPlanIds.has(plan.id);
     const monthlyEq = monthlyEquivalent(plan);

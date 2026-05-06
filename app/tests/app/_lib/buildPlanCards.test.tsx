@@ -184,6 +184,53 @@ describe("buildPlanCardGroups", () => {
     expect(groups.map((g) => g.tier)).toEqual([1, 2, 3]);
   });
 
+  it("formats priceless plans using fallbackCurrency when provided", () => {
+    const plans: Plan[] = [
+      {
+        id: "free",
+        name: "Free",
+        description: "",
+        context: "personal",
+        tier: 1,
+        interval: "month",
+        price: null,
+      },
+    ];
+    const groups = buildPlanCardGroups({
+      plans,
+      locale: "en-US",
+      fallbackCurrency: "eur",
+      labels,
+      planNames: { "personal.1": "Free" },
+      planDescriptions: { "personal.1": "Free desc" },
+      renderCta: () => null,
+    });
+    expect(groups[0]!.monthly?.price).toBe("€0.00");
+  });
+
+  it("falls back to USD for priceless plans when fallbackCurrency is omitted", () => {
+    const plans: Plan[] = [
+      {
+        id: "free",
+        name: "Free",
+        description: "",
+        context: "personal",
+        tier: 1,
+        interval: "month",
+        price: null,
+      },
+    ];
+    const groups = buildPlanCardGroups({
+      plans,
+      locale: "en-US",
+      labels,
+      planNames: { "personal.1": "Free" },
+      planDescriptions: { "personal.1": "Free desc" },
+      renderCta: () => null,
+    });
+    expect(groups[0]!.monthly?.price).toBe("$0.00");
+  });
+
   it("separates personal and team groups", () => {
     const plans: Plan[] = [
       makePlan({ id: "p", context: "personal", tier: 2 }),
