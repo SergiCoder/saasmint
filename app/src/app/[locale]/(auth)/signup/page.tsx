@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
 import { OAuthButtons } from "@/presentation/components/molecules/OAuthButtons";
 import { signUp } from "@/app/actions/auth";
+import { APP_NAME } from "@/lib/appVersion";
 import { AuthForm } from "../_components/AuthForm";
 
 interface SignupPageProps {
@@ -41,7 +42,7 @@ export default async function SignupPage({
   if (isTeam) hiddenFields.context = "team";
 
   return (
-    <AuthLayout appName="SaaSmint" title={t("title")}>
+    <AuthLayout appName={APP_NAME} title={t("title")}>
       <OAuthButtons plan={plan} context={isTeam ? "team" : undefined} />
       <AuthForm
         action={signUp}

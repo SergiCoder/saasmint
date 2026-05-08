@@ -4,14 +4,15 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { isLocale, routing } from "@/lib/i18n/routing";
 import { env } from "@/lib/env";
+import { APP_NAME } from "@/lib/appVersion";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
-  title: { default: "SaaSmint", template: "%s | SaaSmint" },
+  title: { default: APP_NAME, template: `%s | ${APP_NAME}` },
   description: "The platform teams actually ship with.",
   openGraph: {
     type: "website",
-    siteName: "SaaSmint",
+    siteName: APP_NAME,
   },
 };
 

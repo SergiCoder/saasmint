@@ -6,6 +6,12 @@ import pkg from "../../package.json";
  */
 export const APP_VERSION = pkg.version;
 
+/**
+ * Display brand name used in layouts, page metadata, and emails. Centralised
+ * so a future rename only touches one constant instead of nine page files.
+ */
+export const APP_NAME = "SaaSmint";
+
 const REPO_RELEASES_URL =
   "https://github.com/SergiCoder/saasmint-app/releases/tag";
 

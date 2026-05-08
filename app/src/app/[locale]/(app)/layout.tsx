@@ -3,6 +3,7 @@ import { AppLayout } from "@/presentation/components/templates/AppLayout";
 import { redirect } from "@/lib/i18n/navigation";
 import { getPathnameWithoutLocale } from "@/lib/pathname";
 import { isLocale } from "@/lib/i18n/routing";
+import { APP_NAME } from "@/lib/appVersion";
 import { findTeamSubscription } from "@/domain/models/Subscription";
 import { SignOutButton } from "../_components/SignOutButton";
 import { getCurrentUser } from "./_data/getCurrentUser";
@@ -69,7 +70,7 @@ export default async function AppLayoutRoute({
 
   return (
     <AppLayout
-      appName="SaaSmint"
+      appName={APP_NAME}
       navLinks={navLinks}
       user={{
         fullName: user.fullName ?? user.email,

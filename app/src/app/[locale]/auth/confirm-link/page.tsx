@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
+import { APP_NAME } from "@/lib/appVersion";
 import { ConfirmLinkClient } from "./_components/ConfirmLinkClient";
 
 interface Props {
@@ -27,7 +28,7 @@ export default async function ConfirmLinkPage({ params, searchParams }: Props) {
   ]);
 
   return (
-    <AuthLayout appName="SaaSmint" title={t("title")}>
+    <AuthLayout appName={APP_NAME} title={t("title")}>
       <ConfirmLinkClient token={token} />
     </AuthLayout>
   );

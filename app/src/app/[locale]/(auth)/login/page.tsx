@@ -4,6 +4,7 @@ import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { OAuthButtons } from "@/presentation/components/molecules/OAuthButtons";
 import { signIn } from "@/app/actions/auth";
+import { APP_NAME } from "@/lib/appVersion";
 import { AuthForm } from "../_components/AuthForm";
 import { ResendVerificationLink } from "../_components/ResendVerificationLink";
 
@@ -60,7 +61,7 @@ export default async function LoginPage({ params, searchParams }: Props) {
   if (isTeam) hiddenFields.context = "team";
 
   return (
-    <AuthLayout appName="SaaSmint" title={t("title")}>
+    <AuthLayout appName={APP_NAME} title={t("title")}>
       <OAuthButtons plan={plan} context={isTeam ? "team" : undefined} />
       <AuthForm
         action={signIn}

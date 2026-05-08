@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
 import { resetPassword } from "@/app/actions/auth";
+import { APP_NAME } from "@/lib/appVersion";
 import { ForgotPasswordForm } from "./_components/ForgotPasswordForm";
 
 interface Props {
@@ -21,7 +22,7 @@ export default async function ForgotPasswordPage({ params }: Props) {
   const t = await getTranslations("auth.forgotPassword");
 
   return (
-    <AuthLayout appName="SaaSmint" title={t("title")}>
+    <AuthLayout appName={APP_NAME} title={t("title")}>
       <p className="mb-6 text-center text-sm text-gray-600">
         {t("description")}
       </p>

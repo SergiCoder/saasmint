@@ -4,6 +4,7 @@ import { MarketingLayout } from "@/presentation/components/templates/MarketingLa
 import type { Org } from "@/domain/models/Org";
 import { findTeamSubscription } from "@/domain/models/Subscription";
 import { getAccessToken } from "@/infrastructure/auth/cookies";
+import { APP_NAME } from "@/lib/appVersion";
 import { getSubscriptions } from "../(app)/_data/getSubscriptions";
 import { getUserOrgs } from "../(app)/_data/getUserOrgs";
 import { getOptionalUser } from "./_data/getOptionalUser";
@@ -101,7 +102,7 @@ export default async function MarketingLayoutRoute({
 
   return (
     <MarketingLayout
-      appName="SaaSmint"
+      appName={APP_NAME}
       navLinks={navLinks}
       navUser={navUser}
       navActions={navActions}
