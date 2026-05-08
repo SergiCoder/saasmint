@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { planGateway } from "@/infrastructure/registry";
 import { findPersonalSubscription } from "@/domain/models/Subscription";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
+import { formatLongDate } from "@/lib/formatLongDate";
 import { getCurrentUser } from "../../_data/getCurrentUser";
 import { getSubscriptions } from "../../_data/getSubscriptions";
 import { TeamCheckoutForm } from "./_components/TeamCheckoutForm";
@@ -59,12 +60,9 @@ export default async function TeamCheckoutPage({
   const personalSubEndDate = showPersonalSubNotice
     ? new Date(personalSubscription.currentPeriodEnd)
     : null;
-  const personalSubEndDateDisplay =
-    personalSubEndDate && !Number.isNaN(personalSubEndDate.getTime())
-      ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(
-          personalSubEndDate,
-        )
-      : undefined;
+  const personalSubEndDateDisplay = personalSubEndDate
+    ? formatLongDate(personalSubEndDate, locale) || undefined
+    : undefined;
 
   return (
     <div className="mx-auto max-w-md space-y-6 pb-12">

@@ -11,6 +11,7 @@ export { SectionLabel, type SectionLabelProps } from "./SectionLabel";
 export { Button, type ButtonProps } from "./Button";
 export { Input, type InputProps } from "./Input";
 export { Label, type LabelProps } from "./Label";
+export { LinkButton, type LinkButtonProps } from "./LinkButton";
 export { LocaleDropdown } from "./LocaleDropdown";
 export { Logo, type LogoProps } from "./Logo";
 export { MicrosoftIcon, type MicrosoftIconProps } from "./MicrosoftIcon";

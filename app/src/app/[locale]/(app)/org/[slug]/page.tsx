@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { invitationGateway } from "@/infrastructure/registry";
 import { findTeamSubscription } from "@/domain/models/Subscription";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
+import { formatLongDate } from "@/lib/formatLongDate";
 import { getCurrentUser } from "../../_data/getCurrentUser";
 import { getOrgMembers } from "../../_data/getOrgMembers";
 import { getSubscriptions } from "../../_data/getSubscriptions";
@@ -60,10 +61,8 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
   const scheduledChangeDate =
     scheduledChangeAtIso !== null ? new Date(scheduledChangeAtIso) : null;
   const scheduledChangeDisplay =
-    scheduledChangeDate !== null && !Number.isNaN(scheduledChangeDate.getTime())
-      ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(
-          scheduledChangeDate,
-        )
+    scheduledChangeDate !== null
+      ? formatLongDate(scheduledChangeDate, locale) || null
       : null;
 
   const me = members.find((m) => m.user.id === user.id);

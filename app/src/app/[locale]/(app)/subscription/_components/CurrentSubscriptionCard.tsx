@@ -2,18 +2,13 @@ import { getTranslations } from "next-intl/server";
 import type { Subscription } from "@/domain/models/Subscription";
 import { Link } from "@/lib/i18n/navigation";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
+import { formatLongDate } from "@/lib/formatLongDate";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { SubscriptionCard } from "@/presentation/components/organisms/SubscriptionCard";
 import { BillingPortalButton } from "./BillingPortalButton";
 import { CancelRenewalButton } from "./CancelRenewalButton";
 import { ReleaseScheduledChangeButton } from "./ReleaseScheduledChangeButton";
 import { ResumeSubscriptionButton } from "./ResumeSubscriptionButton";
-
-function formatLongDate(date: Date, locale: string): string {
-  return !Number.isNaN(date.getTime())
-    ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(date)
-    : "";
-}
 
 interface CurrentSubscriptionCardProps {
   subscription: Subscription;
