@@ -17,22 +17,27 @@ vi.mock("next-intl/server", () => ({
 }));
 
 vi.mock(
-  "@/app/[locale]/(app)/subscription/_components/ReleaseScheduledChangeButton",
+  "@/app/[locale]/(app)/subscription/_components/BillingActionButton",
   async () => {
     const React = await import("react");
     return {
-      ReleaseScheduledChangeButton: ({
+      BillingActionButton: ({
         children,
+        action,
         context,
       }: {
         children: React.ReactNode;
+        action: (context?: "personal" | "team") => Promise<unknown>;
         context?: "personal" | "team";
       }) =>
         React.createElement(
           "button",
           {
             type: "button",
-            "data-testid": "release-scheduled-change",
+            "data-testid":
+              action.name === "resumeSubscription"
+                ? "resume"
+                : "release-scheduled-change",
             "data-context": context ?? "",
           },
           children,
@@ -40,6 +45,15 @@ vi.mock(
     };
   },
 );
+
+vi.mock("@/app/actions/billing", () => ({
+  resumeSubscription: Object.defineProperty(vi.fn(), "name", {
+    value: "resumeSubscription",
+  }),
+  releaseScheduledChange: Object.defineProperty(vi.fn(), "name", {
+    value: "releaseScheduledChange",
+  }),
+}));
 
 vi.mock("@/presentation/components/molecules/AlertBanner", async () => {
   const React = await import("react");
@@ -105,31 +119,6 @@ vi.mock(
             "data-context": context ?? "",
           },
           label,
-        ),
-    };
-  },
-);
-
-vi.mock(
-  "@/app/[locale]/(app)/subscription/_components/ResumeSubscriptionButton",
-  async () => {
-    const React = await import("react");
-    return {
-      ResumeSubscriptionButton: ({
-        children,
-        context,
-      }: {
-        children: React.ReactNode;
-        context?: "personal" | "team";
-      }) =>
-        React.createElement(
-          "button",
-          {
-            type: "button",
-            "data-testid": "resume",
-            "data-context": context ?? "",
-          },
-          children,
         ),
     };
   },

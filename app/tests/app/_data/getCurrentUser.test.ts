@@ -19,7 +19,7 @@ vi.mock("next/navigation", () => ({
   redirect: (dest: string) => mockRedirect(dest),
 }));
 
-// Loader reads the active locale from the proxy-forwarded `x-pathname` header;
+// Loader reads the active locale from the middleware-forwarded `x-pathname` header;
 // stub a fixed locale so redirects assert against the locale-prefixed path
 // (the locale-prefixed-redirect rule documented in CLAUDE.md).
 vi.mock("@/lib/pathname", () => ({

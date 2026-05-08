@@ -27,8 +27,6 @@ const EXPECTED_USE_CLIENT_FILES: readonly string[] = [
   "src/app/[locale]/(app)/subscription/_components/ChangePlanButton.tsx",
   "src/app/[locale]/(app)/subscription/_components/CheckoutButton.tsx",
   "src/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection.tsx",
-  "src/app/[locale]/(app)/subscription/_components/ReleaseScheduledChangeButton.tsx",
-  "src/app/[locale]/(app)/subscription/_components/ResumeSubscriptionButton.tsx",
   "src/app/[locale]/(app)/subscription/team-checkout/_components/TeamCheckoutForm.tsx",
   "src/app/[locale]/(auth)/_components/AuthForm.tsx",
   "src/app/[locale]/(auth)/_components/ResendVerificationLink.tsx",

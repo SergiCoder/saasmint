@@ -3,8 +3,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 vi.mock("next/navigation", () => ({ redirect: vi.fn() }));
 
 const mockRevalidatePath = vi.fn();
-vi.mock("next/cache", () => ({
-  revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
+vi.mock("@/lib/revalidate", () => ({
+  // The action calls `revalidateLocalizedPath`; assert on the bare path so
+  // tests don't have to enumerate every supported locale.
+  revalidateLocalizedPath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 
 const mockGetCurrentUser = vi.fn();
@@ -247,11 +249,7 @@ describe("user server actions", () => {
       );
 
       const result = await updateAvatarUrl("https://example.com/avatar.webp");
-      expect(result).toEqual({
-        ok: false,
-        code: "image_too_large",
-        message: "Image too large.",
-      });
+      expect(result).toEqual({ ok: false, code: "image_too_large" });
     });
   });
 
@@ -315,11 +313,7 @@ describe("user server actions", () => {
 
       const result = await deleteAccount();
 
-      expect(result).toEqual({
-        ok: false,
-        code: "sole_owner",
-        message: "Cannot delete: you are the sole owner of an active org.",
-      });
+      expect(result).toEqual({ ok: false, code: "sole_owner" });
     });
 
     it("returns session_expired when the gateway throws AuthError", async () => {

@@ -35,12 +35,14 @@ describe("DjangoApiProductGateway", () => {
   const gateway = new DjangoApiProductGateway();
 
   describe("listProducts", () => {
-    it("fetches products with GET /billing/products/", async () => {
+    it("fetches products with GET /billing/products/ and a 1h revalidate window", async () => {
       mockApiFetch.mockResolvedValue({ results: products });
 
       const result = await gateway.listProducts();
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/billing/products/");
+      expect(mockApiFetch).toHaveBeenCalledWith("/billing/products/", {
+        next: { revalidate: 3600 },
+      });
       expect(result).toEqual(products);
     });
 
@@ -58,6 +60,7 @@ describe("DjangoApiProductGateway", () => {
 
       expect(mockApiFetch).toHaveBeenCalledWith(
         "/billing/products/?currency=eur",
+        { next: { revalidate: 3600 } },
       );
     });
 

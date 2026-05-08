@@ -298,12 +298,12 @@ vi.mock(
 );
 
 vi.mock(
-  "@/app/[locale]/(app)/subscription/_components/ResumeSubscriptionButton",
+  "@/app/[locale]/(app)/subscription/_components/BillingActionButton",
   async () => {
     const React = await import("react");
     return {
-      ResumeSubscriptionButton: () =>
-        React.createElement("button", { type: "button" }, "resume"),
+      BillingActionButton: ({ children }: { children: React.ReactNode }) =>
+        React.createElement("button", { type: "button" }, children),
     };
   },
 );

@@ -30,20 +30,8 @@ describe("fail", () => {
     expect(fail("bad_thing")).toEqual({ ok: false, code: "bad_thing" });
   });
 
-  it("omits message/fieldErrors when they are falsy", () => {
+  it("omits fieldErrors when extras is empty", () => {
     expect(fail("bad_thing", {})).toEqual({ ok: false, code: "bad_thing" });
-    expect(fail("bad_thing", { message: "" })).toEqual({
-      ok: false,
-      code: "bad_thing",
-    });
-  });
-
-  it("forwards message when provided", () => {
-    expect(fail("bad", { message: "boom" })).toEqual({
-      ok: false,
-      code: "bad",
-      message: "boom",
-    });
   });
 
   it("forwards fieldErrors when provided", () => {
@@ -52,19 +40,6 @@ describe("fail", () => {
     ).toEqual({
       ok: false,
       code: "invalid_input",
-      fieldErrors: { email: "required" },
-    });
-  });
-
-  it("forwards both message and fieldErrors when both provided", () => {
-    const result = fail("invalid_input", {
-      message: "please fix the fields",
-      fieldErrors: { email: "required" },
-    });
-    expect(result).toEqual({
-      ok: false,
-      code: "invalid_input",
-      message: "please fix the fields",
       fieldErrors: { email: "required" },
     });
   });
@@ -91,22 +66,9 @@ describe("toActionError", () => {
     ).toEqual({ ok: false, code: "NO_PAYMENT_METHOD" });
   });
 
-  it("maps ApiError with a `detail` string body, forwarding the detail as message", () => {
+  it("maps ApiError to its stable code, dropping the backend `detail`", () => {
     const err = new ApiError(400, { detail: "invalid email" });
-    expect(toActionError(err)).toEqual({
-      ok: false,
-      code: "HTTP_400",
-      message: "invalid email",
-    });
-  });
-
-  it("maps ApiError with a string[] body, joining detail parts", () => {
-    const err = new ApiError(400, ["bad", "worse"]);
-    expect(toActionError(err)).toEqual({
-      ok: false,
-      code: "HTTP_400",
-      message: "bad worse",
-    });
+    expect(toActionError(err)).toEqual({ ok: false, code: "HTTP_400" });
   });
 
   it("maps ApiError without a recognisable body, emitting just the code", () => {
@@ -116,11 +78,7 @@ describe("toActionError", () => {
 
   it("respects a custom ApiError code", () => {
     const err = new ApiError(409, { detail: "conflict" }, "CUSTOM_CODE");
-    expect(toActionError(err)).toEqual({
-      ok: false,
-      code: "CUSTOM_CODE",
-      message: "conflict",
-    });
+    expect(toActionError(err)).toEqual({ ok: false, code: "CUSTOM_CODE" });
   });
 
   it("collapses plain Error to unknown_error", () => {

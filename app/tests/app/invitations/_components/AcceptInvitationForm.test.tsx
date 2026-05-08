@@ -94,20 +94,18 @@ describe("AcceptInvitationForm", () => {
       expect(formData.get("password")).toBe(PASSWORD);
     });
 
-    it("renders an error banner with the server-provided message on failure", async () => {
+    it("renders an error banner with the translated error code on failure", async () => {
       mockAcceptInvitation.mockResolvedValue({
         ok: false,
         code: "HTTP_400",
-        message: "Invitation already used",
       });
 
       const user = userEvent.setup();
       const { container } = setup();
       await fillAndSubmit(container, user);
 
-      expect(
-        await screen.findByText("Invitation already used"),
-      ).toBeInTheDocument();
+      // i18n stub falls back to "unknown_error" because actionErrors is empty.
+      expect(await screen.findByText("unknown_error")).toBeInTheDocument();
     });
 
     it("falls back to the unknown_error translation when the server returns a bare code with no message", async () => {

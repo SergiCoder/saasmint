@@ -90,7 +90,6 @@ function renderForm(userOverrides: Partial<User> = {}) {
   return render(
     <ProfileForm
       user={makeUser(userOverrides)}
-      timezones={["UTC", "Europe/Madrid"]}
       phonePrefixes={[
         { prefix: "+1", label: "US/CA" },
         { prefix: "+34", label: "ES" },
@@ -173,7 +172,6 @@ describe("ProfileForm", () => {
     mockUploadAvatar.mockResolvedValue({
       ok: false,
       code: "unknown_error",
-      message: "boom",
     });
 
     const user = userEvent.setup();
@@ -183,7 +181,9 @@ describe("ProfileForm", () => {
     const file = new File(["x"], "avatar.png", { type: "image/png" });
     await user.upload(input, file);
 
-    expect(await screen.findByText("boom")).toBeInTheDocument();
+    // i18n stub falls back to "unknown_error" because the global mock has an
+    // empty `actionErrors` namespace.
+    expect(await screen.findByText("unknown_error")).toBeInTheDocument();
     expect(mockUpdateAvatarUrl).not.toHaveBeenCalled();
   });
 
@@ -197,12 +197,17 @@ describe("ProfileForm", () => {
     expect(values).toEqual(["en", "es"]);
   });
 
-  it("includes the supplied timezones in the timezone select", () => {
+  it("populates the timezone select from Intl.supportedValuesOf", () => {
+    // Lazily-initialised inside the client so the ~10 KB IANA timezone list
+    // doesn't ship in the RSC payload. The exact entries are
+    // platform-dependent — assert the list is non-empty and contains a
+    // canonical zone we know exists everywhere.
     renderForm();
 
     const select = screen.getByLabelText("timezone") as HTMLSelectElement;
     const values = Array.from(select.options).map((o) => o.value);
-    expect(values).toEqual(["UTC", "Europe/Madrid"]);
+    expect(values.length).toBeGreaterThan(50);
+    expect(values).toContain("Europe/Madrid");
   });
 
   it("renders PHONE_PREFIXES in the phonePrefix select", () => {
@@ -265,7 +270,6 @@ describe("ProfileForm", () => {
     mockDeleteAvatar.mockResolvedValue({
       ok: false,
       code: "unknown_error",
-      message: "delete failed",
     });
 
     const user = userEvent.setup();
@@ -274,7 +278,7 @@ describe("ProfileForm", () => {
     const removeButton = screen.getByRole("button", { name: /avatarRemove/i });
     await user.click(removeButton);
 
-    expect(await screen.findByText("delete failed")).toBeInTheDocument();
+    expect(await screen.findByText("unknown_error")).toBeInTheDocument();
     // If the API call failed, we must NOT persist a null avatarUrl.
     expect(mockUpdateAvatarUrl).not.toHaveBeenCalled();
   });

@@ -15,16 +15,13 @@ describe("validateNext", () => {
       });
     }
 
-    it("allows allowlisted path with query string", () => {
-      expect(validateNext("/dashboard?tab=billing", ORIGIN)).toBe(
-        "/dashboard?tab=billing",
-      );
+    it("drops query string for paths with no allowed params", () => {
+      // /dashboard has no per-path allowlist — non-allowlisted params dropped.
+      expect(validateNext("/dashboard?tab=billing", ORIGIN)).toBe("/dashboard");
     });
 
-    it("allows allowlisted path with fragment", () => {
-      expect(validateNext("/dashboard#section", ORIGIN)).toBe(
-        "/dashboard#section",
-      );
+    it("drops the fragment so router.replace can't honour an attacker hash", () => {
+      expect(validateNext("/dashboard#section", ORIGIN)).toBe("/dashboard");
     });
 
     it("allows allowlisted path with trailing slash", () => {
@@ -38,6 +35,15 @@ describe("validateNext", () => {
     it("allows allowlisted checkout with plan query", () => {
       expect(
         validateNext("/subscription/checkout?plan=price_pro", ORIGIN),
+      ).toBe("/subscription/checkout?plan=price_pro");
+    });
+
+    it("keeps only the per-path allowlisted param, dropping unknown ones", () => {
+      expect(
+        validateNext(
+          "/subscription/checkout?plan=price_pro&utm_source=evil",
+          ORIGIN,
+        ),
       ).toBe("/subscription/checkout?plan=price_pro");
     });
 
