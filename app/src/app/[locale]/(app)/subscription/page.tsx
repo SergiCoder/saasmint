@@ -15,6 +15,7 @@ import {
   buildPlanTranslations,
   buildProductPriceSubLabels,
   buildProductTranslations,
+  makeLocalSubLabelFormatter,
   splitPlanGroupsByContext,
 } from "@/app/[locale]/_lib/buildPlanCards";
 import {
@@ -108,22 +109,7 @@ export default async function BillingPage({
     },
     planNames,
     planDescriptions,
-    formatPriceSubLabelLocal: ({
-      interval,
-      localAmount,
-      monthlyEquivalent,
-      billedCurrency,
-    }) =>
-      interval === "year"
-        ? t("billedInLocalYearly", {
-            amount: localAmount,
-            monthly: monthlyEquivalent,
-            currency: billedCurrency,
-          })
-        : t("billedInLocalMonthly", {
-            amount: localAmount,
-            currency: billedCurrency,
-          }),
+    formatPriceSubLabelLocal: makeLocalSubLabelFormatter(t),
     renderCta: ({
       plan,
       isCurrent,

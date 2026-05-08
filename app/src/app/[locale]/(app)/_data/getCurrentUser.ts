@@ -2,6 +2,7 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import { AuthError } from "@/domain/errors/AuthError";
 import { authGateway } from "@/infrastructure/registry";
+import { getLocale } from "@/lib/pathname";
 
 /**
  * Fetches the current user, redirecting to /login on any failure.
@@ -21,6 +22,7 @@ export const getCurrentUser = cache(async function getCurrentUser() {
     return await authGateway.getCurrentUser();
   } catch (err) {
     const code = err instanceof AuthError ? err.code : "UNAUTHENTICATED";
-    redirect(`/login?error=${code}`);
+    const locale = await getLocale();
+    redirect(`/${locale}/login?error=${code}`);
   }
 });

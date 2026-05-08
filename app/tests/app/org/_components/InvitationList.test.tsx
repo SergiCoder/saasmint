@@ -7,6 +7,15 @@ vi.mock("@/app/actions/org", () => ({
 
 import { InvitationList } from "@/app/[locale]/(app)/org/[slug]/_components/InvitationList";
 import type { Invitation } from "@/domain/models/Invitation";
+import type { Org } from "@/domain/models/Org";
+
+const ACME_ORG: Org = {
+  id: "org-1",
+  name: "Acme",
+  slug: "acme",
+  logoUrl: null,
+  createdAt: "2026-01-01T00:00:00Z",
+};
 
 const columns = {
   email: "Email",
@@ -24,12 +33,11 @@ const roleLabels: Record<string, string> = {
 function makeInvitation(overrides?: Partial<Invitation>): Invitation {
   return {
     id: "inv-1",
-    org: "org-1",
-    orgName: "Acme",
+    org: ACME_ORG,
     email: "alice@example.com",
     role: "member",
     status: "pending",
-    invitedBy: { id: "u1", email: "bob@example.com", fullName: "Bob Smith" },
+    invitedBy: { id: "u1", fullName: "Bob Smith" },
     createdAt: "2026-01-01T00:00:00Z",
     expiresAt: "2026-01-08T00:00:00Z",
     ...overrides,

@@ -1,4 +1,5 @@
 import { Link } from "@/lib/i18n/navigation";
+import { SECONDARY_LINK_CLASS } from "@/lib/styles";
 
 export interface ErrorViewProps {
   title: string;
@@ -45,10 +46,7 @@ export function ErrorView({
         <p className="mb-8 text-sm text-gray-600">{description}</p>
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           {retrySlot}
-          <Link
-            href={homeHref}
-            className="focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-          >
+          <Link href={homeHref} className={SECONDARY_LINK_CLASS}>
             {homeLabel}
           </Link>
         </div>

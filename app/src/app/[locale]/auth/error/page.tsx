@@ -30,5 +30,5 @@ export default async function AuthErrorPage({ params, searchParams }: Props) {
   const [{ locale }, { error }] = await Promise.all([params, searchParams]);
   setRequestLocale(locale);
   const code = error && LOGIN_PASSTHROUGH.has(error) ? error : "oauth_error";
-  redirect(`/login?error=${encodeURIComponent(code)}`);
+  redirect(`/${locale}/login?error=${encodeURIComponent(code)}`);
 }

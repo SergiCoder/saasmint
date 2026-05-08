@@ -45,6 +45,36 @@ export function buildProductTranslations(
 }
 
 /**
+ * Returns the `formatPriceSubLabelLocal` callback shape `buildPlanCardGroups`
+ * expects, wired to the caller's typed translator. Both the marketing
+ * pricing page and the subscription page need the exact same dispatch on
+ * `interval`, so the factory keeps the logic in one place.
+ */
+export function makeLocalSubLabelFormatter(
+  t: (
+    key: "billedInLocalMonthly" | "billedInLocalYearly",
+    values: Record<string, string>,
+  ) => string,
+): (ctx: {
+  interval: "month" | "year";
+  localAmount: string;
+  monthlyEquivalent: string;
+  billedCurrency: string;
+}) => string {
+  return ({ interval, localAmount, monthlyEquivalent, billedCurrency }) =>
+    interval === "year"
+      ? t("billedInLocalYearly", {
+          amount: localAmount,
+          monthly: monthlyEquivalent,
+          currency: billedCurrency,
+        })
+      : t("billedInLocalMonthly", {
+          amount: localAmount,
+          currency: billedCurrency,
+        });
+}
+
+/**
  * Build a `productId → priceSubLabel` map for the dual-currency disclosure
  * shown beneath one-time product prices. Only emits an entry when the
  * backend returned a non-null `localCurrency` that differs from the billed

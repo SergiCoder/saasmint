@@ -2,7 +2,7 @@ import type {
   CreateInvitationInput,
   IInvitationGateway,
 } from "@/application/ports/IInvitationGateway";
-import type { Invitation } from "@/domain/models/Invitation";
+import type { Invitation, PublicInvitation } from "@/domain/models/Invitation";
 import {
   apiFetch,
   apiFetchVoid,
@@ -10,10 +10,14 @@ import {
   publicApiFetchVoid,
 } from "./apiClient";
 import { keysToCamel } from "./caseTransform";
-import { InvitationSchema } from "./schemas";
+import { InvitationSchema, PublicInvitationSchema } from "./schemas";
 
 function parseInvitation(raw: Record<string, unknown>): Invitation {
   return InvitationSchema.parse(keysToCamel(raw));
+}
+
+function parsePublicInvitation(raw: Record<string, unknown>): PublicInvitation {
+  return PublicInvitationSchema.parse(keysToCamel(raw));
 }
 
 export class DjangoApiInvitationGateway implements IInvitationGateway {
@@ -44,11 +48,11 @@ export class DjangoApiInvitationGateway implements IInvitationGateway {
     });
   }
 
-  async getByToken(token: string): Promise<Invitation> {
+  async getByToken(token: string): Promise<PublicInvitation> {
     const raw = await publicApiFetch<Record<string, unknown>>(
       `/invitations/${token}/`,
     );
-    return parseInvitation(raw);
+    return parsePublicInvitation(raw);
   }
 
   async acceptInvitation(

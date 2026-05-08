@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { CreditBalance } from "@/domain/models/CreditBalance";
-import type { Invitation } from "@/domain/models/Invitation";
+import type { Invitation, PublicInvitation } from "@/domain/models/Invitation";
 import type { Org } from "@/domain/models/Org";
 import type { OrgMember } from "@/domain/models/OrgMember";
 import {
@@ -55,7 +55,7 @@ export const OrgSchema = z.object({
 
 export const OrgMemberSchema = z.object({
   id: z.string(),
-  org: z.string(),
+  org: OrgSchema,
   user: z.object({
     id: z.string(),
     email: z.string(),
@@ -67,21 +67,41 @@ export const OrgMemberSchema = z.object({
   joinedAt: z.string(),
 }) satisfies z.ZodType<OrgMember>;
 
+const invitedBySchema = z.object({
+  id: z.string(),
+  fullName: z.string(),
+});
+
+const invitationStatusEnum = z.enum([
+  "pending",
+  "accepted",
+  "expired",
+  "cancelled",
+  "declined",
+]);
+
+const invitationRoleEnum = z.enum(["admin", "member"]);
+
 export const InvitationSchema = z.object({
   id: z.string(),
-  org: z.string(),
-  orgName: z.string(),
+  org: OrgSchema,
   email: z.string(),
-  role: z.enum(["admin", "member"]),
-  status: z.enum(["pending", "accepted", "expired", "cancelled", "declined"]),
-  invitedBy: z.object({
-    id: z.string(),
-    email: z.string(),
-    fullName: z.string(),
-  }),
+  role: invitationRoleEnum,
+  status: invitationStatusEnum,
+  invitedBy: invitedBySchema,
   createdAt: z.string(),
   expiresAt: z.string(),
 }) satisfies z.ZodType<Invitation>;
+
+export const PublicInvitationSchema = z.object({
+  id: z.string(),
+  org: OrgSchema,
+  role: invitationRoleEnum,
+  status: invitationStatusEnum,
+  invitedBy: invitedBySchema,
+  createdAt: z.string(),
+  expiresAt: z.string(),
+}) satisfies z.ZodType<PublicInvitation>;
 
 const TIER_STRING_TO_NUMBER: Record<string, PlanTier> = {
   free: PLAN_TIER_FREE,

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { userGateway } from "@/infrastructure/registry";
+import { getCurrentUser } from "../_data/getCurrentUser";
 import { getMyOrgRole } from "../_data/getMyOrgRole";
 import { ChangePasswordForm } from "./_components/ChangePasswordForm";
 import { DangerZone } from "./_components/DangerZone";
@@ -25,7 +25,7 @@ export default async function ProfilePage({ params }: Props) {
 
   const [t, user, myOrgRole] = await Promise.all([
     getTranslations("profile"),
-    userGateway.getProfile(),
+    getCurrentUser(),
     getMyOrgRole(),
   ]);
 

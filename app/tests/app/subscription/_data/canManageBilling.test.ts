@@ -27,7 +27,7 @@ beforeEach(async () => {
   canManageBilling = mod.canManageBilling;
 });
 
-const user = { id: "user-1" } as Parameters<typeof canManageBilling>[0];
+const userId: Parameters<typeof canManageBilling>[0] = "user-1";
 
 const personalSub = {
   plan: { context: "personal" },
@@ -39,7 +39,7 @@ const teamSub = {
 
 describe("canManageBilling", () => {
   it("returns true for personal subscriptions without touching gateways", async () => {
-    const result = await canManageBilling(user, personalSub);
+    const result = await canManageBilling(userId, personalSub);
     expect(result).toBe(true);
     expect(mockGetUserOrgs).not.toHaveBeenCalled();
     expect(mockListOrgMembers).not.toHaveBeenCalled();
@@ -52,7 +52,7 @@ describe("canManageBilling", () => {
       { user: { id: "user-2" }, isBilling: false },
     ]);
 
-    const result = await canManageBilling(user, teamSub);
+    const result = await canManageBilling(userId, teamSub);
 
     expect(result).toBe(true);
     expect(mockGetUserOrgs).toHaveBeenCalledWith();
@@ -65,7 +65,7 @@ describe("canManageBilling", () => {
       { user: { id: "user-1" }, isBilling: false },
     ]);
 
-    const result = await canManageBilling(user, teamSub);
+    const result = await canManageBilling(userId, teamSub);
     expect(result).toBe(false);
   });
 
@@ -75,14 +75,14 @@ describe("canManageBilling", () => {
       { user: { id: "someone-else" }, isBilling: true },
     ]);
 
-    const result = await canManageBilling(user, teamSub);
+    const result = await canManageBilling(userId, teamSub);
     expect(result).toBe(false);
   });
 
   it("returns false when the user has no orgs", async () => {
     mockGetUserOrgs.mockResolvedValueOnce([]);
 
-    const result = await canManageBilling(user, teamSub);
+    const result = await canManageBilling(userId, teamSub);
     expect(result).toBe(false);
     expect(mockListOrgMembers).not.toHaveBeenCalled();
   });
@@ -90,7 +90,7 @@ describe("canManageBilling", () => {
   it("returns false when getUserOrgs returns empty (e.g. gateway error)", async () => {
     mockGetUserOrgs.mockResolvedValueOnce([]);
 
-    const result = await canManageBilling(user, teamSub);
+    const result = await canManageBilling(userId, teamSub);
 
     expect(result).toBe(false);
     expect(mockListOrgMembers).not.toHaveBeenCalled();
@@ -101,7 +101,7 @@ describe("canManageBilling", () => {
     mockGetUserOrgs.mockResolvedValueOnce([{ id: "org-1" }]);
     mockListOrgMembers.mockResolvedValueOnce([]);
 
-    const result = await canManageBilling(user, teamSub);
+    const result = await canManageBilling(userId, teamSub);
     expect(result).toBe(false);
   });
 });

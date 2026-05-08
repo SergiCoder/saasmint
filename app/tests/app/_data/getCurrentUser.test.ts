@@ -19,6 +19,13 @@ vi.mock("next/navigation", () => ({
   redirect: (dest: string) => mockRedirect(dest),
 }));
 
+// Loader reads the active locale from the proxy-forwarded `x-pathname` header;
+// stub a fixed locale so redirects assert against the locale-prefixed path
+// (the locale-prefixed-redirect rule documented in CLAUDE.md).
+vi.mock("@/lib/pathname", () => ({
+  getLocale: vi.fn(() => Promise.resolve("en")),
+}));
+
 const { getCurrentUser } =
   await import("@/app/[locale]/(app)/_data/getCurrentUser");
 
@@ -46,7 +53,7 @@ describe("getCurrentUser", () => {
     );
 
     await expect(getCurrentUser()).rejects.toThrow("NEXT_REDIRECT");
-    expect(mockRedirect).toHaveBeenCalledWith("/login?error=TOKEN_EXPIRED");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/login?error=TOKEN_EXPIRED");
   });
 
   it("coerces non-auth errors to /login?error=UNAUTHENTICATED so a probe failure never surfaces a 500", async () => {
@@ -55,20 +62,26 @@ describe("getCurrentUser", () => {
     );
 
     await expect(getCurrentUser()).rejects.toThrow("NEXT_REDIRECT");
-    expect(mockRedirect).toHaveBeenCalledWith("/login?error=UNAUTHENTICATED");
+    expect(mockRedirect).toHaveBeenCalledWith(
+      "/en/login?error=UNAUTHENTICATED",
+    );
   });
 
   it("treats an ApiError the same as a generic failure (UNAUTHENTICATED)", async () => {
     mockGetCurrentUser.mockRejectedValue(new ApiError(500, { detail: "boom" }));
 
     await expect(getCurrentUser()).rejects.toThrow("NEXT_REDIRECT");
-    expect(mockRedirect).toHaveBeenCalledWith("/login?error=UNAUTHENTICATED");
+    expect(mockRedirect).toHaveBeenCalledWith(
+      "/en/login?error=UNAUTHENTICATED",
+    );
   });
 
   it("treats a bare thrown value (non-Error) as UNAUTHENTICATED", async () => {
     mockGetCurrentUser.mockRejectedValue("weird string");
 
     await expect(getCurrentUser()).rejects.toThrow("NEXT_REDIRECT");
-    expect(mockRedirect).toHaveBeenCalledWith("/login?error=UNAUTHENTICATED");
+    expect(mockRedirect).toHaveBeenCalledWith(
+      "/en/login?error=UNAUTHENTICATED",
+    );
   });
 });

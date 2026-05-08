@@ -18,6 +18,7 @@ import {
   buildPlanTranslations,
   buildProductPriceSubLabels,
   buildProductTranslations,
+  makeLocalSubLabelFormatter,
   splitPlanGroupsByContext,
 } from "@/app/[locale]/_lib/buildPlanCards";
 import {
@@ -111,10 +112,10 @@ export default async function PricingPage({ params, searchParams }: Props) {
   // false when the user has no sub in that context (cheap default).
   const [personalCanManage, teamCanManage] = await Promise.all([
     user && personalSubscription
-      ? canManageBilling(user, personalSubscription)
+      ? canManageBilling(user.id, personalSubscription)
       : Promise.resolve(false),
     user && teamSubscription
-      ? canManageBilling(user, teamSubscription)
+      ? canManageBilling(user.id, teamSubscription)
       : Promise.resolve(false),
   ]);
 
@@ -146,22 +147,7 @@ export default async function PricingPage({ params, searchParams }: Props) {
     },
     planNames,
     planDescriptions,
-    formatPriceSubLabelLocal: ({
-      interval,
-      localAmount,
-      monthlyEquivalent,
-      billedCurrency,
-    }) =>
-      interval === "year"
-        ? t("billedInLocalYearly", {
-            amount: localAmount,
-            monthly: monthlyEquivalent,
-            currency: billedCurrency,
-          })
-        : t("billedInLocalMonthly", {
-            amount: localAmount,
-            currency: billedCurrency,
-          }),
+    formatPriceSubLabelLocal: makeLocalSubLabelFormatter(t),
     renderCta: ({
       plan,
       isCurrent,

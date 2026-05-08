@@ -3,16 +3,11 @@ import { PLAN_TIER_PRO } from "@/domain/models/Plan";
 import type { Subscription } from "@/domain/models/Subscription";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { formatCurrency } from "@/lib/formatCurrency";
+import { formatLongDate } from "@/lib/formatLongDate";
 import { ChangePlanButton } from "../_components/ChangePlanButton";
 import { CheckoutButton } from "../_components/CheckoutButton";
 import { TeamCheckoutButton } from "../_components/TeamCheckoutButton";
 import { startCheckout } from "@/app/actions/billing";
-
-function formatLongDate(date: Date, locale: string): string {
-  return !Number.isNaN(date.getTime())
-    ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(date)
-    : "";
-}
 
 interface RenderPlanUpgradeCtaOptions {
   plan: Plan;
@@ -28,14 +23,22 @@ interface RenderPlanUpgradeCtaOptions {
   teamCanManage: boolean;
   locale: string;
   /**
-   * `getTranslations("billing")` from next-intl. Widened to a structural
-   * shape the typed translator is assignable to — keys read here:
-   * `changePlanConfirmTitleImmediate`, `changePlanConfirmTitleDeferred`,
-   * `changePlanConfirmBodyImmediate`, `changePlanConfirmBodyDeferred`,
-   * `changePlanConfirmAction`, `changePlanConfirmDismiss`.
+   * `getTranslations("billing")` from next-intl. Narrowed to the literal
+   * union of keys this helper actually reads — a function accepting the
+   * full `billing.*` union (what next-intl returns) is assignable here via
+   * parameter contravariance.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  tBilling: (key: any, values?: Record<string, string | number>) => string;
+  tBilling: (
+    key:
+      | "scheduledPlanLabel"
+      | "changePlanConfirmTitleImmediate"
+      | "changePlanConfirmTitleDeferred"
+      | "changePlanConfirmBodyImmediate"
+      | "changePlanConfirmBodyDeferred"
+      | "changePlanConfirmAction"
+      | "changePlanConfirmDismiss",
+    values?: Record<string, string | number>,
+  ) => string;
   /** `useTranslations("plans")` — for the target plan's localised name. */
   tPlans: (key: never) => string;
   /**

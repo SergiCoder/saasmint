@@ -1,4 +1,4 @@
-import type { PlanPrice } from "./PlanPrice";
+import type { Price } from "./Price";
 
 export type PlanTier = 1 | 2 | 3;
 
@@ -13,5 +13,5 @@ export interface Plan {
   readonly context: "personal" | "team";
   readonly tier: PlanTier;
   readonly interval: "month" | "year";
-  readonly price: PlanPrice | null;
+  readonly price: Price | null;
 }

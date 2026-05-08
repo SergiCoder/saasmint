@@ -17,7 +17,7 @@ describe("contextQuery", () => {
   it("returns an empty string for an unrecognised value (injection guard)", () => {
     // contextQuery must not emit arbitrary query strings — a tampered RPC
     // argument like "&other=injected" must be silently dropped.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     expect(contextQuery("&other=injected" as any)).toBe("");
   });
 });

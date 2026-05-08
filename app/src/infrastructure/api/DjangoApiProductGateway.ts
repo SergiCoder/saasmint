@@ -23,7 +23,7 @@ export class DjangoApiProductGateway implements IProductGateway {
     input: ProductCheckoutInput,
   ): Promise<{ url: string }> {
     const { context, ...body } = input;
-    const raw = await apiFetch<unknown>(
+    const raw = await apiFetch<Record<string, unknown>>(
       `/billing/product-checkout-sessions/${contextQuery(context)}`,
       {
         method: "POST",

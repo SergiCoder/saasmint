@@ -11,9 +11,12 @@ vi.mock("next-intl/server", () => ({
   setRequestLocale: vi.fn(),
 }));
 
-const mockGetProfile = vi.fn<() => Promise<User>>();
-vi.mock("@/infrastructure/registry", () => ({
-  userGateway: { getProfile: () => mockGetProfile() },
+// Profile page now reads via the cached `getCurrentUser` (shared with the
+// `(app)` layout) instead of calling the user gateway directly — eliminates a
+// second `/account/` round-trip per profile render.
+const mockGetCurrentUser = vi.fn<() => Promise<User>>();
+vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
+  getCurrentUser: () => mockGetCurrentUser(),
 }));
 
 const mockGetMyOrgRole = vi.fn<() => Promise<OrgMember["role"] | null>>();
@@ -105,7 +108,7 @@ async function renderPage(locale = "en") {
 describe("ProfilePage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetProfile.mockResolvedValue(makeUser());
+    mockGetCurrentUser.mockResolvedValue(makeUser());
     mockGetMyOrgRole.mockResolvedValue(null);
   });
 
@@ -118,7 +121,9 @@ describe("ProfilePage", () => {
   });
 
   it("renders the ProfileForm with the user returned by getProfile", async () => {
-    mockGetProfile.mockResolvedValue(makeUser({ email: "bob@example.com" }));
+    mockGetCurrentUser.mockResolvedValue(
+      makeUser({ email: "bob@example.com" }),
+    );
 
     await renderPage();
 
@@ -157,7 +162,9 @@ describe("ProfilePage", () => {
   });
 
   it("renders the DangerZone with the user's email", async () => {
-    mockGetProfile.mockResolvedValue(makeUser({ email: "alice@example.com" }));
+    mockGetCurrentUser.mockResolvedValue(
+      makeUser({ email: "alice@example.com" }),
+    );
 
     await renderPage();
 
@@ -206,10 +213,10 @@ describe("ProfilePage", () => {
     );
   });
 
-  it("calls userGateway.getProfile and getMyOrgRole exactly once per render", async () => {
+  it("calls getCurrentUser and getMyOrgRole exactly once per render", async () => {
     await renderPage();
 
-    expect(mockGetProfile).toHaveBeenCalledOnce();
+    expect(mockGetCurrentUser).toHaveBeenCalledOnce();
     expect(mockGetMyOrgRole).toHaveBeenCalledOnce();
   });
 
@@ -222,6 +229,6 @@ describe("ProfilePage", () => {
 
     // Neither mock exists; the absence of an error proves the registry mock
     // doesn't expose referenceGateway or subscriptionGateway.
-    expect(mockGetProfile).toHaveBeenCalledOnce();
+    expect(mockGetCurrentUser).toHaveBeenCalledOnce();
   });
 });

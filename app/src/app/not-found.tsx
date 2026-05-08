@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SECONDARY_LINK_CLASS } from "@/lib/styles";
 
 // Fallback for requests that never entered a `[locale]` segment. The root
 // layout owns <html>/<body>; strings are hardcoded in English because
@@ -30,10 +31,7 @@ export default function RootNotFound() {
         <p className="mb-8 text-sm text-gray-600">
           We couldn&apos;t find the page you were looking for.
         </p>
-        <Link
-          href="/"
-          className="focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-        >
+        <Link href="/" className={SECONDARY_LINK_CLASS}>
           Back to home
         </Link>
       </div>

@@ -27,7 +27,7 @@ export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
     userId: string,
     role: OrgMember["role"],
   ): Promise<void> {
-    await apiFetch<OrgMember>(`/orgs/${orgId}/members/${userId}/`, {
+    await apiFetchVoid(`/orgs/${orgId}/members/${userId}/`, {
       method: "PATCH",
       body: JSON.stringify({ role }),
     });
