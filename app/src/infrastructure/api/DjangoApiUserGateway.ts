@@ -1,3 +1,4 @@
+import { z } from "zod";
 import type {
   IUserGateway,
   UpdateProfileInput,
@@ -5,12 +6,13 @@ import type {
 import type { User } from "@/domain/models/User";
 import { apiFetch, apiFetchVoid } from "./apiClient";
 import { keysToSnake } from "./caseTransform";
-import { parseUser } from "./parsers";
+import { fetchCurrentUser, parseUser } from "./parsers";
+
+const AvatarUploadSchema = z.object({ avatar_url: z.string() });
 
 export class DjangoApiUserGateway implements IUserGateway {
   async getProfile(): Promise<User> {
-    const raw = await apiFetch<Record<string, unknown>>("/account/");
-    return parseUser(raw);
+    return fetchCurrentUser();
   }
 
   async updateProfile(input: UpdateProfileInput): Promise<User> {
@@ -30,11 +32,12 @@ export class DjangoApiUserGateway implements IUserGateway {
   }
 
   async uploadAvatar(formData: FormData): Promise<{ avatarUrl: string }> {
-    const raw = await apiFetch<{ avatar_url: string }>("/account/avatar/", {
+    const raw = await apiFetch<Record<string, unknown>>("/account/avatar/", {
       method: "POST",
       body: formData,
     });
-    return { avatarUrl: raw.avatar_url };
+    const { avatar_url } = AvatarUploadSchema.parse(raw);
+    return { avatarUrl: avatar_url };
   }
 
   async deleteAvatar(): Promise<void> {

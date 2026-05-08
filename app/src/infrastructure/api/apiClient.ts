@@ -99,6 +99,15 @@ async function raw(
  */
 type ApiResponseShape = Record<string, unknown>;
 
+/**
+ * The `as T` cast on `res.json()` is intentionally unsound — `fetch()` returns
+ * `unknown` and TypeScript cannot prove the response shape at runtime. Every
+ * caller MUST validate the result with a Zod schema (`SomeSchema.parse(...)`)
+ * before treating it as the typed `T`. The {@link ApiResponseShape}
+ * constraint forces callers to receive `Record<string, unknown>` rather than
+ * a misleading typed shape, but it does not enforce parsing — that remains a
+ * convention every gateway is expected to follow.
+ */
 export async function apiFetch<T extends ApiResponseShape>(
   path: string,
   options: RequestInit = {},

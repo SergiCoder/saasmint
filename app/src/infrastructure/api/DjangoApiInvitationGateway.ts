@@ -9,16 +9,7 @@ import {
   publicApiFetch,
   publicApiFetchVoid,
 } from "./apiClient";
-import { keysToCamel } from "./caseTransform";
-import { InvitationSchema, PublicInvitationSchema } from "./schemas";
-
-function parseInvitation(raw: Record<string, unknown>): Invitation {
-  return InvitationSchema.parse(keysToCamel(raw));
-}
-
-function parsePublicInvitation(raw: Record<string, unknown>): PublicInvitation {
-  return PublicInvitationSchema.parse(keysToCamel(raw));
-}
+import { parseInvitation, parsePublicInvitation } from "./parsers";
 
 export class DjangoApiInvitationGateway implements IInvitationGateway {
   async createInvitation(

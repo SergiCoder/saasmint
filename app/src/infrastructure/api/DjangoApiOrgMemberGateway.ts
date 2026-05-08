@@ -1,12 +1,7 @@
 import type { IOrgMemberGateway } from "@/application/ports/IOrgMemberGateway";
 import type { OrgMember } from "@/domain/models/OrgMember";
 import { apiFetch, apiFetchVoid } from "./apiClient";
-import { keysToCamel } from "./caseTransform";
-import { OrgMemberSchema } from "./schemas";
-
-function parseMember(raw: Record<string, unknown>): OrgMember {
-  return OrgMemberSchema.parse(keysToCamel(raw));
-}
+import { parseMember } from "./parsers";
 
 export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
   async listMembers(orgId: string): Promise<OrgMember[]> {
