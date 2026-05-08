@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { invitationGateway } from "@/infrastructure/registry";
 import {
+  ACTION_CODE_INVALID_INPUT,
   fail,
   toActionError,
   type ActionResult,
@@ -24,7 +25,7 @@ export async function acceptInvitation(
   const password = getString(formData, "password");
 
   if (!token || !fullName || !password) {
-    return fail("invalid_input");
+    return fail(ACTION_CODE_INVALID_INPUT);
   }
   if (fullName.length < 3 || fullName.length > 255) {
     return fail("full_name_invalid");

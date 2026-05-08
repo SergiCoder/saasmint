@@ -17,7 +17,7 @@ export class DjangoApiUserGateway implements IUserGateway {
 
   async updateProfile(input: UpdateProfileInput): Promise<User> {
     const { phonePrefix, phone, ...rest } = input;
-    const payload = keysToSnake(rest) as Record<string, unknown>;
+    const payload = keysToSnake(rest as Record<string, unknown>);
 
     if ("phonePrefix" in input || "phone" in input) {
       payload.phone =

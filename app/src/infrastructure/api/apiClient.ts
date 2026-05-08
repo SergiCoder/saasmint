@@ -122,8 +122,8 @@ export async function apiFetch<T extends ApiResponseShape>(
  * to an unauthenticated request when the token is missing OR rejected. Use
  * for endpoints that personalize the response for logged-in users but work
  * anonymously too (e.g. plans list, where pricing adjusts to the user's
- * preferred currency). A stale/invalid token that makes it past the proxy
- * refresh must not crash the anonymous render path.
+ * preferred currency). A stale/invalid token that makes it past the
+ * middleware refresh must not crash the anonymous render path.
  */
 export async function apiFetchOptional<T extends ApiResponseShape>(
   path: string,

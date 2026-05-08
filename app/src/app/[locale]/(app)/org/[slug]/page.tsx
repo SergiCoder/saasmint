@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import type { OrgMember } from "@/domain/models/OrgMember";
 import { findTeamSubscription } from "@/domain/models/Subscription";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { formatLongDate } from "@/lib/formatLongDate";
@@ -15,6 +16,15 @@ import { InvitationList } from "./_components/InvitationList";
 import { TransferOwnershipForm } from "./_components/TransferOwnershipForm";
 import { DeleteOrgZone } from "./_components/DeleteOrgZone";
 import { SeatManager } from "./_components/SeatManager";
+
+const ROLE_LABEL_KEY = {
+  owner: "roleOwner",
+  admin: "roleAdmin",
+  member: "roleMember",
+} as const satisfies Record<
+  OrgMember["role"],
+  "roleOwner" | "roleAdmin" | "roleMember"
+>;
 
 interface OrgDetailPageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -101,12 +111,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
       email: m.user.email,
       avatarUrl: m.user.avatarUrl,
       role: m.role,
-      roleLabel: t(
-        `role${m.role.charAt(0).toUpperCase() + m.role.slice(1)}` as
-          | "roleMember"
-          | "roleAdmin"
-          | "roleOwner",
-      ),
+      roleLabel: t(ROLE_LABEL_KEY[m.role]),
       actions,
     };
   });

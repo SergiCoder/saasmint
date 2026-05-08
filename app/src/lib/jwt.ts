@@ -3,7 +3,7 @@ import { decodeJwtPayload } from "@/lib/jwtDecode";
 
 /**
  * Decodes the `sub` claim from the access token cookie without verifying the
- * signature. The proxy middleware has already vetted the token's expiry and
+ * signature. The middleware has already vetted the token's expiry and
  * the backend re-validates on every request — this helper is for skipping a
  * `GET /account/` round-trip when only the user ID is needed (e.g. server
  * actions doing authorization checks against `OrgMember.user.id`).

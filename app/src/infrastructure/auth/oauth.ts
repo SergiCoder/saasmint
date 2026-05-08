@@ -1,4 +1,5 @@
 import { env } from "@/lib/env";
+import { isMemberOf } from "@/lib/typeGuards";
 
 export type OAuthProvider = "google" | "github" | "microsoft";
 
@@ -9,10 +10,7 @@ export const OAUTH_PROVIDERS: readonly OAuthProvider[] = [
 ];
 
 export function isOAuthProvider(value: unknown): value is OAuthProvider {
-  return (
-    typeof value === "string" &&
-    (OAUTH_PROVIDERS as readonly string[]).includes(value)
-  );
+  return isMemberOf(OAUTH_PROVIDERS, value);
 }
 
 export function getOAuthRedirectUrl(provider: OAuthProvider): string {

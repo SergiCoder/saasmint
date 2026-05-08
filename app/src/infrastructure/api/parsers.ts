@@ -14,7 +14,7 @@ import {
 } from "./schemas";
 
 export function parseUser(raw: Record<string, unknown>): User {
-  const camel = keysToCamel(raw) as Record<string, unknown>;
+  const camel = keysToCamel(raw);
   flattenPhone(raw, camel);
   return UserSchema.parse(camel);
 }
