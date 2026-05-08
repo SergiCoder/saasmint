@@ -10,6 +10,10 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
+    // Dynamic JSON imports surface as `any` to TypeScript (the module path is
+    // computed). The cast is safe because all files under `messages/` follow
+    // the next-intl messages schema enforced by the rest of the codebase
+    // (typed translator keys originate from the same JSON).
     messages: (await import(`../../../messages/${locale}.json`))
       .default as AbstractIntlMessages,
   };

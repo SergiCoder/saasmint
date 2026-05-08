@@ -1,6 +1,7 @@
 "use client";
 
 import { useMessages, useTranslations } from "next-intl";
+import { isRecord } from "@/lib/typeGuards";
 import type { ActionErr } from "./ActionResult";
 
 /**
@@ -11,10 +12,12 @@ import type { ActionErr } from "./ActionResult";
  */
 export function useActionErrorMessage(): (err: ActionErr) => string {
   const t = useTranslations("actionErrors");
-  const messages = useMessages() as { actionErrors?: Record<string, unknown> };
-  const known = messages.actionErrors ?? {};
+  const messages = useMessages();
+  const actionErrors = isRecord(messages.actionErrors)
+    ? messages.actionErrors
+    : {};
   return (err) => {
     if (err.message) return err.message;
-    return err.code in known ? t(err.code) : t("unknown_error");
+    return err.code in actionErrors ? t(err.code) : t("unknown_error");
   };
 }
