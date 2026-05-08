@@ -7,6 +7,10 @@ import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { PronounsPicker } from "@/presentation/components/molecules/PronounsPicker";
 import { AvatarUpload } from "@/presentation/components/atoms/AvatarUpload";
 import { Button } from "@/presentation/components/atoms/Button";
+import {
+  INPUT_BASE_CLASS,
+  INPUT_BORDER_DEFAULT,
+} from "@/presentation/components/atoms/Input";
 import { Label } from "@/presentation/components/atoms/Label";
 import { uploadAvatar, deleteAvatar } from "@/app/actions/avatar";
 import { compressImage } from "@/lib/compressImage";
@@ -15,7 +19,7 @@ import { LOCALES } from "@/lib/i18n/locales";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 import { useResendVerification } from "@/lib/actions/useResendVerification";
 import type { User } from "@/domain/models/User";
-import { PHONE_PREFIXES } from "@/domain/data/phonePrefixes";
+import type { PhonePrefix } from "@/domain/models/PhonePrefix";
 
 const SUPPORTED_CURRENCIES = [
   { value: "usd", label: "USD — US Dollar" },
@@ -43,9 +47,18 @@ const SUPPORTED_CURRENCIES = [
 interface ProfileFormProps {
   user: User;
   timezones: readonly string[];
+  /**
+   * Phone-prefix options. Passed from the server page so the ~8 KB
+   * `PHONE_PREFIXES` table doesn't ship in the client bundle.
+   */
+  phonePrefixes: readonly PhonePrefix[];
 }
 
-export function ProfileForm({ user, timezones }: ProfileFormProps) {
+export function ProfileForm({
+  user,
+  timezones,
+  phonePrefixes,
+}: ProfileFormProps) {
   const t = useTranslations("profile");
   const translateError = useActionErrorMessage();
   const [state, formAction, pending] = useActionState(updateProfile, null);
@@ -106,8 +119,7 @@ export function ProfileForm({ user, timezones }: ProfileFormProps) {
     }
   }
 
-  const selectClassName =
-    "block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50";
+  const selectClassName = `${INPUT_BASE_CLASS} ${INPUT_BORDER_DEFAULT}`;
 
   return (
     <form
@@ -192,10 +204,10 @@ export function ProfileForm({ user, timezones }: ProfileFormProps) {
               value={phonePrefix}
               onChange={(e) => setPhonePrefix(e.target.value)}
               aria-label={t("phonePrefix")}
-              className="focus:border-primary-500 focus:ring-primary-500 w-full min-w-0 truncate rounded-md border border-gray-300 py-2 pr-8 pl-3 text-sm shadow-sm transition-colors focus:ring-2 focus:ring-offset-0 focus:outline-none"
+              className={`${selectClassName} min-w-0 truncate pr-8 pl-3`}
             >
               <option value="">{t("phonePrefix")}</option>
-              {PHONE_PREFIXES.map((p) => (
+              {phonePrefixes.map((p) => (
                 <option key={p.prefix} value={p.prefix}>
                   {p.label} ({p.prefix})
                 </option>
@@ -214,7 +226,7 @@ export function ProfileForm({ user, timezones }: ProfileFormProps) {
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-offset-0 focus:outline-none"
+              className={selectClassName}
             />
             {(fieldErrors?.phone === "phoneNumberRequired" ||
               fieldErrors?.phone === "phoneTooShort") && (
@@ -284,7 +296,7 @@ export function ProfileForm({ user, timezones }: ProfileFormProps) {
           rows={3}
           defaultValue={user.bio ?? ""}
           placeholder={t("bioPlaceholder")}
-          className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-offset-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className={selectClassName}
         />
       </div>
       <Button type="submit" loading={pending} disabled={!dirty}>

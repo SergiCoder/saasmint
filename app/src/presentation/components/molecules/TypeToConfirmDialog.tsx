@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "@/presentation/components/atoms/Button";
+import {
+  INPUT_BASE_CLASS,
+  INPUT_BORDER_DEFAULT,
+} from "@/presentation/components/atoms/Input";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 
 export interface TypeToConfirmDialogProps {
@@ -35,8 +39,7 @@ export interface TypeToConfirmDialogProps {
   onConfirm: () => Promise<string | null>;
 }
 
-const INPUT_CLASS =
-  "focus:border-primary-500 focus:ring-primary-500 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-offset-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50";
+const INPUT_CLASS = `${INPUT_BASE_CLASS} ${INPUT_BORDER_DEFAULT}`;
 
 export function TypeToConfirmDialog({
   triggerLabel,

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { PHONE_PREFIXES } from "@/domain/data/phonePrefixes";
 import { getCurrentUser } from "../_data/getCurrentUser";
 import { getMyOrgRole } from "../_data/getMyOrgRole";
 import { ChangePasswordForm } from "./_components/ChangePasswordForm";
@@ -29,14 +30,15 @@ export default async function ProfilePage({ params }: Props) {
     getMyOrgRole(),
   ]);
 
-  const deleteRestriction: "owner" | undefined =
-    myOrgRole === "owner" ? "owner" : undefined;
-
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
       <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <ProfileForm user={user} timezones={TIMEZONES} />
+        <ProfileForm
+          user={user}
+          timezones={TIMEZONES}
+          phonePrefixes={PHONE_PREFIXES}
+        />
       </section>
       <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
@@ -46,7 +48,7 @@ export default async function ProfilePage({ params }: Props) {
       </section>
       <DangerZone
         userEmail={user.email}
-        deleteRestriction={deleteRestriction}
+        deleteRestricted={myOrgRole === "owner"}
       />
     </div>
   );
