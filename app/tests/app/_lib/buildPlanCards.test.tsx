@@ -9,6 +9,7 @@ import type { Product } from "@/domain/models/Product";
 const labels = {
   upgrade: "Upgrade",
   seat: "seat",
+  billedYearly: "billed yearly",
 };
 
 function makePlan(overrides: Partial<Plan> & { id: string }): Plan {
@@ -718,7 +719,7 @@ describe("buildPlanCardGroups", () => {
         formatPriceSubLabelLocal: () => "should-not-be-called",
       });
       expect(groups[0]!.yearly?.priceSubLabel).toBe(
-        "$16.00/month billed yearly",
+        "$16.00/month — billed yearly",
       );
     });
 

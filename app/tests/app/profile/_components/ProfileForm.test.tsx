@@ -91,6 +91,10 @@ function renderForm(userOverrides: Partial<User> = {}) {
     <ProfileForm
       user={makeUser(userOverrides)}
       timezones={["UTC", "Europe/Madrid"]}
+      phonePrefixes={[
+        { prefix: "+1", label: "US/CA" },
+        { prefix: "+34", label: "ES" },
+      ]}
     />,
   );
 }

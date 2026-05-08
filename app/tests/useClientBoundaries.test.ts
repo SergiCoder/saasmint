@@ -22,6 +22,7 @@ const EXPECTED_USE_CLIENT_FILES: readonly string[] = [
   "src/app/[locale]/(app)/profile/_components/DangerZone.tsx",
   "src/app/[locale]/(app)/profile/_components/DeleteAccountDialog.tsx",
   "src/app/[locale]/(app)/profile/_components/ProfileForm.tsx",
+  "src/app/[locale]/(app)/subscription/_components/BillingActionButton.tsx",
   "src/app/[locale]/(app)/subscription/_components/CancelRenewalButton.tsx",
   "src/app/[locale]/(app)/subscription/_components/ChangePlanButton.tsx",
   "src/app/[locale]/(app)/subscription/_components/CheckoutButton.tsx",
@@ -53,6 +54,7 @@ const EXPECTED_USE_CLIENT_FILES: readonly string[] = [
   "src/presentation/components/molecules/TypeToConfirmDialog.tsx",
   "src/presentation/components/molecules/UserMenu.tsx",
   "src/presentation/components/organisms/CtaSection.tsx",
+  "src/presentation/components/organisms/DangerZone.tsx",
   "src/presentation/components/organisms/MobileMenuToggle.tsx",
   "src/presentation/components/organisms/RouteErrorBoundary.tsx",
 ];
