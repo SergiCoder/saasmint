@@ -32,7 +32,7 @@ describe("AuthErrorPage (Django OAuth failure landing)", () => {
     await expect(renderPage({ error: "exchange_failed" })).rejects.toThrow(
       /NEXT_REDIRECT/,
     );
-    expect(mockRedirect).toHaveBeenCalledWith("/login?error=oauth_error");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/login?error=oauth_error");
   });
 
   it("redirects invalid_state / missing_code to /login with generic oauth_error", async () => {
@@ -41,7 +41,7 @@ describe("AuthErrorPage (Django OAuth failure landing)", () => {
       await expect(renderPage({ error: code })).rejects.toThrow(
         /NEXT_REDIRECT/,
       );
-      expect(mockRedirect).toHaveBeenCalledWith("/login?error=oauth_error");
+      expect(mockRedirect).toHaveBeenCalledWith("/en/login?error=oauth_error");
     }
   });
 
@@ -50,7 +50,7 @@ describe("AuthErrorPage (Django OAuth failure landing)", () => {
       /NEXT_REDIRECT/,
     );
     expect(mockRedirect).toHaveBeenCalledWith(
-      "/login?error=email_not_verified",
+      "/en/login?error=email_not_verified",
     );
   });
 
@@ -59,7 +59,7 @@ describe("AuthErrorPage (Django OAuth failure landing)", () => {
       /NEXT_REDIRECT/,
     );
     expect(mockRedirect).toHaveBeenCalledWith(
-      "/login?error=account_deactivated",
+      "/en/login?error=account_deactivated",
     );
   });
 
@@ -72,13 +72,13 @@ describe("AuthErrorPage (Django OAuth failure landing)", () => {
       renderPage({ error: "oauth_email_unverified_collision" }),
     ).rejects.toThrow(/NEXT_REDIRECT/);
     expect(mockRedirect).toHaveBeenCalledWith(
-      "/login?error=oauth_email_unverified_collision",
+      "/en/login?error=oauth_email_unverified_collision",
     );
   });
 
   it("redirects missing error to /login with generic oauth_error", async () => {
     await expect(renderPage({})).rejects.toThrow(/NEXT_REDIRECT/);
-    expect(mockRedirect).toHaveBeenCalledWith("/login?error=oauth_error");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/login?error=oauth_error");
   });
 
   it("url-encodes the error code to prevent query-injection", async () => {
@@ -88,7 +88,7 @@ describe("AuthErrorPage (Django OAuth failure landing)", () => {
     await expect(renderPage({ error: "malicious&admin=true" })).rejects.toThrow(
       /NEXT_REDIRECT/,
     );
-    expect(mockRedirect).toHaveBeenCalledWith("/login?error=oauth_error");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/login?error=oauth_error");
   });
 
   it("calls setRequestLocale with the locale from params", async () => {

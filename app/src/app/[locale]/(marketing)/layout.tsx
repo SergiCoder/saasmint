@@ -2,7 +2,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { MarketingLayout } from "@/presentation/components/templates/MarketingLayout";
 import { APP_VERSION, getReleaseUrl } from "@/lib/appVersion";
+import type { Org } from "@/domain/models/Org";
 import { findTeamSubscription } from "@/domain/models/Subscription";
+import { getAccessToken } from "@/infrastructure/auth/cookies";
 import { getSubscriptions } from "../(app)/_data/getSubscriptions";
 import { getUserOrgs } from "../(app)/_data/getUserOrgs";
 import { getOptionalUser } from "./_data/getOptionalUser";
@@ -23,6 +25,14 @@ export default async function MarketingLayoutRoute({
   const { locale } = await params;
   setRequestLocale(locale);
 
+  // Speculatively kick off `getUserOrgs()` for any caller carrying a session
+  // cookie — it doesn't depend on `user.preferredCurrency` so it can overlap
+  // with `getOptionalUser()`. Anonymous visitors skip the request entirely.
+  const hasSessionCookie = (await getAccessToken()) !== undefined;
+  const userOrgsPromise: Promise<Org[]> = hasSessionCookie
+    ? getUserOrgs()
+    : Promise.resolve([]);
+
   const [t, tCommon, tFooter, user] = await Promise.all([
     getTranslations("nav"),
     getTranslations("common"),
@@ -33,7 +43,7 @@ export default async function MarketingLayoutRoute({
   const [subscriptions, userOrgs] = user
     ? await Promise.all([
         getSubscriptions(user.preferredCurrency),
-        getUserOrgs(),
+        userOrgsPromise,
       ])
     : [[], []];
 

@@ -9,12 +9,10 @@ import {
   type Subscription,
 } from "@/domain/models/Subscription";
 import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
-import {
-  authGateway,
-  productGateway,
-  subscriptionGateway,
-} from "@/infrastructure/registry";
+import { productGateway, subscriptionGateway } from "@/infrastructure/registry";
+import { AuthError } from "@/domain/errors/AuthError";
 import { canManageBilling } from "@/app/[locale]/(app)/subscription/_data/canManageBilling";
+import { getCurrentUserIdFromCookie } from "@/lib/jwt";
 import {
   APP_ORIGIN,
   assertTrustedRedirect,
@@ -46,10 +44,15 @@ import {
 async function assertCanManageBilling(
   context?: SubscriptionContext,
 ): Promise<Subscription> {
-  const [user, subscriptions] = await Promise.all([
-    authGateway.getCurrentUser(),
-    subscriptionGateway.listSubscriptions(),
-  ]);
+  // The user ID comes straight from the JWT cookie — the proxy middleware
+  // has already verified the token's expiry and the backend re-validates on
+  // every API call. Fetching the full /account/ payload here would add a
+  // round-trip to every billing mutation just to read `id`.
+  const userId = await getCurrentUserIdFromCookie();
+  if (!userId) {
+    throw new AuthError("No active session", "NO_SESSION");
+  }
+  const subscriptions = await subscriptionGateway.listSubscriptions();
   let subscription: Subscription | null;
   if (context === "personal") {
     subscription = findPersonalSubscription(subscriptions);
@@ -68,7 +71,7 @@ async function assertCanManageBilling(
   if (!subscription) {
     throw new BillingError("No active subscription", "no_subscription");
   }
-  if (!(await canManageBilling(user, subscription))) {
+  if (!(await canManageBilling(userId, subscription))) {
     throw new BillingError(
       "You do not have permission to manage billing",
       "not_billing_member",
