@@ -18,8 +18,39 @@ const apiProtocol: "http" | "https" = apiUrl
 
 const isDev = process.env.NODE_ENV === "development";
 
+// Origins that need to appear in `img-src` and `connect-src`. The API origin
+// covers user avatars served by Django and the JSON API itself; OAuth
+// provider hosts cover externally-hosted user avatars.
+const apiOrigin = apiUrl ? new URL(apiUrl).origin : "";
+const oauthAvatarHosts = [
+  "https://lh3.googleusercontent.com",
+  "https://avatars.githubusercontent.com",
+];
+
+const csp = [
+  `default-src 'self'`,
+  // Next.js injects small inline bootstrap scripts for hydration; without
+  // per-request nonce middleware we need `'unsafe-inline'`. Dev additionally
+  // uses `eval` for HMR fast refresh.
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  `style-src 'self' 'unsafe-inline'`,
+  `img-src 'self' data: blob: ${apiOrigin} ${oauthAvatarHosts.join(" ")}`.trim(),
+  `font-src 'self' data:`,
+  // API JSON calls + dev HMR websocket. Production never speaks ws.
+  `connect-src 'self' ${apiOrigin}${isDev ? " ws: wss:" : ""}`.trim(),
+  `frame-ancestors 'none'`,
+  `frame-src 'none'`,
+  `object-src 'none'`,
+  `base-uri 'self'`,
+  // Server actions post back to same origin; Stripe redirects use server-issued
+  // 30x Location headers (not form actions), so Stripe origins don't belong here.
+  `form-action 'self'`,
+]
+  .filter(Boolean)
+  .join("; ");
+
 const securityHeaders = [
-  { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+  { key: "Content-Security-Policy", value: csp },
   // Legacy belt-and-braces alongside CSP frame-ancestors; older browsers
   // (pre-Chromium Edge, old Safari) honour X-Frame-Options but not
   // frame-ancestors, so we emit both to prevent clickjacking.

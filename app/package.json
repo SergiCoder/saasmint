@@ -26,8 +26,8 @@
     "gray-matter": "^4.0.3",
     "next": "^16.2.4",
     "next-intl": "^4.11.0",
-    "react": "19.2.5",
-    "react-dom": "19.2.5",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "zod": "^4.4.3"
   },
   "//": "pnpm.overrides pins transitive deps above their CVE ranges: vite (8.0.0-8.0.4) and postcss (<8.5.10, pulled in by next@16.2.4). Drop entries once their parents bump.",
