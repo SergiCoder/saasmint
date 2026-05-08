@@ -5,6 +5,7 @@ import { useRouter } from "@/lib/i18n/navigation";
 import { cancelRenewal } from "@/app/actions/billing";
 import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
+import { GHOST_UNDERLINE_BUTTON_CLASS } from "@/lib/styles";
 import {
   ConfirmDialog,
   type ConfirmDialogHandle,
@@ -66,7 +67,7 @@ export function CancelRenewalButton({
       <button
         type="button"
         onClick={open}
-        className="ml-auto cursor-pointer text-sm text-gray-500 underline-offset-2 hover:text-gray-700 hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400"
+        className={`ml-auto ${GHOST_UNDERLINE_BUTTON_CLASS}`}
       >
         {label}
       </button>

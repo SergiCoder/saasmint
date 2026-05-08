@@ -2,10 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import {
-  INPUT_BASE_CLASS,
-  INPUT_BORDER_DEFAULT,
-} from "@/presentation/components/atoms/Input";
+import { INPUT_DEFAULT_CLASS } from "@/presentation/components/atoms/Input";
 import { useResendVerification } from "@/lib/actions/useResendVerification";
 
 interface ResendVerificationLinkProps {
@@ -47,7 +44,7 @@ export function ResendVerificationLink({ email }: ResendVerificationLinkProps) {
         value={typedEmail}
         onChange={(e) => setTypedEmail(e.target.value)}
         placeholder={t("email")}
-        className={`${INPUT_BASE_CLASS} ${INPUT_BORDER_DEFAULT}`}
+        className={INPUT_DEFAULT_CLASS}
       />
       <button
         type="button"

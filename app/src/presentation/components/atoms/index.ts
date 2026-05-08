@@ -14,6 +14,7 @@ export {
   INPUT_BASE_CLASS,
   INPUT_BORDER_DEFAULT,
   INPUT_BORDER_ERROR,
+  INPUT_DEFAULT_CLASS,
   type InputProps,
 } from "./Input";
 export { Label, type LabelProps } from "./Label";

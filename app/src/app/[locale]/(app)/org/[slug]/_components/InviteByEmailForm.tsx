@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { FormField } from "@/presentation/components/molecules/FormField";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Button } from "@/presentation/components/atoms/Button";
+import { INPUT_DEFAULT_CLASS } from "@/presentation/components/atoms/Input";
 import { inviteMember } from "@/app/actions/org";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 
@@ -38,7 +39,7 @@ export function InviteByEmailForm({ orgId }: InviteByEmailFormProps) {
           id="role"
           name="role"
           defaultValue="member"
-          className="focus:border-primary-500 focus:ring-primary-500 block w-full cursor-pointer rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:ring-2 focus:ring-offset-0 focus:outline-none"
+          className={`${INPUT_DEFAULT_CLASS} cursor-pointer`}
         >
           <option value="member">{t("roleMember")}</option>
           <option value="admin">{t("roleAdmin")}</option>

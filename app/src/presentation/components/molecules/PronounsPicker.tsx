@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { Label } from "../atoms/Label";
-import { INPUT_BASE_CLASS, INPUT_BORDER_DEFAULT } from "../atoms/Input";
+import { INPUT_DEFAULT_CLASS } from "../atoms/Input";
 
-const DEFAULT_INPUT_CLASS = `${INPUT_BASE_CLASS} ${INPUT_BORDER_DEFAULT}`;
 const CUSTOM_PRONOUNS_VALUE = "__custom__";
 const PRONOUN_KEYS = [
   "pronounsHeHim",
@@ -27,7 +26,7 @@ export function PronounsPicker({
   t,
   defaultValue = null,
   onDirty,
-  selectClassName = DEFAULT_INPUT_CLASS,
+  selectClassName = INPUT_DEFAULT_CLASS,
 }: PronounsPickerProps) {
   const pronounOptions = PRONOUN_KEYS.map((key) => t(key));
   const isCustom =
@@ -75,7 +74,7 @@ export function PronounsPicker({
             onDirty?.();
           }}
           placeholder={t("pronounsCustomPlaceholder")}
-          className={`${DEFAULT_INPUT_CLASS} mt-2`}
+          className={`${INPUT_DEFAULT_CLASS} mt-2`}
         />
       )}
     </div>

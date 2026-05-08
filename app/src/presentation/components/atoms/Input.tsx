@@ -15,6 +15,14 @@ export const INPUT_BORDER_DEFAULT =
 export const INPUT_BORDER_ERROR =
   "border-red-300 focus:border-red-500 focus:ring-red-500";
 
+/**
+ * Pre-composed default-state input class — `INPUT_BASE_CLASS` joined with
+ * `INPUT_BORDER_DEFAULT`. Import this on raw `<select>`/`<textarea>` /
+ * inline `<input>` elements rather than reassembling the pair at every
+ * call site, so the canonical visual contract changes in one place.
+ */
+export const INPUT_DEFAULT_CLASS = `${INPUT_BASE_CLASS} ${INPUT_BORDER_DEFAULT}`;
+
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: boolean;
 }

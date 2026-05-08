@@ -26,7 +26,7 @@ interface BillingActionButtonProps {
 /**
  * Shared "fire a context-aware billing action and refresh" button. Used by
  * Resume and Release flows; both render the same compose-and-refresh shape
- * so the component lives here instead of in three sibling files.
+ * so the component lives here instead of in each sibling file.
  */
 export function BillingActionButton({
   children,

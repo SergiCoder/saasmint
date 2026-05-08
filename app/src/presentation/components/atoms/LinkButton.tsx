@@ -1,5 +1,6 @@
 import type { ComponentProps } from "react";
 import { Link } from "@/lib/i18n/navigation";
+import { BUTTON_BASE_CLASS } from "@/lib/styles";
 
 const variants = {
   primary:
@@ -13,9 +14,6 @@ const sizes = {
   md: "px-4 py-2 text-sm",
   lg: "px-6 py-3 text-base",
 } as const;
-
-const base =
-  "inline-flex cursor-pointer items-center justify-center rounded-md font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none";
 
 type LocaleLinkProps = ComponentProps<typeof Link>;
 
@@ -44,7 +42,7 @@ export function LinkButton({
     <Link
       data-variant={variant}
       data-size={size}
-      className={`${base} ${variants[variant]} ${sizes[size]} ${widthClass} ${className}`.trim()}
+      className={`${BUTTON_BASE_CLASS} ${variants[variant]} ${sizes[size]} ${widthClass} ${className}`.trim()}
       {...props}
     >
       {children}

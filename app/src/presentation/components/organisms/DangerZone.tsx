@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { GHOST_UNDERLINE_BUTTON_CLASS } from "@/lib/styles";
 
 export interface DangerZoneProps {
   /**
@@ -35,7 +36,7 @@ export function DangerZone({
       <button
         type="button"
         onClick={() => setExpanded(true)}
-        className="cursor-pointer text-sm text-gray-500 underline-offset-2 hover:text-gray-700 hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400"
+        className={GHOST_UNDERLINE_BUTTON_CLASS}
       >
         {triggerLabel}
       </button>

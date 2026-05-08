@@ -2,10 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "@/presentation/components/atoms/Button";
-import {
-  INPUT_BASE_CLASS,
-  INPUT_BORDER_DEFAULT,
-} from "@/presentation/components/atoms/Input";
+import { INPUT_DEFAULT_CLASS } from "@/presentation/components/atoms/Input";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 
 export interface TypeToConfirmDialogProps {
@@ -38,8 +35,6 @@ export interface TypeToConfirmDialogProps {
    */
   onConfirm: () => Promise<string | null>;
 }
-
-const INPUT_CLASS = `${INPUT_BASE_CLASS} ${INPUT_BORDER_DEFAULT}`;
 
 export function TypeToConfirmDialog({
   triggerLabel,
@@ -133,7 +128,7 @@ export function TypeToConfirmDialog({
               onChange={(e) => setValue(e.target.value)}
               placeholder={inputPlaceholder}
               disabled={pending}
-              className={INPUT_CLASS}
+              className={INPUT_DEFAULT_CLASS}
             />
           </div>
 
