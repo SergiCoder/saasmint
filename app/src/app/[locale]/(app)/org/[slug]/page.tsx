@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { invitationGateway } from "@/infrastructure/registry";
 import { findTeamSubscription } from "@/domain/models/Subscription";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { formatLongDate } from "@/lib/formatLongDate";
 import { getCurrentUser } from "../../_data/getCurrentUser";
+import { getOrgInvitations } from "../../_data/getOrgInvitations";
 import { getOrgMembers } from "../../_data/getOrgMembers";
 import { getSubscriptions } from "../../_data/getSubscriptions";
 import { getUserOrgs } from "../../_data/getUserOrgs";
@@ -43,7 +43,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
 
   const [members, invitations] = await Promise.all([
     getOrgMembers(org.id),
-    invitationGateway.listInvitations(org.id).catch(() => []),
+    getOrgInvitations(org.id),
   ]);
 
   const teamSubscription = findTeamSubscription(subscriptions);
