@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import type { User } from "@/domain/models/User";
 import { AuthError } from "@/domain/errors/AuthError";
 import { authGateway } from "@/infrastructure/registry";
 import { getLocale } from "@/lib/pathname";
@@ -17,12 +18,14 @@ import { getLocale } from "@/lib/pathname";
  * Wrapped with React.cache() so that layout + page share a single request
  * per server render pass.
  */
-export const getCurrentUser = cache(async function getCurrentUser() {
-  try {
-    return await authGateway.getCurrentUser();
-  } catch (err) {
-    const code = err instanceof AuthError ? err.code : "UNAUTHENTICATED";
-    const locale = await getLocale();
-    redirect(`/${locale}/login?error=${code}`);
-  }
-});
+export const getCurrentUser = cache(
+  async function getCurrentUser(): Promise<User> {
+    try {
+      return await authGateway.getCurrentUser();
+    } catch (err) {
+      const code = err instanceof AuthError ? err.code : "UNAUTHENTICATED";
+      const locale = await getLocale();
+      redirect(`/${locale}/login?error=${encodeURIComponent(code)}`);
+    }
+  },
+);

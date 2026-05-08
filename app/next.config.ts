@@ -16,7 +16,13 @@ const apiProtocol: "http" | "https" = apiUrl
     })()
   : "https";
 
-const isDev = process.env.NODE_ENV === "development";
+// Belt-and-braces: a misconfigured deployment that ships with NODE_ENV unset
+// or "development" must not relax the production CSP. Vercel sets
+// VERCEL_ENV=production on the live deployment; on platforms without it the
+// fallback is a strict NODE_ENV === "development" check.
+const vercelEnv = process.env.NEXT_PUBLIC_VERCEL_ENV ?? process.env.VERCEL_ENV;
+const isDev =
+  process.env.NODE_ENV === "development" && vercelEnv !== "production";
 
 // Origins that need to appear in `img-src` and `connect-src`. The API origin
 // covers user avatars served by Django and the JSON API itself; OAuth
@@ -25,6 +31,7 @@ const apiOrigin = apiUrl ? new URL(apiUrl).origin : "";
 const oauthAvatarHosts = [
   "https://lh3.googleusercontent.com",
   "https://avatars.githubusercontent.com",
+  "https://graph.microsoft.com",
 ];
 
 const csp = [
@@ -82,6 +89,7 @@ const config: NextConfig = {
       // OAuth provider avatars — one entry per provider we support.
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
       { protocol: "https", hostname: "avatars.githubusercontent.com" },
+      { protocol: "https", hostname: "graph.microsoft.com" },
     ],
     ...(isDev && { dangerouslyAllowLocalIP: true }),
   },
