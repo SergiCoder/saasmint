@@ -48,14 +48,9 @@ export function flattenPhone(
   user: Record<string, unknown>,
 ): void {
   const phoneData = raw.phone;
-  if (
-    phoneData &&
-    typeof phoneData === "object" &&
-    "prefix" in phoneData &&
-    "number" in phoneData
-  ) {
-    user.phonePrefix = (phoneData as { prefix: unknown }).prefix;
-    user.phone = (phoneData as { number: unknown }).number;
+  if (isRecord(phoneData) && "prefix" in phoneData && "number" in phoneData) {
+    user.phonePrefix = phoneData.prefix;
+    user.phone = phoneData.number;
   } else {
     user.phonePrefix = null;
     user.phone = null;
@@ -71,23 +66,21 @@ export function applyPriceDefaults(
   camel: Record<string, unknown>,
   fallbackCurrency = "usd",
 ): void {
+  // `isRecord` rejects arrays (`typeof [] === "object"`) and `null`,
+  // narrowing without an unchecked cast.
   const price = camel.price;
-  if (!price || typeof price !== "object") return;
-  const camelPrice = price as Record<string, unknown>;
-  if (
-    camelPrice.displayAmount === undefined &&
-    typeof camelPrice.amount === "number"
-  ) {
-    camelPrice.displayAmount = camelPrice.amount / 100;
+  if (!isRecord(price)) return;
+  if (price.displayAmount === undefined && typeof price.amount === "number") {
+    price.displayAmount = price.amount / 100;
   }
-  if (camelPrice.currency === undefined) {
-    camelPrice.currency = fallbackCurrency;
+  if (price.currency === undefined) {
+    price.currency = fallbackCurrency;
   }
-  if (camelPrice.localDisplayAmount === undefined) {
-    camelPrice.localDisplayAmount = null;
+  if (price.localDisplayAmount === undefined) {
+    price.localDisplayAmount = null;
   }
-  if (camelPrice.localCurrency === undefined) {
-    camelPrice.localCurrency = null;
+  if (price.localCurrency === undefined) {
+    price.localCurrency = null;
   }
 }
 

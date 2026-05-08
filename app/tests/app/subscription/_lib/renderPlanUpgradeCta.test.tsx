@@ -80,9 +80,9 @@ const defaultOpts = {
   personalCanManage: true,
   teamCanManage: true,
   locale: "en",
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   tBilling: tBilling as any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   tPlans: tPlans as any,
 };
 

@@ -33,18 +33,20 @@ import { getString } from "@/lib/actions/parseFormData";
 import { getLocale } from "@/lib/pathname";
 import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
 
-interface TokenResponse {
+// Declared as `type` rather than `interface` so they satisfy the
+// `Record<string, unknown>` index-signature constraint on `apiFetch<T>`.
+type TokenResponse = {
   access_token: string;
   refresh_token: string;
   token_type?: string;
-}
+};
 
-interface OAuthExchangeResponse {
+type OAuthExchangeResponse = {
   access_token: string;
   refresh_token: string;
   token_type?: string;
   expires_in?: number;
-}
+};
 
 export type StartOAuthResult = { redirectUrl: string };
 

@@ -88,7 +88,18 @@ async function raw(
   return res;
 }
 
-export async function apiFetch<T>(
+/**
+ * Generic shape every typed `apiFetch*` accepts: a JSON object response
+ * body. Constraining the generic to this shape prevents callers from
+ * widening to `unknown` or to a primitive — the response must always be a
+ * record so that downstream `keysToCamel` + Zod schema parse can run.
+ * Domain models (which are also record-shaped) intentionally pass; gateways
+ * are still expected to validate via Zod, but the type convention is now
+ * encoded in the signature instead of a comment.
+ */
+type ApiResponseShape = Record<string, unknown>;
+
+export async function apiFetch<T extends ApiResponseShape>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
@@ -105,7 +116,7 @@ export async function apiFetch<T>(
  * preferred currency). A stale/invalid token that makes it past the proxy
  * refresh must not crash the anonymous render path.
  */
-export async function apiFetchOptional<T>(
+export async function apiFetchOptional<T extends ApiResponseShape>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
@@ -130,7 +141,7 @@ export async function apiFetchVoid(
   await raw(path, options, token);
 }
 
-export async function publicApiFetch<T>(
+export async function publicApiFetch<T extends ApiResponseShape>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {

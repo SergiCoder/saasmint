@@ -27,7 +27,7 @@ export interface SubscriptionPageData {
    * keyed by `subscription.id`. Personal subs are always manageable by their
    * owner; team subs only by the org's billing member.
    */
-  canManageById: Record<string, boolean>;
+  canManageById: Partial<Record<string, boolean>>;
   teamOwnerName: string | null;
   /**
    * Whether the caller is the owner of their (first) org. Drives the rule-5b
@@ -82,7 +82,7 @@ export async function getSubscriptionPageData(
     await Promise.all([
       Promise.all(
         subscriptions.map(
-          async (s) => [s.id, await canManageBilling(user, s)] as const,
+          async (s) => [s.id, await canManageBilling(user.id, s)] as const,
         ),
       ),
       (async (): Promise<string | null> => {
