@@ -7,9 +7,6 @@ import { ChangePasswordForm } from "./_components/ChangePasswordForm";
 import { DangerZone } from "./_components/DangerZone";
 import { ProfileForm } from "./_components/ProfileForm";
 
-// Static data — compute once at module load, not per request.
-const TIMEZONES = Intl.supportedValuesOf("timeZone");
-
 interface Props {
   params: Promise<{ locale: string }>;
 }
@@ -34,11 +31,7 @@ export default async function ProfilePage({ params }: Props) {
     <div className="mx-auto max-w-2xl space-y-8">
       <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
       <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <ProfileForm
-          user={user}
-          timezones={TIMEZONES}
-          phonePrefixes={PHONE_PREFIXES}
-        />
+        <ProfileForm user={user} phonePrefixes={PHONE_PREFIXES} />
       </section>
       <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-gray-900">

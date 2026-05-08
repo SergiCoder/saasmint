@@ -7,10 +7,7 @@ import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { PronounsPicker } from "@/presentation/components/molecules/PronounsPicker";
 import { AvatarUpload } from "@/presentation/components/atoms/AvatarUpload";
 import { Button } from "@/presentation/components/atoms/Button";
-import {
-  INPUT_BASE_CLASS,
-  INPUT_BORDER_DEFAULT,
-} from "@/presentation/components/atoms/Input";
+import { INPUT_DEFAULT_CLASS } from "@/presentation/components/atoms/Input";
 import { Label } from "@/presentation/components/atoms/Label";
 import { uploadAvatar, deleteAvatar } from "@/app/actions/avatar";
 import { compressImage } from "@/lib/compressImage";
@@ -46,7 +43,6 @@ const SUPPORTED_CURRENCIES = [
 
 interface ProfileFormProps {
   user: User;
-  timezones: readonly string[];
   /**
    * Phone-prefix options. Passed from the server page so the ~8 KB
    * `PHONE_PREFIXES` table doesn't ship in the client bundle.
@@ -54,11 +50,15 @@ interface ProfileFormProps {
   phonePrefixes: readonly PhonePrefix[];
 }
 
-export function ProfileForm({
-  user,
-  timezones,
-  phonePrefixes,
-}: ProfileFormProps) {
+export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
+  // Lazy-initialise the timezone list on first render so the ~10 KB IANA
+  // string array stays out of the RSC payload (the server would otherwise
+  // serialise it on every profile-page hit, even when the picker never
+  // opens). `Intl.supportedValuesOf` is available in all the browsers we
+  // support, so the client can compute it just-in-time.
+  const [timezones] = useState<readonly string[]>(() =>
+    Intl.supportedValuesOf("timeZone"),
+  );
   const t = useTranslations("profile");
   const translateError = useActionErrorMessage();
   const [state, formAction, pending] = useActionState(updateProfile, null);
@@ -119,7 +119,7 @@ export function ProfileForm({
     }
   }
 
-  const selectClassName = `${INPUT_BASE_CLASS} ${INPUT_BORDER_DEFAULT}`;
+  const selectClassName = INPUT_DEFAULT_CLASS;
 
   return (
     <form

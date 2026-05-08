@@ -8,11 +8,16 @@ import { keysToCamelWithPrice, keysToSnake } from "./caseTransform";
 import { contextQuery } from "./contextQuery";
 import { CheckoutSessionResponseSchema, ProductSchema } from "./schemas";
 
+// Same rationale as the plan catalog: the product list rarely changes and
+// the upstream response only varies by the currency query param.
+const PRODUCT_CACHE_TTL_SECONDS = 60 * 60;
+
 export class DjangoApiProductGateway implements IProductGateway {
   async listProducts(currency?: string): Promise<Product[]> {
     const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
     const data = await apiFetch<{ results: Record<string, unknown>[] }>(
       `/billing/products/${query}`,
+      { next: { revalidate: PRODUCT_CACHE_TTL_SECONDS } },
     );
     return data.results.map((r) =>
       ProductSchema.parse(keysToCamelWithPrice(r, currency)),

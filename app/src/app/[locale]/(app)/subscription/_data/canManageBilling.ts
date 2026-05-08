@@ -1,4 +1,5 @@
 import { cache } from "react";
+import type { Org } from "@/domain/models/Org";
 import type { Subscription } from "@/domain/models/Subscription";
 import { getOrgMembers } from "../../_data/getOrgMembers";
 import { getUserOrgs } from "../../_data/getUserOrgs";
@@ -10,16 +11,20 @@ import { getUserOrgs } from "../../_data/getUserOrgs";
  * member flagged as `isBilling` in the org.
  *
  * Wrapped with React.cache() so that a single render pass doesn't duplicate
- * the org + member lookups.
+ * the org + member lookups. Server-action callers can pass `preloadedOrgs`
+ * when they have already kicked off `getUserOrgs()` in parallel with
+ * `listSubscriptions()` — `React.cache` does not deduplicate across
+ * server-action invocations, so the preload avoids a serial round-trip.
  */
 export const canManageBilling = cache(async function canManageBilling(
   userId: string,
   subscription: Subscription,
+  options?: { preloadedOrgs?: readonly Org[] },
 ): Promise<boolean> {
   if (subscription.plan.context === "personal") return true;
 
   try {
-    const orgs = await getUserOrgs();
+    const orgs = options?.preloadedOrgs ?? (await getUserOrgs());
     // Team subscriptions belong to the user's first (currently only) org.
     const org = orgs[0];
     if (!org) return false;
