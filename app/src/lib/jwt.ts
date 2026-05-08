@@ -1,5 +1,5 @@
 import { getAccessToken } from "@/infrastructure/auth/cookies";
-import { isRecord } from "@/lib/typeGuards";
+import { decodeJwtPayload } from "@/lib/jwtDecode";
 
 /**
  * Decodes the `sub` claim from the access token cookie without verifying the
@@ -15,15 +15,9 @@ import { isRecord } from "@/lib/typeGuards";
 export async function getCurrentUserIdFromCookie(): Promise<string | null> {
   const token = await getAccessToken();
   if (!token) return null;
-  const parts = token.split(".");
-  if (parts.length !== 3 || !parts[1]) return null;
-  try {
-    const payload: unknown = JSON.parse(atob(parts[1]));
-    if (isRecord(payload) && typeof payload.sub === "string") {
-      return payload.sub;
-    }
-    return null;
-  } catch {
-    return null;
+  const payload = decodeJwtPayload(token);
+  if (payload && typeof payload.sub === "string") {
+    return payload.sub;
   }
+  return null;
 }

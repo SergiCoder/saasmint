@@ -9,6 +9,7 @@ import {
   refreshTokenCookieOptions,
 } from "@/infrastructure/auth/cookies";
 import { env } from "@/lib/env";
+import { decodeJwtPayload } from "@/lib/jwtDecode";
 import { PATHNAME_HEADER } from "@/lib/pathname";
 
 const intlMiddleware = createMiddleware(routing);
@@ -41,24 +42,10 @@ function needsUser(pathnameWithoutLocale: string): boolean {
 }
 
 function isTokenExpired(token: string): boolean {
-  try {
-    const parts = token.split(".");
-    if (parts.length !== 3 || !parts[1]) return true;
-    const payload: unknown = JSON.parse(atob(parts[1]));
-    if (
-      typeof payload !== "object" ||
-      payload === null ||
-      !("exp" in payload) ||
-      typeof (payload as { exp: unknown }).exp !== "number"
-    ) {
-      return true;
-    }
-    const exp = (payload as { exp: number }).exp;
-    // Consider expired 30s early to avoid race conditions
-    return exp * 1000 < Date.now() + 30_000;
-  } catch {
-    return true;
-  }
+  const payload = decodeJwtPayload(token);
+  if (!payload || typeof payload.exp !== "number") return true;
+  // Consider expired 30s early to avoid race conditions.
+  return payload.exp * 1000 < Date.now() + 30_000;
 }
 
 /**
@@ -128,6 +115,10 @@ export async function proxy(request: NextRequest) {
       });
 
       if (res.ok) {
+        // Zod is intentionally excluded from the Edge bundle (see env.ts),
+        // so we cast directly. If the response shape ever changes, the
+        // server actions that next consume the cookie will re-issue the
+        // refresh on their own apiFetch — degrades gracefully to a redirect.
         const data = (await res.json()) as {
           access_token: string;
           refresh_token: string;

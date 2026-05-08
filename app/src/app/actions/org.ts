@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import type { OrgMember } from "@/domain/models/OrgMember";
 import {
-  authGateway,
   invitationGateway,
   orgGateway,
   orgMemberGateway,
@@ -15,6 +14,7 @@ import {
   type ActionResult,
 } from "@/lib/actions/ActionResult";
 import { getString } from "@/lib/actions/parseFormData";
+import { getCurrentUserIdFromCookie } from "@/lib/jwt";
 
 const assignableRoles = ["admin", "member"] as const;
 type AssignableRole = (typeof assignableRoles)[number];
@@ -32,12 +32,14 @@ async function assertOrgRole(
   orgId: string,
   allowed: readonly OrgRole[],
 ): Promise<boolean> {
+  // Read the user ID directly from the JWT cookie to avoid a full
+  // GET /account/ round-trip on every org mutation. The proxy middleware
+  // has already vetted token expiry; the backend re-validates membership.
+  const userId = await getCurrentUserIdFromCookie();
+  if (!userId) return false;
   try {
-    const [user, members] = await Promise.all([
-      authGateway.getCurrentUser(),
-      orgMemberGateway.listMembers(orgId),
-    ]);
-    const me = members.find((m) => m.user.id === user.id);
+    const members = await orgMemberGateway.listMembers(orgId);
+    const me = members.find((m) => m.user.id === userId);
     return me ? allowed.includes(me.role) : false;
   } catch {
     return false;
