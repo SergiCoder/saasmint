@@ -110,6 +110,12 @@ export interface PlanCardLabels {
   upgrade: string;
   /** Singular noun for one seat (e.g. "seat"). Used in team interval labels. */
   seat: string;
+  /**
+   * Localised "billed yearly" suffix. Used as a fallback for the yearly
+   * sub-label when no `formatPriceSubLabelLocal` is provided (i.e. when the
+   * user's preferred currency matches the billed currency).
+   */
+  billedYearly: string;
 }
 
 export interface PlanVariantView {
@@ -309,8 +315,8 @@ export function buildPlanCardGroups({
       const monthlyEqDisplay = displayAmount / 12;
       const formatted = formatCurrency(monthlyEqDisplay, currency, locale);
       priceSubLabel = isTeam
-        ? `${formatted}/${labels.seat}/month billed yearly`
-        : `${formatted}/month billed yearly`;
+        ? `${formatted}/${labels.seat}/month — ${labels.billedYearly}`
+        : `${formatted}/month — ${labels.billedYearly}`;
     }
 
     return {

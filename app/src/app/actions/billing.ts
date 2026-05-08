@@ -89,7 +89,7 @@ export async function startProductCheckout(
 
   // Optional — only the rule-5b case (org owner with both subs) sends one;
   // everyone else lets the backend default route by account type.
-  const context = parseContext(formData);
+  const context = normalizeContext(getString(formData, "context"));
 
   let url: string;
   try {
@@ -149,7 +149,9 @@ export async function openBillingPortal(formData?: FormData) {
   // Concurrent billers (rule 5) MUST send it — otherwise the backend default
   // ("team" for org members, "personal" otherwise) would route a "manage
   // personal" click into the team portal. Single-context callers omit it.
-  const context = formData ? parseContext(formData) : undefined;
+  const context = formData
+    ? normalizeContext(getString(formData, "context"))
+    : undefined;
   let url: string | null = null;
   try {
     await assertCanManageBilling(context);
@@ -170,15 +172,11 @@ export async function openBillingPortal(formData?: FormData) {
 /**
  * Server actions are reachable as RPC endpoints — the TypeScript signature
  * does not survive the wire boundary. Normalize any caller-supplied value
- * down to the literal union (or `undefined`) before it touches authorization
- * checks or URL construction.
+ * (raw arg or FormData entry) down to the literal union or `undefined`
+ * before it touches authorization checks or URL construction.
  */
 function normalizeContext(value: unknown): SubscriptionContext | undefined {
   return value === "personal" || value === "team" ? value : undefined;
-}
-
-function parseContext(formData: FormData): SubscriptionContext | undefined {
-  return normalizeContext(getString(formData, "context"));
 }
 
 /** Schedule the subscription to end at the current period's close. */
@@ -270,7 +268,7 @@ export async function updateSeats(
   if (seatLimit === undefined || seatLimit < 1) {
     return fail("invalid_seat_count");
   }
-  const context = parseContext(formData);
+  const context = normalizeContext(getString(formData, "context"));
 
   try {
     await assertCanManageBilling(context);
