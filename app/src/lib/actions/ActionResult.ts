@@ -4,12 +4,21 @@ import { BillingError } from "@/domain/errors/BillingError";
 import { NetworkError } from "@/domain/errors/NetworkError";
 
 /**
+ * Action-error codes shared between server actions and the
+ * `actionErrors.<code>` next-intl namespace. Defined here so a rename only
+ * touches one place — message JSON files still need to keep the same key.
+ */
+export const ACTION_CODE_INVALID_INPUT = "invalid_input";
+export const ACTION_CODE_NOT_AUTHORIZED = "not_authorized";
+
+/**
  * Stable envelope returned by every server action. Callers either hit the
  * `ok: true` branch (with optional `data`) or the `ok: false` branch
  * (with a stable `code` that form components translate via next-intl under
- * the `actionErrors.<code>` namespace). `message` is a server-provided
- * override (typically from {@link ApiError.detail}); `fieldErrors` carries
- * per-input validation messages keyed by form-field name.
+ * the `actionErrors.<code>` namespace). `fieldErrors` carries per-input
+ * validation messages keyed by form-field name. The envelope intentionally
+ * omits any free-form server-provided message — the client surface is
+ * limited to i18n-mapped strings to keep backend payloads off the UI.
  */
 export type ActionOk<T> = T extends void
   ? { readonly ok: true }
@@ -18,7 +27,6 @@ export type ActionOk<T> = T extends void
 export type ActionErr = {
   readonly ok: false;
   readonly code: string;
-  readonly message?: string;
   readonly fieldErrors?: Readonly<Record<string, string>>;
 };
 
@@ -40,21 +48,22 @@ export function ok<T>(data?: T): ActionResult<T> {
 
 export function fail(
   code: string,
-  extras?: { message?: string; fieldErrors?: Record<string, string> },
+  extras?: { fieldErrors?: Record<string, string> },
 ): ActionErr {
   return {
     ok: false,
     code,
-    ...(extras?.message ? { message: extras.message } : {}),
     ...(extras?.fieldErrors ? { fieldErrors: extras.fieldErrors } : {}),
   };
 }
 
 /**
- * Map a thrown gateway/domain error to an {@link ActionErr}. Prefers the
- * domain error's stable `code` field; for {@link ApiError} also forwards
- * the server-provided detail as `message`. Unknown throwables collapse to
- * `unknown_error`.
+ * Map a thrown gateway/domain error to an {@link ActionErr} carrying the
+ * stable `code` field. The {@link ApiError} `detail` string is intentionally
+ * dropped — surfacing arbitrary backend strings as UI text would let
+ * upstream content drive the client surface; clients translate `code`
+ * through the `actionErrors.<code>` next-intl namespace instead. Unknown
+ * throwables collapse to `unknown_error`.
  */
 export function toActionError(err: unknown): ActionErr {
   if (err instanceof AuthError) {
@@ -67,10 +76,7 @@ export function toActionError(err: unknown): ActionErr {
     return { ok: false, code: err.code };
   }
   if (err instanceof ApiError) {
-    const detail = err.detail;
-    return detail
-      ? { ok: false, code: err.code, message: detail }
-      : { ok: false, code: err.code };
+    return { ok: false, code: err.code };
   }
   return { ok: false, code: "unknown_error" };
 }

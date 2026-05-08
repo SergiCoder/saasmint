@@ -6,9 +6,8 @@ import type { ActionErr } from "./ActionResult";
 
 /**
  * Hook that returns a function for translating an {@link ActionErr} into a
- * user-facing string. Prefers the action's `message` override (server-provided
- * detail) if set, then the `actionErrors.<code>` translation, then the
- * translated `unknown_error` fallback.
+ * user-facing string via the `actionErrors.<code>` next-intl namespace,
+ * falling back to the translated `unknown_error` when the code is unknown.
  */
 export function useActionErrorMessage(): (err: ActionErr) => string {
   const t = useTranslations("actionErrors");
@@ -16,8 +15,5 @@ export function useActionErrorMessage(): (err: ActionErr) => string {
   const actionErrors = isRecord(messages.actionErrors)
     ? messages.actionErrors
     : {};
-  return (err) => {
-    if (err.message) return err.message;
-    return err.code in actionErrors ? t(err.code) : t("unknown_error");
-  };
+  return (err) => (err.code in actionErrors ? t(err.code) : t("unknown_error"));
 }

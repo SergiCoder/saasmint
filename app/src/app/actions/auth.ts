@@ -408,7 +408,7 @@ export async function confirmOAuthLink(
   return ok();
 }
 
-export async function signOut() {
+export async function signOut(): Promise<void> {
   const locale = await getLocale();
   try {
     await authGateway.signOut();

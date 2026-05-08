@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { BillingError } from "@/domain/errors/BillingError";
 import {
@@ -12,12 +11,15 @@ import type { SubscriptionContext } from "@/application/ports/ISubscriptionGatew
 import { productGateway, subscriptionGateway } from "@/infrastructure/registry";
 import { AuthError } from "@/domain/errors/AuthError";
 import { canManageBilling } from "@/app/[locale]/(app)/subscription/_data/canManageBilling";
+import { getUserOrgs } from "@/app/[locale]/(app)/_data/getUserOrgs";
 import { getCurrentUserIdFromCookie } from "@/lib/jwt";
+import { revalidateLocalizedPath } from "@/lib/revalidate";
 import {
   APP_ORIGIN,
   assertTrustedRedirect,
 } from "@/app/[locale]/(app)/subscription/_data/trustedRedirect";
 import {
+  ACTION_CODE_INVALID_INPUT,
   ok,
   fail,
   toActionError,
@@ -44,14 +46,19 @@ import {
 async function assertCanManageBilling(
   context?: SubscriptionContext,
 ): Promise<Subscription> {
-  // The user ID comes straight from the JWT cookie — the proxy middleware
-  // has already verified the token's expiry and the backend re-validates on
+  // The user ID comes straight from the JWT cookie — the middleware has
+  // already verified the token's expiry and the backend re-validates on
   // every API call. Fetching the full /account/ payload here would add a
   // round-trip to every billing mutation just to read `id`.
   const userId = await getCurrentUserIdFromCookie();
   if (!userId) {
     throw new AuthError("No active session", "NO_SESSION");
   }
+  // Run the subscription list and (for team-eligible callers) the user's org
+  // list in parallel — neither depends on the other, and `React.cache` does
+  // not deduplicate across server actions, so a sequential `await` chain
+  // costs an extra Django round-trip on every billing mutation.
+  const orgsPromise = context === "personal" ? null : getUserOrgs();
   const subscriptions = await subscriptionGateway.listSubscriptions();
   let subscription: Subscription | null;
   if (context === "personal") {
@@ -71,7 +78,11 @@ async function assertCanManageBilling(
   if (!subscription) {
     throw new BillingError("No active subscription", "no_subscription");
   }
-  if (!(await canManageBilling(userId, subscription))) {
+  const preloadedOrgs = orgsPromise ? await orgsPromise : undefined;
+  const allowed = preloadedOrgs
+    ? await canManageBilling(userId, subscription, { preloadedOrgs })
+    : await canManageBilling(userId, subscription);
+  if (!allowed) {
     throw new BillingError(
       "You do not have permission to manage billing",
       "not_billing_member",
@@ -85,7 +96,7 @@ export async function startProductCheckout(
   formData: FormData,
 ): Promise<ActionResult> {
   const productPriceId = getString(formData, "productPriceId");
-  if (!productPriceId) return fail("invalid_input");
+  if (!productPriceId) return fail(ACTION_CODE_INVALID_INPUT);
 
   // Optional — only the rule-5b case (org owner with both subs) sends one;
   // everyone else lets the backend default route by account type.
@@ -114,7 +125,7 @@ export async function startCheckout(
   formData: FormData,
 ): Promise<ActionResult> {
   const planPriceId = getString(formData, "planPriceId");
-  if (!planPriceId) return fail("invalid_input");
+  if (!planPriceId) return fail(ACTION_CODE_INVALID_INPUT);
 
   // Form field name `seatLimit` mirrors the new backend wire field
   // (`seat_limit`, renamed from `quantity` in v0.8.0). Backend enforces
@@ -144,7 +155,7 @@ export async function startCheckout(
   redirect(url);
 }
 
-export async function openBillingPortal(formData?: FormData) {
+export async function openBillingPortal(formData?: FormData): Promise<void> {
   // Form-submitted context picks the Stripe customer the portal attaches to.
   // Concurrent billers (rule 5) MUST send it — otherwise the backend default
   // ("team" for org members, "personal" otherwise) would route a "manage
@@ -191,7 +202,7 @@ export async function cancelRenewal(
     console.error("Failed to cancel subscription", err);
     return toActionError(err);
   }
-  revalidatePath("/subscription", "layout");
+  revalidateLocalizedPath("/subscription", "layout");
   return ok();
 }
 
@@ -207,7 +218,7 @@ export async function resumeSubscription(
     console.error("Failed to resume subscription", err);
     return toActionError(err);
   }
-  revalidatePath("/subscription", "layout");
+  revalidateLocalizedPath("/subscription", "layout");
   return ok();
 }
 
@@ -222,7 +233,7 @@ export async function changePlan(
   planPriceId: string,
   context?: SubscriptionContext,
 ): Promise<ActionResult<{ deferred: boolean }>> {
-  if (!planPriceId) return fail("invalid_input");
+  if (!planPriceId) return fail(ACTION_CODE_INVALID_INPUT);
   const safeContext = normalizeContext(context);
   try {
     await assertCanManageBilling(safeContext);
@@ -230,7 +241,7 @@ export async function changePlan(
       planPriceId,
       safeContext,
     );
-    revalidatePath("/subscription", "layout");
+    revalidateLocalizedPath("/subscription", "layout");
     return ok({ deferred: updated.scheduledChangeAt !== null });
   } catch (err) {
     console.error("Failed to change plan", err);
@@ -253,7 +264,7 @@ export async function releaseScheduledChange(
     console.error("Failed to release scheduled plan change", err);
     return toActionError(err);
   }
-  revalidatePath("/subscription", "layout");
+  revalidateLocalizedPath("/subscription", "layout");
   return ok();
 }
 
@@ -277,7 +288,7 @@ export async function updateSeats(
     console.error("Failed to update seats", err);
     return toActionError(err);
   }
-  revalidatePath("/org", "layout");
-  revalidatePath("/subscription", "layout");
+  revalidateLocalizedPath("/org", "layout");
+  revalidateLocalizedPath("/subscription", "layout");
   return ok();
 }

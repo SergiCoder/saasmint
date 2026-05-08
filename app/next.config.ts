@@ -34,11 +34,14 @@ const oauthAvatarHosts = [
   "https://graph.microsoft.com",
 ];
 
+// This static baseline only applies to routes outside the middleware matcher
+// (currently none of the user-facing pages — `/_next/static`, `/favicon.ico`,
+// etc. — fall in that bucket). The middleware emits a stricter, nonce-bearing
+// CSP for every page response, overriding the value set here. Keep the static
+// fallback `'unsafe-inline'` because Next's static asset routes don't carry a
+// nonce. Dev additionally needs `'unsafe-eval'` for HMR.
 const csp = [
   `default-src 'self'`,
-  // Next.js injects small inline bootstrap scripts for hydration; without
-  // per-request nonce middleware we need `'unsafe-inline'`. Dev additionally
-  // uses `eval` for HMR fast refresh.
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   `style-src 'self' 'unsafe-inline'`,
   `img-src 'self' data: blob: ${apiOrigin} ${oauthAvatarHosts.join(" ")}`.trim(),
