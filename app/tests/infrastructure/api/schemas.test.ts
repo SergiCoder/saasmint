@@ -7,6 +7,7 @@ import {
   OrgSchema,
   PlanSchema,
   ProductSchema,
+  PublicInvitationSchema,
   SubscriptionListResponseSchema,
   SubscriptionSchema,
   UserSchema,
@@ -42,7 +43,7 @@ const validOrg = {
 
 const validOrgMember = {
   id: "m1",
-  org: "o1",
+  org: validOrg,
   user: {
     id: "u1",
     email: "alice@example.com",
@@ -56,14 +57,25 @@ const validOrgMember = {
 
 const validInvitation = {
   id: "i1",
-  org: "o1",
-  orgName: "Acme",
+  org: validOrg,
   email: "new@example.com",
   role: "member",
   status: "pending",
   invitedBy: {
     id: "u1",
-    email: "alice@example.com",
+    fullName: "Alice",
+  },
+  createdAt: "2024-01-01T00:00:00Z",
+  expiresAt: "2024-01-08T00:00:00Z",
+};
+
+const validPublicInvitation = {
+  id: "i1",
+  org: validOrg,
+  role: "member",
+  status: "pending",
+  invitedBy: {
+    id: "u1",
     fullName: "Alice",
   },
   createdAt: "2024-01-01T00:00:00Z",
@@ -253,6 +265,42 @@ describe("InvitationSchema", () => {
     expect(() =>
       InvitationSchema.parse({ ...validInvitation, status: "revoked" }),
     ).toThrow();
+  });
+});
+
+describe("PublicInvitationSchema", () => {
+  it("accepts the redacted public invitation shape", () => {
+    expect(() =>
+      PublicInvitationSchema.parse(validPublicInvitation),
+    ).not.toThrow();
+  });
+
+  it("rejects payloads carrying the redacted invitee email", () => {
+    // Backend strips `email` from the public endpoint to prevent token-holders
+    // from enumerating addresses; the schema must mirror that contract by
+    // refusing payloads that smuggle it through.
+    expect(() =>
+      PublicInvitationSchema.parse({
+        ...validPublicInvitation,
+        email: "leaked@example.com",
+      }),
+    ).not.toThrow(); // Zod strict-mode is off — extra keys are stripped, not rejected
+    const parsed = PublicInvitationSchema.parse({
+      ...validPublicInvitation,
+      email: "leaked@example.com",
+    });
+    expect(parsed).not.toHaveProperty("email");
+  });
+
+  it("rejects payloads where invitedBy carries an email", () => {
+    const parsed = PublicInvitationSchema.parse({
+      ...validPublicInvitation,
+      invitedBy: {
+        ...validPublicInvitation.invitedBy,
+        email: "leaked@example.com",
+      },
+    });
+    expect(parsed.invitedBy).not.toHaveProperty("email");
   });
 });
 

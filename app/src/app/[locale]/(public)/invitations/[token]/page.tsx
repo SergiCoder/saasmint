@@ -7,7 +7,7 @@ import {
 } from "@/infrastructure/registry";
 import { ApiError } from "@/domain/errors/ApiError";
 import { AuthError } from "@/domain/errors/AuthError";
-import type { Invitation } from "@/domain/models/Invitation";
+import type { PublicInvitation } from "@/domain/models/Invitation";
 import { findPersonalSubscription } from "@/domain/models/Subscription";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Button } from "@/presentation/components/atoms/Button";
@@ -43,7 +43,7 @@ export default async function InvitationPage({ params }: InvitationPageProps) {
     // accept-success and the client-side router.push to /dashboard.
     invitationGateway
       .getByToken(token)
-      .catch((err: unknown): Invitation | null => {
+      .catch((err: unknown): PublicInvitation | null => {
         if (err instanceof ApiError && err.status === 404) return null;
         throw err;
       }),
@@ -67,7 +67,7 @@ export default async function InvitationPage({ params }: InvitationPageProps) {
       <div className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
         <h1 className="text-xl font-bold text-gray-900">{t("title")}</h1>
         <p className="mt-2 mb-6 text-sm text-gray-600">
-          {t("description", { orgName: invitation.orgName })}
+          {t("description", { orgName: invitation.org.name })}
         </p>
 
         {showConcurrentBillingNotice && (

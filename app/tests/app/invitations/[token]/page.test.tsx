@@ -1,7 +1,8 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { Invitation } from "@/domain/models/Invitation";
+import type { PublicInvitation } from "@/domain/models/Invitation";
+import type { Org } from "@/domain/models/Org";
 import type { Subscription } from "@/domain/models/Subscription";
 import { AuthError } from "@/domain/errors/AuthError";
 
@@ -25,7 +26,7 @@ vi.mock("next-intl/server", () => ({
   setRequestLocale: (locale: string) => setRequestLocaleMock(locale),
 }));
 
-const mockGetByToken = vi.fn<(token: string) => Promise<Invitation>>();
+const mockGetByToken = vi.fn<(token: string) => Promise<PublicInvitation>>();
 const mockListSubscriptions =
   vi.fn<(currency?: string) => Promise<Subscription[]>>();
 vi.mock("@/infrastructure/registry", () => ({
@@ -61,17 +62,24 @@ const { generateMetadata } = pageModule;
 
 // --- Helpers -------------------------------------------------------------
 
-function makeInvitation(overrides: Partial<Invitation> = {}): Invitation {
+const ACME_ORG: Org = {
+  id: "org_1",
+  name: "Acme Corp",
+  slug: "acme",
+  logoUrl: null,
+  createdAt: "2025-01-01T00:00:00Z",
+};
+
+function makeInvitation(
+  overrides: Partial<PublicInvitation> = {},
+): PublicInvitation {
   return {
     id: "inv_1",
-    org: "org_1",
-    orgName: "Acme Corp",
-    email: "invitee@example.com",
+    org: ACME_ORG,
     role: "member",
     status: "pending",
     invitedBy: {
       id: "u_admin",
-      email: "admin@acme.test",
       fullName: "Admin One",
     },
     createdAt: "2025-01-01T00:00:00Z",
@@ -149,7 +157,9 @@ describe("InvitationPage", () => {
   });
 
   it("interpolates the invitation orgName into the description", async () => {
-    mockGetByToken.mockResolvedValue(makeInvitation({ orgName: "Globex Inc" }));
+    mockGetByToken.mockResolvedValue(
+      makeInvitation({ org: { ...ACME_ORG, name: "Globex Inc" } }),
+    );
 
     await renderPage("tok_abc123");
 

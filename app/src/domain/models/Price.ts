@@ -1,4 +1,4 @@
-export interface ProductPrice {
+export interface Price {
   readonly id: string;
   readonly amount: number;
   readonly displayAmount: number;

@@ -20,16 +20,37 @@ vi.mock("@/infrastructure/api/caseTransform", async () => {
 const { DjangoApiInvitationGateway } =
   await import("@/infrastructure/api/DjangoApiInvitationGateway");
 
+const rawOrg = {
+  id: "org-1",
+  name: "The Bee Lab",
+  slug: "the-bee-lab",
+  logo_url: null,
+  created_at: "2024-01-01T00:00:00Z",
+};
+
 const rawInvitation = {
   id: "inv1",
-  org: "org-1",
-  org_name: "The Bee Lab",
+  org: rawOrg,
   email: "bob@example.com",
   role: "member",
   status: "pending",
   invited_by: {
     id: "u1",
-    email: "alice@example.com",
+    full_name: "Alice",
+  },
+  created_at: "2024-01-01T00:00:00Z",
+  expires_at: "2024-01-08T00:00:00Z",
+};
+
+// `getByToken()` hits the unauthenticated endpoint, which strips `email`
+// from both the invitation row and the inviter shape.
+const rawPublicInvitation = {
+  id: "inv1",
+  org: rawOrg,
+  role: "member",
+  status: "pending",
+  invited_by: {
+    id: "u1",
     full_name: "Alice",
   },
   created_at: "2024-01-01T00:00:00Z",
@@ -115,14 +136,16 @@ describe("DjangoApiInvitationGateway", () => {
   });
 
   describe("getByToken", () => {
-    it("fetches GET /invitations/:token/ and maps response", async () => {
-      mockPublicApiFetch.mockResolvedValue(rawInvitation);
+    it("fetches GET /invitations/:token/ and maps the public invitation shape", async () => {
+      mockPublicApiFetch.mockResolvedValue(rawPublicInvitation);
 
       const result = await gateway.getByToken("abc123");
 
       expect(mockPublicApiFetch).toHaveBeenCalledWith("/invitations/abc123/");
-      expect(result.orgName).toBe("The Bee Lab");
+      expect(result.org.name).toBe("The Bee Lab");
       expect(result.invitedBy.fullName).toBe("Alice");
+      // PublicInvitation must not leak the invitee email.
+      expect(result).not.toHaveProperty("email");
     });
   });
 
