@@ -97,8 +97,10 @@ export function applyPriceDefaults(
 
 /**
  * Convert a raw API object's keys to camelCase and fill in `price` defaults
- * (`displayAmount`, `currency`) when the API omits them. Covers Plan,
- * Product, and top-level Subscription responses.
+ * (`displayAmount`, `currency`) when the API omits them. Covers Plan and
+ * Product responses. Subscriptions wrap their plan one level deeper, so
+ * `DjangoApiSubscriptionGateway` uses `keysToCamel` + a private
+ * `applySubscriptionPriceDefaults` walk instead.
  */
 export function keysToCamelWithPrice(
   raw: Record<string, unknown>,
