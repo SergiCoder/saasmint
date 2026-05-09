@@ -42,6 +42,7 @@ const EXPECTED_USE_CLIENT_FILES: readonly string[] = [
   "src/app/[locale]/auth/confirm-link/_components/ConfirmLinkClient.tsx",
   "src/app/global-error.tsx",
   "src/lib/actions/useActionErrorMessage.ts",
+  "src/lib/actions/useBillingAction.ts",
   "src/lib/actions/useResendVerification.ts",
   "src/presentation/components/atoms/AvatarUpload.tsx",
   "src/presentation/components/atoms/LocaleDropdown.tsx",

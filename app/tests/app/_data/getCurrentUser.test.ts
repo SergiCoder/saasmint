@@ -46,13 +46,26 @@ describe("getCurrentUser", () => {
     expect(mockRedirect).not.toHaveBeenCalled();
   });
 
-  it("redirects to /login?error=<auth-code> when gateway throws AuthError", async () => {
+  it("redirects to /login?error=<auth-code> when gateway throws AuthError with a known code", async () => {
+    mockGetCurrentUser.mockRejectedValue(
+      new AuthError("expired", "token_expired"),
+    );
+
+    await expect(getCurrentUser()).rejects.toThrow("NEXT_REDIRECT");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/login?error=token_expired");
+  });
+
+  it("coerces unknown AuthError codes to UNAUTHENTICATED so unfiltered backend codes can't reach the URL", async () => {
+    // `TOKEN_EXPIRED` (uppercase) is not in the login-error allowlist; the
+    // loader collapses it to UNAUTHENTICATED before redirecting.
     mockGetCurrentUser.mockRejectedValue(
       new AuthError("expired", "TOKEN_EXPIRED"),
     );
 
     await expect(getCurrentUser()).rejects.toThrow("NEXT_REDIRECT");
-    expect(mockRedirect).toHaveBeenCalledWith("/en/login?error=TOKEN_EXPIRED");
+    expect(mockRedirect).toHaveBeenCalledWith(
+      "/en/login?error=UNAUTHENTICATED",
+    );
   });
 
   it("coerces non-auth errors to /login?error=UNAUTHENTICATED so a probe failure never surfaces a 500", async () => {

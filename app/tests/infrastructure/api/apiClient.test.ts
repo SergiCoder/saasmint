@@ -384,9 +384,7 @@ describe("apiFetchOptional", () => {
         json: () => Promise.resolve({ results: [] }),
       });
 
-    const result = await apiFetchOptional<{ results: unknown[] }>(
-      "/billing/plans/",
-    );
+    const result = await apiFetchOptional("/billing/plans/");
 
     expect(result).toEqual({ results: [] });
     expect(fetchSpy).toHaveBeenCalledTimes(2);

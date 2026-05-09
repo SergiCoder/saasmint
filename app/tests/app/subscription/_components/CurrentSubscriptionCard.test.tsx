@@ -2,19 +2,18 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { Subscription } from "@/domain/models/Subscription";
 
-// getTranslations echoes the key so the tests can assert on raw keys.
-vi.mock("next-intl/server", () => ({
-  getTranslations: vi.fn(() =>
-    Promise.resolve((key: string, values?: Record<string, unknown>) => {
-      if (values) {
-        return `${key}:${Object.entries(values)
-          .map(([k, v]) => `${k}=${String(v)}`)
-          .join(",")}`;
-      }
-      return key;
-    }),
-  ),
-}));
+// Stub translator that echoes the key so tests can assert on raw keys.
+// The real `getTranslations("billing")` was previously called inside the
+// component; now the parent page passes the resolved translator as a prop,
+// so we just pass a plain echo function here.
+const echoTranslator = (key: string, values?: Record<string, unknown>) => {
+  if (values) {
+    return `${key}:${Object.entries(values)
+      .map(([k, v]) => `${k}=${String(v)}`)
+      .join(",")}`;
+  }
+  return key;
+};
 
 vi.mock(
   "@/app/[locale]/(app)/subscription/_components/BillingActionButton",
@@ -211,11 +210,19 @@ function makeSub(overrides: Partial<Subscription> = {}): Subscription {
   };
 }
 
-async function renderCard(
-  props: React.ComponentProps<typeof CurrentSubscriptionCard>,
-) {
-  const jsx = await CurrentSubscriptionCard(props);
-  return render(jsx as React.ReactElement);
+type RawProps = Omit<
+  React.ComponentProps<typeof CurrentSubscriptionCard>,
+  "tBilling" | "tPlans"
+>;
+
+function renderCard(props: RawProps) {
+  return render(
+    <CurrentSubscriptionCard
+      {...props}
+      tBilling={echoTranslator}
+      tPlans={echoTranslator}
+    />,
+  );
 }
 
 beforeEach(() => {
@@ -224,7 +231,7 @@ beforeEach(() => {
 
 describe("CurrentSubscriptionCard", () => {
   it("renders planName and period-end details for an active personal monthly sub when canManage=true", async () => {
-    await renderCard({
+    renderCard({
       subscription: makeSub(),
       locale: "en",
       planName: "Pro",
@@ -253,7 +260,7 @@ describe("CurrentSubscriptionCard", () => {
     // and `cancelAt !== null` we render the cancel-date row, the cancellation
     // notice, and the Resume action — `canceledAt` only flips when the sub
     // has actually ended.
-    await renderCard({
+    renderCard({
       subscription: makeSub({ cancelAt: "2026-02-01T00:00:00Z" }),
       locale: "en",
       planName: "Pro",
@@ -275,7 +282,7 @@ describe("CurrentSubscriptionCard", () => {
     // Once the sub has actually ended (status === "canceled"), Resume is no
     // longer valid (Stripe rejects it on a closed sub) and Cancel-renewal is
     // moot. The card just shows when it ended.
-    await renderCard({
+    renderCard({
       subscription: makeSub({
         status: "canceled",
         cancelAt: null,
@@ -301,7 +308,7 @@ describe("CurrentSubscriptionCard", () => {
     // The cancel banner quotes the actual scheduled cutover (`cancelAt`),
     // not the period-end proxy the old heuristic relied on. The date row
     // itself is suppressed in this state — the banner owns the cutover date.
-    await renderCard({
+    renderCard({
       subscription: makeSub({
         cancelAt: "2026-03-15T00:00:00Z",
         currentPeriodEnd: "2026-04-01T00:00:00Z",
@@ -320,7 +327,7 @@ describe("CurrentSubscriptionCard", () => {
   });
 
   it("omits period-end details when currentPeriodEnd is an unparseable string", async () => {
-    await renderCard({
+    renderCard({
       subscription: makeSub({ currentPeriodEnd: "not-a-date" }),
       locale: "en",
       planName: "Free",
@@ -333,7 +340,7 @@ describe("CurrentSubscriptionCard", () => {
   });
 
   it("renders seats label and yearly interval for a team yearly subscription with quantity > 1", async () => {
-    await renderCard({
+    renderCard({
       subscription: makeSub({
         plan: {
           id: "plan_team",
@@ -361,7 +368,7 @@ describe("CurrentSubscriptionCard", () => {
   });
 
   it("renders the seats-of-max label even when team quantity is 1", async () => {
-    await renderCard({
+    renderCard({
       subscription: makeSub({
         plan: {
           id: "plan_team",
@@ -387,7 +394,7 @@ describe("CurrentSubscriptionCard", () => {
   });
 
   it("hides management actions and shows managedBy footer for team sub when the caller can't manage", async () => {
-    await renderCard({
+    renderCard({
       subscription: makeSub({
         plan: {
           id: "plan_team",
@@ -416,7 +423,7 @@ describe("CurrentSubscriptionCard", () => {
   });
 
   it("omits the managedBy footer when teamOwnerName is null", async () => {
-    await renderCard({
+    renderCard({
       subscription: makeSub({
         plan: {
           id: "plan_team",
@@ -440,7 +447,7 @@ describe("CurrentSubscriptionCard", () => {
   });
 
   it("uses team-flavored cancel copy with org-archival warning when an owner cancels a team sub", async () => {
-    await renderCard({
+    renderCard({
       subscription: makeSub({
         plan: {
           id: "plan_team",
@@ -476,7 +483,7 @@ describe("CurrentSubscriptionCard", () => {
   });
 
   it("uses standard personal cancel copy for a personal sub", async () => {
-    await renderCard({
+    renderCard({
       subscription: makeSub(),
       locale: "en",
       planName: "Pro",
@@ -499,7 +506,7 @@ describe("CurrentSubscriptionCard", () => {
   });
 
   it("shows no actions for a personal sub the caller can't manage", async () => {
-    await renderCard({
+    renderCard({
       subscription: makeSub(),
       locale: "en",
       planName: "Pro",
@@ -516,7 +523,7 @@ describe("CurrentSubscriptionCard", () => {
 
   describe("isConcurrent (rule 5 — concurrent personal+team billing)", () => {
     it("uses the personal eyebrow even when not concurrent", async () => {
-      await renderCard({
+      renderCard({
         subscription: makeSub(),
         locale: "en",
         planName: "Pro",
@@ -530,7 +537,7 @@ describe("CurrentSubscriptionCard", () => {
     });
 
     it("uses the currentPersonalPlan eyebrow for the personal card when concurrent", async () => {
-      await renderCard({
+      renderCard({
         subscription: makeSub(),
         locale: "en",
         planName: "Pro",
@@ -545,7 +552,7 @@ describe("CurrentSubscriptionCard", () => {
     });
 
     it("uses the currentTeamPlan eyebrow for the team card when concurrent", async () => {
-      await renderCard({
+      renderCard({
         subscription: makeSub({
           plan: {
             id: "plan_team",
@@ -572,7 +579,7 @@ describe("CurrentSubscriptionCard", () => {
     });
 
     it("pins context=personal on the cancel button for the personal card when concurrent", async () => {
-      await renderCard({
+      renderCard({
         subscription: makeSub(),
         locale: "en",
         planName: "Pro",
@@ -588,7 +595,7 @@ describe("CurrentSubscriptionCard", () => {
     });
 
     it("pins context=team on the cancel button for the team card when concurrent", async () => {
-      await renderCard({
+      renderCard({
         subscription: makeSub({
           plan: {
             id: "plan_team",
@@ -616,7 +623,7 @@ describe("CurrentSubscriptionCard", () => {
     });
 
     it("pins context on the resume button when concurrent and scheduled to cancel", async () => {
-      await renderCard({
+      renderCard({
         subscription: makeSub({
           plan: {
             id: "plan_team",
@@ -643,7 +650,7 @@ describe("CurrentSubscriptionCard", () => {
     });
 
     it("leaves context unset on cancel/resume buttons when not concurrent (single-sub default)", async () => {
-      await renderCard({
+      renderCard({
         subscription: makeSub(),
         locale: "en",
         planName: "Pro",
@@ -670,7 +677,7 @@ describe("CurrentSubscriptionCard", () => {
     };
 
     it("renders the downgrade banner when scheduledPlan is set and canManage=true", async () => {
-      await renderCard({
+      renderCard({
         subscription: makeSub({
           scheduledPlan,
           scheduledChangeAt: "2026-03-01T00:00:00Z",
@@ -688,7 +695,7 @@ describe("CurrentSubscriptionCard", () => {
     });
 
     it("includes the scheduled plan name and date in the banner headline", async () => {
-      await renderCard({
+      renderCard({
         subscription: makeSub({
           scheduledPlan,
           scheduledChangeAt: "2026-03-01T00:00:00Z",
@@ -706,7 +713,7 @@ describe("CurrentSubscriptionCard", () => {
     });
 
     it("renders the cancel banner instead of the downgrade banner when both are set (cancel takes priority)", async () => {
-      await renderCard({
+      renderCard({
         subscription: makeSub({
           scheduledPlan,
           scheduledChangeAt: "2026-03-01T00:00:00Z",
@@ -728,7 +735,7 @@ describe("CurrentSubscriptionCard", () => {
     });
 
     it("does NOT render the downgrade banner when scheduledPlan is null", async () => {
-      await renderCard({
+      renderCard({
         subscription: makeSub({ scheduledPlan: null, scheduledChangeAt: null }),
         locale: "en",
         planName: "Pro",
@@ -750,7 +757,7 @@ describe("CurrentSubscriptionCard", () => {
     });
 
     it("does NOT render the downgrade banner when canManage=false", async () => {
-      await renderCard({
+      renderCard({
         subscription: makeSub({
           scheduledPlan,
           scheduledChangeAt: "2026-03-01T00:00:00Z",
@@ -768,7 +775,7 @@ describe("CurrentSubscriptionCard", () => {
     });
 
     it("pins context on ReleaseScheduledChangeButton when concurrent", async () => {
-      await renderCard({
+      renderCard({
         subscription: makeSub({
           scheduledPlan,
           scheduledChangeAt: "2026-03-01T00:00:00Z",
@@ -787,7 +794,7 @@ describe("CurrentSubscriptionCard", () => {
     });
 
     it("renders the card without a wrapper div when there is no downgrade banner", async () => {
-      const { container } = await renderCard({
+      const { container } = renderCard({
         subscription: makeSub(),
         locale: "en",
         planName: "Pro",
