@@ -6,10 +6,13 @@ import {
   publicApiFetch,
   publicApiFetchVoid,
 } from "@/infrastructure/api/apiClient";
+import {
+  OAuthExchangeResponseSchema,
+  TokenResponseSchema,
+} from "@/infrastructure/api/schemas";
 import { ApiError } from "@/domain/errors/ApiError";
 import { authGateway, planGateway } from "@/infrastructure/registry";
 import {
-  clearAuthCookies,
   consumeOAuthFlowCookies,
   consumePendingPlan,
   setAuthCookies,
@@ -32,21 +35,6 @@ import {
 import { getString } from "@/lib/actions/parseFormData";
 import { getLocale } from "@/lib/pathname";
 import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
-
-// Declared as `type` rather than `interface` so they satisfy the
-// `Record<string, unknown>` index-signature constraint on `apiFetch<T>`.
-type TokenResponse = {
-  access_token: string;
-  refresh_token: string;
-  token_type?: string;
-};
-
-type OAuthExchangeResponse = {
-  access_token: string;
-  refresh_token: string;
-  token_type?: string;
-  expires_in?: number;
-};
 
 export type StartOAuthResult = { redirectUrl: string };
 
@@ -122,12 +110,13 @@ export async function signIn(
   const credentials = readCredentials(formData);
   if (!credentials) return fail("email_and_password_required");
 
-  let data: TokenResponse;
+  let data: ReturnType<typeof TokenResponseSchema.parse>;
   try {
-    data = await publicApiFetch<TokenResponse>("/auth/login/", {
+    const raw = await publicApiFetch<Record<string, unknown>>("/auth/login/", {
       method: "POST",
       body: JSON.stringify(credentials),
     });
+    data = TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Sign-in failed", err);
     return toActionError(err);
@@ -170,14 +159,21 @@ export async function signUp(
   const isTeam = routing?.context === "team";
 
   try {
-    await publicApiFetch<TokenResponse>("/auth/register/", {
-      method: "POST",
-      body: JSON.stringify({
-        email: credentials.email,
-        password: credentials.password,
-        full_name: fullName,
-      }),
-    });
+    const raw = await publicApiFetch<Record<string, unknown>>(
+      "/auth/register/",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+          full_name: fullName,
+        }),
+      },
+    );
+    // Registration returns a token envelope but we don't consume it — the
+    // user must verify their email before logging in. Parse anyway to fail
+    // loudly on a malformed backend response.
+    TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Sign-up failed", err);
     return toActionError(err);
@@ -232,12 +228,16 @@ export async function resetPasswordWithToken(
     return fail("password_too_short");
   if (password !== confirmPassword) return fail("passwords_do_not_match");
 
-  let data: TokenResponse;
+  let data: ReturnType<typeof TokenResponseSchema.parse>;
   try {
-    data = await publicApiFetch<TokenResponse>("/auth/reset-password/", {
-      method: "POST",
-      body: JSON.stringify({ token, password }),
-    });
+    const raw = await publicApiFetch<Record<string, unknown>>(
+      "/auth/reset-password/",
+      {
+        method: "POST",
+        body: JSON.stringify({ token, password }),
+      },
+    );
+    data = TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Reset-password failed", err);
     return fail("invalid_reset_link");
@@ -260,15 +260,19 @@ export async function changePassword(
     return fail("password_too_short");
   if (password !== confirmPassword) return fail("passwords_do_not_match");
 
-  let data: TokenResponse;
+  let data: ReturnType<typeof TokenResponseSchema.parse>;
   try {
-    data = await apiFetch<TokenResponse>("/auth/change-password/", {
-      method: "POST",
-      body: JSON.stringify({
-        current_password: currentPassword,
-        new_password: password,
-      }),
-    });
+    const raw = await apiFetch<Record<string, unknown>>(
+      "/auth/change-password/",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          current_password: currentPassword,
+          new_password: password,
+        }),
+      },
+    );
+    data = TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Change-password failed", err);
     return toActionError(err);
@@ -303,12 +307,16 @@ export async function resendVerificationEmail(
 export async function verifyEmail(
   token: string,
 ): Promise<ActionResult<{ pendingPlan?: string; isTeamPlan?: boolean }>> {
-  let data: TokenResponse;
+  let data: ReturnType<typeof TokenResponseSchema.parse>;
   try {
-    data = await publicApiFetch<TokenResponse>("/auth/verify-email/", {
-      method: "POST",
-      body: JSON.stringify({ token }),
-    });
+    const raw = await publicApiFetch<Record<string, unknown>>(
+      "/auth/verify-email/",
+      {
+        method: "POST",
+        body: JSON.stringify({ token }),
+      },
+    );
+    data = TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Verify-email failed", err);
     return toActionError(err);
@@ -353,12 +361,13 @@ export async function exchangeOAuthCode(
     return { ok: false, error: "oauth_no_flow" };
   }
 
-  let data: OAuthExchangeResponse;
+  let data: ReturnType<typeof OAuthExchangeResponseSchema.parse>;
   try {
-    data = await publicApiFetch<OAuthExchangeResponse>(
+    const raw = await publicApiFetch<Record<string, unknown>>(
       "/auth/oauth/exchange/",
       { method: "POST", body: JSON.stringify({ code }) },
     );
+    data = OAuthExchangeResponseSchema.parse(raw);
   } catch (err) {
     console.error("OAuth exchange failed", err);
     if (
@@ -393,12 +402,13 @@ export async function confirmOAuthLink(
     return fail("invalid_token");
   }
 
-  let data: OAuthExchangeResponse;
+  let data: ReturnType<typeof OAuthExchangeResponseSchema.parse>;
   try {
-    data = await publicApiFetch<OAuthExchangeResponse>(
+    const raw = await publicApiFetch<Record<string, unknown>>(
       "/auth/oauth/confirm-link/",
       { method: "POST", body: JSON.stringify({ token }) },
     );
+    data = OAuthExchangeResponseSchema.parse(raw);
   } catch (err) {
     console.error("OAuth confirm-link failed", err);
     return toActionError(err);
@@ -413,8 +423,9 @@ export async function signOut(): Promise<void> {
   try {
     await authGateway.signOut();
   } catch {
-    // Session already expired — clear cookies and redirect anyway
-    await clearAuthCookies();
+    // Backend revoke failed (already-expired session, network error, 5xx):
+    // the gateway's `finally` has already cleared local cookies, so we can
+    // swallow and proceed straight to the login redirect.
   }
   redirect(`/${locale}/login`);
 }
