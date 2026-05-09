@@ -5,9 +5,7 @@ import { parseMember, parsePaginated } from "./parsers";
 
 export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
   async listMembers(orgId: string): Promise<OrgMember[]> {
-    const data = await apiFetch<Record<string, unknown>>(
-      `/orgs/${encodeURIComponent(orgId)}/members/`,
-    );
+    const data = await apiFetch(`/orgs/${encodeURIComponent(orgId)}/members/`);
     return parsePaginated(data, parseMember);
   }
 

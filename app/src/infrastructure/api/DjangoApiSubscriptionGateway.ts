@@ -34,9 +34,7 @@ function applySubscriptionPriceDefaults(
 export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
   async listSubscriptions(currency?: string): Promise<Subscription[]> {
     const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
-    const raw = await apiFetch<Record<string, unknown>>(
-      `/billing/subscriptions/me/${query}`,
-    );
+    const raw = await apiFetch(`/billing/subscriptions/me/${query}`);
     const camel = keysToCamel(raw);
     if (isRecord(camel) && Array.isArray(camel.results)) {
       for (const row of camel.results) {
@@ -50,13 +48,10 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
   async createCheckoutSession(
     input: CheckoutSessionInput,
   ): Promise<{ url: string }> {
-    const raw = await apiFetch<Record<string, unknown>>(
-      "/billing/checkout-sessions/",
-      {
-        method: "POST",
-        body: JSON.stringify(keysToSnake(input)),
-      },
-    );
+    const raw = await apiFetch("/billing/checkout-sessions/", {
+      method: "POST",
+      body: JSON.stringify(keysToSnake(input)),
+    });
     return CheckoutSessionResponseSchema.parse(raw);
   }
 
@@ -64,7 +59,7 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
     input: BillingPortalInput,
   ): Promise<{ url: string }> {
     const { context, ...body } = input;
-    const raw = await apiFetch<Record<string, unknown>>(
+    const raw = await apiFetch(
       `/billing/portal-sessions/${contextQuery(context)}`,
       {
         method: "POST",
@@ -78,7 +73,7 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
     planPriceId: string,
     context?: SubscriptionContext,
   ): Promise<Subscription> {
-    const raw = await apiFetch<Record<string, unknown>>(
+    const raw = await apiFetch(
       `/billing/subscriptions/me/${contextQuery(context)}`,
       {
         method: "PATCH",

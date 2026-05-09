@@ -30,7 +30,7 @@ export class DjangoApiUserGateway implements IUserGateway {
         phonePrefix && phone ? { prefix: phonePrefix, number: phone } : null;
     }
 
-    const raw = await apiFetch<Record<string, unknown>>("/account/", {
+    const raw = await apiFetch("/account/", {
       method: "PATCH",
       body: JSON.stringify(payload),
     });
@@ -38,7 +38,7 @@ export class DjangoApiUserGateway implements IUserGateway {
   }
 
   async uploadAvatar(formData: FormData): Promise<{ avatarUrl: string }> {
-    const raw = await apiFetch<Record<string, unknown>>("/account/avatar/", {
+    const raw = await apiFetch("/account/avatar/", {
       method: "POST",
       body: formData,
     });

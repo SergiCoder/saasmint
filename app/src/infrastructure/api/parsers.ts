@@ -27,7 +27,7 @@ export function parseUser(raw: Record<string, unknown>): User {
  * implementation rather than duplicating the apiFetch + parse pair.
  */
 export async function fetchCurrentUser(): Promise<User> {
-  const raw = await apiFetch<Record<string, unknown>>("/account/");
+  const raw = await apiFetch("/account/");
   return parseUser(raw);
 }
 

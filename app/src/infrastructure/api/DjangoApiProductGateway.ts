@@ -16,10 +16,9 @@ const PRODUCT_CACHE_TTL_SECONDS = 60 * 60;
 export class DjangoApiProductGateway implements IProductGateway {
   async listProducts(currency?: string): Promise<Product[]> {
     const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
-    const data = await apiFetch<Record<string, unknown>>(
-      `/billing/products/${query}`,
-      { next: { revalidate: PRODUCT_CACHE_TTL_SECONDS } },
-    );
+    const data = await apiFetch(`/billing/products/${query}`, {
+      next: { revalidate: PRODUCT_CACHE_TTL_SECONDS },
+    });
     return parsePaginated(data, (r) =>
       ProductSchema.parse(keysToCamelWithPrice(r, currency)),
     );
@@ -29,7 +28,7 @@ export class DjangoApiProductGateway implements IProductGateway {
     input: ProductCheckoutInput,
   ): Promise<{ url: string }> {
     const { context, ...body } = input;
-    const raw = await apiFetch<Record<string, unknown>>(
+    const raw = await apiFetch(
       `/billing/product-checkout-sessions/${contextQuery(context)}`,
       {
         method: "POST",

@@ -20,10 +20,9 @@ const PLAN_CACHE_TTL_SECONDS = 60 * 60;
 export class DjangoApiPlanGateway implements IPlanGateway {
   async listPlans(currency?: string): Promise<Plan[]> {
     const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
-    const data = await apiFetchOptional<Record<string, unknown>>(
-      `/billing/plans/${query}`,
-      { next: { revalidate: PLAN_CACHE_TTL_SECONDS } },
-    );
+    const data = await apiFetchOptional(`/billing/plans/${query}`, {
+      next: { revalidate: PLAN_CACHE_TTL_SECONDS },
+    });
     return parsePaginated(data, (r) => parsePlan(r, currency));
   }
 }

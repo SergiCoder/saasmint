@@ -5,7 +5,7 @@ import { parseOrg, parsePaginated } from "./parsers";
 
 export class DjangoApiOrgGateway implements IOrgGateway {
   async listUserOrgs(): Promise<Org[]> {
-    const data = await apiFetch<Record<string, unknown>>("/orgs/");
+    const data = await apiFetch("/orgs/");
     return parsePaginated(data, parseOrg);
   }
 

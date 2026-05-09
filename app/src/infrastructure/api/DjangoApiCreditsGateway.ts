@@ -5,7 +5,7 @@ import { CreditBalanceListResponseSchema } from "./schemas";
 
 export class DjangoApiCreditsGateway implements ICreditsGateway {
   async listBalances(): Promise<CreditBalance[]> {
-    const raw = await apiFetch<Record<string, unknown>>("/billing/credits/me/");
+    const raw = await apiFetch("/billing/credits/me/");
     return CreditBalanceListResponseSchema.parse(raw).balances;
   }
 }

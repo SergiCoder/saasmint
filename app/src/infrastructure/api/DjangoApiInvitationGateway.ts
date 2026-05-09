@@ -20,7 +20,7 @@ export class DjangoApiInvitationGateway implements IInvitationGateway {
     orgId: string,
     input: CreateInvitationInput,
   ): Promise<Invitation> {
-    const raw = await apiFetch<Record<string, unknown>>(
+    const raw = await apiFetch(
       `/orgs/${encodeURIComponent(orgId)}/invitations/`,
       {
         method: "POST",
@@ -31,7 +31,7 @@ export class DjangoApiInvitationGateway implements IInvitationGateway {
   }
 
   async listInvitations(orgId: string): Promise<Invitation[]> {
-    const data = await apiFetch<Record<string, unknown>>(
+    const data = await apiFetch(
       `/orgs/${encodeURIComponent(orgId)}/invitations/`,
     );
     return parsePaginated(data, parseInvitation);
@@ -45,7 +45,7 @@ export class DjangoApiInvitationGateway implements IInvitationGateway {
   }
 
   async getByToken(token: string): Promise<PublicInvitation> {
-    const raw = await publicApiFetch<Record<string, unknown>>(
+    const raw = await publicApiFetch(
       `/invitations/${encodeURIComponent(token)}/`,
     );
     return parsePublicInvitation(raw);

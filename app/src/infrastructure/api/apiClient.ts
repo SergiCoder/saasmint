@@ -89,32 +89,30 @@ async function raw(
 }
 
 /**
- * Generic shape every typed `apiFetch*` accepts: a JSON object response
- * body. Constraining the generic to this shape prevents callers from
- * widening to `unknown` or to a primitive — the response must always be a
- * record so that downstream `keysToCamel` + Zod schema parse can run.
- * Domain models (which are also record-shaped) intentionally pass; gateways
- * are still expected to validate via Zod, but the type convention is now
- * encoded in the signature instead of a comment.
+ * Every typed `apiFetch*` returns a JSON object — i.e. a `Record<string,
+ * unknown>`. Callers MUST narrow the result through a Zod schema (`SomeSchema
+ * .parse(raw)`) before reading typed fields; the schema parse is the only
+ * runtime guarantee. The previous signature accepted a generic `T` so
+ * callers could declare the typed shape upfront, but the underlying cast was
+ * unsound — TypeScript cannot prove the response shape at runtime — so the
+ * generic has been removed in favour of always handing the caller the raw
+ * record and letting `parse()` do the narrowing.
  */
-type ApiResponseShape = Record<string, unknown>;
+async function readJson(res: Response): Promise<Record<string, unknown>> {
+  // `res.json()` returns `unknown`. We assert the record shape here so the
+  // unsound cast lives in exactly one place; downstream gateways narrow the
+  // record through a Zod schema (`SomeSchema.parse(raw)`) before reading
+  // typed fields.
+  return (await res.json()) as Record<string, unknown>;
+}
 
-/**
- * The `as T` cast on `res.json()` is intentionally unsound — `fetch()` returns
- * `unknown` and TypeScript cannot prove the response shape at runtime. Every
- * caller MUST validate the result with a Zod schema (`SomeSchema.parse(...)`)
- * before treating it as the typed `T`. The {@link ApiResponseShape}
- * constraint forces callers to receive `Record<string, unknown>` rather than
- * a misleading typed shape, but it does not enforce parsing — that remains a
- * convention every gateway is expected to follow.
- */
-export async function apiFetch<T extends ApiResponseShape>(
+export async function apiFetch(
   path: string,
   options: RequestInit = {},
-): Promise<T> {
+): Promise<Record<string, unknown>> {
   const token = await getAuthToken();
   const res = await raw(path, options, token);
-  return (await res.json()) as T;
+  return readJson(res);
 }
 
 /**
@@ -125,18 +123,18 @@ export async function apiFetch<T extends ApiResponseShape>(
  * preferred currency). A stale/invalid token that makes it past the
  * middleware refresh must not crash the anonymous render path.
  */
-export async function apiFetchOptional<T extends ApiResponseShape>(
+export async function apiFetchOptional(
   path: string,
   options: RequestInit = {},
-): Promise<T> {
+): Promise<Record<string, unknown>> {
   const token = await getAccessToken();
   try {
     const res = await raw(path, options, token ?? null);
-    return (await res.json()) as T;
+    return readJson(res);
   } catch (err) {
     if (token && err instanceof AuthError) {
       const res = await raw(path, options, null);
-      return (await res.json()) as T;
+      return readJson(res);
     }
     throw err;
   }
@@ -150,12 +148,12 @@ export async function apiFetchVoid(
   await raw(path, options, token);
 }
 
-export async function publicApiFetch<T extends ApiResponseShape>(
+export async function publicApiFetch(
   path: string,
   options: RequestInit = {},
-): Promise<T> {
+): Promise<Record<string, unknown>> {
   const res = await raw(path, options, null);
-  return (await res.json()) as T;
+  return readJson(res);
 }
 
 export async function publicApiFetchVoid(
