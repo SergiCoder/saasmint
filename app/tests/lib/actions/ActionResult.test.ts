@@ -17,11 +17,12 @@ describe("ok", () => {
     expect(result).toEqual({ ok: true, data: { id: "u1" } });
   });
 
-  it("wraps falsy-but-defined data (e.g. null, 0, '', false)", () => {
-    expect(ok(null)).toEqual({ ok: true, data: null });
-    expect(ok(0)).toEqual({ ok: true, data: 0 });
-    expect(ok("")).toEqual({ ok: true, data: "" });
-    expect(ok(false)).toEqual({ ok: true, data: false });
+  it("wraps an empty object", () => {
+    expect(ok({})).toEqual({ ok: true, data: {} });
+  });
+
+  it("wraps an array (also struct-shaped)", () => {
+    expect(ok(["a", "b"])).toEqual({ ok: true, data: ["a", "b"] });
   });
 });
 

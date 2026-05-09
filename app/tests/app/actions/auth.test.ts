@@ -84,6 +84,9 @@ function mockPlans(): void {
 beforeEach(async () => {
   vi.clearAllMocks();
   mockPlans();
+  const { __resetPlanRoutingCacheForTests } =
+    await import("@/lib/planRoutingCache");
+  __resetPlanRoutingCacheForTests();
   const mod = await import("@/app/actions/auth");
   signIn = mod.signIn;
   signUp = mod.signUp;

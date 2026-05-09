@@ -55,7 +55,7 @@ vi.mock("@/app/[locale]/(app)/subscription/_data/canManageBilling", () => ({
 // parallel with `listSubscriptions()` to avoid a serial round-trip on the
 // team-billing path. Stub it so tests don't reach into the org gateway.
 const mockGetUserOrgs = vi.fn(async () => [] as unknown[]);
-vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
+vi.mock("@/app/[locale]/_data/getUserOrgs", () => ({
   getUserOrgs: () => mockGetUserOrgs(),
 }));
 
@@ -398,20 +398,20 @@ describe("billing server actions", () => {
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await openBillingPortal();
-      expect(result).toBeUndefined();
+      expect(result).toEqual({ ok: false, code: "not_billing_member" });
       expect(mockCreateBillingPortalSession).not.toHaveBeenCalled();
       expect(mockRedirect).not.toHaveBeenCalled();
       errSpy.mockRestore();
     });
 
-    it("swallows non-redirect errors and returns without redirecting", async () => {
+    it("returns an error envelope and skips the redirect on non-redirect failures", async () => {
       mockCreateBillingPortalSession.mockRejectedValue(
         new Error("portal down"),
       );
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await openBillingPortal();
-      expect(result).toBeUndefined();
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
       expect(mockRedirect).not.toHaveBeenCalled();
       errSpy.mockRestore();
     });
