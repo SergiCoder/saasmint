@@ -1,6 +1,7 @@
 "use server";
 
 import { authGateway, userGateway } from "@/infrastructure/registry";
+import { ALLOWED_AVATAR_ORIGINS } from "@/lib/allowedAvatarHosts";
 import { isLocale } from "@/lib/i18n/routing";
 import { revalidateLocalizedPath } from "@/lib/revalidate";
 import {
@@ -31,7 +32,9 @@ const SUPPORTED_TIMEZONES: ReadonlySet<string> = new Set(
 function isAllowedAvatarUrl(url: string): boolean {
   try {
     const parsed = new URL(url);
-    return parsed.protocol === "https:";
+    return (
+      parsed.protocol === "https:" && ALLOWED_AVATAR_ORIGINS.has(parsed.origin)
+    );
   } catch {
     return false;
   }

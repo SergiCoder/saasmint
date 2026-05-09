@@ -26,6 +26,11 @@ function isAssignableRole(value: unknown): value is AssignableRole {
   return isMemberOf(assignableRoles, value);
 }
 
+// RFC 5321 caps SMTP path length at 254 chars. The backend validates too;
+// this mirrors `marketing.ts` so a misbehaving client can't push oversized
+// strings through the action.
+const MAX_EMAIL_LENGTH = 254;
+
 type OrgRole = OrgMember["role"];
 
 async function assertOrgRole(
@@ -54,7 +59,12 @@ export async function inviteMember(
   const email = getString(formData, "email");
   const role = formData.get("role");
 
-  if (!orgId || !email || !isAssignableRole(role)) {
+  if (
+    !orgId ||
+    !email ||
+    email.length > MAX_EMAIL_LENGTH ||
+    !isAssignableRole(role)
+  ) {
     return fail(ACTION_CODE_INVALID_INPUT);
   }
 

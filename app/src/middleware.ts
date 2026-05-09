@@ -8,6 +8,7 @@ import {
   accessTokenCookieOptions,
   refreshTokenCookieOptions,
 } from "@/infrastructure/auth/cookies";
+import { OAUTH_AVATAR_HOSTS } from "@/lib/allowedAvatarHosts";
 import { env } from "@/lib/env";
 import { decodeJwtPayload } from "@/lib/jwtDecode";
 import { CSP_NONCE_HEADER, PATHNAME_HEADER } from "@/lib/pathname";
@@ -32,11 +33,6 @@ const apiOrigin = (() => {
     return "";
   }
 })();
-const OAUTH_AVATAR_HOSTS = [
-  "https://lh3.googleusercontent.com",
-  "https://avatars.githubusercontent.com",
-  "https://graph.microsoft.com",
-];
 
 /**
  * Builds a per-request Content-Security-Policy with a fresh nonce for
@@ -74,6 +70,8 @@ const PROTECTED_PREFIXES = [
   "/profile",
   "/org",
   "/admin",
+  "/feature1",
+  "/feature2",
 ];
 
 // Routes that never read the session user — refreshing the access token
