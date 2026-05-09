@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 
@@ -25,6 +26,10 @@ const LOGIN_PASSTHROUGH = new Set([
   "account_deactivated",
   "oauth_email_unverified_collision",
 ]);
+
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: "Error", robots: { index: false, follow: false } };
+}
 
 export default async function AuthErrorPage({ params, searchParams }: Props) {
   const [{ locale }, { error }] = await Promise.all([params, searchParams]);

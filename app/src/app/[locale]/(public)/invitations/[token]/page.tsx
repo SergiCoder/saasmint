@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import {
-  invitationGateway,
-  subscriptionGateway,
-} from "@/infrastructure/registry";
-import { ApiError } from "@/domain/errors/ApiError";
-import { AuthError } from "@/domain/errors/AuthError";
-import type { PublicInvitation } from "@/domain/models/Invitation";
 import { findPersonalSubscription } from "@/domain/models/Subscription";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Button } from "@/presentation/components/atoms/Button";
 import { declineInvitation } from "@/app/actions/invitation";
 import { AcceptInvitationForm } from "./_components/AcceptInvitationForm";
+import { getInvitationByToken } from "./_data/getInvitationByToken";
+import { getOptionalSubscriptions } from "./_data/getOptionalSubscriptions";
 
 interface InvitationPageProps {
   params: Promise<{ locale: string; token: string }>;
@@ -36,25 +31,8 @@ export default async function InvitationPage({ params }: InvitationPageProps) {
 
   const [t, invitation, subscriptions] = await Promise.all([
     getTranslations("invitation"),
-    // Server Action re-renders this RSC after `acceptInvitation` consumes
-    // the token, which then 404s here. Catch that single case and redirect
-    // to the same destination the client is about to navigate to —
-    // otherwise the user briefly sees the route error boundary between
-    // accept-success and the client-side router.push to /dashboard.
-    invitationGateway
-      .getByToken(token)
-      .catch((err: unknown): PublicInvitation | null => {
-        if (err instanceof ApiError && err.status === 404) return null;
-        throw err;
-      }),
-    // Anonymous visitors hit AuthError ("NO_SESSION") because apiFetch needs
-    // a token; coerce that single case to an empty list. Anything else
-    // (network down, schema parse failure, 5xx) should still surface to the
-    // error boundary.
-    subscriptionGateway.listSubscriptions().catch((err: unknown) => {
-      if (err instanceof AuthError) return [];
-      throw err;
-    }),
+    getInvitationByToken(token),
+    getOptionalSubscriptions(),
   ]);
 
   if (invitation === null) redirect(`/${locale}/dashboard`);
