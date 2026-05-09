@@ -33,19 +33,22 @@ export default async function MarketingLayoutRoute({
     ? getUserOrgs()
     : Promise.resolve([]);
 
-  const [t, tCommon, tFooter, user] = await Promise.all([
-    getTranslations("nav"),
-    getTranslations("common"),
-    getTranslations("footer"),
-    getOptionalUser(),
-  ]);
-
-  const [subscriptions, userOrgs] = user
-    ? await Promise.all([
-        getSubscriptions(user.preferredCurrency),
-        userOrgsPromise,
-      ])
-    : [[], []];
+  // Chain `getSubscriptions` off the user fetch (it needs `preferredCurrency`)
+  // so the subscriptions round-trip overlaps with the translation loads
+  // instead of running serially in a second `Promise.all`.
+  const userPromise = getOptionalUser();
+  const subscriptionsPromise = userPromise.then((u) =>
+    u ? getSubscriptions(u.preferredCurrency) : [],
+  );
+  const [t, tCommon, tFooter, user, subscriptions, userOrgs] =
+    await Promise.all([
+      getTranslations("nav"),
+      getTranslations("common"),
+      getTranslations("footer"),
+      userPromise,
+      subscriptionsPromise,
+      userOrgsPromise,
+    ]);
 
   const hasOrg =
     findTeamSubscription(subscriptions) !== null || userOrgs.length > 0;

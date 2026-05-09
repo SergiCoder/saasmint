@@ -99,24 +99,29 @@ export default async function PricingPage({ params, searchParams }: Props) {
   // both contexts here is free when the user only happens to land on
   // /pricing first. Both calls run concurrently; either side resolves to
   // false when the user has no sub in that context (cheap default).
-  const [personalCanManage, teamCanManage] = await Promise.all([
+  // The org-members fetch is gated on the same signals that drive the
+  // products picker (signed-in concurrent-billing user with at least one
+  // org) and runs alongside `canManageBilling` so the roundtrip is overlapped
+  // with stage 3 instead of waiting for it serially.
+  const firstOrg = userOrgs.at(0);
+  const orgMembersPromise =
+    user && isConcurrent && firstOrg
+      ? getOrgMembers(firstOrg.id)
+      : Promise.resolve([]);
+
+  const [personalCanManage, teamCanManage, orgMembers] = await Promise.all([
     user && personalSubscription
       ? canManageBilling(user.id, personalSubscription)
       : Promise.resolve(false),
     user && teamSubscription
       ? canManageBilling(user.id, teamSubscription)
       : Promise.resolve(false),
+    orgMembersPromise,
   ]);
 
-  // Resolve org-owner flag only when both signals that gate the picker are
-  // already true (signed-in user with concurrent personal+team subs). Skips
-  // the orgMembers roundtrip in every other case — most page renders.
-  const firstOrg = userOrgs.at(0);
   const isCurrentUserOrgOwner =
     user && isConcurrent && firstOrg
-      ? (await getOrgMembers(firstOrg.id)).some(
-          (m) => m.user.id === user.id && m.role === "owner",
-        )
+      ? orgMembers.some((m) => m.user.id === user.id && m.role === "owner")
       : false;
 
   const allPlans = [...SYNTHETIC_FREE_PLANS, ...plans];
