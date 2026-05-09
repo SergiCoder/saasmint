@@ -26,8 +26,7 @@ vi.mock("@/lib/pathname", () => ({
   getLocale: vi.fn(() => Promise.resolve("en")),
 }));
 
-const { getCurrentUser } =
-  await import("@/app/[locale]/(app)/_data/getCurrentUser");
+const { getCurrentUser } = await import("@/app/[locale]/_data/getCurrentUser");
 
 const fakeUser = {
   id: "u1",

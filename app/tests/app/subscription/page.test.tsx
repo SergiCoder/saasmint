@@ -24,35 +24,35 @@ vi.mock("next-intl/server", () => ({
 }));
 
 const mockGetCurrentUser = vi.fn<() => Promise<User>>();
-vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
+vi.mock("@/app/[locale]/_data/getCurrentUser", () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
 
 const mockGetOrgMembers = vi.fn<() => Promise<unknown[]>>(() =>
   Promise.resolve([]),
 );
-vi.mock("@/app/[locale]/(app)/_data/getOrgMembers", () => ({
+vi.mock("@/app/[locale]/_data/getOrgMembers", () => ({
   getOrgMembers: () => mockGetOrgMembers(),
 }));
 
 const mockGetSubscriptions = vi.fn<() => Promise<Subscription[]>>(() =>
   Promise.resolve([]),
 );
-vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
+vi.mock("@/app/[locale]/_data/getSubscriptions", () => ({
   getSubscriptions: () => mockGetSubscriptions(),
 }));
 
 const mockGetCreditBalances = vi.fn<
   () => Promise<{ balance: number; scope: "user" | "org" }[]>
 >(() => Promise.resolve([]));
-vi.mock("@/app/[locale]/(app)/_data/getCreditBalances", () => ({
+vi.mock("@/app/[locale]/_data/getCreditBalances", () => ({
   getCreditBalances: () => mockGetCreditBalances(),
 }));
 
 const mockGetUserOrgs = vi.fn<() => Promise<unknown[]>>(() =>
   Promise.resolve([]),
 );
-vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
+vi.mock("@/app/[locale]/_data/getUserOrgs", () => ({
   getUserOrgs: () => mockGetUserOrgs(),
 }));
 

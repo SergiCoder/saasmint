@@ -8,12 +8,12 @@ vi.mock("@/infrastructure/registry", () => ({
   },
 }));
 
-let getOrgInvitations: typeof import("@/app/[locale]/(app)/_data/getOrgInvitations").getOrgInvitations;
+let getOrgInvitations: typeof import("@/app/[locale]/_data/getOrgInvitations").getOrgInvitations;
 
 beforeEach(async () => {
   vi.resetModules();
   vi.clearAllMocks();
-  const mod = await import("@/app/[locale]/(app)/_data/getOrgInvitations");
+  const mod = await import("@/app/[locale]/_data/getOrgInvitations");
   getOrgInvitations = mod.getOrgInvitations;
 });
 

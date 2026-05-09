@@ -3,11 +3,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const mockGetUserOrgs = vi.fn();
 const mockListOrgMembers = vi.fn();
 
-vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
+vi.mock("@/app/[locale]/_data/getUserOrgs", () => ({
   getUserOrgs: (...args: unknown[]) => mockGetUserOrgs(...args),
 }));
 
-vi.mock("@/app/[locale]/(app)/_data/getOrgMembers", () => ({
+vi.mock("@/app/[locale]/_data/getOrgMembers", () => ({
   getOrgMembers: (...args: unknown[]) => mockListOrgMembers(...args),
 }));
 

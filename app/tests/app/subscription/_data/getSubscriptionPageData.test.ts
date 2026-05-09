@@ -19,15 +19,15 @@ vi.mock("@/infrastructure/registry", () => ({
   },
 }));
 
-vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
+vi.mock("@/app/[locale]/_data/getSubscriptions", () => ({
   getSubscriptions: (...args: unknown[]) => mockGetSubscriptions(...args),
 }));
 
-vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
+vi.mock("@/app/[locale]/_data/getUserOrgs", () => ({
   getUserOrgs: (...args: unknown[]) => mockGetUserOrgs(...args),
 }));
 
-vi.mock("@/app/[locale]/(app)/_data/getOrgMembers", () => ({
+vi.mock("@/app/[locale]/_data/getOrgMembers", () => ({
   getOrgMembers: (...args: unknown[]) => mockGetOrgMembers(...args),
 }));
 

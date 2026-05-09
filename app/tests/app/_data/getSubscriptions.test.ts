@@ -8,12 +8,12 @@ vi.mock("@/infrastructure/registry", () => ({
   },
 }));
 
-let getSubscriptions: typeof import("@/app/[locale]/(app)/_data/getSubscriptions").getSubscriptions;
+let getSubscriptions: typeof import("@/app/[locale]/_data/getSubscriptions").getSubscriptions;
 
 beforeEach(async () => {
   vi.resetModules();
   vi.clearAllMocks();
-  const mod = await import("@/app/[locale]/(app)/_data/getSubscriptions");
+  const mod = await import("@/app/[locale]/_data/getSubscriptions");
   getSubscriptions = mod.getSubscriptions;
 });
 

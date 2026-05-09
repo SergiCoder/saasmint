@@ -4,9 +4,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { findPersonalSubscription } from "@/domain/models/Subscription";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { formatLongDate } from "@/lib/formatLongDate";
-import { getCurrentUser } from "../../_data/getCurrentUser";
-import { getPlans } from "../../_data/getPlans";
-import { getSubscriptions } from "../../_data/getSubscriptions";
+import { getCurrentUser } from "../../../_data/getCurrentUser";
+import { getPlans } from "../../../_data/getPlans";
+import { getSubscriptions } from "../../../_data/getSubscriptions";
 import { TeamCheckoutForm } from "./_components/TeamCheckoutForm";
 
 interface TeamCheckoutPageProps {

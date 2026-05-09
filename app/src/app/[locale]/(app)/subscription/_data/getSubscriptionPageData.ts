@@ -8,11 +8,11 @@ import {
 import type { Org } from "@/domain/models/Org";
 import type { OrgMember } from "@/domain/models/OrgMember";
 import type { User } from "@/domain/models/User";
-import { getPlans } from "../../_data/getPlans";
-import { getProducts } from "../../_data/getProducts";
-import { getSubscriptions } from "../../_data/getSubscriptions";
-import { getUserOrgs } from "../../_data/getUserOrgs";
-import { getOrgMembers } from "../../_data/getOrgMembers";
+import { getPlans } from "../../../_data/getPlans";
+import { getProducts } from "../../../_data/getProducts";
+import { getSubscriptions } from "../../../_data/getSubscriptions";
+import { getUserOrgs } from "../../../_data/getUserOrgs";
+import { getOrgMembers } from "../../../_data/getOrgMembers";
 import { canManageBilling } from "./canManageBilling";
 
 async function resolveTeamOwnerName(

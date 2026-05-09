@@ -1,8 +1,8 @@
 import { cache } from "react";
 import type { Org } from "@/domain/models/Org";
 import type { Subscription } from "@/domain/models/Subscription";
-import { getOrgMembers } from "../../_data/getOrgMembers";
-import { getUserOrgs } from "../../_data/getUserOrgs";
+import { getOrgMembers } from "../../../_data/getOrgMembers";
+import { getUserOrgs } from "../../../_data/getUserOrgs";
 
 /**
  * Returns whether the user identified by `userId` is allowed to manage

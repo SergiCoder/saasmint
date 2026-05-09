@@ -15,12 +15,12 @@ vi.mock("next-intl/server", () => ({
 // `(app)` layout) instead of calling the user gateway directly — eliminates a
 // second `/account/` round-trip per profile render.
 const mockGetCurrentUser = vi.fn<() => Promise<User>>();
-vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
+vi.mock("@/app/[locale]/_data/getCurrentUser", () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
 
 const mockGetMyOrgRole = vi.fn<() => Promise<OrgMember["role"] | null>>();
-vi.mock("@/app/[locale]/(app)/_data/getMyOrgRole", () => ({
+vi.mock("@/app/[locale]/_data/getMyOrgRole", () => ({
   getMyOrgRole: () => mockGetMyOrgRole(),
 }));
 

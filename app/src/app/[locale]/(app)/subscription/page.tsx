@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { getCurrentUser } from "../_data/getCurrentUser";
+import { getCurrentUser } from "../../_data/getCurrentUser";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
 import { renderPlanUpgradeCta } from "./_lib/renderPlanUpgradeCta";
@@ -8,7 +8,7 @@ import { CurrentSubscriptionCard } from "./_components/CurrentSubscriptionCard";
 import { CreditBalanceCard } from "./_components/CreditBalanceCard";
 import { FreePlanCard } from "./_components/FreePlanCard";
 import { ProductsCheckoutSection } from "./_components/ProductsCheckoutSection";
-import { getCreditBalances } from "../_data/getCreditBalances";
+import { getCreditBalances } from "../../_data/getCreditBalances";
 import { getSubscriptionPageData } from "./_data/getSubscriptionPageData";
 import {
   buildPlanCardGroups,
@@ -16,6 +16,7 @@ import {
   buildProductPriceSubLabels,
   buildProductTranslations,
   makeLocalSubLabelFormatter,
+  makeProductSubLabelFormatter,
   splitPlanGroupsByContext,
 } from "@/app/[locale]/_lib/buildPlanCards";
 import {
@@ -302,11 +303,7 @@ export default async function BillingPage({
         priceSubLabels={buildProductPriceSubLabels(
           products,
           locale,
-          ({ localAmount, billedCurrency }) =>
-            t("billedInLocalMonthly", {
-              amount: localAmount,
-              currency: billedCurrency,
-            }),
+          makeProductSubLabelFormatter(t),
         )}
         creditsLabel={t("credits")}
         buyLabel={t("buy")}

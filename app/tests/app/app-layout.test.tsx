@@ -39,17 +39,17 @@ vi.mock("@/lib/pathname", () => ({
 }));
 
 const mockGetCurrentUser = vi.fn<() => Promise<User>>();
-vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
+vi.mock("@/app/[locale]/_data/getCurrentUser", () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
 
 const mockGetSubscriptions = vi.fn<() => Promise<Subscription[]>>();
-vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
+vi.mock("@/app/[locale]/_data/getSubscriptions", () => ({
   getSubscriptions: () => mockGetSubscriptions(),
 }));
 
 const mockGetUserOrgs = vi.fn<() => Promise<Org[]>>();
-vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
+vi.mock("@/app/[locale]/_data/getUserOrgs", () => ({
   getUserOrgs: () => mockGetUserOrgs(),
 }));
 

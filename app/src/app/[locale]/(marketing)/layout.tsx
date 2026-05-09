@@ -1,17 +1,15 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
+import { LinkButton } from "@/presentation/components/atoms/LinkButton";
 import { MarketingLayout } from "@/presentation/components/templates/MarketingLayout";
 import type { Org } from "@/domain/models/Org";
 import { findTeamSubscription } from "@/domain/models/Subscription";
 import { getAccessToken } from "@/infrastructure/auth/cookies";
 import { APP_NAME } from "@/lib/appVersion";
-import { getSubscriptions } from "../(app)/_data/getSubscriptions";
-import { getUserOrgs } from "../(app)/_data/getUserOrgs";
+import { getSubscriptions } from "../_data/getSubscriptions";
+import { getUserOrgs } from "../_data/getUserOrgs";
 import { getOptionalUser } from "./_data/getOptionalUser";
 import { SignOutButton } from "../_components/SignOutButton";
-
-const primaryLinkClass =
-  "bg-primary-600 hover:bg-primary-700 focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none";
 
 interface MarketingLayoutRouteProps {
   children: React.ReactNode;
@@ -88,9 +86,9 @@ export default async function MarketingLayoutRoute({
       >
         {t("signIn")}
       </Link>
-      <Link href="/pricing" className={primaryLinkClass}>
+      <LinkButton href="/pricing" size="sm">
         {t("getStarted")}
-      </Link>
+      </LinkButton>
     </>
   );
 
