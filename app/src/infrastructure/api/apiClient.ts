@@ -99,11 +99,15 @@ async function raw(
  * record and letting `parse()` do the narrowing.
  */
 async function readJson(res: Response): Promise<Record<string, unknown>> {
-  // `res.json()` returns `unknown`. We assert the record shape here so the
-  // unsound cast lives in exactly one place; downstream gateways narrow the
-  // record through a Zod schema (`SomeSchema.parse(raw)`) before reading
-  // typed fields.
-  return (await res.json()) as Record<string, unknown>;
+  // `res.json()` returns `unknown`. Validate the object shape here so a
+  // backend that returns an array, primitive, or `null` surfaces as a clean
+  // `ApiError` instead of crashing inside `keysToCamel`/`Object.entries` in
+  // a downstream gateway. Downstream callers still narrow via Zod.
+  const json: unknown = await res.json();
+  if (!isRecord(json)) {
+    throw new ApiError(res.status, json, "UNEXPECTED_RESPONSE_SHAPE");
+  }
+  return json;
 }
 
 export async function apiFetch(
