@@ -2,9 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { Product } from "@/domain/models/Product";
 
 const mockApiFetch = vi.fn();
+const mockApiFetchOptional = vi.fn();
 
 vi.mock("@/infrastructure/api/apiClient", () => ({
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetchOptional: (...args: unknown[]) => mockApiFetchOptional(...args),
 }));
 
 const { DjangoApiProductGateway } =
@@ -35,37 +37,39 @@ describe("DjangoApiProductGateway", () => {
   const gateway = new DjangoApiProductGateway();
 
   describe("listProducts", () => {
-    it("fetches products with GET /billing/products/ and a 1h revalidate window", async () => {
-      mockApiFetch.mockResolvedValue({ results: products });
+    it("fetches products with GET /billing/products/ via apiFetchOptional and a 1h revalidate window", async () => {
+      mockApiFetchOptional.mockResolvedValue({ results: products });
 
       const result = await gateway.listProducts();
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/billing/products/", {
+      expect(mockApiFetchOptional).toHaveBeenCalledWith("/billing/products/", {
         next: { revalidate: 3600 },
       });
       expect(result).toEqual(products);
     });
 
     it("returns an empty array when no products exist", async () => {
-      mockApiFetch.mockResolvedValue({ results: [] });
+      mockApiFetchOptional.mockResolvedValue({ results: [] });
 
       const result = await gateway.listProducts();
       expect(result).toEqual([]);
     });
 
     it("appends ?currency= query string when currency is provided", async () => {
-      mockApiFetch.mockResolvedValue({ results: products });
+      mockApiFetchOptional.mockResolvedValue({ results: products });
 
       await gateway.listProducts("eur");
 
-      expect(mockApiFetch).toHaveBeenCalledWith(
+      expect(mockApiFetchOptional).toHaveBeenCalledWith(
         "/billing/products/?currency=eur",
         { next: { revalidate: 3600 } },
       );
     });
 
-    it("propagates errors from apiFetch", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 500: Server Error"));
+    it("propagates errors from apiFetchOptional", async () => {
+      mockApiFetchOptional.mockRejectedValue(
+        new Error("API 500: Server Error"),
+      );
 
       await expect(gateway.listProducts()).rejects.toThrow(
         "API 500: Server Error",

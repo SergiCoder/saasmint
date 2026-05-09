@@ -9,19 +9,20 @@
  * for our locale × currency surface is well below the cap, so steady-state
  * behaviour is unaffected; the eviction only triggers pathologically).
  */
-export function createFormatterCache<F>(
+export function createFormatterCache<F extends object>(
   maxSize: number,
   factory: (key: string) => F,
 ): (key: string) => F {
   const cache = new Map<string, F>();
   return (key) => {
-    // `Map.has` is the correct cache-miss sentinel: a `get(key)` truthiness
-    // check would re-invoke the factory whenever the cached value was a
-    // legitimate falsy value (`0`, `""`, `null`).
-    if (!cache.has(key)) {
-      if (cache.size >= maxSize) cache.clear();
-      cache.set(key, factory(key));
-    }
-    return cache.get(key) as F;
+    const cached = cache.get(key);
+    // `F extends object` rules out falsy values, so a single `get` is
+    // sufficient — no need for a `has` sentinel. Factory output is always a
+    // truthy `Intl.NumberFormat` / `Intl.DateTimeFormat` instance.
+    if (cached !== undefined) return cached;
+    if (cache.size >= maxSize) cache.clear();
+    const value = factory(key);
+    cache.set(key, value);
+    return value;
   };
 }

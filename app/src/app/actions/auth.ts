@@ -53,10 +53,6 @@ export type ExchangeOAuthResult =
         | "oauth_email_unverified_collision";
     };
 
-interface PlanRouting {
-  context: "personal" | "team";
-}
-
 /**
  * Look up the plan by price id and return its routing info, or undefined when
  * the id is unknown. Treats the plan catalog — not untrusted form fields — as
@@ -67,7 +63,7 @@ interface PlanRouting {
  */
 async function resolvePlanRouting(
   priceId: string,
-): Promise<PlanRouting | undefined> {
+): Promise<{ context: "personal" | "team" } | undefined> {
   try {
     const routing = await getPlanRouting();
     const context = routing.get(priceId);

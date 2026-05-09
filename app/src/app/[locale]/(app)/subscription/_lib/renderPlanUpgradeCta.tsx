@@ -212,14 +212,13 @@ export function renderPlanUpgradeCta({
   if (!isPricedPlan(plan)) return null;
   if (isCurrent) return null;
 
-  const pricedPlan = plan;
   const highlighted = plan.tier === PLAN_TIER_PRO && isUpgrade;
   const subInContext = isTeam ? teamSubscription : personalSubscription;
   const canManageInContext = isTeam ? teamCanManage : personalCanManage;
 
   if (subInContext !== null) {
     return renderChangePlanCta({
-      plan: pricedPlan,
+      plan,
       subInContext,
       isUpgrade,
       isTeam,
@@ -237,7 +236,7 @@ export function renderPlanUpgradeCta({
   // No sub in this context yet — only upgrades (fresh checkout) make sense.
   if (!isUpgrade) return null;
   return renderFirstCheckoutCta({
-    plan: pricedPlan,
+    plan,
     isTeam,
     hasOrg,
     highlighted,

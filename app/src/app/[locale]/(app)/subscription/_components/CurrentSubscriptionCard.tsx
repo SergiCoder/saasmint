@@ -12,8 +12,37 @@ import { BillingPortalButton } from "./BillingPortalButton";
 import { BillingActionButton } from "./BillingActionButton";
 import { CancelRenewalButton } from "./CancelRenewalButton";
 
-type Translator = (
-  key: string,
+/**
+ * Narrow union of `billing.*` keys this card reads. A typed next-intl
+ * translator (which accepts the full namespace key union) is assignable
+ * here via parameter contravariance — without sacrificing the typo
+ * detection a `(key: string) => string` alias would erase.
+ */
+type TBilling = (
+  key:
+    | "endsOn"
+    | "cancelsOn"
+    | "renewsOn"
+    | "portal"
+    | "billedYearly"
+    | "billedMonthly"
+    | "seatsOfMax"
+    | "cancelRenewal"
+    | "cancelRenewalTitle"
+    | "cancelRenewalTeamTitle"
+    | "cancelRenewalBody"
+    | "cancelRenewalTeamBody"
+    | "cancelRenewalTeam"
+    | "cancelRenewalKeep"
+    | "currentTeamPlan"
+    | "currentPersonalPlan"
+    | "scheduledCancelHeadline"
+    | "scheduledCancelBody"
+    | "resumeSubscription"
+    | "scheduledDowngradeHeadline"
+    | "scheduledDowngradeBody"
+    | "keepCurrentPlan"
+    | "managedBy",
   values?: Record<string, string | number>,
 ) => string;
 
@@ -29,9 +58,11 @@ interface CurrentSubscriptionCardProps {
    * render skips an extra `Promise.all` wait — the parent has already
    * awaited the same translator.
    */
-  tBilling: Translator;
-  /** `getTranslations("plans")` from the parent page. */
-  tPlans: Translator;
+  tBilling: TBilling;
+  /** `getTranslations("plans")` from the parent page. Only used via
+   * `translatePlanName`, which accepts the codebase-standard
+   * `(key: never) => string` shape. */
+  tPlans: (key: never) => string;
   /**
    * Slug of the team subscription's org. When set on a team card, the seats
    * row deep-links to `/org/{slug}` so the billing member can jump straight

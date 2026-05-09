@@ -103,7 +103,7 @@ export const PublicInvitationSchema = z.object({
   expiresAt: z.string(),
 }) satisfies z.ZodType<PublicInvitation>;
 
-const TIER_STRING_TO_NUMBER: Record<string, PlanTier> = {
+const TIER_STRING_TO_NUMBER: Readonly<Partial<Record<string, PlanTier>>> = {
   free: PLAN_TIER_FREE,
   basic: PLAN_TIER_BASIC,
   pro: PLAN_TIER_PRO,

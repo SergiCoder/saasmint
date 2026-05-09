@@ -28,8 +28,10 @@ export function BillingPortalButton({
       action={async (formData) => {
         // Discard the ActionResult: this form is a plain submit (no
         // useActionState) and its success path redirects to Stripe (never
-        // returns). Failures get logged inside the action; surfacing them
-        // here would require lifting state with useActionState.
+        // returns). React's `form action` prop only accepts
+        // `Promise<void>`-returning actions, so wrap the typed action.
+        // Failures get logged inside the action; surfacing them here would
+        // require lifting state with useActionState.
         await openBillingPortal(formData);
       }}
     >

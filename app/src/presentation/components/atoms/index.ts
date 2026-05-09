@@ -11,8 +11,6 @@ export { SectionLabel, type SectionLabelProps } from "./SectionLabel";
 export { Button, type ButtonProps } from "./Button";
 export {
   Input,
-  INPUT_BASE_CLASS,
-  INPUT_BORDER_DEFAULT,
   INPUT_BORDER_ERROR,
   INPUT_DEFAULT_CLASS,
   type InputProps,

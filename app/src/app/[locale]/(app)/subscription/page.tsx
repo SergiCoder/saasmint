@@ -261,9 +261,7 @@ export default async function BillingPage({
         </div>
       )}
 
-      {groups.length === 0 ? (
-        <p className="text-sm text-gray-500">{t("changePlan")}</p>
-      ) : (
+      {groups.length > 0 && (
         <>
           {personalGroups.length > 0 && (
             <PricingSection

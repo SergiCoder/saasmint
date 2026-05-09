@@ -47,9 +47,11 @@ Each gateway implements a port from `src/application/ports/`. **Import singleton
 
 `src/infrastructure/api/apiClient.ts` exposes five variants over a shared `raw()`:
 
-- `apiFetch<T>` / `apiFetchVoid` — require token; throw `AuthError("NO_SESSION")` if none.
-- `apiFetchOptional<T>` — send token if present, fall back to anonymous. If a sent token is rejected, falls back to a fresh anonymous call.
-- `publicApiFetch<T>` / `publicApiFetchVoid` — never send a token.
+- `apiFetch` / `apiFetchVoid` — require token; throw `AuthError("NO_SESSION")` if none.
+- `apiFetchOptional` — send token if present, fall back to anonymous. If a sent token is rejected, falls back to a fresh anonymous call.
+- `publicApiFetch` / `publicApiFetchVoid` — never send a token.
+
+The four JSON variants always return `Record<string, unknown>` — they accept no generic parameter. Type the response by passing the parsed result through a Zod schema (see "Response parsing" below); never cast the raw JSON.
 
 Non-OK normalization: `401` on authenticated → `AuthError`; everything else → `ApiError(status, body)`. Network failures → friendly "unreachable" error.
 
@@ -57,7 +59,7 @@ Non-OK normalization: `401` on authenticated → `AuthError`; everything else �
 
 Gateways never cast raw JSON to domain types:
 
-1. `apiFetch<Record<string, unknown>>(...)` for untyped JSON
+1. `apiFetch(...)` returns `Record<string, unknown>` — no generic, no cast
 2. `keysToCamel(raw)` (or `keysToCamelWithPrice` for Plan/Product, plus `flattenPhone` for User) in `caseTransform.ts`
 3. `UserSchema.parse(...)` etc. from `schemas.ts` — Zod schemas `satisfies z.ZodType<DomainModel>`
 

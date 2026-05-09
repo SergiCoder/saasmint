@@ -49,8 +49,8 @@ export function makeParser<T extends object>(
 /**
  * Validate a DRF-style paginated envelope and parse each row through the
  * caller's per-item parser. Centralises the `{ results: [...] }` shape check
- * so list-endpoint gateways don't have to trust the cast `apiFetch<{
- * results: ... }>` would otherwise rely on.
+ * so list-endpoint gateways don't have to cast the untyped `apiFetch(...)`
+ * result as a paginated shape before reading `results`.
  */
 export function parsePaginated<T>(
   raw: Record<string, unknown>,
