@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { findPersonalSubscription } from "@/domain/models/Subscription";
@@ -11,6 +12,14 @@ import { TeamCheckoutForm } from "./_components/TeamCheckoutForm";
 interface TeamCheckoutPageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ plan?: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: TeamCheckoutPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "billing" });
+  return { title: t("teamCheckout") };
 }
 
 export default async function TeamCheckoutPage({

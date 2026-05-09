@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { OrgMember } from "@/domain/models/OrgMember";
@@ -28,6 +29,21 @@ const ROLE_LABEL_KEY = {
 
 interface OrgDetailPageProps {
   params: Promise<{ locale: string; slug: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: OrgDetailPageProps): Promise<Metadata> {
+  const { locale, slug } = await params;
+  // `getUserOrgs` is React.cache'd against the same key the page uses, so
+  // resolving the org name here adds no extra round-trip when the page
+  // renders successfully.
+  const [t, orgs] = await Promise.all([
+    getTranslations({ locale, namespace: "org" }),
+    getUserOrgs(),
+  ]);
+  const org = orgs.find((o) => o.slug === slug);
+  return { title: org?.name ?? t("members") };
 }
 
 export default async function OrgDetailPage({ params }: OrgDetailPageProps) {

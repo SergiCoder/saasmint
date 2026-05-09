@@ -1,4 +1,5 @@
 import { Badge } from "@/presentation/components/atoms/Badge";
+import { formatInteger } from "@/lib/formatInteger";
 
 interface CreditBalanceCardProps {
   /** Section eyebrow, e.g. "Credit balance". */
@@ -23,7 +24,7 @@ export function CreditBalanceCard({
   scopeBadge,
   locale,
 }: CreditBalanceCardProps) {
-  const formattedBalance = new Intl.NumberFormat(locale).format(balance);
+  const formattedBalance = formatInteger(balance, locale);
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
