@@ -1,3 +1,5 @@
+import { createFormatterCache } from "./formatterCache";
+
 /**
  * Locale-aware date formatters.
  *
@@ -13,25 +15,15 @@ type DateStyle = Extract<
   "long" | "medium"
 >;
 
-const formatterCache = new Map<string, Intl.DateTimeFormat>();
-
-function getFormatter(
-  locale: string,
-  dateStyle: DateStyle,
-): Intl.DateTimeFormat {
-  const key = `${dateStyle}|${locale}`;
-  let formatter = formatterCache.get(key);
-  if (!formatter) {
-    formatter = new Intl.DateTimeFormat(locale, { dateStyle });
-    formatterCache.set(key, formatter);
-  }
-  return formatter;
-}
+const getFormatter = createFormatterCache<Intl.DateTimeFormat>(200, (key) => {
+  const [dateStyle, locale] = key.split("|") as [DateStyle, string];
+  return new Intl.DateTimeFormat(locale, { dateStyle });
+});
 
 function formatDate(date: Date, locale: string, dateStyle: DateStyle): string {
   return Number.isNaN(date.getTime())
     ? ""
-    : getFormatter(locale, dateStyle).format(date);
+    : getFormatter(`${dateStyle}|${locale}`).format(date);
 }
 
 /** Formats `date` as a locale-aware long date (e.g. "January 1, 2026"). */

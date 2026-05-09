@@ -168,6 +168,17 @@ export default async function middleware(request: NextRequest) {
   let refreshRejected = false;
 
   if (shouldRefresh) {
+    // Mark the refresh as failed: clear in-memory token + delete cookies on
+    // the request so downstream gateway calls don't send a stale token that
+    // will trip their 401 branches. The response cookies are cleared later
+    // via `clearStaleCookiesOnResponse` once the intl response is built.
+    const markRefreshFailed = () => {
+      refreshRejected = true;
+      accessToken = undefined;
+      request.cookies.delete(ACCESS_TOKEN_NAME);
+      request.cookies.delete(REFRESH_TOKEN_NAME);
+    };
+
     try {
       const res = await fetch(`${API_URL}/api/v1/auth/refresh/`, {
         method: "POST",
@@ -209,18 +220,10 @@ export default async function middleware(request: NextRequest) {
           return withPathnameHeader(request, intlResponse, nonce);
         }
         // Malformed body — treat as a refresh failure (same path as a 4xx).
-        refreshRejected = true;
-        accessToken = undefined;
-        request.cookies.delete(ACCESS_TOKEN_NAME);
-        request.cookies.delete(REFRESH_TOKEN_NAME);
+        markRefreshFailed();
       } else {
         // Django rejected the refresh (401/invalid/revoked/user-deleted).
-        // Clear the stale cookies so downstream gateway calls don't send a
-        // token that will trip their 401 branches.
-        refreshRejected = true;
-        accessToken = undefined;
-        request.cookies.delete(ACCESS_TOKEN_NAME);
-        request.cookies.delete(REFRESH_TOKEN_NAME);
+        markRefreshFailed();
       }
     } catch {
       // Network error (API unreachable) — leave cookies alone, fall through.

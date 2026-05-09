@@ -9,9 +9,12 @@ import {
 import {
   OAuthExchangeResponseSchema,
   TokenResponseSchema,
+  type OAuthExchangeResponse,
+  type TokenResponse,
 } from "@/infrastructure/api/schemas";
 import { ApiError } from "@/domain/errors/ApiError";
-import { authGateway, planGateway } from "@/infrastructure/registry";
+import { authGateway } from "@/infrastructure/registry";
+import { getPlanRouting } from "@/lib/planRoutingCache";
 import {
   consumeOAuthFlowCookies,
   consumePendingPlan,
@@ -70,19 +73,16 @@ async function resolvePlanRouting(
   priceId: string,
 ): Promise<PlanRouting | undefined> {
   try {
-    const plans = await planGateway.listPlans();
-    for (const plan of plans) {
-      if (plan.price?.id === priceId) {
-        return { context: plan.context };
-      }
-    }
+    const routing = await getPlanRouting();
+    const context = routing.get(priceId);
+    return context ? { context } : undefined;
   } catch (err) {
     // Swallow on a genuine outage so signup still proceeds as personal,
     // but surface the failure server-side so a misrouted team signup isn't
     // invisible to operators.
     console.error("resolvePlanRouting failed", err);
+    return undefined;
   }
-  return undefined;
 }
 
 interface Credentials {
@@ -110,7 +110,7 @@ export async function signIn(
   const credentials = readCredentials(formData);
   if (!credentials) return fail("email_and_password_required");
 
-  let data: ReturnType<typeof TokenResponseSchema.parse>;
+  let data: TokenResponse;
   try {
     const raw = await publicApiFetch<Record<string, unknown>>("/auth/login/", {
       method: "POST",
@@ -228,7 +228,7 @@ export async function resetPasswordWithToken(
     return fail("password_too_short");
   if (password !== confirmPassword) return fail("passwords_do_not_match");
 
-  let data: ReturnType<typeof TokenResponseSchema.parse>;
+  let data: TokenResponse;
   try {
     const raw = await publicApiFetch<Record<string, unknown>>(
       "/auth/reset-password/",
@@ -260,7 +260,7 @@ export async function changePassword(
     return fail("password_too_short");
   if (password !== confirmPassword) return fail("passwords_do_not_match");
 
-  let data: ReturnType<typeof TokenResponseSchema.parse>;
+  let data: TokenResponse;
   try {
     const raw = await apiFetch<Record<string, unknown>>(
       "/auth/change-password/",
@@ -307,7 +307,7 @@ export async function resendVerificationEmail(
 export async function verifyEmail(
   token: string,
 ): Promise<ActionResult<{ pendingPlan?: string; isTeamPlan?: boolean }>> {
-  let data: ReturnType<typeof TokenResponseSchema.parse>;
+  let data: TokenResponse;
   try {
     const raw = await publicApiFetch<Record<string, unknown>>(
       "/auth/verify-email/",
@@ -361,7 +361,7 @@ export async function exchangeOAuthCode(
     return { ok: false, error: "oauth_no_flow" };
   }
 
-  let data: ReturnType<typeof OAuthExchangeResponseSchema.parse>;
+  let data: OAuthExchangeResponse;
   try {
     const raw = await publicApiFetch<Record<string, unknown>>(
       "/auth/oauth/exchange/",
@@ -402,7 +402,7 @@ export async function confirmOAuthLink(
     return fail("invalid_token");
   }
 
-  let data: ReturnType<typeof OAuthExchangeResponseSchema.parse>;
+  let data: OAuthExchangeResponse;
   try {
     const raw = await publicApiFetch<Record<string, unknown>>(
       "/auth/oauth/confirm-link/",

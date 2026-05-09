@@ -49,6 +49,134 @@ interface RenderPlanUpgradeCtaOptions {
   fullWidth?: boolean;
 }
 
+type Price = NonNullable<Plan["price"]>;
+
+interface ChangePlanCtaArgs {
+  plan: Plan & { price: Price };
+  subInContext: Subscription;
+  isUpgrade: boolean;
+  isTeam: boolean;
+  highlighted: boolean;
+  canManageInContext: boolean;
+  upgradeLabel: string;
+  changePlanLabel: string;
+  locale: string;
+  tBilling: RenderPlanUpgradeCtaOptions["tBilling"];
+  tPlans: RenderPlanUpgradeCtaOptions["tPlans"];
+  fullWidth: boolean;
+}
+
+function renderChangePlanCta({
+  plan,
+  subInContext,
+  isUpgrade,
+  isTeam,
+  highlighted,
+  canManageInContext,
+  upgradeLabel,
+  changePlanLabel,
+  locale,
+  tBilling,
+  tPlans,
+  fullWidth,
+}: ChangePlanCtaArgs): React.ReactNode {
+  // A schedule already targets this plan — render a non-actionable
+  // "Scheduled — {date}" label so the user can see at a glance which
+  // plan they're switching to. The undo control lives on the current
+  // plan card's banner ("Keep {currentPlan}"); rendering another CTA
+  // here would confuse "switch" with "undo switch". This branch fires
+  // regardless of canManage so non-billing members still see the
+  // pending change on the right card.
+  if (subInContext.scheduledPlan?.id === plan.id) {
+    const cutoverIso = subInContext.scheduledChangeAt;
+    const cutover = cutoverIso ? new Date(cutoverIso) : null;
+    const cutoverDisplay = cutover ? formatLongDate(cutover, locale) : "";
+    return (
+      <p className="text-primary-700 text-center text-sm font-medium">
+        {tBilling("scheduledPlanLabel", { date: cutoverDisplay })}
+      </p>
+    );
+  }
+  // Non-billing members can't action a plan change; the action would 403.
+  if (!canManageInContext) return null;
+  // Pin context; required for concurrent billers (rule 5) and harmless for
+  // single-sub callers since it matches the backend default routing.
+  const portalContext = isTeam ? "team" : "personal";
+  // Detect deferred (downgrade) by comparing target price to current price.
+  // Backend uses the same comparison: `target.amount < current.amount` →
+  // SubscriptionSchedule, else immediate proration.
+  const currentAmount = subInContext.plan.price?.amount ?? 0;
+  const isDeferred = plan.price.amount < currentAmount;
+
+  const targetPlanName = translatePlanName(tPlans, plan);
+  const targetPriceFormatted = formatCurrency(
+    plan.price.displayAmount,
+    plan.price.currency,
+    locale,
+  );
+  const periodEndDate = new Date(subInContext.currentPeriodEnd);
+  const periodEndDisplay = formatLongDate(periodEndDate, locale);
+
+  const confirmTitle = isDeferred
+    ? tBilling("changePlanConfirmTitleDeferred", { plan: targetPlanName })
+    : tBilling("changePlanConfirmTitleImmediate", { plan: targetPlanName });
+  const confirmBody = isDeferred
+    ? tBilling("changePlanConfirmBodyDeferred", {
+        plan: targetPlanName,
+        price: targetPriceFormatted,
+        date: periodEndDisplay,
+      })
+    : tBilling("changePlanConfirmBodyImmediate", {
+        plan: targetPlanName,
+        price: targetPriceFormatted,
+      });
+
+  return (
+    <ChangePlanButton
+      planPriceId={plan.price.id}
+      isDeferred={isDeferred}
+      context={portalContext}
+      highlighted={highlighted}
+      fullWidth={fullWidth}
+      confirmTitle={confirmTitle}
+      confirmBody={confirmBody}
+      confirmAction={tBilling("changePlanConfirmAction")}
+      confirmDismiss={tBilling("changePlanConfirmDismiss")}
+    >
+      {isUpgrade ? upgradeLabel : changePlanLabel}
+    </ChangePlanButton>
+  );
+}
+
+function renderFirstCheckoutCta(args: {
+  plan: Plan & { price: Price };
+  isTeam: boolean;
+  hasOrg: boolean;
+  highlighted: boolean;
+  upgradeLabel: string;
+}): React.ReactNode {
+  const { plan, isTeam, hasOrg, highlighted, upgradeLabel } = args;
+  if (isTeam) {
+    // First-time team checkout: rule 8 blocks a second team checkout for an
+    // org owner who doesn't yet have a team sub.
+    if (hasOrg) return null;
+    return (
+      <TeamCheckoutButton planPriceId={plan.price.id} highlighted={highlighted}>
+        {upgradeLabel}
+      </TeamCheckoutButton>
+    );
+  }
+  return (
+    <CheckoutButton
+      action={startCheckout}
+      field={{ name: "planPriceId", value: plan.price.id }}
+      highlighted={highlighted}
+    >
+      {upgradeLabel}
+    </CheckoutButton>
+  );
+}
+
 /**
  * Shared routing matrix for plan-change CTAs used on both /subscription and
  * /pricing. Same-context upgrades and downgrades route to an in-app confirm
@@ -80,105 +208,35 @@ export function renderPlanUpgradeCta({
   if (!plan.price) return null;
   if (isCurrent) return null;
 
+  const pricedPlan = plan as Plan & { price: Price };
   const highlighted = plan.tier === PLAN_TIER_PRO && isUpgrade;
   const subInContext = isTeam ? teamSubscription : personalSubscription;
-  const hasSubInContext = subInContext !== null;
   const canManageInContext = isTeam ? teamCanManage : personalCanManage;
 
-  if (hasSubInContext) {
-    // A schedule already targets this plan — render a non-actionable
-    // "Scheduled — {date}" label so the user can see at a glance which
-    // plan they're switching to. The undo control lives on the current
-    // plan card's banner ("Keep {currentPlan}"); rendering another CTA
-    // here would confuse "switch" with "undo switch". This branch fires
-    // regardless of canManage so non-billing members still see the
-    // pending change on the right card.
-    if (subInContext.scheduledPlan?.id === plan.id) {
-      const cutoverIso = subInContext.scheduledChangeAt;
-      const cutover = cutoverIso ? new Date(cutoverIso) : null;
-      const cutoverDisplay = cutover ? formatLongDate(cutover, locale) : "";
-      return (
-        <p className="text-primary-700 text-center text-sm font-medium">
-          {tBilling("scheduledPlanLabel", { date: cutoverDisplay })}
-        </p>
-      );
-    }
-    // Non-billing members can't action a plan change; the action would 403.
-    if (!canManageInContext) return null;
-    // Pin context; required for concurrent billers (rule 5) and harmless for
-    // single-sub callers since it matches the backend default routing.
-    const portalContext = isTeam ? "team" : "personal";
-    // Detect deferred (downgrade) by comparing target price to current price.
-    // Backend uses the same comparison: `target.amount < current.amount` →
-    // SubscriptionSchedule, else immediate proration.
-    const currentAmount = subInContext.plan.price?.amount ?? 0;
-    const isDeferred = plan.price.amount < currentAmount;
-
-    const targetPlanName = translatePlanName(tPlans, plan);
-    const targetPriceFormatted = formatCurrency(
-      plan.price.displayAmount,
-      plan.price.currency,
+  if (subInContext !== null) {
+    return renderChangePlanCta({
+      plan: pricedPlan,
+      subInContext,
+      isUpgrade,
+      isTeam,
+      highlighted,
+      canManageInContext,
+      upgradeLabel,
+      changePlanLabel,
       locale,
-    );
-    const periodEndDate = new Date(subInContext.currentPeriodEnd);
-    const periodEndDisplay = formatLongDate(periodEndDate, locale);
-
-    const confirmTitle = isDeferred
-      ? tBilling("changePlanConfirmTitleDeferred", {
-          plan: targetPlanName,
-        })
-      : tBilling("changePlanConfirmTitleImmediate", {
-          plan: targetPlanName,
-        });
-    const confirmBody = isDeferred
-      ? tBilling("changePlanConfirmBodyDeferred", {
-          plan: targetPlanName,
-          price: targetPriceFormatted,
-          date: periodEndDisplay,
-        })
-      : tBilling("changePlanConfirmBodyImmediate", {
-          plan: targetPlanName,
-          price: targetPriceFormatted,
-        });
-
-    return (
-      <ChangePlanButton
-        planPriceId={plan.price.id}
-        isDeferred={isDeferred}
-        context={portalContext}
-        highlighted={highlighted}
-        fullWidth={fullWidth}
-        confirmTitle={confirmTitle}
-        confirmBody={confirmBody}
-        confirmAction={tBilling("changePlanConfirmAction")}
-        confirmDismiss={tBilling("changePlanConfirmDismiss")}
-      >
-        {isUpgrade ? upgradeLabel : changePlanLabel}
-      </ChangePlanButton>
-    );
+      tBilling,
+      tPlans,
+      fullWidth,
+    });
   }
 
   // No sub in this context yet — only upgrades (fresh checkout) make sense.
   if (!isUpgrade) return null;
-
-  if (isTeam) {
-    // First-time team checkout: rule 8 blocks a second team checkout for an
-    // org owner who doesn't yet have a team sub.
-    if (hasOrg) return null;
-    return (
-      <TeamCheckoutButton planPriceId={plan.price.id} highlighted={highlighted}>
-        {upgradeLabel}
-      </TeamCheckoutButton>
-    );
-  }
-
-  return (
-    <CheckoutButton
-      action={startCheckout}
-      field={{ name: "planPriceId", value: plan.price.id }}
-      highlighted={highlighted}
-    >
-      {upgradeLabel}
-    </CheckoutButton>
-  );
+  return renderFirstCheckoutCta({
+    plan: pricedPlan,
+    isTeam,
+    hasOrg,
+    highlighted,
+    upgradeLabel,
+  });
 }

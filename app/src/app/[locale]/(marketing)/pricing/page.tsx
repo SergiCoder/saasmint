@@ -4,11 +4,11 @@ import { PricingSection } from "@/presentation/components/organisms/PricingSecti
 import { GetStartedButton } from "./_components/GetStartedButton";
 import { ProductsCheckoutSection } from "@/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection";
 import { renderPlanUpgradeCta } from "@/app/[locale]/(app)/subscription/_lib/renderPlanUpgradeCta";
-import { getOrgMembers } from "@/app/[locale]/(app)/_data/getOrgMembers";
-import { getPlans } from "@/app/[locale]/(app)/_data/getPlans";
-import { getProducts } from "@/app/[locale]/(app)/_data/getProducts";
-import { getSubscriptions } from "@/app/[locale]/(app)/_data/getSubscriptions";
-import { getUserOrgs } from "@/app/[locale]/(app)/_data/getUserOrgs";
+import { getOrgMembers } from "@/app/[locale]/_data/getOrgMembers";
+import { getPlans } from "@/app/[locale]/_data/getPlans";
+import { getProducts } from "@/app/[locale]/_data/getProducts";
+import { getSubscriptions } from "@/app/[locale]/_data/getSubscriptions";
+import { getUserOrgs } from "@/app/[locale]/_data/getUserOrgs";
 import { canManageBilling } from "@/app/[locale]/(app)/subscription/_data/canManageBilling";
 import { getOptionalUser } from "../_data/getOptionalUser";
 import {
@@ -17,6 +17,7 @@ import {
   buildProductPriceSubLabels,
   buildProductTranslations,
   makeLocalSubLabelFormatter,
+  makeProductSubLabelFormatter,
   splitPlanGroupsByContext,
 } from "@/app/[locale]/_lib/buildPlanCards";
 import {
@@ -271,11 +272,7 @@ export default async function PricingPage({ params, searchParams }: Props) {
           priceSubLabels={buildProductPriceSubLabels(
             products,
             locale,
-            ({ localAmount, billedCurrency }) =>
-              t("billedInLocalMonthly", {
-                amount: localAmount,
-                currency: billedCurrency,
-              }),
+            makeProductSubLabelFormatter(t),
           )}
           creditsLabel={t("credits")}
           buyLabel={t("buy")}
