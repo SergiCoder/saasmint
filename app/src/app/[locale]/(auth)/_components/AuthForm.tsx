@@ -13,7 +13,7 @@ import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
 import { ResendVerificationLink } from "./ResendVerificationLink";
 
 interface AuthFormProps {
-  action: (prev: unknown, fd: FormData) => Promise<ActionResult | undefined>;
+  action: (prev: unknown, fd: FormData) => Promise<ActionResult>;
   translationNamespace: string;
   passwordAutoComplete: string;
   showNameField?: boolean;

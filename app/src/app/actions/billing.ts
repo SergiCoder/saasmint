@@ -11,7 +11,7 @@ import type { SubscriptionContext } from "@/application/ports/ISubscriptionGatew
 import { productGateway, subscriptionGateway } from "@/infrastructure/registry";
 import { AuthError } from "@/domain/errors/AuthError";
 import { canManageBilling } from "@/app/[locale]/(app)/subscription/_data/canManageBilling";
-import { getUserOrgs } from "@/app/[locale]/(app)/_data/getUserOrgs";
+import { getUserOrgs } from "@/app/[locale]/_data/getUserOrgs";
 import { getCurrentUserIdFromCookie } from "@/lib/jwt";
 import { revalidateLocalizedPath } from "@/lib/revalidate";
 import {
@@ -155,7 +155,9 @@ export async function startCheckout(
   redirect(url);
 }
 
-export async function openBillingPortal(formData?: FormData): Promise<void> {
+export async function openBillingPortal(
+  formData?: FormData,
+): Promise<ActionResult> {
   // Form-submitted context picks the Stripe customer the portal attaches to.
   // Concurrent billers (rule 5) MUST send it — otherwise the backend default
   // ("team" for org members, "personal" otherwise) would route a "manage
@@ -163,7 +165,7 @@ export async function openBillingPortal(formData?: FormData): Promise<void> {
   const context = formData
     ? normalizeContext(getString(formData, "context"))
     : undefined;
-  let url: string | null = null;
+  let url: string;
   try {
     await assertCanManageBilling(context);
     const session = await subscriptionGateway.createBillingPortalSession({
@@ -174,9 +176,9 @@ export async function openBillingPortal(formData?: FormData): Promise<void> {
     url = session.url;
   } catch (err) {
     console.error("Failed to open billing portal", err);
+    return toActionError(err);
   }
 
-  if (!url) return;
   redirect(url);
 }
 

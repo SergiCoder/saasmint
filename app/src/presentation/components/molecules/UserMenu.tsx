@@ -25,7 +25,8 @@ export function UserMenu({ user, menuItems, signOutSlot }: UserMenuProps) {
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      if (!(e.target instanceof Node)) return;
+      if (ref.current && !ref.current.contains(e.target)) {
         setOpen(false);
       }
     }
