@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
+import { APP_NAME } from "@/lib/appVersion";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -25,7 +26,7 @@ export default async function LinkEmailSentPage({ params }: Props) {
   const t = await getTranslations("auth.linkEmailSent");
 
   return (
-    <AuthLayout appName="SaaSmint" title={t("title")}>
+    <AuthLayout appName={APP_NAME} title={t("title")}>
       <p className="text-center text-sm text-gray-600">{t("body")}</p>
     </AuthLayout>
   );

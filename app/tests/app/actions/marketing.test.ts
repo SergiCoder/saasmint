@@ -137,7 +137,7 @@ describe("submitInquiry", () => {
     expect(result).toEqual({ ok: false, code: "HTTP_429" });
   });
 
-  it("maps an ApiError with backend detail to a translated message override", async () => {
+  it("maps an ApiError to its stable code, dropping the backend detail", async () => {
     mockSubmit.mockRejectedValue(
       new ApiError(400, { detail: "Email is invalid." }),
     );
@@ -147,11 +147,7 @@ describe("submitInquiry", () => {
       makeFormData({ email: "user@example.com", source: "landing-cta" }),
     );
 
-    expect(result).toEqual({
-      ok: false,
-      code: "HTTP_400",
-      message: "Email is invalid.",
-    });
+    expect(result).toEqual({ ok: false, code: "HTTP_400" });
   });
 
   it("returns unknown_error for non-ApiError throwables", async () => {

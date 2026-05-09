@@ -106,6 +106,7 @@ export default async function BillingPage({
     labels: {
       upgrade: t("upgrade"),
       seat: t("seat"),
+      billedYearly: t("billedYearly"),
     },
     planNames,
     planDescriptions,

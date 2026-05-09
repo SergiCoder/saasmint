@@ -92,16 +92,17 @@ describe("ContactForm", () => {
     expect(screen.queryByRole("button", { name: "Send" })).toBeNull();
   });
 
-  it("renders an error AlertBanner with the action message when the action fails", () => {
+  it("renders an error AlertBanner when the action fails", () => {
     mockState.value = {
       ok: false,
       code: "HTTP_429",
-      message: "Too many requests, slow down.",
     };
     render(<ContactForm {...baseProps} />);
 
     const alert = screen.getByRole("alert");
-    expect(alert).toHaveTextContent("Too many requests, slow down.");
+    // i18n stub falls back to "unknown_error" because actionErrors namespace
+    // is empty in the global mock.
+    expect(alert).toHaveTextContent("unknown_error");
     // Form is still rendered so the user can correct & retry.
     expect(screen.getByRole("button", { name: "Send" })).toBeInTheDocument();
   });

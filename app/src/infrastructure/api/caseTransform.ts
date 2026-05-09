@@ -11,8 +11,13 @@ export function toCamelCase(key: string): string {
 /**
  * Recursively convert all object keys to snake_case. Arrays are mapped;
  * plain objects walked; non-plain objects (Date, Map, etc.) left untouched.
- * Inverse of `keysToCamel`.
+ * Inverse of `keysToCamel`. The record overload preserves the input shape
+ * so callers don't need a downstream `as Record<string, unknown>` cast.
  */
+export function keysToSnake(
+  value: Record<string, unknown>,
+): Record<string, unknown>;
+export function keysToSnake(value: unknown): unknown;
 export function keysToSnake(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(keysToSnake);
   if (!isRecord(value)) return value;
@@ -26,9 +31,14 @@ export function keysToSnake(value: unknown): unknown {
 /**
  * Recursively convert all object keys to camelCase. Arrays are mapped; plain
  * objects walked; everything else returned as-is. Parse the result with a
- * schema (Zod) to get a typed value — the returned type is deliberately
- * `unknown` because this function does not validate shape.
+ * schema (Zod) to get a typed value — this function does not validate shape.
+ * The record overload preserves the input shape so callers don't need a
+ * downstream `as Record<string, unknown>` cast.
  */
+export function keysToCamel(
+  value: Record<string, unknown>,
+): Record<string, unknown>;
+export function keysToCamel(value: unknown): unknown;
 export function keysToCamel(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(keysToCamel);
   if (!isRecord(value)) return value;
@@ -93,7 +103,7 @@ export function keysToCamelWithPrice(
   raw: Record<string, unknown>,
   fallbackCurrency = "usd",
 ): Record<string, unknown> {
-  const result = keysToCamel(raw) as Record<string, unknown>;
+  const result = keysToCamel(raw);
   applyPriceDefaults(result, fallbackCurrency);
   return result;
 }

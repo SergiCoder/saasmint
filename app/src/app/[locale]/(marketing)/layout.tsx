@@ -1,10 +1,10 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { MarketingLayout } from "@/presentation/components/templates/MarketingLayout";
-import { APP_VERSION, getReleaseUrl } from "@/lib/appVersion";
 import type { Org } from "@/domain/models/Org";
 import { findTeamSubscription } from "@/domain/models/Subscription";
 import { getAccessToken } from "@/infrastructure/auth/cookies";
+import { APP_NAME } from "@/lib/appVersion";
 import { getSubscriptions } from "../(app)/_data/getSubscriptions";
 import { getUserOrgs } from "../(app)/_data/getUserOrgs";
 import { getOptionalUser } from "./_data/getOptionalUser";
@@ -102,7 +102,7 @@ export default async function MarketingLayoutRoute({
 
   return (
     <MarketingLayout
-      appName="SaaSmint"
+      appName={APP_NAME}
       navLinks={navLinks}
       navUser={navUser}
       navActions={navActions}
@@ -113,10 +113,6 @@ export default async function MarketingLayoutRoute({
       toggleNavLabel={tCommon("toggleNav")}
       footerSections={footerSections}
       copyright={tFooter("copyright")}
-      footerVersion={{
-        label: `v${APP_VERSION}`,
-        href: getReleaseUrl(APP_VERSION),
-      }}
     >
       {children}
     </MarketingLayout>

@@ -48,12 +48,14 @@ describe("DjangoApiPlanGateway", () => {
   const gateway = new DjangoApiPlanGateway();
 
   describe("listPlans", () => {
-    it("calls apiFetchOptional on /billing/plans/", async () => {
+    it("calls apiFetchOptional on /billing/plans/ with a 1h revalidate window", async () => {
       mockApiFetchOptional.mockResolvedValue({ results: rawPlans });
 
       const result = await gateway.listPlans();
 
-      expect(mockApiFetchOptional).toHaveBeenCalledWith("/billing/plans/");
+      expect(mockApiFetchOptional).toHaveBeenCalledWith("/billing/plans/", {
+        next: { revalidate: 3600 },
+      });
       expect(result).toHaveLength(2);
     });
 
@@ -72,6 +74,7 @@ describe("DjangoApiPlanGateway", () => {
 
       expect(mockApiFetchOptional).toHaveBeenCalledWith(
         "/billing/plans/?currency=eur",
+        { next: { revalidate: 3600 } },
       );
     });
 

@@ -8,9 +8,10 @@ import { LogoCloud } from "@/presentation/components/organisms/LogoCloud";
 import { FeaturesGrid } from "@/presentation/components/organisms/FeaturesGrid";
 import { StatsSection } from "@/presentation/components/organisms/StatsSection";
 import { CtaSection } from "@/presentation/components/organisms/CtaSection";
+import { APP_NAME } from "@/lib/appVersion";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return { title: "SaaSmint" };
+  return { title: APP_NAME };
 }
 
 const LOGOS = [

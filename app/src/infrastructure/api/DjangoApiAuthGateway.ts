@@ -1,7 +1,7 @@
 import type { IAuthGateway } from "@/application/ports/IAuthGateway";
 import type { User } from "@/domain/models/User";
-import { apiFetch, apiFetchVoid } from "./apiClient";
-import { parseUser } from "./parsers";
+import { apiFetchVoid } from "./apiClient";
+import { fetchCurrentUser } from "./parsers";
 import {
   clearAuthCookies,
   getRefreshToken,
@@ -9,8 +9,7 @@ import {
 
 export class DjangoApiAuthGateway implements IAuthGateway {
   async getCurrentUser(): Promise<User> {
-    const raw = await apiFetch<Record<string, unknown>>("/account/");
-    return parseUser(raw);
+    return fetchCurrentUser();
   }
 
   async signOut(): Promise<void> {

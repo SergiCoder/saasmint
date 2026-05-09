@@ -12,17 +12,17 @@ import type { OAuthProvider } from "@/infrastructure/auth/oauth";
 
 const providers = [
   {
-    id: "google" as OAuthProvider,
+    id: "google" satisfies OAuthProvider,
     icon: GoogleIcon,
     labelKey: "continueWithGoogle",
   },
   {
-    id: "github" as OAuthProvider,
+    id: "github" satisfies OAuthProvider,
     icon: GitHubIcon,
     labelKey: "continueWithGitHub",
   },
   {
-    id: "microsoft" as OAuthProvider,
+    id: "microsoft" satisfies OAuthProvider,
     icon: MicrosoftIcon,
     labelKey: "continueWithMicrosoft",
   },

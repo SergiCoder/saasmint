@@ -1,10 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { AuthError } from "@/domain/errors/AuthError";
 import { authGateway, userGateway } from "@/infrastructure/registry";
 import { isLocale } from "@/lib/i18n/routing";
+import { revalidateLocalizedPath } from "@/lib/revalidate";
 import {
+  ACTION_CODE_INVALID_INPUT,
   ok,
   fail,
   toActionError,
@@ -12,17 +12,33 @@ import {
 } from "@/lib/actions/ActionResult";
 import { getString } from "@/lib/actions/parseFormData";
 
+function isAllowedAvatarUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 export async function updateAvatarUrl(
   avatarUrl: string | null,
 ): Promise<ActionResult> {
+  // Defence-in-depth: backend authoritatively validates avatar URLs, but this
+  // action is a public RPC — clients can call it with any string. Reject
+  // non-https schemes (data:, javascript:, etc.) before forwarding.
+  if (avatarUrl !== null && !isAllowedAvatarUrl(avatarUrl)) {
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { avatarUrl: "invalid" },
+    });
+  }
   try {
-    await authGateway.getCurrentUser();
     await userGateway.updateProfile({ avatarUrl });
   } catch (err) {
     console.error("Failed to update avatar", err);
     return toActionError(err);
   }
-  revalidatePath("/", "layout");
+  revalidateLocalizedPath("/", "layout");
   return ok();
 }
 
@@ -30,14 +46,6 @@ export async function updateProfile(
   _prevState: unknown,
   formData: FormData,
 ): Promise<ActionResult> {
-  try {
-    await authGateway.getCurrentUser();
-  } catch (err) {
-    return err instanceof AuthError
-      ? fail("session_expired")
-      : fail("profile_load_failed");
-  }
-
   const fullName = getString(formData, "fullName");
   if (!fullName || fullName.length < 3 || fullName.length > 255) {
     return fail("full_name_invalid");
@@ -49,7 +57,7 @@ export async function updateProfile(
   const hasPhone = phone !== null;
 
   if (hasPrefix !== hasPhone) {
-    return fail("invalid_input", {
+    return fail(ACTION_CODE_INVALID_INPUT, {
       fieldErrors: {
         phone: hasPrefix ? "phoneNumberRequired" : "phonePrefixRequired",
       },
@@ -57,7 +65,9 @@ export async function updateProfile(
   }
 
   if (phone && phone.length < 4) {
-    return fail("invalid_input", { fieldErrors: { phone: "phoneTooShort" } });
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { phone: "phoneTooShort" },
+    });
   }
 
   const preferredLocale = getString(formData, "preferredLocale");
@@ -84,7 +94,9 @@ export async function updateProfile(
     return toActionError(err);
   }
 
-  revalidatePath("/profile");
+  // Layout scope: the (app) layout reads user fullName and avatar to render
+  // the navbar. Without "layout" the navbar shows stale data after a save.
+  revalidateLocalizedPath("/profile", "layout");
   return ok();
 }
 

@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { planGateway } from "@/infrastructure/registry";
 import { formatCurrency } from "@/lib/formatCurrency";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { getCurrentUser } from "../../_data/getCurrentUser";
+import { getPlans } from "../../_data/getPlans";
 import { CheckoutButton } from "../_components/CheckoutButton";
 import { startCheckout } from "@/app/actions/billing";
 
@@ -30,7 +30,7 @@ export default async function CheckoutPage({
     redirect(`/${locale}/subscription`);
   }
 
-  const plans = await planGateway.listPlans(user.preferredCurrency);
+  const plans = await getPlans(user.preferredCurrency);
   const plan = plans.find((p) => p.price?.id === planPriceId);
 
   if (!plan || !plan.price || plan.context !== "personal") {

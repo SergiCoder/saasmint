@@ -9,8 +9,10 @@ vi.mock("next/navigation", () => ({
 }));
 
 const mockRevalidatePath = vi.fn();
-vi.mock("next/cache", () => ({
-  revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
+vi.mock("@/lib/revalidate", () => ({
+  // The action calls `revalidateLocalizedPath`; assert on the bare path so
+  // tests don't have to enumerate every supported locale.
+  revalidateLocalizedPath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 
 const mockGetCurrentUserIdFromCookie = vi.fn<() => Promise<string | null>>();
@@ -47,6 +49,14 @@ vi.mock("@/infrastructure/registry", () => ({
 const mockCanManageBilling = vi.fn();
 vi.mock("@/app/[locale]/(app)/subscription/_data/canManageBilling", () => ({
   canManageBilling: (...args: unknown[]) => mockCanManageBilling(...args),
+}));
+
+// `assertCanManageBilling` now speculatively kicks off `getUserOrgs()` in
+// parallel with `listSubscriptions()` to avoid a serial round-trip on the
+// team-billing path. Stub it so tests don't reach into the org gateway.
+const mockGetUserOrgs = vi.fn(async () => [] as unknown[]);
+vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
+  getUserOrgs: () => mockGetUserOrgs(),
 }));
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
@@ -188,7 +198,6 @@ describe("billing server actions", () => {
       expect(result).toEqual({
         ok: false,
         code: "payment_provider_error",
-        message: "Payment provider error. Please try again.",
       });
       expect(mockRedirect).not.toHaveBeenCalled();
     });
@@ -544,7 +553,13 @@ describe("billing server actions", () => {
 
       await cancelRenewal("team");
 
-      expect(mockCanManageBilling).toHaveBeenCalledWith(user.id, teamSub);
+      // Team-context calls pass a `{ preloadedOrgs }` options arg so
+      // canManageBilling can skip the redundant getUserOrgs round-trip.
+      expect(mockCanManageBilling).toHaveBeenCalledWith(
+        user.id,
+        teamSub,
+        expect.objectContaining({ preloadedOrgs: expect.any(Array) }),
+      );
       expect(mockCancelSubscription).toHaveBeenCalledWith("team");
     });
 
@@ -824,7 +839,11 @@ describe("billing server actions", () => {
 
       await updateSeats(undefined, formData);
 
-      expect(mockCanManageBilling).toHaveBeenCalledWith(seatsUser.id, teamSub);
+      expect(mockCanManageBilling).toHaveBeenCalledWith(
+        seatsUser.id,
+        teamSub,
+        expect.objectContaining({ preloadedOrgs: expect.any(Array) }),
+      );
       expect(mockUpdateSeats).toHaveBeenCalledWith(5, "team");
     });
 
@@ -971,7 +990,11 @@ describe("billing server actions", () => {
 
       await changePlan("price_team_pro", "team");
 
-      expect(mockCanManageBilling).toHaveBeenCalledWith(user.id, teamSub);
+      expect(mockCanManageBilling).toHaveBeenCalledWith(
+        user.id,
+        teamSub,
+        expect.objectContaining({ preloadedOrgs: expect.any(Array) }),
+      );
       expect(mockChangePlan).toHaveBeenCalledWith("price_team_pro", "team");
     });
 

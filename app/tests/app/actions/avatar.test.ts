@@ -18,15 +18,23 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
+// First 12 bytes for each format we accept — enough for the action's
+// magic-byte check. Padding zeros after for the requested overall size.
+const IMAGE_HEADERS: Record<string, number[]> = {
+  "image/jpeg": [0xff, 0xd8, 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  "image/png": [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0],
+  "image/webp": [0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x45, 0x42, 0x50],
+};
+
 function makeImageFormData(
-  options: { type?: string; size?: number } = {},
+  options: { type?: string; size?: number; bytes?: number[] } = {},
 ): FormData {
-  const { type = "image/webp", size = 1024 } = options;
+  const { type = "image/webp", size = 1024, bytes } = options;
+  const header = bytes ?? IMAGE_HEADERS[type] ?? [];
+  const buffer = new Uint8Array(Math.max(size, header.length));
+  buffer.set(header, 0);
   const formData = new FormData();
-  formData.append(
-    "avatar",
-    new File([new Uint8Array(size)], "avatar.webp", { type }),
-  );
+  formData.append("avatar", new File([buffer], "avatar.webp", { type }));
   return formData;
 }
 
@@ -59,6 +67,16 @@ describe("uploadAvatar", () => {
     expect(mockUploadAvatar).not.toHaveBeenCalled();
   });
 
+  it("rejects files whose magic bytes don't match an allowed image format", async () => {
+    // Declared as JPEG but actually empty bytes — defends against `file.type`
+    // spoofing on the multipart form upload.
+    const result = await uploadAvatar(
+      makeImageFormData({ type: "image/jpeg", bytes: new Array(12).fill(0) }),
+    );
+    expect(result).toEqual({ ok: false, code: "unsupported_image" });
+    expect(mockUploadAvatar).not.toHaveBeenCalled();
+  });
+
   it("rejects files over the size limit", async () => {
     const result = await uploadAvatar(
       makeImageFormData({ size: 6 * 1024 * 1024 }),
@@ -77,18 +95,14 @@ describe("uploadAvatar", () => {
     expect(result).toEqual({ ok: false, code: "session_expired" });
   });
 
-  it("extracts ApiError detail as message", async () => {
+  it("maps ApiError to its stable code, dropping the backend detail", async () => {
     mockUploadAvatar.mockRejectedValue(
       new ApiError(413, { detail: "File too large" }),
     );
 
     const result = await uploadAvatar(makeImageFormData());
 
-    expect(result).toEqual({
-      ok: false,
-      code: "HTTP_413",
-      message: "File too large",
-    });
+    expect(result).toEqual({ ok: false, code: "HTTP_413" });
   });
 
   it("returns the ApiError code when no detail is present", async () => {
@@ -128,18 +142,14 @@ describe("deleteAvatar", () => {
     expect(result).toEqual({ ok: false, code: "session_expired" });
   });
 
-  it("extracts ApiError detail as message", async () => {
+  it("maps ApiError to its stable code, dropping the backend detail", async () => {
     mockDeleteAvatar.mockRejectedValue(
       new ApiError(404, { detail: "Avatar not found" }),
     );
 
     const result = await deleteAvatar();
 
-    expect(result).toEqual({
-      ok: false,
-      code: "HTTP_404",
-      message: "Avatar not found",
-    });
+    expect(result).toEqual({ ok: false, code: "HTTP_404" });
   });
 
   it("returns the ApiError code when no detail is present", async () => {

@@ -30,7 +30,10 @@ const profileFormPropsCapture = vi.fn<(props: unknown) => void>();
 vi.mock("@/app/[locale]/(app)/profile/_components/ProfileForm", async () => {
   const React = await import("react");
   return {
-    ProfileForm: (props: { user: User; timezones: readonly string[] }) => {
+    ProfileForm: (props: {
+      user: User;
+      phonePrefixes: readonly { prefix: string; label: string }[];
+    }) => {
       profileFormPropsCapture(props);
       return React.createElement("div", {
         "data-testid": "profile-form",
@@ -55,11 +58,11 @@ const dangerZonePropsCapture = vi.fn<(props: unknown) => void>();
 vi.mock("@/app/[locale]/(app)/profile/_components/DangerZone", async () => {
   const React = await import("react");
   return {
-    DangerZone: (props: { userEmail: string; deleteRestriction?: "owner" }) => {
+    DangerZone: (props: { userEmail: string; deleteRestricted?: boolean }) => {
       dangerZonePropsCapture(props);
       return React.createElement("div", {
         "data-testid": "danger-zone",
-        "data-restriction": props.deleteRestriction ?? "",
+        "data-restriction": props.deleteRestricted ? "owner" : "",
         "data-email": props.userEmail,
       });
     },
@@ -138,21 +141,11 @@ describe("ProfilePage", () => {
     );
   });
 
-  it("renders the ProfileForm with a non-empty timezones array", async () => {
+  it("does not pass the timezone list as a prop (lazily-init'd inside the client)", async () => {
     await renderPage();
 
-    // The page uses Intl.supportedValuesOf("timeZone") — just assert the
-    // prop received is a non-empty array of strings; the exact values are
-    // platform-dependent so we avoid pinning a specific entry.
-    expect(profileFormPropsCapture).toHaveBeenCalledWith(
-      expect.objectContaining({
-        timezones: expect.arrayContaining([expect.any(String)]),
-      }),
-    );
     const call = profileFormPropsCapture.mock.calls[0]?.[0];
-    expect((call as { timezones: unknown[] }).timezones.length).toBeGreaterThan(
-      0,
-    );
+    expect(call).not.toHaveProperty("timezones");
   });
 
   it("renders the ChangePasswordForm section", async () => {
@@ -174,7 +167,7 @@ describe("ProfilePage", () => {
     );
   });
 
-  it("passes deleteRestriction='owner' to DangerZone when the user is an org owner", async () => {
+  it("passes deleteRestricted=true to DangerZone when the user is an org owner", async () => {
     mockGetMyOrgRole.mockResolvedValue("owner");
 
     await renderPage();
@@ -184,11 +177,11 @@ describe("ProfilePage", () => {
       "owner",
     );
     expect(dangerZonePropsCapture).toHaveBeenCalledWith(
-      expect.objectContaining({ deleteRestriction: "owner" }),
+      expect.objectContaining({ deleteRestricted: true }),
     );
   });
 
-  it("passes no deleteRestriction to DangerZone when the user is an admin (not sole owner)", async () => {
+  it("passes deleteRestricted=false to DangerZone when the user is an admin (not sole owner)", async () => {
     mockGetMyOrgRole.mockResolvedValue("admin");
 
     await renderPage();
@@ -198,11 +191,11 @@ describe("ProfilePage", () => {
       "",
     );
     expect(dangerZonePropsCapture).toHaveBeenCalledWith(
-      expect.objectContaining({ deleteRestriction: undefined }),
+      expect.objectContaining({ deleteRestricted: false }),
     );
   });
 
-  it("passes no deleteRestriction to DangerZone when the user has no org role", async () => {
+  it("passes deleteRestricted=false to DangerZone when the user has no org role", async () => {
     mockGetMyOrgRole.mockResolvedValue(null);
 
     await renderPage();

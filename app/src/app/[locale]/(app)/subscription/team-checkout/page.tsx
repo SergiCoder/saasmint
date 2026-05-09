@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { planGateway } from "@/infrastructure/registry";
 import { findPersonalSubscription } from "@/domain/models/Subscription";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { formatLongDate } from "@/lib/formatLongDate";
 import { getCurrentUser } from "../../_data/getCurrentUser";
+import { getPlans } from "../../_data/getPlans";
 import { getSubscriptions } from "../../_data/getSubscriptions";
 import { TeamCheckoutForm } from "./_components/TeamCheckoutForm";
 
@@ -39,7 +39,7 @@ export default async function TeamCheckoutPage({
   // so layout + this page render off a single subscription roundtrip.
   const [subscriptions, plans] = await Promise.all([
     getSubscriptions(currency),
-    planGateway.listPlans(currency),
+    getPlans(currency),
   ]);
   const plan = plans.find((p) => p.price?.id === planPriceId);
 

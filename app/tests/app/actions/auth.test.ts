@@ -137,11 +137,7 @@ describe("auth server actions", () => {
       formData.set("password", "wrong");
 
       const result = await signIn(undefined, formData);
-      expect(result).toEqual({
-        ok: false,
-        code: "invalid_credentials",
-        message: "Invalid credentials.",
-      });
+      expect(result).toEqual({ ok: false, code: "invalid_credentials" });
       expect(mockRedirect).not.toHaveBeenCalled();
     });
 
@@ -316,11 +312,7 @@ describe("auth server actions", () => {
       formData.set("password", "secret123");
 
       const result = await signUp(undefined, formData);
-      expect(result).toEqual({
-        ok: false,
-        code: "HTTP_400",
-        message: "Email already in use.",
-      });
+      expect(result).toEqual({ ok: false, code: "HTTP_400" });
     });
 
     it("returns unknown_error on non-ApiError throwables", async () => {
@@ -602,11 +594,7 @@ describe("auth server actions", () => {
       formData.set("confirmPassword", "newpass123");
 
       const result = await changePassword(undefined, formData);
-      expect(result).toEqual({
-        ok: false,
-        code: "HTTP_400",
-        message: "Current password is incorrect.",
-      });
+      expect(result).toEqual({ ok: false, code: "HTTP_400" });
     });
 
     it("returns unknown_error on non-ApiError throwables", async () => {
@@ -683,11 +671,7 @@ describe("auth server actions", () => {
       );
 
       const result = await verifyEmail("expired-token");
-      expect(result).toEqual({
-        ok: false,
-        code: "HTTP_400",
-        message: "Token has expired.",
-      });
+      expect(result).toEqual({ ok: false, code: "HTTP_400" });
     });
 
     it("returns unknown_error on non-ApiError throwables", async () => {
@@ -1006,7 +990,7 @@ describe("auth server actions", () => {
         );
 
         const result = await confirmOAuthLink("link-token-abc");
-        expect(result).toEqual({ ok: false, code, message: "nope" });
+        expect(result).toEqual({ ok: false, code });
         expect(mockSetAuthCookies).not.toHaveBeenCalled();
         expect(vi.mocked(console.error)).toHaveBeenCalledWith(
           "OAuth confirm-link failed",

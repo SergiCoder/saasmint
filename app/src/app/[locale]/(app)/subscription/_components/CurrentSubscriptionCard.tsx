@@ -5,10 +5,13 @@ import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { formatLongDate } from "@/lib/formatLongDate";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { SubscriptionCard } from "@/presentation/components/organisms/SubscriptionCard";
+import {
+  releaseScheduledChange,
+  resumeSubscription,
+} from "@/app/actions/billing";
 import { BillingPortalButton } from "./BillingPortalButton";
+import { BillingActionButton } from "./BillingActionButton";
 import { CancelRenewalButton } from "./CancelRenewalButton";
-import { ReleaseScheduledChangeButton } from "./ReleaseScheduledChangeButton";
-import { ResumeSubscriptionButton } from "./ResumeSubscriptionButton";
 
 interface CurrentSubscriptionCardProps {
   subscription: Subscription;
@@ -218,9 +221,12 @@ export async function CurrentSubscriptionCard({
             </p>
             <p className="text-xs">{t("scheduledCancelBody")}</p>
           </div>
-          <ResumeSubscriptionButton context={buttonContext}>
+          <BillingActionButton
+            action={resumeSubscription}
+            context={buttonContext}
+          >
             {t("resumeSubscription")}
-          </ResumeSubscriptionButton>
+          </BillingActionButton>
         </div>
       </AlertBanner>
     );
@@ -241,9 +247,12 @@ export async function CurrentSubscriptionCard({
           </div>
           <div className="flex flex-shrink-0 items-center gap-3">
             {cancelRenewalAction}
-            <ReleaseScheduledChangeButton context={buttonContext}>
+            <BillingActionButton
+              action={releaseScheduledChange}
+              context={buttonContext}
+            >
               {t("keepCurrentPlan", { plan: planName })}
-            </ReleaseScheduledChangeButton>
+            </BillingActionButton>
           </div>
         </div>
       </AlertBanner>

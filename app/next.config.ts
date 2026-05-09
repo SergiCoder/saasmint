@@ -16,7 +16,13 @@ const apiProtocol: "http" | "https" = apiUrl
     })()
   : "https";
 
-const isDev = process.env.NODE_ENV === "development";
+// Belt-and-braces: a misconfigured deployment that ships with NODE_ENV unset
+// or "development" must not relax the production CSP. Vercel sets
+// VERCEL_ENV=production on the live deployment; on platforms without it the
+// fallback is a strict NODE_ENV === "development" check.
+const vercelEnv = process.env.NEXT_PUBLIC_VERCEL_ENV ?? process.env.VERCEL_ENV;
+const isDev =
+  process.env.NODE_ENV === "development" && vercelEnv !== "production";
 
 // Origins that need to appear in `img-src` and `connect-src`. The API origin
 // covers user avatars served by Django and the JSON API itself; OAuth
@@ -25,13 +31,17 @@ const apiOrigin = apiUrl ? new URL(apiUrl).origin : "";
 const oauthAvatarHosts = [
   "https://lh3.googleusercontent.com",
   "https://avatars.githubusercontent.com",
+  "https://graph.microsoft.com",
 ];
 
+// This static baseline only applies to routes outside the middleware matcher
+// (currently none of the user-facing pages — `/_next/static`, `/favicon.ico`,
+// etc. — fall in that bucket). The middleware emits a stricter, nonce-bearing
+// CSP for every page response, overriding the value set here. Keep the static
+// fallback `'unsafe-inline'` because Next's static asset routes don't carry a
+// nonce. Dev additionally needs `'unsafe-eval'` for HMR.
 const csp = [
   `default-src 'self'`,
-  // Next.js injects small inline bootstrap scripts for hydration; without
-  // per-request nonce middleware we need `'unsafe-inline'`. Dev additionally
-  // uses `eval` for HMR fast refresh.
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   `style-src 'self' 'unsafe-inline'`,
   `img-src 'self' data: blob: ${apiOrigin} ${oauthAvatarHosts.join(" ")}`.trim(),
@@ -82,6 +92,7 @@ const config: NextConfig = {
       // OAuth provider avatars — one entry per provider we support.
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
       { protocol: "https", hostname: "avatars.githubusercontent.com" },
+      { protocol: "https", hostname: "graph.microsoft.com" },
     ],
     ...(isDev && { dangerouslyAllowLocalIP: true }),
   },

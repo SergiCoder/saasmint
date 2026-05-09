@@ -76,9 +76,10 @@ const pendingPlanCookieOptions = {
 
 /**
  * Store the selected plan slug so the verify-email flow can redirect to
- * checkout after the user confirms their address.  Short-lived (1 hour),
- * not httpOnly so we could read it client-side if needed, but we read it
- * server-side in the verifyEmail action.
+ * checkout after the user confirms their address. Short-lived (1 hour) and
+ * httpOnly — only the verifyEmail server action consumes it, and keeping
+ * it inaccessible to JavaScript means a stored XSS can't enumerate which
+ * plan a visitor was about to buy.
  */
 export async function setPendingPlan(
   plan: string,

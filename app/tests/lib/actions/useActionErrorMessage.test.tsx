@@ -26,21 +26,6 @@ beforeEach(() => {
 });
 
 describe("useActionErrorMessage", () => {
-  it("prefers the server-provided message when set, bypassing translations", () => {
-    mockMessages.mockReturnValue({
-      actionErrors: { invalid_input: "Please fix the fields" },
-    });
-
-    render(
-      <Probe
-        err={{ ok: false, code: "invalid_input", message: "Custom override" }}
-      />,
-    );
-
-    expect(screen.getByTestId("msg")).toHaveTextContent("Custom override");
-    expect(mockT).not.toHaveBeenCalled();
-  });
-
   it("translates the error code when present in the actionErrors namespace", () => {
     mockMessages.mockReturnValue({
       actionErrors: { session_expired: "..." },
@@ -70,15 +55,5 @@ describe("useActionErrorMessage", () => {
     render(<Probe err={{ ok: false, code: "anything" }} />);
 
     expect(screen.getByTestId("msg")).toHaveTextContent("T:unknown_error");
-  });
-
-  it("treats an empty message as absent and falls through to translation", () => {
-    mockMessages.mockReturnValue({
-      actionErrors: { bad: "..." },
-    });
-
-    render(<Probe err={{ ok: false, code: "bad", message: "" }} />);
-
-    expect(screen.getByTestId("msg")).toHaveTextContent("T:bad");
   });
 });

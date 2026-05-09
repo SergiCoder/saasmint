@@ -202,7 +202,6 @@ describe("AuthForm", () => {
     mockState.value = {
       ok: false,
       code: "invalid_credentials",
-      message: "Invalid credentials.",
     };
 
     render(
@@ -219,7 +218,9 @@ describe("AuthForm", () => {
       />,
     );
 
-    expect(screen.getByRole("alert")).toHaveTextContent("Invalid credentials.");
+    // i18n stub echoes the code key — actionErrors namespace is empty in the
+    // global mock, so unknown codes always fall back to "unknown_error".
+    expect(screen.getByRole("alert")).toHaveTextContent("unknown_error");
     expect(screen.queryByTestId("server-alert")).not.toBeInTheDocument();
   });
 
@@ -227,7 +228,6 @@ describe("AuthForm", () => {
     mockState.value = {
       ok: false,
       code: "email_not_verified",
-      message: "Please verify your email.",
     };
 
     const user = userEvent.setup();
@@ -267,7 +267,6 @@ describe("AuthForm", () => {
     mockState.value = {
       ok: false,
       code: "invalid_credentials",
-      message: "Bad password.",
     };
 
     render(

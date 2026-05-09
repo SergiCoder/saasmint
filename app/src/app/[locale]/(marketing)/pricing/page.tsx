@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import {
-  planGateway,
-  productGateway,
-  subscriptionGateway,
-} from "@/infrastructure/registry";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
 import { GetStartedButton } from "./_components/GetStartedButton";
 import { ProductsCheckoutSection } from "@/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection";
 import { renderPlanUpgradeCta } from "@/app/[locale]/(app)/subscription/_lib/renderPlanUpgradeCta";
 import { getOrgMembers } from "@/app/[locale]/(app)/_data/getOrgMembers";
+import { getPlans } from "@/app/[locale]/(app)/_data/getPlans";
+import { getProducts } from "@/app/[locale]/(app)/_data/getProducts";
+import { getSubscriptions } from "@/app/[locale]/(app)/_data/getSubscriptions";
 import { getUserOrgs } from "@/app/[locale]/(app)/_data/getUserOrgs";
 import { canManageBilling } from "@/app/[locale]/(app)/subscription/_data/canManageBilling";
 import { getOptionalUser } from "../_data/getOptionalUser";
@@ -27,11 +25,9 @@ import {
 } from "@/app/[locale]/_lib/pricingInterval";
 import type { Plan } from "@/domain/models/Plan";
 import { PLAN_TIER_FREE, PLAN_TIER_PRO } from "@/domain/models/Plan";
-import type { Product } from "@/domain/models/Product";
 import {
   findPersonalSubscription,
   findTeamSubscription,
-  type Subscription,
 } from "@/domain/models/Subscription";
 
 /**
@@ -81,16 +77,9 @@ export default async function PricingPage({ params, searchParams }: Props) {
   const currency = user?.preferredCurrency;
 
   const [plans, subscriptions, products, userOrgs] = await Promise.all([
-    planGateway.listPlans(currency).catch((err: unknown): Plan[] => {
-      console.error("Failed to fetch plans", err);
-      return [];
-    }),
-    user
-      ? subscriptionGateway.listSubscriptions(currency).catch(() => [])
-      : Promise.resolve([] as Subscription[]),
-    user
-      ? productGateway.listProducts(currency).catch((): Product[] => [])
-      : Promise.resolve([] as Product[]),
+    getPlans(currency),
+    user ? getSubscriptions(currency) : Promise.resolve([]),
+    user ? getProducts(currency) : Promise.resolve([]),
     user ? getUserOrgs() : Promise.resolve([]),
   ]);
 
@@ -144,6 +133,7 @@ export default async function PricingPage({ params, searchParams }: Props) {
     labels: {
       upgrade: t("upgrade"),
       seat: t("seat"),
+      billedYearly: t("billedYearly"),
     },
     planNames,
     planDescriptions,

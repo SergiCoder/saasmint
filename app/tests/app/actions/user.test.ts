@@ -3,8 +3,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 vi.mock("next/navigation", () => ({ redirect: vi.fn() }));
 
 const mockRevalidatePath = vi.fn();
-vi.mock("next/cache", () => ({
-  revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
+vi.mock("@/lib/revalidate", () => ({
+  // The action calls `revalidateLocalizedPath`; assert on the bare path so
+  // tests don't have to enumerate every supported locale.
+  revalidateLocalizedPath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 
 const mockGetCurrentUser = vi.fn();
@@ -59,7 +61,6 @@ describe("user server actions", () => {
       formData.set("preferredCurrency", "eur");
 
       const result = await updateProfile(undefined, formData);
-      expect(mockGetCurrentUser).toHaveBeenCalledOnce();
       expect(mockUpdateProfile).toHaveBeenCalledWith({
         fullName: "Jane Doe",
         preferredLocale: "fr",
@@ -71,7 +72,7 @@ describe("user server actions", () => {
         pronouns: null,
         bio: null,
       });
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/profile");
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/profile", "layout");
       expect(result).toEqual({ ok: true });
     });
 
@@ -177,9 +178,9 @@ describe("user server actions", () => {
       expect(mockUpdateProfile).not.toHaveBeenCalled();
     });
 
-    it("returns session_expired when getCurrentUser throws AuthError", async () => {
+    it("returns session_expired when the gateway throws AuthError", async () => {
       const { AuthError } = await import("@/domain/errors/AuthError");
-      mockGetCurrentUser.mockRejectedValue(
+      mockUpdateProfile.mockRejectedValue(
         new AuthError("No active session", "NO_SESSION"),
       );
 
@@ -188,7 +189,6 @@ describe("user server actions", () => {
 
       const result = await updateProfile(undefined, formData);
       expect(result).toEqual({ ok: false, code: "session_expired" });
-      expect(mockUpdateProfile).not.toHaveBeenCalled();
     });
   });
 
@@ -198,7 +198,6 @@ describe("user server actions", () => {
 
       await updateAvatarUrl("https://example.com/avatar.webp");
 
-      expect(mockGetCurrentUser).toHaveBeenCalledOnce();
       expect(mockUpdateProfile).toHaveBeenCalledWith({
         avatarUrl: "https://example.com/avatar.webp",
       });
@@ -213,9 +212,19 @@ describe("user server actions", () => {
       expect(mockUpdateProfile).toHaveBeenCalledWith({ avatarUrl: null });
     });
 
-    it("returns session_expired when getCurrentUser throws AuthError", async () => {
+    it("rejects non-https avatar URLs (defence-in-depth)", async () => {
+      const result = await updateAvatarUrl("javascript:alert(document.cookie)");
+      expect(result).toEqual({
+        ok: false,
+        code: "invalid_input",
+        fieldErrors: { avatarUrl: "invalid" },
+      });
+      expect(mockUpdateProfile).not.toHaveBeenCalled();
+    });
+
+    it("returns session_expired when the gateway throws AuthError", async () => {
       const { AuthError } = await import("@/domain/errors/AuthError");
-      mockGetCurrentUser.mockRejectedValue(
+      mockUpdateProfile.mockRejectedValue(
         new AuthError("No active session", "NO_SESSION"),
       );
 
@@ -240,11 +249,7 @@ describe("user server actions", () => {
       );
 
       const result = await updateAvatarUrl("https://example.com/avatar.webp");
-      expect(result).toEqual({
-        ok: false,
-        code: "image_too_large",
-        message: "Image too large.",
-      });
+      expect(result).toEqual({ ok: false, code: "image_too_large" });
     });
   });
 
@@ -308,11 +313,7 @@ describe("user server actions", () => {
 
       const result = await deleteAccount();
 
-      expect(result).toEqual({
-        ok: false,
-        code: "sole_owner",
-        message: "Cannot delete: you are the sole owner of an active org.",
-      });
+      expect(result).toEqual({ ok: false, code: "sole_owner" });
     });
 
     it("returns session_expired when the gateway throws AuthError", async () => {

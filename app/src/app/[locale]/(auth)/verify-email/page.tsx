@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
+import { APP_NAME } from "@/lib/appVersion";
 import { VerifyEmailClient } from "./_components/VerifyEmailClient";
 
 interface Props {
@@ -24,7 +25,7 @@ export default async function VerifyEmailPage({ params, searchParams }: Props) {
   ]);
 
   return (
-    <AuthLayout appName="SaaSmint" title={t("title")}>
+    <AuthLayout appName={APP_NAME} title={t("title")}>
       <VerifyEmailClient token={token} />
     </AuthLayout>
   );

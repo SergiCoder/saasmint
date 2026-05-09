@@ -1,4 +1,3 @@
-import { planGateway, productGateway } from "@/infrastructure/registry";
 import type { Plan } from "@/domain/models/Plan";
 import type { Product } from "@/domain/models/Product";
 import {
@@ -8,6 +7,8 @@ import {
 } from "@/domain/models/Subscription";
 import type { Org } from "@/domain/models/Org";
 import type { User } from "@/domain/models/User";
+import { getPlans } from "../../_data/getPlans";
+import { getProducts } from "../../_data/getProducts";
 import { getSubscriptions } from "../../_data/getSubscriptions";
 import { getUserOrgs } from "../../_data/getUserOrgs";
 import { getOrgMembers } from "../../_data/getOrgMembers";
@@ -49,14 +50,8 @@ export async function getSubscriptionPageData(
 
   const [rawSubscriptions, plans, products, userOrgs] = await Promise.all([
     getSubscriptions(currency),
-    planGateway.listPlans(currency).catch((err: unknown): Plan[] => {
-      console.error("Failed to fetch plans", err);
-      return [];
-    }),
-    productGateway.listProducts(currency).catch((err: unknown): Product[] => {
-      console.error("Failed to fetch products", err);
-      return [];
-    }),
+    getPlans(currency),
+    getProducts(currency),
     getUserOrgs(),
   ]);
 
