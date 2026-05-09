@@ -233,7 +233,7 @@ describe("publicApiFetch", () => {
     fetchSpy.mockResolvedValue({
       ok: true,
       status: 200,
-      json: () => Promise.resolve([{ id: "p1" }]),
+      json: () => Promise.resolve({ results: [{ id: "p1" }] }),
     });
 
     const result = await publicApiFetch("/billing/plans/");
@@ -244,14 +244,14 @@ describe("publicApiFetch", () => {
     );
     const headers = fetchSpy.mock.calls[0]![1].headers;
     expect(headers.authorization).toBeUndefined();
-    expect(result).toEqual([{ id: "p1" }]);
+    expect(result).toEqual({ results: [{ id: "p1" }] });
   });
 
   it("does not read auth cookies", async () => {
     fetchSpy.mockResolvedValue({
       ok: true,
       status: 200,
-      json: () => Promise.resolve([]),
+      json: () => Promise.resolve({ results: [] }),
     });
 
     mockGetAccessToken.mockClear();
@@ -311,6 +311,22 @@ describe("publicApiFetch", () => {
       AuthError,
     );
   });
+
+  it("rejects non-object JSON bodies with UNEXPECTED_RESPONSE_SHAPE", async () => {
+    // A backend that returns a bare array, primitive, or `null` would crash
+    // downstream `keysToCamel`/`Object.entries`; the readJson guard surfaces
+    // a clean ApiError instead.
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve([{ id: "p1" }]),
+    });
+
+    await expect(publicApiFetch("/billing/plans/")).rejects.toMatchObject({
+      code: "UNEXPECTED_RESPONSE_SHAPE",
+      status: 200,
+    });
+  });
 });
 
 describe("isNetworkError (via apiFetch)", () => {
@@ -347,7 +363,7 @@ describe("apiFetchOptional", () => {
     fetchSpy.mockResolvedValue({
       ok: true,
       status: 200,
-      json: () => Promise.resolve([]),
+      json: () => Promise.resolve({ results: [] }),
     });
 
     await apiFetchOptional("/billing/plans/");
@@ -361,7 +377,7 @@ describe("apiFetchOptional", () => {
     fetchSpy.mockResolvedValue({
       ok: true,
       status: 200,
-      json: () => Promise.resolve([]),
+      json: () => Promise.resolve({ results: [] }),
     });
 
     await apiFetchOptional("/billing/plans/");
