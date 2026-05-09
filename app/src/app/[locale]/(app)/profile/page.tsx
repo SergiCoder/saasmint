@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PHONE_PREFIXES } from "@/domain/data/phonePrefixes";
-import { getCurrentUser } from "../_data/getCurrentUser";
-import { getMyOrgRole } from "../_data/getMyOrgRole";
+import { getCurrentUser } from "../../_data/getCurrentUser";
+import { getMyOrgRole } from "../../_data/getMyOrgRole";
 import { ChangePasswordForm } from "./_components/ChangePasswordForm";
 import { DangerZone } from "./_components/DangerZone";
 import { ProfileForm } from "./_components/ProfileForm";
