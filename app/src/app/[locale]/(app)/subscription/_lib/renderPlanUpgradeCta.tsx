@@ -51,6 +51,10 @@ interface RenderPlanUpgradeCtaOptions {
 
 type Price = NonNullable<Plan["price"]>;
 
+function isPricedPlan(plan: Plan): plan is Plan & { price: Price } {
+  return plan.price !== null;
+}
+
 interface ChangePlanCtaArgs {
   plan: Plan & { price: Price };
   subInContext: Subscription;
@@ -205,10 +209,10 @@ export function renderPlanUpgradeCta({
   tPlans,
   fullWidth = true,
 }: RenderPlanUpgradeCtaOptions): React.ReactNode {
-  if (!plan.price) return null;
+  if (!isPricedPlan(plan)) return null;
   if (isCurrent) return null;
 
-  const pricedPlan = plan as Plan & { price: Price };
+  const pricedPlan = plan;
   const highlighted = plan.tier === PLAN_TIER_PRO && isUpgrade;
   const subInContext = isTeam ? teamSubscription : personalSubscription;
   const canManageInContext = isTeam ? teamCanManage : personalCanManage;

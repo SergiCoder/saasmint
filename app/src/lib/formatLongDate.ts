@@ -15,15 +15,26 @@ type DateStyle = Extract<
   "long" | "medium"
 >;
 
-const getFormatter = createFormatterCache<Intl.DateTimeFormat>(200, (key) => {
-  const [dateStyle, locale] = key.split("|") as [DateStyle, string];
-  return new Intl.DateTimeFormat(locale, { dateStyle });
-});
+// Per-style formatter caches. Splitting by `dateStyle` keeps each cache
+// keyed by a single locale string, so the factory never has to parse a
+// composite key — eliminates the unsound `key.split("|") as [DateStyle,
+// string]` tuple cast the previous design required.
+const longFormatterCache = createFormatterCache<Intl.DateTimeFormat>(
+  200,
+  (locale) => new Intl.DateTimeFormat(locale, { dateStyle: "long" }),
+);
+const mediumFormatterCache = createFormatterCache<Intl.DateTimeFormat>(
+  200,
+  (locale) => new Intl.DateTimeFormat(locale, { dateStyle: "medium" }),
+);
 
 function formatDate(date: Date, locale: string, dateStyle: DateStyle): string {
-  return Number.isNaN(date.getTime())
-    ? ""
-    : getFormatter(`${dateStyle}|${locale}`).format(date);
+  if (Number.isNaN(date.getTime())) return "";
+  const formatter =
+    dateStyle === "long"
+      ? longFormatterCache(locale)
+      : mediumFormatterCache(locale);
+  return formatter.format(date);
 }
 
 /** Formats `date` as a locale-aware long date (e.g. "January 1, 2026"). */

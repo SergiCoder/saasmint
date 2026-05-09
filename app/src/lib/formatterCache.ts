@@ -15,12 +15,13 @@ export function createFormatterCache<F>(
 ): (key: string) => F {
   const cache = new Map<string, F>();
   return (key) => {
-    let value = cache.get(key);
-    if (!value) {
+    // `Map.has` is the correct cache-miss sentinel: a `get(key)` truthiness
+    // check would re-invoke the factory whenever the cached value was a
+    // legitimate falsy value (`0`, `""`, `null`).
+    if (!cache.has(key)) {
       if (cache.size >= maxSize) cache.clear();
-      value = factory(key);
-      cache.set(key, value);
+      cache.set(key, factory(key));
     }
-    return value;
+    return cache.get(key) as F;
   };
 }
