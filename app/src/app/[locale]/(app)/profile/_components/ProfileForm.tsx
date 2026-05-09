@@ -15,31 +15,40 @@ import { updateProfile, updateAvatarUrl } from "@/app/actions/user";
 import { LOCALES } from "@/lib/i18n/locales";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 import { useResendVerification } from "@/lib/actions/useResendVerification";
+import { SUPPORTED_CURRENCY_CODES } from "@/lib/supportedCurrencies";
 import type { User } from "@/domain/models/User";
 import type { PhonePrefix } from "@/domain/models/PhonePrefix";
 
-const SUPPORTED_CURRENCIES = [
-  { value: "usd", label: "USD — US Dollar" },
-  { value: "eur", label: "EUR — Euro" },
-  { value: "gbp", label: "GBP — British Pound" },
-  { value: "cad", label: "CAD — Canadian Dollar" },
-  { value: "aud", label: "AUD — Australian Dollar" },
-  { value: "chf", label: "CHF — Swiss Franc" },
-  { value: "jpy", label: "JPY — Japanese Yen" },
-  { value: "cny", label: "CNY — Chinese Yuan" },
-  { value: "twd", label: "TWD — New Taiwan Dollar" },
-  { value: "krw", label: "KRW — South Korean Won" },
-  { value: "brl", label: "BRL — Brazilian Real" },
-  { value: "sek", label: "SEK — Swedish Krona" },
-  { value: "nok", label: "NOK — Norwegian Krone" },
-  { value: "dkk", label: "DKK — Danish Krone" },
-  { value: "pln", label: "PLN — Polish Złoty" },
-  { value: "try", label: "TRY — Turkish Lira" },
-  { value: "idr", label: "IDR — Indonesian Rupiah" },
-  { value: "rub", label: "RUB — Russian Ruble" },
-  { value: "sar", label: "SAR — Saudi Riyal" },
-  { value: "aed", label: "AED — UAE Dirham" },
-] as const;
+const CURRENCY_LABELS: Record<
+  (typeof SUPPORTED_CURRENCY_CODES)[number],
+  string
+> = {
+  usd: "USD — US Dollar",
+  eur: "EUR — Euro",
+  gbp: "GBP — British Pound",
+  cad: "CAD — Canadian Dollar",
+  aud: "AUD — Australian Dollar",
+  chf: "CHF — Swiss Franc",
+  jpy: "JPY — Japanese Yen",
+  cny: "CNY — Chinese Yuan",
+  twd: "TWD — New Taiwan Dollar",
+  krw: "KRW — South Korean Won",
+  brl: "BRL — Brazilian Real",
+  sek: "SEK — Swedish Krona",
+  nok: "NOK — Norwegian Krone",
+  dkk: "DKK — Danish Krone",
+  pln: "PLN — Polish Złoty",
+  try: "TRY — Turkish Lira",
+  idr: "IDR — Indonesian Rupiah",
+  rub: "RUB — Russian Ruble",
+  sar: "SAR — Saudi Riyal",
+  aed: "AED — UAE Dirham",
+};
+
+const SUPPORTED_CURRENCIES = SUPPORTED_CURRENCY_CODES.map((value) => ({
+  value,
+  label: CURRENCY_LABELS[value],
+}));
 
 interface ProfileFormProps {
   user: User;
@@ -124,7 +133,8 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
       key={formKey}
       action={formAction}
       onChange={(e) => {
-        if ((e.target as HTMLElement).closest("[data-auto-save]")) return;
+        if (!(e.target instanceof HTMLElement)) return;
+        if (e.target.closest("[data-auto-save]")) return;
         setDirty(true);
       }}
       className="space-y-6"

@@ -66,6 +66,12 @@ export async function getRefreshToken(): Promise<string | undefined> {
 const PENDING_PLAN_NAME = "pending_plan";
 const PENDING_PLAN_CONTEXT_NAME = "pending_plan_context";
 
+// Same regex used at write time in `signUp` (`PLAN_SLUG_RE` in actions/auth.ts).
+// Re-applied at read time as defense-in-depth: even though the cookie is
+// httpOnly, a junk value reaching this layer (cookie poisoning, schema drift)
+// must not propagate into URL construction in the verify-email flow.
+const PENDING_PLAN_SLUG_RE = /^[A-Za-z0-9_-]{1,64}$/;
+
 const pendingPlanCookieOptions = {
   httpOnly: true,
   secure: true,
@@ -108,6 +114,7 @@ export async function consumePendingPlan(): Promise<PendingPlan | undefined> {
   if (plan) {
     cookieStore.delete(PENDING_PLAN_NAME);
     cookieStore.delete(PENDING_PLAN_CONTEXT_NAME);
+    if (!PENDING_PLAN_SLUG_RE.test(plan)) return undefined;
     return { plan, isTeam: context === "team" };
   }
   return undefined;

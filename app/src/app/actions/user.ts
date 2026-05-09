@@ -11,6 +11,7 @@ import {
   type ActionResult,
 } from "@/lib/actions/ActionResult";
 import { getString } from "@/lib/actions/parseFormData";
+import { isSupportedCurrency } from "@/lib/supportedCurrencies";
 
 // Server-action level caps mirror the backend column limits and bound the
 // payload size on direct RPC callers — the backend remains the authority,
@@ -91,6 +92,16 @@ export async function updateProfile(
   const pronouns = getString(formData, "pronouns") || null;
   const bio = getString(formData, "bio") || null;
 
+  if (preferredLocale && !isLocale(preferredLocale)) {
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { preferredLocale: "invalid" },
+    });
+  }
+  if (preferredCurrency && !isSupportedCurrency(preferredCurrency)) {
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { preferredCurrency: "invalid" },
+    });
+  }
   if (timezone !== null && !SUPPORTED_TIMEZONES.has(timezone)) {
     return fail(ACTION_CODE_INVALID_INPUT, {
       fieldErrors: { timezone: "invalid" },

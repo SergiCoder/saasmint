@@ -2,6 +2,7 @@ import type { IPlanGateway } from "@/application/ports/IPlanGateway";
 import type { Plan } from "@/domain/models/Plan";
 import { apiFetchOptional } from "./apiClient";
 import { keysToCamelWithPrice } from "./caseTransform";
+import { parsePaginated } from "./parsers";
 import { PlanSchema } from "./schemas";
 
 function parsePlan(raw: Record<string, unknown>, currency?: string): Plan {
@@ -19,10 +20,10 @@ const PLAN_CACHE_TTL_SECONDS = 60 * 60;
 export class DjangoApiPlanGateway implements IPlanGateway {
   async listPlans(currency?: string): Promise<Plan[]> {
     const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
-    const data = await apiFetchOptional<{ results: Record<string, unknown>[] }>(
+    const data = await apiFetchOptional<Record<string, unknown>>(
       `/billing/plans/${query}`,
       { next: { revalidate: PLAN_CACHE_TTL_SECONDS } },
     );
-    return data.results.map((r) => parsePlan(r, currency));
+    return parsePaginated(data, (r) => parsePlan(r, currency));
   }
 }

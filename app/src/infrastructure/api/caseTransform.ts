@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from "@/domain/models/Price";
 import { isRecord } from "@/lib/typeGuards";
 
 export function toSnakeCase(key: string): string {
@@ -74,7 +75,7 @@ export function flattenPhone(
  */
 export function applyPriceDefaults(
   camel: Record<string, unknown>,
-  fallbackCurrency = "usd",
+  fallbackCurrency: string = DEFAULT_CURRENCY,
 ): void {
   // `isRecord` rejects arrays (`typeof [] === "object"`) and `null`,
   // narrowing without an unchecked cast.
@@ -101,7 +102,7 @@ export function applyPriceDefaults(
  */
 export function keysToCamelWithPrice(
   raw: Record<string, unknown>,
-  fallbackCurrency = "usd",
+  fallbackCurrency: string = DEFAULT_CURRENCY,
 ): Record<string, unknown> {
   const result = keysToCamel(raw);
   applyPriceDefaults(result, fallbackCurrency);

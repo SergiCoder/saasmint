@@ -205,6 +205,8 @@ export const TokenResponseSchema = z.object({
   token_type: z.string().optional(),
 });
 
+export type TokenResponse = z.infer<typeof TokenResponseSchema>;
+
 /**
  * Token envelope returned by `/auth/oauth/exchange/` and
  * `/auth/oauth/confirm-link/`. Adds the optional `expires_in` field used by
@@ -212,4 +214,17 @@ export const TokenResponseSchema = z.object({
  */
 export const OAuthExchangeResponseSchema = TokenResponseSchema.extend({
   expires_in: z.number().int().positive().optional(),
+});
+
+export type OAuthExchangeResponse = z.infer<typeof OAuthExchangeResponseSchema>;
+
+/**
+ * Generic DRF paginated envelope `{ results: [...] }`. Use to wrap any list
+ * endpoint where each row is parsed by an item schema. Items are validated
+ * as `unknown` here and parsed by the caller's per-row parser, so a single
+ * factory covers every paginated gateway without coupling to a specific row
+ * shape.
+ */
+export const PaginatedResultsSchema = z.object({
+  results: z.array(z.unknown()),
 });
