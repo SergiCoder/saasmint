@@ -1,6 +1,7 @@
 import { Badge } from "@/presentation/components/atoms/Badge";
 import { Button } from "@/presentation/components/atoms/Button";
 import { cancelInvitation } from "@/app/actions/org";
+import { formatMediumDate } from "@/lib/formatLongDate";
 import type { Invitation } from "@/domain/models/Invitation";
 
 interface InvitationListProps {
@@ -65,9 +66,7 @@ export function InvitationList({
                 {invitation.invitedBy.fullName}
               </td>
               <td className="py-4 pr-6 text-sm whitespace-nowrap text-gray-500">
-                {new Intl.DateTimeFormat(locale, {
-                  dateStyle: "medium",
-                }).format(new Date(invitation.expiresAt))}
+                {formatMediumDate(new Date(invitation.expiresAt), locale)}
               </td>
               <td className="py-4 pr-6 text-right whitespace-nowrap">
                 <form action={cancelInvitation}>

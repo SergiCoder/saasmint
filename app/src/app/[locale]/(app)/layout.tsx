@@ -4,11 +4,11 @@ import { redirect } from "@/lib/i18n/navigation";
 import { getPathnameWithoutLocale } from "@/lib/pathname";
 import { isLocale } from "@/lib/i18n/routing";
 import { APP_NAME } from "@/lib/appVersion";
-import { findTeamSubscription } from "@/domain/models/Subscription";
+import { hasOrgAccess } from "../_lib/hasOrgAccess";
 import { SignOutButton } from "../_components/SignOutButton";
-import { getCurrentUser } from "./_data/getCurrentUser";
-import { getSubscriptions } from "./_data/getSubscriptions";
-import { getUserOrgs } from "./_data/getUserOrgs";
+import { getCurrentUser } from "../_data/getCurrentUser";
+import { getSubscriptions } from "../_data/getSubscriptions";
+import { getUserOrgs } from "../_data/getUserOrgs";
 
 interface AppLayoutRouteProps {
   children: React.ReactNode;
@@ -52,8 +52,7 @@ export default async function AppLayoutRoute({
     redirect({ href: pathname, locale: preferredLocale });
   }
 
-  const hasOrg =
-    findTeamSubscription(subscriptions) !== null || userOrgs.length > 0;
+  const hasOrg = hasOrgAccess(subscriptions, userOrgs);
 
   const navLinks = [
     { href: "/dashboard", label: t("dashboard") },

@@ -84,6 +84,9 @@ function mockPlans(): void {
 beforeEach(async () => {
   vi.clearAllMocks();
   mockPlans();
+  const { __resetPlanRoutingCacheForTests } =
+    await import("@/lib/planRoutingCache");
+  __resetPlanRoutingCacheForTests();
   const mod = await import("@/app/actions/auth");
   signIn = mod.signIn;
   signUp = mod.signUp;
@@ -279,8 +282,18 @@ describe("auth server actions", () => {
   });
 
   describe("signUp", () => {
+    // Registration returns the same token envelope as login. The action
+    // doesn't *consume* the tokens (the user must verify their email first),
+    // but it parses the response with `TokenResponseSchema` to fail loudly
+    // on a malformed backend reply — every signUp mock must therefore
+    // resolve to a valid token shape.
+    const validTokens = {
+      access_token: "tok_abc",
+      refresh_token: "ref_abc",
+    };
+
     it("calls Django register and redirects to /login on success", async () => {
-      mockPublicApiFetch.mockResolvedValue({});
+      mockPublicApiFetch.mockResolvedValue(validTokens);
 
       const formData = new FormData();
       formData.set("fullName", "Jane Doe");
@@ -331,7 +344,7 @@ describe("auth server actions", () => {
       // Stale slug (e.g. the pre-v0.7.0 personal-free price id) is not in the
       // catalog — registration proceeds as personal and no pending-plan cookie
       // is set, so verify-email won't try to redirect into a Stripe call.
-      mockPublicApiFetch.mockResolvedValue({});
+      mockPublicApiFetch.mockResolvedValue(validTokens);
 
       const formData = new FormData();
       formData.set("fullName", "Jane Doe");
@@ -355,7 +368,7 @@ describe("auth server actions", () => {
       // and the org is created later when the team checkout webhook fires.
       // Frontend still tracks isTeam locally so verify-email redirects into
       // /subscription/team-checkout instead of /subscription/checkout.
-      mockPublicApiFetch.mockResolvedValue({});
+      mockPublicApiFetch.mockResolvedValue(validTokens);
 
       const formData = new FormData();
       formData.set("fullName", "Jane Doe");
@@ -377,7 +390,7 @@ describe("auth server actions", () => {
     });
 
     it("normalizes the email to lowercase and trims whitespace before calling Django", async () => {
-      mockPublicApiFetch.mockResolvedValue({});
+      mockPublicApiFetch.mockResolvedValue(validTokens);
 
       const formData = new FormData();
       formData.set("fullName", "Jane Doe");
@@ -471,7 +484,13 @@ describe("auth server actions", () => {
 
   describe("resetPasswordWithToken", () => {
     it("returns ok when password is updated", async () => {
-      mockPublicApiFetch.mockResolvedValue({});
+      // The action parses the response via `TokenResponseSchema` and writes
+      // the tokens to auth cookies, so the mock must resolve to a real token
+      // envelope rather than `{}`.
+      mockPublicApiFetch.mockResolvedValue({
+        access_token: "tok_abc",
+        refresh_token: "ref_abc",
+      });
 
       const formData = new FormData();
       formData.set("password", "newpassword123");
@@ -691,11 +710,15 @@ describe("auth server actions", () => {
       expect(mockRedirect).toHaveBeenCalledWith("/en/login");
     });
 
-    it("clears cookies and redirects when gateway throws", async () => {
+    it("redirects to /login even when the gateway throws", async () => {
+      // The gateway clears local cookies in its own `finally` block now, so
+      // the action no longer needs to call `clearAuthCookies` itself — its
+      // sole post-throw responsibility is to swallow the error and issue
+      // the login redirect.
       mockSignOut.mockRejectedValue(new Error("Session expired"));
 
       await expect(signOut()).rejects.toThrow("NEXT_REDIRECT");
-      expect(mockClearAuthCookies).toHaveBeenCalledOnce();
+      expect(mockSignOut).toHaveBeenCalledOnce();
       expect(mockRedirect).toHaveBeenCalledWith("/en/login");
     });
 

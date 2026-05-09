@@ -1,16 +1,25 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { findPersonalSubscription } from "@/domain/models/Subscription";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { formatLongDate } from "@/lib/formatLongDate";
-import { getCurrentUser } from "../../_data/getCurrentUser";
-import { getPlans } from "../../_data/getPlans";
-import { getSubscriptions } from "../../_data/getSubscriptions";
+import { getCurrentUser } from "../../../_data/getCurrentUser";
+import { getPlans } from "../../../_data/getPlans";
+import { getSubscriptions } from "../../../_data/getSubscriptions";
 import { TeamCheckoutForm } from "./_components/TeamCheckoutForm";
 
 interface TeamCheckoutPageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ plan?: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: TeamCheckoutPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "billing" });
+  return { title: t("teamCheckout") };
 }
 
 export default async function TeamCheckoutPage({

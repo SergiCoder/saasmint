@@ -13,14 +13,21 @@ export class DjangoApiAuthGateway implements IAuthGateway {
   }
 
   async signOut(): Promise<void> {
+    // Clear local cookies even if the backend revoke fails (network error,
+    // 5xx, missing token). Otherwise a transient outage would leave a stale
+    // session live in the browser and let the next page load attempt to use
+    // an access token whose refresh has already been invalidated upstream.
     const refreshToken = await getRefreshToken();
-    if (refreshToken) {
-      await apiFetchVoid("/auth/logout/", {
-        method: "POST",
-        body: JSON.stringify({ refresh_token: refreshToken }),
-      });
+    try {
+      if (refreshToken) {
+        await apiFetchVoid("/auth/logout/", {
+          method: "POST",
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        });
+      }
+    } finally {
+      await clearAuthCookies();
     }
-    await clearAuthCookies();
   }
 
   async deleteAccount(): Promise<void> {

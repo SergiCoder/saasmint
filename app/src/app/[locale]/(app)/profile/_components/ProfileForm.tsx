@@ -15,31 +15,40 @@ import { updateProfile, updateAvatarUrl } from "@/app/actions/user";
 import { LOCALES } from "@/lib/i18n/locales";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 import { useResendVerification } from "@/lib/actions/useResendVerification";
+import { SUPPORTED_CURRENCY_CODES } from "@/lib/supportedCurrencies";
 import type { User } from "@/domain/models/User";
 import type { PhonePrefix } from "@/domain/models/PhonePrefix";
 
-const SUPPORTED_CURRENCIES = [
-  { value: "usd", label: "USD — US Dollar" },
-  { value: "eur", label: "EUR — Euro" },
-  { value: "gbp", label: "GBP — British Pound" },
-  { value: "cad", label: "CAD — Canadian Dollar" },
-  { value: "aud", label: "AUD — Australian Dollar" },
-  { value: "chf", label: "CHF — Swiss Franc" },
-  { value: "jpy", label: "JPY — Japanese Yen" },
-  { value: "cny", label: "CNY — Chinese Yuan" },
-  { value: "twd", label: "TWD — New Taiwan Dollar" },
-  { value: "krw", label: "KRW — South Korean Won" },
-  { value: "brl", label: "BRL — Brazilian Real" },
-  { value: "sek", label: "SEK — Swedish Krona" },
-  { value: "nok", label: "NOK — Norwegian Krone" },
-  { value: "dkk", label: "DKK — Danish Krone" },
-  { value: "pln", label: "PLN — Polish Złoty" },
-  { value: "try", label: "TRY — Turkish Lira" },
-  { value: "idr", label: "IDR — Indonesian Rupiah" },
-  { value: "rub", label: "RUB — Russian Ruble" },
-  { value: "sar", label: "SAR — Saudi Riyal" },
-  { value: "aed", label: "AED — UAE Dirham" },
-] as const;
+const CURRENCY_LABELS: Record<
+  (typeof SUPPORTED_CURRENCY_CODES)[number],
+  string
+> = {
+  usd: "USD — US Dollar",
+  eur: "EUR — Euro",
+  gbp: "GBP — British Pound",
+  cad: "CAD — Canadian Dollar",
+  aud: "AUD — Australian Dollar",
+  chf: "CHF — Swiss Franc",
+  jpy: "JPY — Japanese Yen",
+  cny: "CNY — Chinese Yuan",
+  twd: "TWD — New Taiwan Dollar",
+  krw: "KRW — South Korean Won",
+  brl: "BRL — Brazilian Real",
+  sek: "SEK — Swedish Krona",
+  nok: "NOK — Norwegian Krone",
+  dkk: "DKK — Danish Krone",
+  pln: "PLN — Polish Złoty",
+  try: "TRY — Turkish Lira",
+  idr: "IDR — Indonesian Rupiah",
+  rub: "RUB — Russian Ruble",
+  sar: "SAR — Saudi Riyal",
+  aed: "AED — UAE Dirham",
+};
+
+const SUPPORTED_CURRENCIES = SUPPORTED_CURRENCY_CODES.map((value) => ({
+  value,
+  label: CURRENCY_LABELS[value],
+}));
 
 interface ProfileFormProps {
   user: User;
@@ -119,14 +128,13 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
     }
   }
 
-  const selectClassName = INPUT_DEFAULT_CLASS;
-
   return (
     <form
       key={formKey}
       action={formAction}
       onChange={(e) => {
-        if ((e.target as HTMLElement).closest("[data-auto-save]")) return;
+        if (!(e.target instanceof HTMLElement)) return;
+        if (e.target.closest("[data-auto-save]")) return;
         setDirty(true);
       }}
       className="space-y-6"
@@ -186,13 +194,14 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
       <FormField
         label={t("jobTitle")}
         name="jobTitle"
+        maxLength={255}
         defaultValue={user.jobTitle ?? ""}
       />
       <PronounsPicker
         t={t}
         defaultValue={user.pronouns}
         onDirty={() => setDirty(true)}
-        selectClassName={selectClassName}
+        selectClassName={INPUT_DEFAULT_CLASS}
       />
       <div className="space-y-1">
         <Label htmlFor="phone">{t("phone")}</Label>
@@ -204,7 +213,7 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
               value={phonePrefix}
               onChange={(e) => setPhonePrefix(e.target.value)}
               aria-label={t("phonePrefix")}
-              className={`${selectClassName} min-w-0 truncate pr-8 pl-3`}
+              className={`${INPUT_DEFAULT_CLASS} min-w-0 truncate pr-8 pl-3`}
             >
               <option value="">{t("phonePrefix")}</option>
               {phonePrefixes.map((p) => (
@@ -226,7 +235,7 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className={selectClassName}
+              className={INPUT_DEFAULT_CLASS}
             />
             {(fieldErrors?.phone === "phoneNumberRequired" ||
               fieldErrors?.phone === "phoneTooShort") && (
@@ -245,7 +254,7 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
             id="preferredLocale"
             name="preferredLocale"
             defaultValue={user.preferredLocale}
-            className={selectClassName}
+            className={INPUT_DEFAULT_CLASS}
           >
             {LOCALES.map(({ code, label }) => (
               <option key={code} value={code}>
@@ -260,7 +269,7 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
             id="preferredCurrency"
             name="preferredCurrency"
             defaultValue={user.preferredCurrency}
-            className={selectClassName}
+            className={INPUT_DEFAULT_CLASS}
           >
             {SUPPORTED_CURRENCIES.map((currency) => (
               <option key={currency.value} value={currency.value}>
@@ -277,7 +286,7 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
             defaultValue={
               user.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone
             }
-            className={selectClassName}
+            className={INPUT_DEFAULT_CLASS}
           >
             {timezones.map((tz) => (
               <option key={tz} value={tz}>
@@ -294,9 +303,10 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
           id="bio"
           name="bio"
           rows={3}
+          maxLength={500}
           defaultValue={user.bio ?? ""}
           placeholder={t("bioPlaceholder")}
-          className={selectClassName}
+          className={INPUT_DEFAULT_CLASS}
         />
       </div>
       <Button type="submit" loading={pending} disabled={!dirty}>

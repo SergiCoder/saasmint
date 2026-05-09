@@ -64,6 +64,37 @@ describe("keysToSnake", () => {
   it("handles empty objects", () => {
     expect(keysToSnake({})).toEqual({});
   });
+
+  it("recursively snakeises nested plain objects", () => {
+    const input = {
+      userProfile: {
+        firstName: "Alice",
+        contactInfo: { phoneNumber: "555-0100" },
+      },
+    };
+    expect(keysToSnake(input)).toEqual({
+      user_profile: {
+        first_name: "Alice",
+        contact_info: { phone_number: "555-0100" },
+      },
+    });
+  });
+
+  it("maps top-level arrays of objects, snakeising each entry", () => {
+    const input = [{ firstName: "A" }, { firstName: "B" }];
+    expect(keysToSnake(input)).toEqual([
+      { first_name: "A" },
+      { first_name: "B" },
+    ]);
+  });
+
+  it("returns primitives untouched at the top level", () => {
+    expect(keysToSnake(42)).toBe(42);
+    expect(keysToSnake("camelCase")).toBe("camelCase");
+    expect(keysToSnake(null)).toBe(null);
+    expect(keysToSnake(undefined)).toBe(undefined);
+    expect(keysToSnake(true)).toBe(true);
+  });
 });
 
 describe("keysToCamel", () => {

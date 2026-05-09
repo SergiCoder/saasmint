@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { CARD_CLASS } from "@/lib/styles";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -20,7 +21,7 @@ export default async function Feature1Page({ params }: Props) {
   return (
     <div className="space-y-8">
       <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div className={CARD_CLASS}>
         <p className="text-gray-600">{t("description")}</p>
       </div>
     </div>

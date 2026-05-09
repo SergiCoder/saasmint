@@ -6,3 +6,5 @@ export interface Price {
   readonly localDisplayAmount: number | null;
   readonly localCurrency: string | null;
 }
+
+export const DEFAULT_CURRENCY = "usd";

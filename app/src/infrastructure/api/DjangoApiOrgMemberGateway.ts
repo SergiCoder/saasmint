@@ -1,20 +1,19 @@
 import type { IOrgMemberGateway } from "@/application/ports/IOrgMemberGateway";
 import type { OrgMember } from "@/domain/models/OrgMember";
 import { apiFetch, apiFetchVoid } from "./apiClient";
-import { parseMember } from "./parsers";
+import { parseMember, parsePaginated } from "./parsers";
 
 export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
   async listMembers(orgId: string): Promise<OrgMember[]> {
-    const data = await apiFetch<{ results: Record<string, unknown>[] }>(
-      `/orgs/${orgId}/members/`,
-    );
-    return data.results.map(parseMember);
+    const data = await apiFetch(`/orgs/${encodeURIComponent(orgId)}/members/`);
+    return parsePaginated(data, parseMember);
   }
 
   async removeMember(orgId: string, userId: string): Promise<void> {
-    await apiFetchVoid(`/orgs/${orgId}/members/${userId}/`, {
-      method: "DELETE",
-    });
+    await apiFetchVoid(
+      `/orgs/${encodeURIComponent(orgId)}/members/${encodeURIComponent(userId)}/`,
+      { method: "DELETE" },
+    );
   }
 
   async updateMemberRole(
@@ -22,14 +21,17 @@ export class DjangoApiOrgMemberGateway implements IOrgMemberGateway {
     userId: string,
     role: OrgMember["role"],
   ): Promise<void> {
-    await apiFetchVoid(`/orgs/${orgId}/members/${userId}/`, {
-      method: "PATCH",
-      body: JSON.stringify({ role }),
-    });
+    await apiFetchVoid(
+      `/orgs/${encodeURIComponent(orgId)}/members/${encodeURIComponent(userId)}/`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({ role }),
+      },
+    );
   }
 
   async transferOwnership(orgId: string, userId: string): Promise<void> {
-    await apiFetchVoid(`/orgs/${orgId}/owner/`, {
+    await apiFetchVoid(`/orgs/${encodeURIComponent(orgId)}/owner/`, {
       method: "PUT",
       body: JSON.stringify({ user_id: userId }),
     });

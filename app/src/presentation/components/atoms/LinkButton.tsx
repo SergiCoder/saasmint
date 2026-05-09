@@ -1,25 +1,19 @@
 import type { ComponentProps } from "react";
 import { Link } from "@/lib/i18n/navigation";
-import { BUTTON_BASE_CLASS } from "@/lib/styles";
+import {
+  BUTTON_BASE_CLASS,
+  BUTTON_SIZE_CLASSES,
+  BUTTON_VARIANT_CLASSES,
+} from "@/lib/styles";
 
-const variants = {
-  primary:
-    "bg-primary-600 text-white hover:bg-primary-700 focus-visible:ring-primary-500",
-  secondary:
-    "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus-visible:ring-primary-500",
-} as const;
-
-const sizes = {
-  sm: "px-3 py-1.5 text-sm",
-  md: "px-4 py-2 text-sm",
-  lg: "px-6 py-3 text-base",
-} as const;
+const LINK_BUTTON_VARIANTS = ["primary", "secondary"] as const;
+type LinkButtonVariant = (typeof LINK_BUTTON_VARIANTS)[number];
 
 type LocaleLinkProps = ComponentProps<typeof Link>;
 
 export interface LinkButtonProps extends Omit<LocaleLinkProps, "className"> {
-  variant?: keyof typeof variants;
-  size?: keyof typeof sizes;
+  variant?: LinkButtonVariant;
+  size?: keyof typeof BUTTON_SIZE_CLASSES;
   fullWidth?: boolean;
   className?: string;
 }
@@ -27,7 +21,9 @@ export interface LinkButtonProps extends Omit<LocaleLinkProps, "className"> {
 /**
  * Anchor styled like `Button`. Use for navigation that should look like a
  * button (e.g. "Get started", "Continue checkout") without violating the
- * convention of reserving `<button>` for actions.
+ * convention of reserving `<button>` for actions. Restricted to the
+ * `primary` / `secondary` variants — `ghost` / `danger` belong on real
+ * `<button>` elements.
  */
 export function LinkButton({
   variant = "primary",
@@ -42,7 +38,7 @@ export function LinkButton({
     <Link
       data-variant={variant}
       data-size={size}
-      className={`${BUTTON_BASE_CLASS} ${variants[variant]} ${sizes[size]} ${widthClass} ${className}`.trim()}
+      className={`${BUTTON_BASE_CLASS} ${BUTTON_VARIANT_CLASSES[variant]} ${BUTTON_SIZE_CLASSES[size]} ${widthClass} ${className}`.trim()}
       {...props}
     >
       {children}

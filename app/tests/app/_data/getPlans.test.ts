@@ -8,12 +8,12 @@ vi.mock("@/infrastructure/registry", () => ({
   },
 }));
 
-let getPlans: typeof import("@/app/[locale]/(app)/_data/getPlans").getPlans;
+let getPlans: typeof import("@/app/[locale]/_data/getPlans").getPlans;
 
 beforeEach(async () => {
   vi.resetModules();
   vi.clearAllMocks();
-  const mod = await import("@/app/[locale]/(app)/_data/getPlans");
+  const mod = await import("@/app/[locale]/_data/getPlans");
   getPlans = mod.getPlans;
 });
 

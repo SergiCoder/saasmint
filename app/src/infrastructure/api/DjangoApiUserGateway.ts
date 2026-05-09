@@ -17,14 +17,20 @@ export class DjangoApiUserGateway implements IUserGateway {
 
   async updateProfile(input: UpdateProfileInput): Promise<User> {
     const { phonePrefix, phone, ...rest } = input;
-    const payload = keysToSnake(rest as Record<string, unknown>);
+    // Widen at the value level (a fresh record built from `rest` whose field
+    // types are subtypes of `unknown`) instead of asserting `rest` is a
+    // `Record<string, unknown>`. The assertion form silently masks future
+    // additions to `UpdateProfileInput` whose value types might not satisfy
+    // the snake-cased payload contract.
+    const restRecord: Record<string, unknown> = { ...rest };
+    const payload = keysToSnake(restRecord);
 
     if ("phonePrefix" in input || "phone" in input) {
       payload.phone =
         phonePrefix && phone ? { prefix: phonePrefix, number: phone } : null;
     }
 
-    const raw = await apiFetch<Record<string, unknown>>("/account/", {
+    const raw = await apiFetch("/account/", {
       method: "PATCH",
       body: JSON.stringify(payload),
     });
@@ -32,7 +38,7 @@ export class DjangoApiUserGateway implements IUserGateway {
   }
 
   async uploadAvatar(formData: FormData): Promise<{ avatarUrl: string }> {
-    const raw = await apiFetch<Record<string, unknown>>("/account/avatar/", {
+    const raw = await apiFetch("/account/avatar/", {
       method: "POST",
       body: formData,
     });

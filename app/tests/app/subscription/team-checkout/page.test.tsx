@@ -22,12 +22,12 @@ vi.mock("next/navigation", () => ({
 }));
 
 const mockGetCurrentUser = vi.fn<() => Promise<User>>();
-vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
+vi.mock("@/app/[locale]/_data/getCurrentUser", () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
 
 const mockGetSubscriptions = vi.fn<() => Promise<Subscription[]>>();
-vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
+vi.mock("@/app/[locale]/_data/getSubscriptions", () => ({
   getSubscriptions: () => mockGetSubscriptions(),
 }));
 

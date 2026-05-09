@@ -1,25 +1,14 @@
 import type { ButtonHTMLAttributes } from "react";
-import { BUTTON_BASE_CLASS } from "@/lib/styles";
+import {
+  BUTTON_BASE_CLASS,
+  BUTTON_SIZE_CLASSES,
+  BUTTON_VARIANT_CLASSES,
+} from "@/lib/styles";
 import { Spinner } from "./Spinner";
 
-const variants = {
-  primary:
-    "bg-primary-600 text-white hover:bg-primary-700 focus-visible:ring-primary-500",
-  secondary:
-    "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus-visible:ring-primary-500",
-  ghost: "text-gray-700 hover:bg-gray-100 focus-visible:ring-primary-500",
-  danger: "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500",
-} as const;
-
-const sizes = {
-  sm: "px-3 py-1.5 text-sm",
-  md: "px-4 py-2 text-sm",
-  lg: "px-6 py-3 text-base",
-} as const;
-
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: keyof typeof variants;
-  size?: keyof typeof sizes;
+  variant?: keyof typeof BUTTON_VARIANT_CLASSES;
+  size?: keyof typeof BUTTON_SIZE_CLASSES;
   loading?: boolean;
 }
 
@@ -37,7 +26,7 @@ export function Button({
       data-variant={variant}
       data-size={size}
       disabled={disabled || loading}
-      className={`${BUTTON_BASE_CLASS} disabled:pointer-events-none disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`${BUTTON_BASE_CLASS} disabled:pointer-events-none disabled:opacity-50 ${BUTTON_VARIANT_CLASSES[variant]} ${BUTTON_SIZE_CLASSES[size]} ${className}`}
       {...props}
     >
       {loading && <Spinner size="sm" className="mr-2" />}

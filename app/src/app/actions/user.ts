@@ -11,6 +11,22 @@ import {
   type ActionResult,
 } from "@/lib/actions/ActionResult";
 import { getString } from "@/lib/actions/parseFormData";
+import { isSupportedCurrency } from "@/lib/supportedCurrencies";
+import { validateFullName } from "@/lib/validateFullName";
+
+// Server-action level caps mirror the backend column limits and bound the
+// payload size on direct RPC callers — the backend remains the authority,
+// but a misbehaving client can't push 100 KB strings through this action.
+const BIO_MAX_LENGTH = 500;
+const JOB_TITLE_MAX_LENGTH = 255;
+const PRONOUNS_MAX_LENGTH = 50;
+
+// `Intl.supportedValuesOf("timeZone")` allocates a fresh array per call;
+// memoise once at module load so each `updateProfile` call does an O(1)
+// Set lookup instead of an O(n) scan over ~600 IANA zones.
+const SUPPORTED_TIMEZONES: ReadonlySet<string> = new Set(
+  Intl.supportedValuesOf("timeZone"),
+);
 
 function isAllowedAvatarUrl(url: string): boolean {
   try {
@@ -47,9 +63,8 @@ export async function updateProfile(
   formData: FormData,
 ): Promise<ActionResult> {
   const fullName = getString(formData, "fullName");
-  if (!fullName || fullName.length < 3 || fullName.length > 255) {
-    return fail("full_name_invalid");
-  }
+  const nameError = validateFullName(fullName);
+  if (nameError) return fail(nameError);
 
   const phonePrefix = getString(formData, "phonePrefix") || null;
   const phone = getString(formData, "phone") || null;
@@ -76,6 +91,37 @@ export async function updateProfile(
   const jobTitle = getString(formData, "jobTitle") || null;
   const pronouns = getString(formData, "pronouns") || null;
   const bio = getString(formData, "bio") || null;
+
+  if (preferredLocale && !isLocale(preferredLocale)) {
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { preferredLocale: "invalid" },
+    });
+  }
+  if (preferredCurrency && !isSupportedCurrency(preferredCurrency)) {
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { preferredCurrency: "invalid" },
+    });
+  }
+  if (timezone !== null && !SUPPORTED_TIMEZONES.has(timezone)) {
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { timezone: "invalid" },
+    });
+  }
+  if (jobTitle !== null && jobTitle.length > JOB_TITLE_MAX_LENGTH) {
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { jobTitle: "tooLong" },
+    });
+  }
+  if (pronouns !== null && pronouns.length > PRONOUNS_MAX_LENGTH) {
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { pronouns: "tooLong" },
+    });
+  }
+  if (bio !== null && bio.length > BIO_MAX_LENGTH) {
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { bio: "tooLong" },
+    });
+  }
 
   try {
     await userGateway.updateProfile({

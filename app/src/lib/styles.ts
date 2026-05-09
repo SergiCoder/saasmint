@@ -26,3 +26,41 @@ export const GHOST_UNDERLINE_BUTTON_CLASS =
  */
 export const BUTTON_BASE_CLASS =
   "inline-flex cursor-pointer items-center justify-center rounded-md font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none";
+
+/**
+ * Variant class strings shared by `Button` and `LinkButton`. `LinkButton`
+ * only needs `primary` / `secondary` (anchors don't render the danger /
+ * ghost variants), and we widen via key access rather than restricting the
+ * map so a future shared variant only requires editing one file.
+ */
+export const BUTTON_VARIANT_CLASSES = {
+  primary:
+    "bg-primary-600 text-white hover:bg-primary-700 focus-visible:ring-primary-500",
+  secondary:
+    "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus-visible:ring-primary-500",
+  ghost: "text-gray-700 hover:bg-gray-100 focus-visible:ring-primary-500",
+  danger: "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500",
+} as const;
+
+/** Size class strings shared by `Button` and `LinkButton`. */
+export const BUTTON_SIZE_CLASSES = {
+  sm: "px-3 py-1.5 text-sm",
+  md: "px-4 py-2 text-sm",
+  lg: "px-6 py-3 text-base",
+} as const;
+
+/**
+ * Standard "white card" container used by every panel on dashboard, profile,
+ * org, and subscription pages. Centralises the shadow/border/padding choice
+ * so a future visual refresh edits one constant instead of grep-replacing
+ * the literal across 10+ files.
+ */
+export const CARD_CLASS =
+  "rounded-lg border border-gray-200 bg-white p-6 shadow-sm";
+
+/**
+ * Section eyebrow label — small uppercase grey text that appears above
+ * card content (e.g. "PLAN", "CREDITS", member-list table headers).
+ */
+export const EYEBROW_LABEL_CLASS =
+  "text-xs font-medium tracking-wide text-gray-500 uppercase";

@@ -1,4 +1,6 @@
 import { Badge } from "@/presentation/components/atoms/Badge";
+import { formatInteger } from "@/lib/formatInteger";
+import { CARD_CLASS, EYEBROW_LABEL_CLASS } from "@/lib/styles";
 
 interface CreditBalanceCardProps {
   /** Section eyebrow, e.g. "Credit balance". */
@@ -23,15 +25,13 @@ export function CreditBalanceCard({
   scopeBadge,
   locale,
 }: CreditBalanceCardProps) {
-  const formattedBalance = new Intl.NumberFormat(locale).format(balance);
+  const formattedBalance = formatInteger(balance, locale);
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className={CARD_CLASS}>
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
-            {eyebrowLabel}
-          </p>
+          <p className={EYEBROW_LABEL_CLASS}>{eyebrowLabel}</p>
           <p className="mt-1 flex items-baseline gap-2">
             <span className="text-3xl font-semibold text-gray-900">
               {formattedBalance}

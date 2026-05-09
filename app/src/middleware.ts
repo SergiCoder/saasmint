@@ -11,7 +11,7 @@ import {
 import { env } from "@/lib/env";
 import { decodeJwtPayload } from "@/lib/jwtDecode";
 import { CSP_NONCE_HEADER, PATHNAME_HEADER } from "@/lib/pathname";
-import { isMemberOf } from "@/lib/typeGuards";
+import { isMemberOf, isRecord } from "@/lib/typeGuards";
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -168,6 +168,17 @@ export default async function middleware(request: NextRequest) {
   let refreshRejected = false;
 
   if (shouldRefresh) {
+    // Mark the refresh as failed: clear in-memory token + delete cookies on
+    // the request so downstream gateway calls don't send a stale token that
+    // will trip their 401 branches. The response cookies are cleared later
+    // via `clearStaleCookiesOnResponse` once the intl response is built.
+    const markRefreshFailed = () => {
+      refreshRejected = true;
+      accessToken = undefined;
+      request.cookies.delete(ACCESS_TOKEN_NAME);
+      request.cookies.delete(REFRESH_TOKEN_NAME);
+    };
+
     try {
       const res = await fetch(`${API_URL}/api/v1/auth/refresh/`, {
         method: "POST",
@@ -177,41 +188,43 @@ export default async function middleware(request: NextRequest) {
 
       if (res.ok) {
         // Zod is intentionally excluded from the Edge bundle (see env.ts),
-        // so we cast directly. If the response shape ever changes, the
-        // server actions that next consume the cookie will re-issue the
-        // refresh on their own apiFetch — degrades gracefully to a redirect.
-        const data = (await res.json()) as {
-          access_token: string;
-          refresh_token: string;
-        };
-        accessToken = data.access_token;
+        // so we narrow with `isRecord` + per-field typeof checks instead.
+        // A malformed body (missing fields, non-strings) must be treated as
+        // a refresh failure — assigning `undefined` to the cookie writes the
+        // literal string "undefined" and silently breaks every subsequent
+        // authenticated request.
+        const data: unknown = await res.json();
+        if (
+          isRecord(data) &&
+          typeof data.access_token === "string" &&
+          typeof data.refresh_token === "string"
+        ) {
+          accessToken = data.access_token;
 
-        // Forward refreshed tokens to downstream server code (pages,
-        // server components) so they read the new token, not the stale one.
-        request.cookies.set(ACCESS_TOKEN_NAME, data.access_token);
-        request.cookies.set(REFRESH_TOKEN_NAME, data.refresh_token);
+          // Forward refreshed tokens to downstream server code (pages,
+          // server components) so they read the new token, not the stale one.
+          request.cookies.set(ACCESS_TOKEN_NAME, data.access_token);
+          request.cookies.set(REFRESH_TOKEN_NAME, data.refresh_token);
 
-        const intlResponse = intlMiddleware(request);
-        intlResponse.cookies.set(
-          ACCESS_TOKEN_NAME,
-          data.access_token,
-          accessTokenCookieOptions,
-        );
-        intlResponse.cookies.set(
-          REFRESH_TOKEN_NAME,
-          data.refresh_token,
-          refreshTokenCookieOptions,
-        );
-        return withPathnameHeader(request, intlResponse, nonce);
+          const intlResponse = intlMiddleware(request);
+          intlResponse.cookies.set(
+            ACCESS_TOKEN_NAME,
+            data.access_token,
+            accessTokenCookieOptions,
+          );
+          intlResponse.cookies.set(
+            REFRESH_TOKEN_NAME,
+            data.refresh_token,
+            refreshTokenCookieOptions,
+          );
+          return withPathnameHeader(request, intlResponse, nonce);
+        }
+        // Malformed body — treat as a refresh failure (same path as a 4xx).
+        markRefreshFailed();
+      } else {
+        // Django rejected the refresh (401/invalid/revoked/user-deleted).
+        markRefreshFailed();
       }
-
-      // Django rejected the refresh (401/invalid/revoked/user-deleted).
-      // Clear the stale cookies so downstream gateway calls don't send a
-      // token that will trip their 401 branches.
-      refreshRejected = true;
-      accessToken = undefined;
-      request.cookies.delete(ACCESS_TOKEN_NAME);
-      request.cookies.delete(REFRESH_TOKEN_NAME);
     } catch {
       // Network error (API unreachable) — leave cookies alone, fall through.
     }

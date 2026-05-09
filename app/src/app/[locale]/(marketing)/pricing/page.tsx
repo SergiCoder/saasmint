@@ -4,11 +4,11 @@ import { PricingSection } from "@/presentation/components/organisms/PricingSecti
 import { GetStartedButton } from "./_components/GetStartedButton";
 import { ProductsCheckoutSection } from "@/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection";
 import { renderPlanUpgradeCta } from "@/app/[locale]/(app)/subscription/_lib/renderPlanUpgradeCta";
-import { getOrgMembers } from "@/app/[locale]/(app)/_data/getOrgMembers";
-import { getPlans } from "@/app/[locale]/(app)/_data/getPlans";
-import { getProducts } from "@/app/[locale]/(app)/_data/getProducts";
-import { getSubscriptions } from "@/app/[locale]/(app)/_data/getSubscriptions";
-import { getUserOrgs } from "@/app/[locale]/(app)/_data/getUserOrgs";
+import { getOrgMembers } from "@/app/[locale]/_data/getOrgMembers";
+import { getPlans } from "@/app/[locale]/_data/getPlans";
+import { getProducts } from "@/app/[locale]/_data/getProducts";
+import { getSubscriptions } from "@/app/[locale]/_data/getSubscriptions";
+import { getUserOrgs } from "@/app/[locale]/_data/getUserOrgs";
 import { canManageBilling } from "@/app/[locale]/(app)/subscription/_data/canManageBilling";
 import { getOptionalUser } from "../_data/getOptionalUser";
 import {
@@ -17,6 +17,7 @@ import {
   buildProductPriceSubLabels,
   buildProductTranslations,
   makeLocalSubLabelFormatter,
+  makeProductSubLabelFormatter,
   splitPlanGroupsByContext,
 } from "@/app/[locale]/_lib/buildPlanCards";
 import {
@@ -64,24 +65,47 @@ export default async function PricingPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, tPlans, tProducts, user, query] = await Promise.all([
+  // Start `getPlans` speculatively in stage 1 — it only needs
+  // `user.preferredCurrency`, so we can chain it off the user fetch here
+  // and let it overlap with the translation loads instead of waiting for a
+  // second `Promise.all` round. Anonymous visitors (the majority on
+  // /pricing) get the cached anonymous-currency response immediately.
+  // `getUserOrgs` doesn't depend on the user object at all and gates only
+  // on the access-token cookie, so it can run alongside everything else.
+  const userPromise = getOptionalUser();
+  const plansPromise = userPromise.then((u) => getPlans(u?.preferredCurrency));
+  const subscriptionsPromise = userPromise.then((u) =>
+    u ? getSubscriptions(u.preferredCurrency) : [],
+  );
+  const productsPromise = userPromise.then((u) =>
+    u ? getProducts(u.preferredCurrency) : [],
+  );
+  const userOrgsPromise = userPromise.then((u) => (u ? getUserOrgs() : []));
+  const [
+    t,
+    tPlans,
+    tProducts,
+    user,
+    query,
+    plans,
+    subscriptions,
+    products,
+    userOrgs,
+  ] = await Promise.all([
     getTranslations("billing"),
     getTranslations("plans"),
     getTranslations("products"),
-    getOptionalUser(),
+    userPromise,
     searchParams,
+    plansPromise,
+    subscriptionsPromise,
+    productsPromise,
+    userOrgsPromise,
   ]);
 
   const selectedInterval = parseIntervalParam(query.interval);
 
   const currency = user?.preferredCurrency;
-
-  const [plans, subscriptions, products, userOrgs] = await Promise.all([
-    getPlans(currency),
-    user ? getSubscriptions(currency) : Promise.resolve([]),
-    user ? getProducts(currency) : Promise.resolve([]),
-    user ? getUserOrgs() : Promise.resolve([]),
-  ]);
 
   const hasOrg = userOrgs.length > 0;
   const isConcurrent = subscriptions.length > 1;
@@ -99,24 +123,29 @@ export default async function PricingPage({ params, searchParams }: Props) {
   // both contexts here is free when the user only happens to land on
   // /pricing first. Both calls run concurrently; either side resolves to
   // false when the user has no sub in that context (cheap default).
-  const [personalCanManage, teamCanManage] = await Promise.all([
+  // The org-members fetch is gated on the same signals that drive the
+  // products picker (signed-in concurrent-billing user with at least one
+  // org) and runs alongside `canManageBilling` so the roundtrip is overlapped
+  // with stage 3 instead of waiting for it serially.
+  const firstOrg = userOrgs.at(0);
+  const orgMembersPromise =
+    user && isConcurrent && firstOrg
+      ? getOrgMembers(firstOrg.id)
+      : Promise.resolve([]);
+
+  const [personalCanManage, teamCanManage, orgMembers] = await Promise.all([
     user && personalSubscription
       ? canManageBilling(user.id, personalSubscription)
       : Promise.resolve(false),
     user && teamSubscription
       ? canManageBilling(user.id, teamSubscription)
       : Promise.resolve(false),
+    orgMembersPromise,
   ]);
 
-  // Resolve org-owner flag only when both signals that gate the picker are
-  // already true (signed-in user with concurrent personal+team subs). Skips
-  // the orgMembers roundtrip in every other case — most page renders.
-  const firstOrg = userOrgs.at(0);
   const isCurrentUserOrgOwner =
     user && isConcurrent && firstOrg
-      ? (await getOrgMembers(firstOrg.id)).some(
-          (m) => m.user.id === user.id && m.role === "owner",
-        )
+      ? orgMembers.some((m) => m.user.id === user.id && m.role === "owner")
       : false;
 
   const allPlans = [...SYNTHETIC_FREE_PLANS, ...plans];
@@ -266,11 +295,7 @@ export default async function PricingPage({ params, searchParams }: Props) {
           priceSubLabels={buildProductPriceSubLabels(
             products,
             locale,
-            ({ localAmount, billedCurrency }) =>
-              t("billedInLocalMonthly", {
-                amount: localAmount,
-                currency: billedCurrency,
-              }),
+            makeProductSubLabelFormatter(t),
           )}
           creditsLabel={t("credits")}
           buyLabel={t("buy")}

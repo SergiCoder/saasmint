@@ -4,24 +4,24 @@ const mockGetCurrentUser = vi.fn();
 const mockGetUserOrgs = vi.fn();
 const mockGetOrgMembers = vi.fn();
 
-vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
+vi.mock("@/app/[locale]/_data/getCurrentUser", () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
 
-vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
+vi.mock("@/app/[locale]/_data/getUserOrgs", () => ({
   getUserOrgs: () => mockGetUserOrgs(),
 }));
 
-vi.mock("@/app/[locale]/(app)/_data/getOrgMembers", () => ({
+vi.mock("@/app/[locale]/_data/getOrgMembers", () => ({
   getOrgMembers: (orgId: string) => mockGetOrgMembers(orgId),
 }));
 
-let getMyOrgRole: typeof import("@/app/[locale]/(app)/_data/getMyOrgRole").getMyOrgRole;
+let getMyOrgRole: typeof import("@/app/[locale]/_data/getMyOrgRole").getMyOrgRole;
 
 beforeEach(async () => {
   vi.resetModules();
   vi.clearAllMocks();
-  const mod = await import("@/app/[locale]/(app)/_data/getMyOrgRole");
+  const mod = await import("@/app/[locale]/_data/getMyOrgRole");
   getMyOrgRole = mod.getMyOrgRole;
 });
 

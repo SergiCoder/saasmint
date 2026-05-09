@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { findTeamSubscription } from "@/domain/models/Subscription";
-import { getCurrentUser } from "../_data/getCurrentUser";
-import { getOrgMembers } from "../_data/getOrgMembers";
-import { getSubscriptions } from "../_data/getSubscriptions";
-import { getUserOrgs } from "../_data/getUserOrgs";
+import { getCurrentUser } from "../../_data/getCurrentUser";
+import { getOrgMembers } from "../../_data/getOrgMembers";
+import { getSubscriptions } from "../../_data/getSubscriptions";
+import { getUserOrgs } from "../../_data/getUserOrgs";
 import { OrgCard } from "@/presentation/components/molecules/OrgCard";
 
 interface Props {

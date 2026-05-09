@@ -33,8 +33,8 @@ export type ActionErr = {
 export type ActionResult<T = void> = ActionOk<T> | ActionErr;
 
 export function ok(): ActionResult<void>;
-export function ok<T>(data: T): ActionResult<T>;
-export function ok<T>(data?: T): ActionResult<T> {
+export function ok<T extends object>(data: T): ActionResult<T>;
+export function ok<T extends object>(data?: T): ActionResult<T> {
   // The `as ActionResult<T>` cast bridges a TypeScript limitation: ActionOk<T>
   // is a conditional type (`T extends void ? { ok: true } : { ok: true; data: T }`)
   // and TS can't evaluate the conditional at the call-site to prove which

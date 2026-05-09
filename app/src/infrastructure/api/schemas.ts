@@ -191,3 +191,40 @@ export const CreditBalanceListResponseSchema = z.object({
 export const CheckoutSessionResponseSchema = z.object({
   url: z.string().url(),
 });
+
+/**
+ * Token envelope returned by `/auth/login/`, `/auth/register/`,
+ * `/auth/reset-password/`, `/auth/change-password/`, and `/auth/verify-email/`.
+ * Validates the snake_case payload at the boundary so a malformed response
+ * can never propagate `undefined` through `setAuthCookies(...)` and write the
+ * literal string `"undefined"` into the access/refresh cookies.
+ */
+export const TokenResponseSchema = z.object({
+  access_token: z.string().min(1),
+  refresh_token: z.string().min(1),
+  token_type: z.string().optional(),
+});
+
+export type TokenResponse = z.infer<typeof TokenResponseSchema>;
+
+/**
+ * Token envelope returned by `/auth/oauth/exchange/` and
+ * `/auth/oauth/confirm-link/`. Adds the optional `expires_in` field used by
+ * `setAuthCookies` to size the access-token cookie.
+ */
+export const OAuthExchangeResponseSchema = TokenResponseSchema.extend({
+  expires_in: z.number().int().positive().optional(),
+});
+
+export type OAuthExchangeResponse = z.infer<typeof OAuthExchangeResponseSchema>;
+
+/**
+ * Generic DRF paginated envelope `{ results: [...] }`. Use to wrap any list
+ * endpoint where each row is parsed by an item schema. Items are validated
+ * as `unknown` here and parsed by the caller's per-row parser, so a single
+ * factory covers every paginated gateway without coupling to a specific row
+ * shape.
+ */
+export const PaginatedResultsSchema = z.object({
+  results: z.array(z.unknown()),
+});

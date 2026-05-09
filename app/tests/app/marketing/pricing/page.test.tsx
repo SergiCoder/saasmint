@@ -97,14 +97,14 @@ vi.mock(
 const mockGetOrgMembers = vi.fn<() => Promise<unknown[]>>(() =>
   Promise.resolve([]),
 );
-vi.mock("@/app/[locale]/(app)/_data/getOrgMembers", () => ({
+vi.mock("@/app/[locale]/_data/getOrgMembers", () => ({
   getOrgMembers: () => mockGetOrgMembers(),
 }));
 
 const mockGetUserOrgs = vi.fn<() => Promise<unknown[]>>(() =>
   Promise.resolve([]),
 );
-vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
+vi.mock("@/app/[locale]/_data/getUserOrgs", () => ({
   getUserOrgs: () => mockGetUserOrgs(),
 }));
 

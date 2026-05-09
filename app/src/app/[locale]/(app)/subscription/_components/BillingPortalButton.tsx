@@ -24,7 +24,15 @@ export function BillingPortalButton({
   context,
 }: BillingPortalButtonProps) {
   return (
-    <form action={openBillingPortal}>
+    <form
+      action={async (formData) => {
+        // Discard the ActionResult: this form is a plain submit (no
+        // useActionState) and its success path redirects to Stripe (never
+        // returns). Failures get logged inside the action; surfacing them
+        // here would require lifting state with useActionState.
+        await openBillingPortal(formData);
+      }}
+    >
       {context ? <input type="hidden" name="context" value={context} /> : null}
       <Button type="submit" variant="secondary">
         {children}

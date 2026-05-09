@@ -6,8 +6,10 @@ import type { Plan } from "@/domain/models/Plan";
  * next-intl's typed translator narrows keys to the literal union derived
  * from the messages JSON; matching the narrow type at the call-site would
  * require knowing the namespace at compile time. Listing the actual
- * runtime keys here makes the contract visible even though the function
- * signature stays at `(key: never)`.
+ * runtime keys here makes the contract visible — and threading the type
+ * through `satisfies DynamicPlanKey` at every dispatch site means a future
+ * tier or context addition is caught by the compiler before the message
+ * lookup blows up at runtime.
  */
 export type DynamicPlanKey =
   | `${"personal" | "team"}.1.name`
@@ -27,12 +29,13 @@ export type DynamicPlanKey =
  * Parameter type `(key: never) => string` is assignable from any typed
  * translator — `never` is the bottom type, so a function that accepts a
  * specific literal union is assignable where one accepting `never` is
- * required. The set of keys this helper actually issues is documented in
- * {@link DynamicPlanKey} above.
+ * required. The `satisfies DynamicPlanKey` check on the template literal
+ * keeps key construction honest without weakening the translator parameter.
  */
 export function translatePlanName(
   tPlans: (key: never) => string,
   plan: Pick<Plan, "context" | "tier">,
 ): string {
-  return tPlans(`${plan.context}.${plan.tier}.name` as never);
+  const key = `${plan.context}.${plan.tier}.name` satisfies DynamicPlanKey;
+  return tPlans(key as never);
 }

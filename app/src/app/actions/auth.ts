@@ -6,10 +6,16 @@ import {
   publicApiFetch,
   publicApiFetchVoid,
 } from "@/infrastructure/api/apiClient";
-import { ApiError } from "@/domain/errors/ApiError";
-import { authGateway, planGateway } from "@/infrastructure/registry";
 import {
-  clearAuthCookies,
+  OAuthExchangeResponseSchema,
+  TokenResponseSchema,
+  type OAuthExchangeResponse,
+  type TokenResponse,
+} from "@/infrastructure/api/schemas";
+import { ApiError } from "@/domain/errors/ApiError";
+import { authGateway } from "@/infrastructure/registry";
+import { getPlanRouting } from "@/lib/planRoutingCache";
+import {
   consumeOAuthFlowCookies,
   consumePendingPlan,
   setAuthCookies,
@@ -31,22 +37,9 @@ import {
 } from "@/lib/actions/ActionResult";
 import { getString } from "@/lib/actions/parseFormData";
 import { getLocale } from "@/lib/pathname";
-import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
-
-// Declared as `type` rather than `interface` so they satisfy the
-// `Record<string, unknown>` index-signature constraint on `apiFetch<T>`.
-type TokenResponse = {
-  access_token: string;
-  refresh_token: string;
-  token_type?: string;
-};
-
-type OAuthExchangeResponse = {
-  access_token: string;
-  refresh_token: string;
-  token_type?: string;
-  expires_in?: number;
-};
+import { validateNewPassword } from "@/lib/passwordPolicy";
+import { isValidPlanSlug } from "@/lib/planSlug";
+import { validateFullName } from "@/lib/validateFullName";
 
 export type StartOAuthResult = { redirectUrl: string };
 
@@ -59,12 +52,6 @@ export type ExchangeOAuthResult =
         | "oauth_error"
         | "oauth_email_unverified_collision";
     };
-
-const PLAN_SLUG_RE = /^[A-Za-z0-9_-]{1,64}$/;
-
-function isValidPlanSlug(value: unknown): value is string {
-  return typeof value === "string" && PLAN_SLUG_RE.test(value);
-}
 
 interface PlanRouting {
   context: "personal" | "team";
@@ -82,19 +69,16 @@ async function resolvePlanRouting(
   priceId: string,
 ): Promise<PlanRouting | undefined> {
   try {
-    const plans = await planGateway.listPlans();
-    for (const plan of plans) {
-      if (plan.price?.id === priceId) {
-        return { context: plan.context };
-      }
-    }
+    const routing = await getPlanRouting();
+    const context = routing.get(priceId);
+    return context ? { context } : undefined;
   } catch (err) {
     // Swallow on a genuine outage so signup still proceeds as personal,
     // but surface the failure server-side so a misrouted team signup isn't
     // invisible to operators.
     console.error("resolvePlanRouting failed", err);
+    return undefined;
   }
-  return undefined;
 }
 
 interface Credentials {
@@ -124,10 +108,11 @@ export async function signIn(
 
   let data: TokenResponse;
   try {
-    data = await publicApiFetch<TokenResponse>("/auth/login/", {
+    const raw = await publicApiFetch("/auth/login/", {
       method: "POST",
       body: JSON.stringify(credentials),
     });
+    data = TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Sign-in failed", err);
     return toActionError(err);
@@ -159,9 +144,8 @@ export async function signUp(
   if (!credentials) return fail("email_and_password_required");
 
   const fullName = getString(formData, "fullName");
-  if (!fullName || fullName.length < 3 || fullName.length > 255) {
-    return fail("full_name_invalid");
-  }
+  const nameError = validateFullName(fullName);
+  if (nameError) return fail(nameError);
 
   const planField = formData.get("plan");
   const slug = isValidPlanSlug(planField) ? planField : undefined;
@@ -170,7 +154,7 @@ export async function signUp(
   const isTeam = routing?.context === "team";
 
   try {
-    await publicApiFetch<TokenResponse>("/auth/register/", {
+    const raw = await publicApiFetch("/auth/register/", {
       method: "POST",
       body: JSON.stringify({
         email: credentials.email,
@@ -178,6 +162,10 @@ export async function signUp(
         full_name: fullName,
       }),
     });
+    // Registration returns a token envelope but we don't consume it — the
+    // user must verify their email before logging in. Parse anyway to fail
+    // loudly on a malformed backend response.
+    TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Sign-up failed", err);
     return toActionError(err);
@@ -228,16 +216,16 @@ export async function resetPasswordWithToken(
   const token = getString(formData, "token");
 
   if (!token) return fail("invalid_reset_link");
-  if (!password || password.length < PASSWORD_MIN_LENGTH)
-    return fail("password_too_short");
-  if (password !== confirmPassword) return fail("passwords_do_not_match");
+  const passwordError = validateNewPassword(password, confirmPassword);
+  if (passwordError) return fail(passwordError);
 
   let data: TokenResponse;
   try {
-    data = await publicApiFetch<TokenResponse>("/auth/reset-password/", {
+    const raw = await publicApiFetch("/auth/reset-password/", {
       method: "POST",
       body: JSON.stringify({ token, password }),
     });
+    data = TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Reset-password failed", err);
     return fail("invalid_reset_link");
@@ -256,19 +244,19 @@ export async function changePassword(
   const confirmPassword = getString(formData, "confirmPassword");
 
   if (!currentPassword) return fail("current_password_required");
-  if (!password || password.length < PASSWORD_MIN_LENGTH)
-    return fail("password_too_short");
-  if (password !== confirmPassword) return fail("passwords_do_not_match");
+  const passwordError = validateNewPassword(password, confirmPassword);
+  if (passwordError) return fail(passwordError);
 
   let data: TokenResponse;
   try {
-    data = await apiFetch<TokenResponse>("/auth/change-password/", {
+    const raw = await apiFetch("/auth/change-password/", {
       method: "POST",
       body: JSON.stringify({
         current_password: currentPassword,
         new_password: password,
       }),
     });
+    data = TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Change-password failed", err);
     return toActionError(err);
@@ -305,10 +293,11 @@ export async function verifyEmail(
 ): Promise<ActionResult<{ pendingPlan?: string; isTeamPlan?: boolean }>> {
   let data: TokenResponse;
   try {
-    data = await publicApiFetch<TokenResponse>("/auth/verify-email/", {
+    const raw = await publicApiFetch("/auth/verify-email/", {
       method: "POST",
       body: JSON.stringify({ token }),
     });
+    data = TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Verify-email failed", err);
     return toActionError(err);
@@ -321,8 +310,6 @@ export async function verifyEmail(
   );
 }
 
-const APP_URL = env.NEXT_PUBLIC_APP_URL;
-
 export async function startOAuth(
   provider: OAuthProvider,
   nextPath: string | undefined,
@@ -331,7 +318,7 @@ export async function startOAuth(
     throw new Error("Invalid OAuth provider");
   }
 
-  const safeNext = validateNext(nextPath, APP_URL);
+  const safeNext = validateNext(nextPath, env.NEXT_PUBLIC_APP_URL);
 
   // Login-fixation gate: HttpOnly flag cookie, not a nonce. Accepts a
   // seconds-wide race (victim mid-flow when they click attacker's link);
@@ -355,10 +342,11 @@ export async function exchangeOAuthCode(
 
   let data: OAuthExchangeResponse;
   try {
-    data = await publicApiFetch<OAuthExchangeResponse>(
-      "/auth/oauth/exchange/",
-      { method: "POST", body: JSON.stringify({ code }) },
-    );
+    const raw = await publicApiFetch("/auth/oauth/exchange/", {
+      method: "POST",
+      body: JSON.stringify({ code }),
+    });
+    data = OAuthExchangeResponseSchema.parse(raw);
   } catch (err) {
     console.error("OAuth exchange failed", err);
     if (
@@ -371,7 +359,7 @@ export async function exchangeOAuthCode(
   }
 
   await setAuthCookies(data.access_token, data.refresh_token, data.expires_in);
-  return { ok: true, next: validateNext(next, APP_URL) };
+  return { ok: true, next: validateNext(next, env.NEXT_PUBLIC_APP_URL) };
 }
 
 /**
@@ -395,10 +383,11 @@ export async function confirmOAuthLink(
 
   let data: OAuthExchangeResponse;
   try {
-    data = await publicApiFetch<OAuthExchangeResponse>(
-      "/auth/oauth/confirm-link/",
-      { method: "POST", body: JSON.stringify({ token }) },
-    );
+    const raw = await publicApiFetch("/auth/oauth/confirm-link/", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    });
+    data = OAuthExchangeResponseSchema.parse(raw);
   } catch (err) {
     console.error("OAuth confirm-link failed", err);
     return toActionError(err);
@@ -413,8 +402,9 @@ export async function signOut(): Promise<void> {
   try {
     await authGateway.signOut();
   } catch {
-    // Session already expired — clear cookies and redirect anyway
-    await clearAuthCookies();
+    // Backend revoke failed (already-expired session, network error, 5xx):
+    // the gateway's `finally` has already cleared local cookies, so we can
+    // swallow and proceed straight to the login redirect.
   }
   redirect(`/${locale}/login`);
 }

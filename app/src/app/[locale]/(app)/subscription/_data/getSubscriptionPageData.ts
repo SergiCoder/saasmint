@@ -6,13 +6,35 @@ import {
   type Subscription,
 } from "@/domain/models/Subscription";
 import type { Org } from "@/domain/models/Org";
+import type { OrgMember } from "@/domain/models/OrgMember";
 import type { User } from "@/domain/models/User";
-import { getPlans } from "../../_data/getPlans";
-import { getProducts } from "../../_data/getProducts";
-import { getSubscriptions } from "../../_data/getSubscriptions";
-import { getUserOrgs } from "../../_data/getUserOrgs";
-import { getOrgMembers } from "../../_data/getOrgMembers";
+import { getPlans } from "../../../_data/getPlans";
+import { getProducts } from "../../../_data/getProducts";
+import { getSubscriptions } from "../../../_data/getSubscriptions";
+import { getUserOrgs } from "../../../_data/getUserOrgs";
+import { getOrgMembers } from "../../../_data/getOrgMembers";
 import { canManageBilling } from "./canManageBilling";
+
+async function resolveTeamOwnerName(
+  team: Subscription | null,
+  firstOrg: Org | undefined,
+  orgMembersPromise: Promise<readonly OrgMember[]>,
+): Promise<string | null> {
+  if (!team || !firstOrg) return null;
+  const members = await orgMembersPromise;
+  const owner = members.find((m) => m.role === "owner");
+  return owner?.user.fullName ?? null;
+}
+
+async function resolveIsCurrentUserOrgOwner(
+  firstOrg: Org | undefined,
+  userId: string,
+  orgMembersPromise: Promise<readonly OrgMember[]>,
+): Promise<boolean> {
+  if (!firstOrg) return false;
+  const members = await orgMembersPromise;
+  return members.some((m) => m.user.id === userId && m.role === "owner");
+}
 
 export interface SubscriptionPageData {
   /**
@@ -80,17 +102,8 @@ export async function getSubscriptionPageData(
           async (s) => [s.id, await canManageBilling(user.id, s)] as const,
         ),
       ),
-      (async (): Promise<string | null> => {
-        if (!team || !firstOrg) return null;
-        const members = await orgMembersPromise;
-        const owner = members.find((m) => m.role === "owner");
-        return owner?.user.fullName ?? null;
-      })(),
-      (async (): Promise<boolean> => {
-        if (!firstOrg) return false;
-        const members = await orgMembersPromise;
-        return members.some((m) => m.user.id === user.id && m.role === "owner");
-      })(),
+      resolveTeamOwnerName(team, firstOrg, orgMembersPromise),
+      resolveIsCurrentUserOrgOwner(firstOrg, user.id, orgMembersPromise),
     ]);
   const canManageById = Object.fromEntries(canManageEntries);
 

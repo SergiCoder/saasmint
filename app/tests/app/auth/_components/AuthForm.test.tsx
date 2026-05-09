@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { ActionResult } from "@/lib/actions/ActionResult";
+import { ok, type ActionResult } from "@/lib/actions/ActionResult";
 
 // Stub ResendVerificationLink so AuthForm tests don't exercise the sub-component
 // in detail — that component has its own test file.
@@ -28,7 +28,7 @@ vi.mock("react", async (importOriginal) => {
 
 import { AuthForm } from "@/app/[locale]/(auth)/_components/AuthForm";
 
-const noopAction = vi.fn(async () => undefined);
+const noopAction = vi.fn(async (): Promise<ActionResult> => ok());
 
 beforeEach(() => {
   mockState.value = null;
