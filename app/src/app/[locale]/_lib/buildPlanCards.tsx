@@ -2,12 +2,16 @@ import type { Plan, PlanTier } from "@/domain/models/Plan";
 import { PLAN_TIER_PRO } from "@/domain/models/Plan";
 import type { Product } from "@/domain/models/Product";
 import { formatCurrency } from "@/lib/formatCurrency";
+import type { DynamicPlanKey } from "@/lib/i18n/planTranslation";
 
 /**
  * Build translated plan name / description maps keyed by `"{context}.{tier}"`.
  * Consumers pass their typed `tPlans` directly; the `(key: never) => string`
  * parameter accepts any typed next-intl translator (never is the bottom
- * type) and localises the dynamic-key `as never` cast to this helper.
+ * type) and localises the dynamic-key `as never` cast to this helper. The
+ * `satisfies DynamicPlanKey` checks keep the constructed key strings in sync
+ * with the documented key union so a future tier or context addition is
+ * caught at compile time.
  */
 export function buildPlanTranslations(
   plans: Plan[],
@@ -21,14 +25,24 @@ export function buildPlanTranslations(
   for (const plan of plans) {
     const key = `${plan.context}.${plan.tier}`;
     if (!planNames[key]) {
-      planNames[key] = tPlans(`${plan.context}.${plan.tier}.name` as never);
-      planDescriptions[key] = tPlans(
-        `${plan.context}.${plan.tier}.description` as never,
-      );
+      const nameKey =
+        `${plan.context}.${plan.tier}.name` satisfies DynamicPlanKey;
+      const descKey =
+        `${plan.context}.${plan.tier}.description` satisfies DynamicPlanKey;
+      planNames[key] = tPlans(nameKey as never);
+      planDescriptions[key] = tPlans(descKey as never);
     }
   }
   return { planNames, planDescriptions };
 }
+
+/**
+ * Documented union of dynamic message keys read by buildProductTranslations.
+ * Products are keyed by their integer credit count; bumping this when a new
+ * SKU lands keeps the helper honest at compile time. New entries must match
+ * the keys present in `messages/<locale>.json` under the `products` namespace.
+ */
+export type DynamicProductKey = `${number}`;
 
 /**
  * Build the translated product name map keyed by credit count. Used by the
@@ -40,7 +54,10 @@ export function buildProductTranslations(
   tProducts: (key: never) => string,
 ): Record<number, string> {
   return Object.fromEntries(
-    products.map((p) => [p.credits, tProducts(`${p.credits}` as never)]),
+    products.map((p) => {
+      const key = `${p.credits}` satisfies DynamicProductKey;
+      return [p.credits, tProducts(key as never)];
+    }),
   );
 }
 

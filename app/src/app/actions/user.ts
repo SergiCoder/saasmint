@@ -12,6 +12,20 @@ import {
 } from "@/lib/actions/ActionResult";
 import { getString } from "@/lib/actions/parseFormData";
 
+// Server-action level caps mirror the backend column limits and bound the
+// payload size on direct RPC callers — the backend remains the authority,
+// but a misbehaving client can't push 100 KB strings through this action.
+const BIO_MAX_LENGTH = 500;
+const JOB_TITLE_MAX_LENGTH = 255;
+const PRONOUNS_MAX_LENGTH = 50;
+
+// `Intl.supportedValuesOf("timeZone")` allocates a fresh array per call;
+// memoise once at module load so each `updateProfile` call does an O(1)
+// Set lookup instead of an O(n) scan over ~600 IANA zones.
+const SUPPORTED_TIMEZONES: ReadonlySet<string> = new Set(
+  Intl.supportedValuesOf("timeZone"),
+);
+
 function isAllowedAvatarUrl(url: string): boolean {
   try {
     const parsed = new URL(url);
@@ -76,6 +90,27 @@ export async function updateProfile(
   const jobTitle = getString(formData, "jobTitle") || null;
   const pronouns = getString(formData, "pronouns") || null;
   const bio = getString(formData, "bio") || null;
+
+  if (timezone !== null && !SUPPORTED_TIMEZONES.has(timezone)) {
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { timezone: "invalid" },
+    });
+  }
+  if (jobTitle !== null && jobTitle.length > JOB_TITLE_MAX_LENGTH) {
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { jobTitle: "tooLong" },
+    });
+  }
+  if (pronouns !== null && pronouns.length > PRONOUNS_MAX_LENGTH) {
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { pronouns: "tooLong" },
+    });
+  }
+  if (bio !== null && bio.length > BIO_MAX_LENGTH) {
+    return fail(ACTION_CODE_INVALID_INPUT, {
+      fieldErrors: { bio: "tooLong" },
+    });
+  }
 
   try {
     await userGateway.updateProfile({

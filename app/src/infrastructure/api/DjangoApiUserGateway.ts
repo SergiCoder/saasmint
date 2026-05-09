@@ -17,7 +17,13 @@ export class DjangoApiUserGateway implements IUserGateway {
 
   async updateProfile(input: UpdateProfileInput): Promise<User> {
     const { phonePrefix, phone, ...rest } = input;
-    const payload = keysToSnake(rest as Record<string, unknown>);
+    // Widen at the value level (a fresh record built from `rest` whose field
+    // types are subtypes of `unknown`) instead of asserting `rest` is a
+    // `Record<string, unknown>`. The assertion form silently masks future
+    // additions to `UpdateProfileInput` whose value types might not satisfy
+    // the snake-cased payload contract.
+    const restRecord: Record<string, unknown> = { ...rest };
+    const payload = keysToSnake(restRecord);
 
     if ("phonePrefix" in input || "phone" in input) {
       payload.phone =

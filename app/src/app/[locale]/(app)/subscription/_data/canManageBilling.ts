@@ -21,6 +21,12 @@ export const canManageBilling = cache(async function canManageBilling(
   subscription: Subscription,
   options?: { preloadedOrgs?: readonly Org[] },
 ): Promise<boolean> {
+  // Personal subs are always manageable by their owner. The implicit
+  // invariant — `subscription` was fetched via the caller's session and
+  // therefore belongs to `userId` — is enforced upstream by the gateway,
+  // which only returns rows scoped to the authenticated user. Callers must
+  // never invoke this with a `subscription` taken from a different user's
+  // session, or the personal-context branch will silently grant access.
   if (subscription.plan.context === "personal") return true;
 
   try {

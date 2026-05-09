@@ -15,6 +15,22 @@ import {
   SubscriptionSchema,
 } from "./schemas";
 
+/**
+ * Apply price defaults to a subscription's nested `plan` and `scheduledPlan`
+ * shapes. `keysToCamelWithPrice` was designed for flat plan/product objects;
+ * subscriptions wrap their plan one level deeper, so this helper consolidates
+ * the manual walk used by `listSubscriptions` and `changePlan`.
+ */
+function applySubscriptionPriceDefaults(
+  sub: Record<string, unknown>,
+  currency?: string,
+): void {
+  if (isRecord(sub.plan)) applyPriceDefaults(sub.plan, currency);
+  if (isRecord(sub.scheduledPlan)) {
+    applyPriceDefaults(sub.scheduledPlan, currency);
+  }
+}
+
 export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
   async listSubscriptions(currency?: string): Promise<Subscription[]> {
     const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
@@ -25,10 +41,7 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
     if (isRecord(camel) && Array.isArray(camel.results)) {
       for (const row of camel.results) {
         if (!isRecord(row)) continue;
-        if (isRecord(row.plan)) applyPriceDefaults(row.plan, currency);
-        if (isRecord(row.scheduledPlan)) {
-          applyPriceDefaults(row.scheduledPlan, currency);
-        }
+        applySubscriptionPriceDefaults(row, currency);
       }
     }
     return SubscriptionListResponseSchema.parse(camel).results;
@@ -73,12 +86,7 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
       },
     );
     const camel = keysToCamel(raw);
-    if (isRecord(camel)) {
-      if (isRecord(camel.plan)) applyPriceDefaults(camel.plan);
-      if (isRecord(camel.scheduledPlan)) {
-        applyPriceDefaults(camel.scheduledPlan);
-      }
-    }
+    if (isRecord(camel)) applySubscriptionPriceDefaults(camel);
     return SubscriptionSchema.parse(camel);
   }
 

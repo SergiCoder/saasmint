@@ -6,6 +6,16 @@ import { authGateway } from "@/infrastructure/registry";
 import { getLocale } from "@/lib/pathname";
 
 /**
+ * Pure cached fetch of the current user. Kept separate from `getCurrentUser`
+ * because `React.cache` does not memoize thrown values — folding the redirect
+ * throw into the cached function would make every caller re-run the full
+ * `GET /account/` round-trip on auth failure, defeating the cache.
+ */
+const fetchCurrentUser = cache(function fetchCurrentUser(): Promise<User> {
+  return authGateway.getCurrentUser();
+});
+
+/**
  * Fetches the current user, redirecting to /login on any failure.
  * Use in (app) server components instead of calling the gateway directly,
  * because Next.js renders layout and page in parallel — the layout's redirect
@@ -15,17 +25,16 @@ import { getLocale } from "@/lib/pathname";
  * auth probe that can't complete still surfaces the sign-in screen rather
  * than an opaque 500.
  *
- * Wrapped with React.cache() so that layout + page share a single request
- * per server render pass.
+ * The successful path is cached via `fetchCurrentUser` so layout + page share
+ * a single request per server render pass; the failure path falls through to
+ * `redirect`, which throws and is intentionally not cached.
  */
-export const getCurrentUser = cache(
-  async function getCurrentUser(): Promise<User> {
-    try {
-      return await authGateway.getCurrentUser();
-    } catch (err) {
-      const code = err instanceof AuthError ? err.code : "UNAUTHENTICATED";
-      const locale = await getLocale();
-      redirect(`/${locale}/login?error=${encodeURIComponent(code)}`);
-    }
-  },
-);
+export async function getCurrentUser(): Promise<User> {
+  try {
+    return await fetchCurrentUser();
+  } catch (err) {
+    const code = err instanceof AuthError ? err.code : "UNAUTHENTICATED";
+    const locale = await getLocale();
+    redirect(`/${locale}/login?error=${encodeURIComponent(code)}`);
+  }
+}

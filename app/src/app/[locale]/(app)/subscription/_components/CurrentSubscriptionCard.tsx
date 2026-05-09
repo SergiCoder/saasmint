@@ -138,25 +138,20 @@ export async function CurrentSubscriptionCard({
 
   const cancelRenewalAction =
     canManage && !isScheduledToCancel && !isFullyCanceled ? (
-      isTeam ? (
-        <CancelRenewalButton
-          label={t("cancelRenewal")}
-          confirmTitle={t("cancelRenewalTeamTitle")}
-          confirmBody={t("cancelRenewalTeamBody", { date: periodEndDisplay })}
-          confirmAction={t("cancelRenewalTeam")}
-          confirmDismiss={t("cancelRenewalKeep")}
-          context={buttonContext}
-        />
-      ) : (
-        <CancelRenewalButton
-          label={t("cancelRenewal")}
-          confirmTitle={t("cancelRenewalTitle")}
-          confirmBody={t("cancelRenewalBody", { date: periodEndDisplay })}
-          confirmAction={t("cancelRenewal")}
-          confirmDismiss={t("cancelRenewalKeep")}
-          context={buttonContext}
-        />
-      )
+      <CancelRenewalButton
+        label={t("cancelRenewal")}
+        confirmTitle={
+          isTeam ? t("cancelRenewalTeamTitle") : t("cancelRenewalTitle")
+        }
+        confirmBody={
+          isTeam
+            ? t("cancelRenewalTeamBody", { date: periodEndDisplay })
+            : t("cancelRenewalBody", { date: periodEndDisplay })
+        }
+        confirmAction={isTeam ? t("cancelRenewalTeam") : t("cancelRenewal")}
+        confirmDismiss={t("cancelRenewalKeep")}
+        context={buttonContext}
+      />
     ) : null;
 
   const eyebrowLabel = isTeam ? t("currentTeamPlan") : t("currentPersonalPlan");

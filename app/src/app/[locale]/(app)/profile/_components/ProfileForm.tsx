@@ -119,8 +119,6 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
     }
   }
 
-  const selectClassName = INPUT_DEFAULT_CLASS;
-
   return (
     <form
       key={formKey}
@@ -186,13 +184,14 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
       <FormField
         label={t("jobTitle")}
         name="jobTitle"
+        maxLength={255}
         defaultValue={user.jobTitle ?? ""}
       />
       <PronounsPicker
         t={t}
         defaultValue={user.pronouns}
         onDirty={() => setDirty(true)}
-        selectClassName={selectClassName}
+        selectClassName={INPUT_DEFAULT_CLASS}
       />
       <div className="space-y-1">
         <Label htmlFor="phone">{t("phone")}</Label>
@@ -204,7 +203,7 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
               value={phonePrefix}
               onChange={(e) => setPhonePrefix(e.target.value)}
               aria-label={t("phonePrefix")}
-              className={`${selectClassName} min-w-0 truncate pr-8 pl-3`}
+              className={`${INPUT_DEFAULT_CLASS} min-w-0 truncate pr-8 pl-3`}
             >
               <option value="">{t("phonePrefix")}</option>
               {phonePrefixes.map((p) => (
@@ -226,7 +225,7 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className={selectClassName}
+              className={INPUT_DEFAULT_CLASS}
             />
             {(fieldErrors?.phone === "phoneNumberRequired" ||
               fieldErrors?.phone === "phoneTooShort") && (
@@ -245,7 +244,7 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
             id="preferredLocale"
             name="preferredLocale"
             defaultValue={user.preferredLocale}
-            className={selectClassName}
+            className={INPUT_DEFAULT_CLASS}
           >
             {LOCALES.map(({ code, label }) => (
               <option key={code} value={code}>
@@ -260,7 +259,7 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
             id="preferredCurrency"
             name="preferredCurrency"
             defaultValue={user.preferredCurrency}
-            className={selectClassName}
+            className={INPUT_DEFAULT_CLASS}
           >
             {SUPPORTED_CURRENCIES.map((currency) => (
               <option key={currency.value} value={currency.value}>
@@ -277,7 +276,7 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
             defaultValue={
               user.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone
             }
-            className={selectClassName}
+            className={INPUT_DEFAULT_CLASS}
           >
             {timezones.map((tz) => (
               <option key={tz} value={tz}>
@@ -294,9 +293,10 @@ export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
           id="bio"
           name="bio"
           rows={3}
+          maxLength={500}
           defaultValue={user.bio ?? ""}
           placeholder={t("bioPlaceholder")}
-          className={selectClassName}
+          className={INPUT_DEFAULT_CLASS}
         />
       </div>
       <Button type="submit" loading={pending} disabled={!dirty}>
