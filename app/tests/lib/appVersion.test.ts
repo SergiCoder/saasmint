@@ -1,12 +1,22 @@
 import { describe, it, expect } from "vitest";
 import pkg from "../../package.json";
-import { APP_VERSION, getReleaseUrl } from "@/lib/appVersion";
+import { APP_NAME, APP_VERSION, getReleaseUrl } from "@/lib/appVersion";
 
 describe("APP_VERSION", () => {
   it("matches the version declared in package.json", () => {
     // Pins the contract that the footer stamp tracks the shipped semver —
     // any refactor that decouples APP_VERSION from package.json will fail here.
     expect(APP_VERSION).toBe(pkg.version);
+  });
+});
+
+describe("APP_NAME", () => {
+  it("is the canonical brand name used across layouts and metadata", () => {
+    // Single source of truth for the marketing brand string. If this changes,
+    // every layout / `generateMetadata` template that interpolates it should
+    // pick up the new value automatically — guarding the constant prevents
+    // accidental drift.
+    expect(APP_NAME).toBe("SaaSmint");
   });
 });
 

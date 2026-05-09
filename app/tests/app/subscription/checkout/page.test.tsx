@@ -119,8 +119,11 @@ describe("CheckoutPage", () => {
   it("redirects to /subscription when the plan query param is missing", async () => {
     await expect(renderPage({})).rejects.toThrow(/NEXT_REDIRECT/);
     expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
-    // Don't hit the API for plans until we know the plan id is present.
-    expect(mockListPlans).not.toHaveBeenCalled();
+    // `getPlans` is hoisted into the page's initial `Promise.all` so it
+    // overlaps the user fetch and the translation loads. The catalog call
+    // is therefore expected on this code path even though the redirect
+    // discards the result — the wasted RTT only fires when the plan param
+    // is missing (a degenerate case), not on the happy path.
   });
 
   it("redirects to /subscription when no plan matches the given planPriceId", async () => {
