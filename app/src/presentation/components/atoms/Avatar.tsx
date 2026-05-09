@@ -30,19 +30,21 @@ export function Avatar({
 }: AvatarProps) {
   const initials = alt
     .split(" ")
-    .map((w) => w[0])
+    .map((w) => w[0] ?? "")
     .join("")
     .slice(0, 2)
     .toUpperCase();
 
   if (src) {
+    const px = pixelSizes[size];
     return (
       <Image
         src={src}
         alt={alt}
-        width={pixelSizes[size]}
-        height={pixelSizes[size]}
+        width={px}
+        height={px}
         priority={priority}
+        sizes={`${px}px`}
         className={`inline-block rounded-full object-cover ${sizes[size]} ${className}`}
       />
     );

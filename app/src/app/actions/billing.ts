@@ -50,16 +50,21 @@ async function assertCanManageBilling(
   // already verified the token's expiry and the backend re-validates on
   // every API call. Fetching the full /account/ payload here would add a
   // round-trip to every billing mutation just to read `id`.
-  const userId = await getCurrentUserIdFromCookie();
+  //
+  // Fan out the cookie read, the subscription list, and (for team-eligible
+  // callers) the org list together. `React.cache` does not deduplicate across
+  // server actions, so any sequential `await` here costs an extra Django
+  // round-trip on every billing mutation.
+  const userIdPromise = getCurrentUserIdFromCookie();
+  const subscriptionsPromise = subscriptionGateway.listSubscriptions();
+  const orgsPromise = context === "personal" ? null : getUserOrgs();
+  const [userId, subscriptions] = await Promise.all([
+    userIdPromise,
+    subscriptionsPromise,
+  ]);
   if (!userId) {
     throw new AuthError("No active session", "NO_SESSION");
   }
-  // Run the subscription list and (for team-eligible callers) the user's org
-  // list in parallel — neither depends on the other, and `React.cache` does
-  // not deduplicate across server actions, so a sequential `await` chain
-  // costs an extra Django round-trip on every billing mutation.
-  const orgsPromise = context === "personal" ? null : getUserOrgs();
-  const subscriptions = await subscriptionGateway.listSubscriptions();
   let subscription: Subscription | null;
   if (context === "personal") {
     subscription = findPersonalSubscription(subscriptions);
@@ -192,36 +197,49 @@ function normalizeContext(value: unknown): SubscriptionContext | undefined {
   return value === "personal" || value === "team" ? value : undefined;
 }
 
-/** Schedule the subscription to end at the current period's close. */
-export async function cancelRenewal(
-  context?: SubscriptionContext,
+/**
+ * Shared shape for the three billing mutations that don't need to read the
+ * gateway's return value: assert authorization → run the gateway call →
+ * revalidate the locale-prefixed subscription paths. `errorLabel` is the
+ * `console.error` prefix so failed calls are still distinguishable in logs.
+ */
+async function runBillingMutation(
+  context: SubscriptionContext | undefined,
+  mutate: (ctx: SubscriptionContext | undefined) => Promise<void>,
+  errorLabel: string,
 ): Promise<ActionResult> {
   const safeContext = normalizeContext(context);
   try {
     await assertCanManageBilling(safeContext);
-    await subscriptionGateway.cancelSubscription(safeContext);
+    await mutate(safeContext);
   } catch (err) {
-    console.error("Failed to cancel subscription", err);
+    console.error(errorLabel, err);
     return toActionError(err);
   }
   revalidateLocalizedPath("/subscription", "layout");
   return ok();
 }
 
+/** Schedule the subscription to end at the current period's close. */
+export async function cancelRenewal(
+  context?: SubscriptionContext,
+): Promise<ActionResult> {
+  return runBillingMutation(
+    context,
+    (ctx) => subscriptionGateway.cancelSubscription(ctx),
+    "Failed to cancel subscription",
+  );
+}
+
 /** Undo a pending cancellation so the subscription renews normally. */
 export async function resumeSubscription(
   context?: SubscriptionContext,
 ): Promise<ActionResult> {
-  const safeContext = normalizeContext(context);
-  try {
-    await assertCanManageBilling(safeContext);
-    await subscriptionGateway.resumeSubscription(safeContext);
-  } catch (err) {
-    console.error("Failed to resume subscription", err);
-    return toActionError(err);
-  }
-  revalidateLocalizedPath("/subscription", "layout");
-  return ok();
+  return runBillingMutation(
+    context,
+    (ctx) => subscriptionGateway.resumeSubscription(ctx),
+    "Failed to resume subscription",
+  );
 }
 
 /**
@@ -258,16 +276,11 @@ export async function changePlan(
 export async function releaseScheduledChange(
   context?: SubscriptionContext,
 ): Promise<ActionResult> {
-  const safeContext = normalizeContext(context);
-  try {
-    await assertCanManageBilling(safeContext);
-    await subscriptionGateway.releaseScheduledChange(safeContext);
-  } catch (err) {
-    console.error("Failed to release scheduled plan change", err);
-    return toActionError(err);
-  }
-  revalidateLocalizedPath("/subscription", "layout");
-  return ok();
+  return runBillingMutation(
+    context,
+    (ctx) => subscriptionGateway.releaseScheduledChange(ctx),
+    "Failed to release scheduled plan change",
+  );
 }
 
 export async function updateSeats(

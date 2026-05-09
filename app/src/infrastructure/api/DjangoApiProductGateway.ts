@@ -3,7 +3,7 @@ import type {
   ProductCheckoutInput,
 } from "@/application/ports/IProductGateway";
 import type { Product } from "@/domain/models/Product";
-import { apiFetch } from "./apiClient";
+import { apiFetch, apiFetchOptional } from "./apiClient";
 import { keysToCamelWithPrice, keysToSnake } from "./caseTransform";
 import { contextQuery } from "./contextQuery";
 import { parsePaginated } from "./parsers";
@@ -16,7 +16,7 @@ const PRODUCT_CACHE_TTL_SECONDS = 60 * 60;
 export class DjangoApiProductGateway implements IProductGateway {
   async listProducts(currency?: string): Promise<Product[]> {
     const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
-    const data = await apiFetch(`/billing/products/${query}`, {
+    const data = await apiFetchOptional(`/billing/products/${query}`, {
       next: { revalidate: PRODUCT_CACHE_TTL_SECONDS },
     });
     return parsePaginated(data, (r) =>
