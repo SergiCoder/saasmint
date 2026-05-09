@@ -13,7 +13,12 @@ export function decodeJwtPayload(
   const parts = token.split(".");
   if (parts.length !== 3 || !parts[1]) return null;
   try {
-    const payload: unknown = JSON.parse(atob(parts[1]));
+    // JWTs use base64url (RFC 7515), which substitutes `-`/`_` for `+`/`/`
+    // and may omit `=` padding. `atob` only decodes standard base64, so
+    // normalise the payload before decoding — otherwise tokens with `-` or
+    // `_` characters silently fail and force a refresh on every request.
+    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const payload: unknown = JSON.parse(atob(base64));
     return isRecord(payload) ? payload : null;
   } catch {
     return null;

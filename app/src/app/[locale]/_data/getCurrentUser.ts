@@ -4,6 +4,7 @@ import type { User } from "@/domain/models/User";
 import { AuthError } from "@/domain/errors/AuthError";
 import { authGateway } from "@/infrastructure/registry";
 import { getLocale } from "@/lib/pathname";
+import { isLoginErrorCode } from "@/app/[locale]/(auth)/_lib/loginErrorCodes";
 
 /**
  * Pure cached fetch of the current user. Kept separate from `getCurrentUser`
@@ -33,7 +34,11 @@ export async function getCurrentUser(): Promise<User> {
   try {
     return await fetchCurrentUser();
   } catch (err) {
-    const code = err instanceof AuthError ? err.code : "UNAUTHENTICATED";
+    const rawCode = err instanceof AuthError ? err.code : "UNAUTHENTICATED";
+    // Backend codes flow through `AuthError.code` from the 401 response body;
+    // coerce anything outside the known set to `UNAUTHENTICATED` so a
+    // surprise payload can't reach the URL.
+    const code = isLoginErrorCode(rawCode) ? rawCode : "UNAUTHENTICATED";
     const locale = await getLocale();
     redirect(`/${locale}/login?error=${encodeURIComponent(code)}`);
   }
