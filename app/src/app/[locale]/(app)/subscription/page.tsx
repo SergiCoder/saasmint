@@ -218,6 +218,8 @@ export default async function BillingPage({
                 planName={translatePlanName(tPlans, s.plan)}
                 canManage={canManageById[s.id] === true}
                 teamOwnerName={s.plan.context === "team" ? teamOwnerName : null}
+                tBilling={t}
+                tPlans={tPlans}
                 teamOrgSlug={
                   s.plan.context === "team"
                     ? (userOrgs.at(0)?.slug ?? null)

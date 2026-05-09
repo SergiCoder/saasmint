@@ -70,12 +70,22 @@ export function NavBar({
                 className="md:hidden"
                 aria-label={user.fullName}
               >
-                <Avatar src={user.avatarUrl} alt={user.fullName} size="sm" />
+                <Avatar
+                  src={user.avatarUrl}
+                  alt={user.fullName}
+                  size="sm"
+                  priority
+                />
               </Link>
             </>
           ) : (
             user && (
-              <Avatar src={user.avatarUrl} alt={user.fullName} size="sm" />
+              <Avatar
+                src={user.avatarUrl}
+                alt={user.fullName}
+                size="sm"
+                priority
+              />
             )
           )}
           <MobileMenuToggle toggleNavLabel={toggleNavLabel}>

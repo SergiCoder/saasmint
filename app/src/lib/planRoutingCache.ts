@@ -15,25 +15,41 @@ import { planGateway } from "@/infrastructure/registry";
 
 const PLAN_ROUTING_TTL_MS = 60 * 60 * 1000;
 
+type Routing = Map<string, "personal" | "team">;
+
 let planRoutingCache: {
   expiresAt: number;
-  routing: Map<string, "personal" | "team">;
+  routing: Routing;
 } | null = null;
 
-export async function getPlanRouting(): Promise<
-  Map<string, "personal" | "team">
-> {
+// Coalesces concurrent expiry: when N requests find the cache stale at the
+// same instant, only the first one fires `planGateway.listPlans()`; the
+// others share the same in-flight Promise and return as soon as it resolves.
+let inflightRefresh: Promise<Routing> | null = null;
+
+export async function getPlanRouting(): Promise<Routing> {
   const now = Date.now();
   if (planRoutingCache && planRoutingCache.expiresAt > now) {
     return planRoutingCache.routing;
   }
-  const plans = await planGateway.listPlans();
-  const routing = new Map<string, "personal" | "team">();
-  for (const plan of plans) {
-    if (plan.price) routing.set(plan.price.id, plan.context);
-  }
-  planRoutingCache = { expiresAt: now + PLAN_ROUTING_TTL_MS, routing };
-  return routing;
+  if (inflightRefresh) return inflightRefresh;
+  inflightRefresh = planGateway
+    .listPlans()
+    .then((plans) => {
+      const routing: Routing = new Map();
+      for (const plan of plans) {
+        if (plan.price) routing.set(plan.price.id, plan.context);
+      }
+      planRoutingCache = {
+        expiresAt: Date.now() + PLAN_ROUTING_TTL_MS,
+        routing,
+      };
+      return routing;
+    })
+    .finally(() => {
+      inflightRefresh = null;
+    });
+  return inflightRefresh;
 }
 
 /**
@@ -41,4 +57,5 @@ export async function getPlanRouting(): Promise<
  */
 export function __resetPlanRoutingCacheForTests(): void {
   planRoutingCache = null;
+  inflightRefresh = null;
 }

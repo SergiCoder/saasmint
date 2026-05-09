@@ -65,24 +65,47 @@ export default async function PricingPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, tPlans, tProducts, user, query] = await Promise.all([
+  // Start `getPlans` speculatively in stage 1 — it only needs
+  // `user.preferredCurrency`, so we can chain it off the user fetch here
+  // and let it overlap with the translation loads instead of waiting for a
+  // second `Promise.all` round. Anonymous visitors (the majority on
+  // /pricing) get the cached anonymous-currency response immediately.
+  // `getUserOrgs` doesn't depend on the user object at all and gates only
+  // on the access-token cookie, so it can run alongside everything else.
+  const userPromise = getOptionalUser();
+  const plansPromise = userPromise.then((u) => getPlans(u?.preferredCurrency));
+  const subscriptionsPromise = userPromise.then((u) =>
+    u ? getSubscriptions(u.preferredCurrency) : [],
+  );
+  const productsPromise = userPromise.then((u) =>
+    u ? getProducts(u.preferredCurrency) : [],
+  );
+  const userOrgsPromise = userPromise.then((u) => (u ? getUserOrgs() : []));
+  const [
+    t,
+    tPlans,
+    tProducts,
+    user,
+    query,
+    plans,
+    subscriptions,
+    products,
+    userOrgs,
+  ] = await Promise.all([
     getTranslations("billing"),
     getTranslations("plans"),
     getTranslations("products"),
-    getOptionalUser(),
+    userPromise,
     searchParams,
+    plansPromise,
+    subscriptionsPromise,
+    productsPromise,
+    userOrgsPromise,
   ]);
 
   const selectedInterval = parseIntervalParam(query.interval);
 
   const currency = user?.preferredCurrency;
-
-  const [plans, subscriptions, products, userOrgs] = await Promise.all([
-    getPlans(currency),
-    user ? getSubscriptions(currency) : Promise.resolve([]),
-    user ? getProducts(currency) : Promise.resolve([]),
-    user ? getUserOrgs() : Promise.resolve([]),
-  ]);
 
   const hasOrg = userOrgs.length > 0;
   const isConcurrent = subscriptions.length > 1;

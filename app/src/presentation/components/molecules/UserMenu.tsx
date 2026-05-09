@@ -50,7 +50,7 @@ export function UserMenu({ user, menuItems, signOutSlot }: UserMenuProps) {
         aria-expanded={open}
         aria-haspopup="menu"
       >
-        <Avatar src={user.avatarUrl} alt={user.fullName} size="sm" />
+        <Avatar src={user.avatarUrl} alt={user.fullName} size="sm" priority />
       </button>
 
       {open && (
