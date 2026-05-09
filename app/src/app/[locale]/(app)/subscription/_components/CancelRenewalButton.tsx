@@ -1,10 +1,9 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
-import { useRouter } from "@/lib/i18n/navigation";
+import { useRef } from "react";
 import { cancelRenewal } from "@/app/actions/billing";
 import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
-import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
+import { useBillingAction } from "@/lib/actions/useBillingAction";
 import { GHOST_UNDERLINE_BUTTON_CLASS } from "@/lib/styles";
 import {
   ConfirmDialog,
@@ -34,31 +33,15 @@ export function CancelRenewalButton({
   confirmDismiss,
   context,
 }: CancelRenewalButtonProps) {
-  const router = useRouter();
-  const translateError = useActionErrorMessage();
   const confirmRef = useRef<ConfirmDialogHandle>(null);
-  const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
+  const { execute, isPending, error, clearError } = useBillingAction(
+    cancelRenewal,
+    () => confirmRef.current?.close(),
+  );
 
   const open = () => {
-    setError(null);
+    clearError();
     confirmRef.current?.open();
-  };
-
-  const confirm = () => {
-    startTransition(async () => {
-      const result = await cancelRenewal(context);
-      if (result.ok) {
-        confirmRef.current?.close();
-        // Action calls revalidatePath, but a Server Component re-render only
-        // happens once the client triggers it — without router.refresh the
-        // card keeps showing the active-renewal state instead of transitioning
-        // to the scheduled-cancel banner.
-        router.refresh();
-      } else {
-        setError(translateError(result));
-      }
-    });
   };
 
   return (
@@ -79,8 +62,8 @@ export function CancelRenewalButton({
         cancelLabel={confirmDismiss}
         variant="danger"
         loading={isPending}
-        onConfirm={confirm}
-        onClose={() => setError(null)}
+        onConfirm={() => execute(context)}
+        onClose={clearError}
       />
     </>
   );

@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "@/lib/i18n/navigation";
 import { Button } from "@/presentation/components/atoms/Button";
 import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
 import type { ActionResult } from "@/lib/actions/ActionResult";
-import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
+import { useBillingAction } from "@/lib/actions/useBillingAction";
 
 interface BillingActionButtonProps {
   children: React.ReactNode;
@@ -33,29 +31,14 @@ export function BillingActionButton({
   action,
   context,
 }: BillingActionButtonProps) {
-  const router = useRouter();
-  const translateError = useActionErrorMessage();
-  const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-
-  const handleClick = () => {
-    setError(null);
-    startTransition(async () => {
-      const result = await action(context);
-      if (result.ok) {
-        router.refresh();
-      } else {
-        setError(translateError(result));
-      }
-    });
-  };
+  const { execute, isPending, error } = useBillingAction(action);
 
   return (
     <div className="flex flex-col items-end gap-1">
       <Button
         type="button"
         variant="primary"
-        onClick={handleClick}
+        onClick={() => execute(context)}
         loading={isPending}
       >
         {children}
