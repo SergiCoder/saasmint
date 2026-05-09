@@ -10,7 +10,8 @@ import {
 } from "@/lib/actions/ActionResult";
 import { getString } from "@/lib/actions/parseFormData";
 import { getLocale } from "@/lib/pathname";
-import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
+import { validateNewPassword } from "@/lib/passwordPolicy";
+import { validateFullName } from "@/lib/validateFullName";
 
 // Backend creates the invitee as unverified and emails a verification link
 // instead of issuing tokens. We mirror the regular signup flow: redirect to
@@ -27,12 +28,10 @@ export async function acceptInvitation(
   if (!token || !fullName || !password) {
     return fail(ACTION_CODE_INVALID_INPUT);
   }
-  if (fullName.length < 3 || fullName.length > 255) {
-    return fail("full_name_invalid");
-  }
-  if (password.length < PASSWORD_MIN_LENGTH) {
-    return fail("password_too_short");
-  }
+  const nameError = validateFullName(fullName);
+  if (nameError) return fail(nameError);
+  const passwordError = validateNewPassword(password);
+  if (passwordError) return fail(passwordError);
 
   try {
     await invitationGateway.acceptInvitation(token, { fullName, password });

@@ -12,6 +12,7 @@ import {
 } from "@/lib/actions/ActionResult";
 import { getString } from "@/lib/actions/parseFormData";
 import { isSupportedCurrency } from "@/lib/supportedCurrencies";
+import { validateFullName } from "@/lib/validateFullName";
 
 // Server-action level caps mirror the backend column limits and bound the
 // payload size on direct RPC callers — the backend remains the authority,
@@ -62,9 +63,8 @@ export async function updateProfile(
   formData: FormData,
 ): Promise<ActionResult> {
   const fullName = getString(formData, "fullName");
-  if (!fullName || fullName.length < 3 || fullName.length > 255) {
-    return fail("full_name_invalid");
-  }
+  const nameError = validateFullName(fullName);
+  if (nameError) return fail(nameError);
 
   const phonePrefix = getString(formData, "phonePrefix") || null;
   const phone = getString(formData, "phone") || null;

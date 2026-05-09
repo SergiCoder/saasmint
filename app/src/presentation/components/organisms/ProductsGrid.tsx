@@ -1,5 +1,6 @@
 import type { Product } from "@/domain/models/Product";
 import { formatCurrency } from "@/lib/formatCurrency";
+import { CARD_CLASS } from "@/lib/styles";
 
 export interface ProductsGridProps {
   title: string;
@@ -36,10 +37,7 @@ export function ProductsGrid({
         {products.map((product) => {
           const priceSubLabel = priceSubLabels?.[product.id];
           return (
-            <div
-              key={product.id}
-              className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
-            >
+            <div key={product.id} className={CARD_CLASS}>
               <h3 className="font-semibold text-gray-900">
                 {productNames?.[product.credits] ?? product.name}
               </h3>

@@ -6,6 +6,7 @@ import type { Product } from "@/domain/models/Product";
 import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
 import { CheckoutButton } from "./CheckoutButton";
 import { startProductCheckout } from "@/app/actions/billing";
+import { CARD_CLASS } from "@/lib/styles";
 
 interface ProductsCheckoutSectionProps {
   title: string;
@@ -52,7 +53,7 @@ export function ProductsCheckoutSection({
   return (
     <div className="space-y-4">
       {showPicker && (
-        <fieldset className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <fieldset className={CARD_CLASS}>
           {/* Keep `legend` in the DOM for screen readers (it's the
             accessible name for the radio group), but visually render the
             label as a card heading so the picker matches the product

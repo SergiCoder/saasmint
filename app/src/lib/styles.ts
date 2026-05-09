@@ -48,3 +48,19 @@ export const BUTTON_SIZE_CLASSES = {
   md: "px-4 py-2 text-sm",
   lg: "px-6 py-3 text-base",
 } as const;
+
+/**
+ * Standard "white card" container used by every panel on dashboard, profile,
+ * org, and subscription pages. Centralises the shadow/border/padding choice
+ * so a future visual refresh edits one constant instead of grep-replacing
+ * the literal across 10+ files.
+ */
+export const CARD_CLASS =
+  "rounded-lg border border-gray-200 bg-white p-6 shadow-sm";
+
+/**
+ * Section eyebrow label — small uppercase grey text that appears above
+ * card content (e.g. "PLAN", "CREDITS", member-list table headers).
+ */
+export const EYEBROW_LABEL_CLASS =
+  "text-xs font-medium tracking-wide text-gray-500 uppercase";

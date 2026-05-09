@@ -1,5 +1,6 @@
 import { Badge } from "../atoms/Badge";
 import { FormattedDate } from "../atoms/FormattedDate";
+import { CARD_CLASS, EYEBROW_LABEL_CLASS } from "@/lib/styles";
 
 const statusVariant = {
   active: "success",
@@ -59,15 +60,11 @@ export function SubscriptionCard({
   className = "",
 }: SubscriptionCardProps) {
   return (
-    <div
-      className={`rounded-lg border border-gray-200 bg-white p-6 shadow-sm ${className}`}
-    >
+    <div className={`${CARD_CLASS} ${className}`}>
       <div className="flex items-start justify-between gap-4">
         <div>
           {eyebrowLabel && (
-            <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
-              {eyebrowLabel}
-            </p>
+            <p className={EYEBROW_LABEL_CLASS}>{eyebrowLabel}</p>
           )}
           <h3 className="mt-1 text-lg font-semibold text-gray-900">
             {planName}

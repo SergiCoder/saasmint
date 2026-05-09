@@ -5,6 +5,7 @@ import type { OrgMember } from "@/domain/models/OrgMember";
 import { findTeamSubscription } from "@/domain/models/Subscription";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
 import { formatLongDate } from "@/lib/formatLongDate";
+import { CARD_CLASS } from "@/lib/styles";
 import { getCurrentUser } from "../../../_data/getCurrentUser";
 import { getOrgInvitations } from "../../../_data/getOrgInvitations";
 import { getOrgMembers } from "../../../_data/getOrgMembers";
@@ -197,7 +198,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
       )}
 
       {canManage && (
-        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <section className={CARD_CLASS}>
           <h2 className="mb-4 text-lg font-semibold text-gray-900">
             {t("inviteByEmail")}
           </h2>
@@ -206,7 +207,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
       )}
 
       {isOwner && transferCandidates.length > 0 && (
-        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <section className={CARD_CLASS}>
           <h2 className="mb-4 text-lg font-semibold text-gray-900">
             {t("transferOwnership")}
           </h2>

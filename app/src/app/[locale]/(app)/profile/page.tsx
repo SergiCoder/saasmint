@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PHONE_PREFIXES } from "@/domain/data/phonePrefixes";
+import { CARD_CLASS } from "@/lib/styles";
 import { getCurrentUser } from "../../_data/getCurrentUser";
 import { getMyOrgRole } from "../../_data/getMyOrgRole";
 import { ChangePasswordForm } from "./_components/ChangePasswordForm";
@@ -30,10 +31,10 @@ export default async function ProfilePage({ params }: Props) {
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
-      <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <section className={CARD_CLASS}>
         <ProfileForm user={user} phonePrefixes={PHONE_PREFIXES} />
       </section>
-      <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <section className={CARD_CLASS}>
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
           {t("changePassword")}
         </h2>

@@ -3,9 +3,9 @@ import { Link } from "@/lib/i18n/navigation";
 import { LinkButton } from "@/presentation/components/atoms/LinkButton";
 import { MarketingLayout } from "@/presentation/components/templates/MarketingLayout";
 import type { Org } from "@/domain/models/Org";
-import { findTeamSubscription } from "@/domain/models/Subscription";
 import { getAccessToken } from "@/infrastructure/auth/cookies";
 import { APP_NAME } from "@/lib/appVersion";
+import { hasOrgAccess } from "../_lib/hasOrgAccess";
 import { getSubscriptions } from "../_data/getSubscriptions";
 import { getUserOrgs } from "../_data/getUserOrgs";
 import { getOptionalUser } from "./_data/getOptionalUser";
@@ -48,8 +48,7 @@ export default async function MarketingLayoutRoute({
       userOrgsPromise,
     ]);
 
-  const hasOrg =
-    findTeamSubscription(subscriptions) !== null || userOrgs.length > 0;
+  const hasOrg = hasOrgAccess(subscriptions, userOrgs);
 
   const navLinks = [
     { href: "/", label: t("home") },

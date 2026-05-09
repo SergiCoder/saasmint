@@ -1,4 +1,5 @@
 import { Badge } from "@/presentation/components/atoms/Badge";
+import { CARD_CLASS, EYEBROW_LABEL_CLASS } from "@/lib/styles";
 
 interface FreePlanCardProps {
   eyebrowLabel: string;
@@ -14,12 +15,10 @@ export function FreePlanCard({
   badgeLabel,
 }: FreePlanCardProps) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className={CARD_CLASS}>
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
-            {eyebrowLabel}
-          </p>
+          <p className={EYEBROW_LABEL_CLASS}>{eyebrowLabel}</p>
           <h3 className="mt-1 text-lg font-semibold text-gray-900">
             {planName}
           </h3>
