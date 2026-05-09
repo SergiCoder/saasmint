@@ -5,10 +5,7 @@ import { GetStartedButton } from "./_components/GetStartedButton";
 import { ProductsCheckoutSection } from "@/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection";
 import { renderPlanUpgradeCta } from "@/app/[locale]/(app)/subscription/_lib/renderPlanUpgradeCta";
 import { getOrgMembers } from "@/app/[locale]/_data/getOrgMembers";
-import { getPlans } from "@/app/[locale]/_data/getPlans";
-import { getProducts } from "@/app/[locale]/_data/getProducts";
-import { getSubscriptions } from "@/app/[locale]/_data/getSubscriptions";
-import { getUserOrgs } from "@/app/[locale]/_data/getUserOrgs";
+import { getPricingCatalog } from "@/app/[locale]/_data/getPricingCatalog";
 import { canManageBilling } from "@/app/[locale]/(app)/subscription/_data/canManageBilling";
 import { getOptionalUser } from "../_data/getOptionalUser";
 import {
@@ -65,43 +62,22 @@ export default async function PricingPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  // Start `getPlans` speculatively in stage 1 — it only needs
-  // `user.preferredCurrency`, so we can chain it off the user fetch here
-  // and let it overlap with the translation loads instead of waiting for a
-  // second `Promise.all` round. Anonymous visitors (the majority on
-  // /pricing) get the cached anonymous-currency response immediately.
-  // `getUserOrgs` doesn't depend on the user object at all and gates only
-  // on the access-token cookie, so it can run alongside everything else.
+  // The catalog fan-out chains off the user fetch so plans/subscriptions/
+  // products/orgs all start as soon as the user resolves, overlapping with
+  // the translation loads on the same Promise.all. Anonymous visitors (the
+  // majority on /pricing) skip the authenticated calls and fall back to
+  // empty lists.
   const userPromise = getOptionalUser();
-  const plansPromise = userPromise.then((u) => getPlans(u?.preferredCurrency));
-  const subscriptionsPromise = userPromise.then((u) =>
-    u ? getSubscriptions(u.preferredCurrency) : [],
-  );
-  const productsPromise = userPromise.then((u) =>
-    u ? getProducts(u.preferredCurrency) : [],
-  );
-  const userOrgsPromise = userPromise.then((u) => (u ? getUserOrgs() : []));
-  const [
-    t,
-    tPlans,
-    tProducts,
-    user,
-    query,
-    plans,
-    subscriptions,
-    products,
-    userOrgs,
-  ] = await Promise.all([
+  const catalogPromise = userPromise.then(getPricingCatalog);
+  const [t, tPlans, tProducts, user, query, catalog] = await Promise.all([
     getTranslations("billing"),
     getTranslations("plans"),
     getTranslations("products"),
     userPromise,
     searchParams,
-    plansPromise,
-    subscriptionsPromise,
-    productsPromise,
-    userOrgsPromise,
+    catalogPromise,
   ]);
+  const { plans, subscriptions, products, userOrgs } = catalog;
 
   const selectedInterval = parseIntervalParam(query.interval);
 

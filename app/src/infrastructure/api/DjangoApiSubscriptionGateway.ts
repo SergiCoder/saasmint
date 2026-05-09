@@ -9,11 +9,8 @@ import { isRecord } from "@/lib/typeGuards";
 import { apiFetch, apiFetchVoid } from "./apiClient";
 import { applyPriceDefaults, keysToCamel, keysToSnake } from "./caseTransform";
 import { contextQuery } from "./contextQuery";
-import {
-  CheckoutSessionResponseSchema,
-  SubscriptionListResponseSchema,
-  SubscriptionSchema,
-} from "./schemas";
+import { parsePaginated } from "./parsers";
+import { CheckoutSessionResponseSchema, SubscriptionSchema } from "./schemas";
 
 /**
  * Apply price defaults to a subscription's nested `plan` and `scheduledPlan`
@@ -35,14 +32,10 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
   async listSubscriptions(currency?: string): Promise<Subscription[]> {
     const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
     const raw = await apiFetch(`/billing/subscriptions/me/${query}`);
-    const camel = keysToCamel(raw);
-    if (isRecord(camel) && Array.isArray(camel.results)) {
-      for (const row of camel.results) {
-        if (!isRecord(row)) continue;
-        applySubscriptionPriceDefaults(row, currency);
-      }
-    }
-    return SubscriptionListResponseSchema.parse(camel).results;
+    return parsePaginated(keysToCamel(raw), (row) => {
+      applySubscriptionPriceDefaults(row, currency);
+      return SubscriptionSchema.parse(row);
+    });
   }
 
   async createCheckoutSession(
