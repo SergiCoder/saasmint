@@ -26,12 +26,16 @@ export function BillingPortalButton({
   return (
     <form
       action={async (formData) => {
-        // Discard the ActionResult: this form is a plain submit (no
+        // Inline `"use server"` promotes this closure to a Server Action so
+        // it's safe to serialize as the `<form action>` prop. Without it,
+        // Next.js rejects the function (it's not a known Server Action ref).
+        // We also discard the ActionResult: this form is a plain submit (no
         // useActionState) and its success path redirects to Stripe (never
         // returns). React's `form action` prop only accepts
         // `Promise<void>`-returning actions, so wrap the typed action.
         // Failures get logged inside the action; surfacing them here would
         // require lifting state with useActionState.
+        "use server";
         await openBillingPortal(formData);
       }}
     >

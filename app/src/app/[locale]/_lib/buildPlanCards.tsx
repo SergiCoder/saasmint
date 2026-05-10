@@ -304,12 +304,14 @@ function buildPlanVariant(
   const isCurrent = currentPlanIds.has(plan.id);
   const monthlyEq = monthlyEquivalent(plan);
   // Compare each candidate against the user's current plan in the SAME
-  // context (concurrent personal+team are independent ladders). When the
-  // user has no plan in that context yet, treat any priced option as an
-  // upgrade.
+  // context (concurrent personal+team are independent ladders). "Upgrade"
+  // means a tier promotion — switching interval within the same tier
+  // (e.g. Pro Yearly ↔ Pro Monthly) is just a cadence change and must NOT
+  // be labelled "Upgrade" or get the highlighted CTA. When the user has
+  // no plan in that context yet, treat any priced option as an upgrade.
   const sameContextCurrent = currentByContext[plan.context];
   const isUpgrade = sameContextCurrent
-    ? monthlyEq > monthlyEquivalent(sameContextCurrent)
+    ? plan.tier > sameContextCurrent.tier
     : monthlyEq > 0;
   const ctaLabel = labels.upgrade;
 
