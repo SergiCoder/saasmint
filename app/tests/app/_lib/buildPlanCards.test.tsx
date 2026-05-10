@@ -425,6 +425,69 @@ describe("buildPlanCardGroups", () => {
     expect(pro?.label).toBe("Upgrade");
   });
 
+  it("does not flag a same-tier different-interval candidate as an upgrade", () => {
+    // User on Pro Yearly looking at Pro Monthly: monthly-equivalent of the
+    // monthly variant is HIGHER than the discounted yearly equivalent, but
+    // it's the same tier — labelling it "Upgrade" would be wrong (and was
+    // a real bug pre-fix). Cadence switches go through "Change plan".
+    const plans: Plan[] = [
+      makePlan({
+        id: "pro-m",
+        tier: 3,
+        interval: "month",
+        price: {
+          id: "pm",
+          amount: 4599,
+          displayAmount: 45.99,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
+      }),
+      makePlan({
+        id: "pro-y",
+        tier: 3,
+        interval: "year",
+        price: {
+          id: "py",
+          amount: 45990,
+          displayAmount: 459.9,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
+      }),
+    ];
+    const proYearlyPlan = plans.find((p) => p.id === "pro-y")!;
+    const ctaCalls: Array<{ id: string; isUpgrade: boolean }> = [];
+    buildPlanCardGroups({
+      plans,
+      currentPlans: [proYearlyPlan],
+      locale: "en-US",
+      labels,
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
+      renderCta: ({ plan, isUpgrade }) => {
+        ctaCalls.push({ id: plan.id, isUpgrade });
+        return null;
+      },
+    });
+    const proMonthly = ctaCalls.find((c) => c.id === "pro-m");
+    expect(proMonthly?.isUpgrade).toBe(false);
+  });
+
   it("treats a candidate from a context the user has no sub in as a net-new upgrade", () => {
     // Concurrent personal+team is allowed (rule 5), so a personal-only user
     // looking at a team plan is *adding* a sub, not switching — comparison
