@@ -41,6 +41,14 @@ import { validateNewPassword } from "@/lib/passwordPolicy";
 import { isValidPlanSlug } from "@/lib/planSlug";
 import { validateFullName } from "@/lib/validateFullName";
 
+/** Conditionally adds `captcha_token` to a request body. */
+function withCaptcha(
+  body: Record<string, unknown>,
+  captchaToken: string | undefined | null,
+): Record<string, unknown> {
+  return captchaToken ? { ...body, captcha_token: captchaToken } : body;
+}
+
 export type StartOAuthResult = { redirectUrl: string };
 
 export type ExchangeOAuthResult =
@@ -154,12 +162,16 @@ export async function signUp(
   try {
     const raw = await publicApiFetch("/auth/register/", {
       method: "POST",
-      body: JSON.stringify({
-        email: credentials.email,
-        password: credentials.password,
-        full_name: fullName,
-        ...(captchaToken ? { captcha_token: captchaToken } : {}),
-      }),
+      body: JSON.stringify(
+        withCaptcha(
+          {
+            email: credentials.email,
+            password: credentials.password,
+            full_name: fullName,
+          },
+          captchaToken,
+        ),
+      ),
     });
     // Registration returns a token envelope but we don't consume it — the
     // user must verify their email before logging in. Parse anyway to fail
@@ -199,10 +211,9 @@ export async function resetPassword(
   try {
     await publicApiFetch("/auth/forgot-password/", {
       method: "POST",
-      body: JSON.stringify({
-        email: email.trim().toLowerCase(),
-        ...(captchaToken ? { captcha_token: captchaToken } : {}),
-      }),
+      body: JSON.stringify(
+        withCaptcha({ email: email.trim().toLowerCase() }, captchaToken),
+      ),
     });
   } catch {
     // Swallow errors — never reveal whether the email exists
@@ -283,10 +294,9 @@ export async function resendVerificationEmail(
   try {
     await publicApiFetchVoid("/auth/resend-verification/", {
       method: "POST",
-      body: JSON.stringify({
-        email: email.trim().toLowerCase(),
-        ...(captchaToken ? { captcha_token: captchaToken } : {}),
-      }),
+      body: JSON.stringify(
+        withCaptcha({ email: email.trim().toLowerCase() }, captchaToken),
+      ),
     });
   } catch (err) {
     // Swallow errors — never reveal whether the email exists or is already verified

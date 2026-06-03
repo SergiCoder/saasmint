@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
 import { FormField } from "@/presentation/components/molecules/FormField";
@@ -18,14 +18,15 @@ export function ForgotPasswordForm({ action }: ForgotPasswordFormProps) {
   const t = useTranslations("auth.forgotPassword");
   const translateError = useActionErrorMessage();
   const executeRecaptcha = useRecaptcha();
-  const [state, formAction, pending] = useActionState(
+  const actionWithCaptcha = useCallback(
     async (prev: unknown, formData: FormData): Promise<ActionResult> => {
       const token = await executeRecaptcha("forgot_password");
       if (token) formData.set("captcha_token", token);
       return action(prev, formData);
     },
-    null,
+    [action, executeRecaptcha],
   );
+  const [state, formAction, pending] = useActionState(actionWithCaptcha, null);
 
   if (state?.ok) {
     return <AlertBanner variant="success">{t("successMessage")}</AlertBanner>;

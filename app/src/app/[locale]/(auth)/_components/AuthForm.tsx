@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
 import { FormField } from "@/presentation/components/molecules/FormField";
@@ -44,7 +44,7 @@ export function AuthForm({
   const t = useTranslations(translationNamespace);
   const translateError = useActionErrorMessage();
   const executeRecaptcha = useRecaptcha();
-  const [state, formAction, pending] = useActionState(
+  const actionWithCaptcha = useCallback(
     async (prev: unknown, formData: FormData): Promise<ActionResult> => {
       if (captchaAction) {
         const token = await executeRecaptcha(captchaAction);
@@ -52,8 +52,9 @@ export function AuthForm({
       }
       return action(prev, formData);
     },
-    null,
+    [action, captchaAction, executeRecaptcha],
   );
+  const [state, formAction, pending] = useActionState(actionWithCaptcha, null);
   const [email, setEmail] = useState("");
   const errorMessage = state && !state.ok ? translateError(state) : null;
   const showResendLink =
