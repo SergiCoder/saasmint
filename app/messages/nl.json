@@ -400,6 +400,7 @@
     "password_too_short": "Het wachtwoord moet minimaal 10 tekens lang zijn",
     "profile_load_failed": "Profiel kon niet worden geladen",
     "session_expired": "Sessie verlopen. Log opnieuw in.",
+    "captcha_failed": "Beveiligingsverificatie mislukt. Probeer het opnieuw.",
     "unknown_error": "Er is iets misgegaan. Probeer het opnieuw.",
     "unsupported_image": "Niet-ondersteund afbeeldingstype",
     "message_required": "Voeg een bericht toe.",

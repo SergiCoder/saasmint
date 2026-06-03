@@ -314,6 +314,29 @@ describe("auth server actions", () => {
       expect(mockRedirect).toHaveBeenCalledWith("/en/login?registered=true");
     });
 
+    it("threads captcha_token into the register body when present in the form", async () => {
+      mockPublicApiFetch.mockResolvedValue(validTokens);
+
+      const formData = new FormData();
+      formData.set("fullName", "Jane Doe");
+      formData.set("email", "new@example.com");
+      formData.set("password", "secret123");
+      formData.set("captcha_token", "tok_recaptcha");
+
+      await expect(signUp(undefined, formData)).rejects.toThrow(
+        "NEXT_REDIRECT",
+      );
+      expect(mockPublicApiFetch).toHaveBeenCalledWith("/auth/register/", {
+        method: "POST",
+        body: JSON.stringify({
+          email: "new@example.com",
+          password: "secret123",
+          full_name: "Jane Doe",
+          captcha_token: "tok_recaptcha",
+        }),
+      });
+    });
+
     it("returns ApiError envelope with detail when registration fails", async () => {
       mockPublicApiFetch.mockRejectedValue(
         new ApiError(400, { detail: "Email already in use." }),
@@ -457,6 +480,27 @@ describe("auth server actions", () => {
         {
           method: "POST",
           body: JSON.stringify({ email: "user@example.com" }),
+        },
+      );
+    });
+
+    it("threads captcha_token into the forgot-password body when present", async () => {
+      mockPublicApiFetch.mockResolvedValue({});
+
+      const formData = new FormData();
+      formData.set("email", "user@example.com");
+      formData.set("captcha_token", "tok_recaptcha");
+
+      const result = await resetPassword(undefined, formData);
+      expect(result).toEqual({ ok: true });
+      expect(mockPublicApiFetch).toHaveBeenCalledWith(
+        "/auth/forgot-password/",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email: "user@example.com",
+            captcha_token: "tok_recaptcha",
+          }),
         },
       );
     });
@@ -908,6 +952,26 @@ describe("auth server actions", () => {
         {
           method: "POST",
           body: JSON.stringify({ email: "user@example.com" }),
+        },
+      );
+    });
+
+    it("threads the captcha token into the body when one is supplied", async () => {
+      mockPublicApiFetchVoid.mockResolvedValue(undefined);
+
+      const result = await resendVerificationEmail(
+        "User@Example.COM",
+        "tok_recaptcha",
+      );
+      expect(result).toEqual({ ok: true });
+      expect(mockPublicApiFetchVoid).toHaveBeenCalledWith(
+        "/auth/resend-verification/",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email: "user@example.com",
+            captcha_token: "tok_recaptcha",
+          }),
         },
       );
     });

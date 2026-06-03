@@ -400,6 +400,7 @@
     "password_too_short": "비밀번호는 10자 이상이어야 합니다",
     "profile_load_failed": "프로필을 불러오지 못했습니다",
     "session_expired": "세션이 만료되었습니다. 다시 로그인해 주세요.",
+    "captcha_failed": "보안 인증에 실패했습니다. 다시 시도해 주세요.",
     "unknown_error": "문제가 발생했습니다. 다시 시도해 주세요.",
     "unsupported_image": "지원되지 않는 이미지 형식입니다",
     "message_required": "메시지를 입력해 주세요.",

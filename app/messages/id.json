@@ -400,6 +400,7 @@
     "password_too_short": "Kata sandi harus minimal 10 karakter",
     "profile_load_failed": "Gagal memuat profil",
     "session_expired": "Sesi kedaluwarsa. Silakan masuk lagi.",
+    "captcha_failed": "Verifikasi keamanan gagal. Silakan coba lagi.",
     "unknown_error": "Terjadi kesalahan. Silakan coba lagi.",
     "unsupported_image": "Tipe gambar tidak didukung",
     "message_required": "Mohon sertakan pesan.",

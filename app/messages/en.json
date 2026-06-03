@@ -443,6 +443,7 @@
     "password_too_short": "Password must be at least 10 characters",
     "profile_load_failed": "Failed to load profile",
     "session_expired": "Session expired. Please log in again.",
+    "captcha_failed": "Security verification failed. Please try again.",
     "unknown_error": "Something went wrong. Please try again.",
     "unsupported_image": "Unsupported image type",
     "message_required": "Please include a message.",

@@ -38,7 +38,7 @@ async function assertOrgRole(
   allowed: readonly OrgRole[],
 ): Promise<boolean> {
   // Read the user ID directly from the JWT cookie to avoid a full
-  // GET /account/ round-trip on every org mutation. The middleware has
+  // GET /account/ round-trip on every org mutation. The proxy has
   // already vetted token expiry; the backend re-validates membership.
   const userId = await getCurrentUserIdFromCookie();
   if (!userId) return false;

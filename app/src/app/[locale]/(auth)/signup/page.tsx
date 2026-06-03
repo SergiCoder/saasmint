@@ -44,6 +44,7 @@ export default async function SignupPage({
         translationNamespace="auth.register"
         passwordAutoComplete="new-password"
         showNameField
+        captchaAction="register"
         hiddenFields={hiddenFields}
         footerLink={{
           href: loginHref,

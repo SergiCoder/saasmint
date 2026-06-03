@@ -34,9 +34,9 @@ const oauthAvatarHosts = [
   "https://graph.microsoft.com",
 ];
 
-// This static baseline only applies to routes outside the middleware matcher
+// This static baseline only applies to routes outside the proxy matcher
 // (currently none of the user-facing pages — `/_next/static`, `/favicon.ico`,
-// etc. — fall in that bucket). The middleware emits a stricter, nonce-bearing
+// etc. — fall in that bucket). The proxy emits a stricter, nonce-bearing
 // CSP for every page response, overriding the value set here. Keep the static
 // fallback `'unsafe-inline'` because Next's static asset routes don't carry a
 // nonce. Dev additionally needs `'unsafe-eval'` for HMR.

@@ -400,6 +400,7 @@
     "password_too_short": "A senha deve ter pelo menos 10 caracteres",
     "profile_load_failed": "Não foi possível carregar o perfil",
     "session_expired": "Sessão expirada. Faça login novamente.",
+    "captcha_failed": "A verificação de segurança falhou. Tente novamente.",
     "unknown_error": "Algo deu errado. Tente novamente.",
     "unsupported_image": "Tipo de imagem não suportado",
     "message_required": "Por favor, inclua uma mensagem.",

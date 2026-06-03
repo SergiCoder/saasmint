@@ -400,6 +400,7 @@
     "password_too_short": "Passordet må være minst 10 tegn",
     "profile_load_failed": "Kunne ikke laste profilen",
     "session_expired": "Økten er utløpt. Logg inn igjen.",
+    "captcha_failed": "Sikkerhetsverifiseringen mislyktes. Prøv igjen.",
     "unknown_error": "Noe gikk galt. Prøv igjen.",
     "unsupported_image": "Bildetype støttes ikke",
     "message_required": "Vennligst legg ved en melding.",

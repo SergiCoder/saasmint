@@ -400,6 +400,7 @@
     "password_too_short": "Adgangskoden skal være mindst 10 tegn",
     "profile_load_failed": "Profilen kunne ikke indlæses",
     "session_expired": "Sessionen er udløbet. Log venligst ind igen.",
+    "captcha_failed": "Sikkerhedsverificeringen mislykkedes. Prøv igen.",
     "unknown_error": "Noget gik galt. Prøv venligst igen.",
     "unsupported_image": "Billedtypen understøttes ikke",
     "message_required": "Tilføj venligst en besked.",

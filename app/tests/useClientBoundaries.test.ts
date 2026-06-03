@@ -44,6 +44,7 @@ const EXPECTED_USE_CLIENT_FILES: readonly string[] = [
   "src/lib/actions/useActionErrorMessage.ts",
   "src/lib/actions/useBillingAction.ts",
   "src/lib/actions/useResendVerification.ts",
+  "src/lib/recaptcha/useRecaptcha.ts",
   "src/presentation/components/atoms/AvatarUpload.tsx",
   "src/presentation/components/atoms/LocaleDropdown.tsx",
   "src/presentation/components/molecules/ConfirmDialog.tsx",
