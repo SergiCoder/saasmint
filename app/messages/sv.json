@@ -400,6 +400,7 @@
     "password_too_short": "Lösenordet måste vara minst 10 tecken",
     "profile_load_failed": "Det gick inte att ladda profilen",
     "session_expired": "Sessionen har gått ut. Logga in igen.",
+    "captcha_failed": "Säkerhetsverifieringen misslyckades. Försök igen.",
     "unknown_error": "Något gick fel. Försök igen.",
     "unsupported_image": "Bildtypen stöds inte",
     "message_required": "Inkludera ett meddelande.",

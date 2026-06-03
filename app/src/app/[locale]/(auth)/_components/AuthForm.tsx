@@ -9,6 +9,7 @@ import { PasswordRequirements } from "@/presentation/components/molecules/Passwo
 import { Button } from "@/presentation/components/atoms/Button";
 import type { ActionResult } from "@/lib/actions/ActionResult";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
+import { useRecaptcha } from "@/lib/recaptcha/useRecaptcha";
 import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
 import { ResendVerificationLink } from "./ResendVerificationLink";
 
@@ -21,6 +22,12 @@ interface AuthFormProps {
   footerLink: { href: string; textKey: string; linkKey: string };
   serverAlerts?: React.ReactNode;
   hiddenFields?: Record<string, string>;
+  /**
+   * reCAPTCHA v3 action name. When set, a fresh token is attached as
+   * `captcha_token` before the action runs (e.g. "register" on signup). Login
+   * omits this so it stays frictionless.
+   */
+  captchaAction?: string;
 }
 
 export function AuthForm({
@@ -32,10 +39,21 @@ export function AuthForm({
   footerLink,
   serverAlerts,
   hiddenFields,
+  captchaAction,
 }: AuthFormProps) {
   const t = useTranslations(translationNamespace);
   const translateError = useActionErrorMessage();
-  const [state, formAction, pending] = useActionState(action, null);
+  const executeRecaptcha = useRecaptcha();
+  const [state, formAction, pending] = useActionState(
+    async (prev: unknown, formData: FormData): Promise<ActionResult> => {
+      if (captchaAction) {
+        const token = await executeRecaptcha(captchaAction);
+        if (token) formData.set("captcha_token", token);
+      }
+      return action(prev, formData);
+    },
+    null,
+  );
   const [email, setEmail] = useState("");
   const errorMessage = state && !state.ok ? translateError(state) : null;
   const showResendLink =

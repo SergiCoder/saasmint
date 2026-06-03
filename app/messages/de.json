@@ -400,6 +400,7 @@
     "password_too_short": "Das Passwort muss mindestens 10 Zeichen lang sein",
     "profile_load_failed": "Profil konnte nicht geladen werden",
     "session_expired": "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
+    "captcha_failed": "Sicherheitsüberprüfung fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "unknown_error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "unsupported_image": "Nicht unterstützter Bildtyp",
     "message_required": "Bitte fügen Sie eine Nachricht hinzu.",

@@ -400,6 +400,7 @@
     "password_too_short": "Hasło musi mieć co najmniej 10 znaków",
     "profile_load_failed": "Nie udało się wczytać profilu",
     "session_expired": "Sesja wygasła. Zaloguj się ponownie.",
+    "captcha_failed": "Weryfikacja zabezpieczeń nie powiodła się. Spróbuj ponownie.",
     "unknown_error": "Coś poszło nie tak. Spróbuj ponownie.",
     "unsupported_image": "Nieobsługiwany typ obrazu",
     "message_required": "Dołącz wiadomość.",

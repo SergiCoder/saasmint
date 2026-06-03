@@ -400,6 +400,7 @@
     "password_too_short": "Parola en az 10 karakter olmalıdır",
     "profile_load_failed": "Profil yüklenemedi",
     "session_expired": "Oturumun süresi doldu. Lütfen tekrar giriş yapın.",
+    "captcha_failed": "Güvenlik doğrulaması başarısız oldu. Lütfen tekrar deneyin.",
     "unknown_error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
     "unsupported_image": "Desteklenmeyen görsel türü",
     "message_required": "Lütfen bir mesaj ekleyin.",

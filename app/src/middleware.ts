@@ -34,6 +34,14 @@ const apiOrigin = (() => {
   }
 })();
 
+// Loosen the CSP for Google reCAPTCHA only when a site key is configured, so
+// the policy stays maximally strict when the feature is dormant. v3 loads
+// `api.js` from www.google.com (which injects gstatic.com scripts) and renders
+// an invisible challenge iframe from www.google.com.
+const RECAPTCHA_ENABLED = !!env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+const RECAPTCHA_SCRIPT_SRC = " https://www.google.com https://www.gstatic.com";
+const RECAPTCHA_FRAME_SRC = "https://www.google.com";
+
 /**
  * Builds a per-request Content-Security-Policy with a fresh nonce for
  * `script-src`. `'strict-dynamic'` lets nonce-tagged scripts load further
@@ -45,13 +53,13 @@ const apiOrigin = (() => {
 function buildCsp(nonce: string): string {
   return [
     `default-src 'self'`,
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline'${IS_DEV ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline'${IS_DEV ? " 'unsafe-eval'" : ""}${RECAPTCHA_ENABLED ? RECAPTCHA_SCRIPT_SRC : ""}`,
     `style-src 'self' 'unsafe-inline'`,
     `img-src 'self' data: blob: ${apiOrigin} ${OAUTH_AVATAR_HOSTS.join(" ")}`.trim(),
     `font-src 'self' data:`,
-    `connect-src 'self' ${apiOrigin}${IS_DEV ? " ws: wss:" : ""}`.trim(),
+    `connect-src 'self' ${apiOrigin}${IS_DEV ? " ws: wss:" : ""}${RECAPTCHA_ENABLED ? ` ${RECAPTCHA_FRAME_SRC}` : ""}`.trim(),
     `frame-ancestors 'none'`,
-    `frame-src 'none'`,
+    `frame-src ${RECAPTCHA_ENABLED ? RECAPTCHA_FRAME_SRC : "'none'"}`,
     `object-src 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,

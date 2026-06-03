@@ -8,6 +8,7 @@ import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Button } from "@/presentation/components/atoms/Button";
 import type { ActionResult } from "@/lib/actions/ActionResult";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
+import { useRecaptcha } from "@/lib/recaptcha/useRecaptcha";
 
 interface ForgotPasswordFormProps {
   action: (prev: unknown, fd: FormData) => Promise<ActionResult>;
@@ -16,7 +17,15 @@ interface ForgotPasswordFormProps {
 export function ForgotPasswordForm({ action }: ForgotPasswordFormProps) {
   const t = useTranslations("auth.forgotPassword");
   const translateError = useActionErrorMessage();
-  const [state, formAction, pending] = useActionState(action, null);
+  const executeRecaptcha = useRecaptcha();
+  const [state, formAction, pending] = useActionState(
+    async (prev: unknown, formData: FormData): Promise<ActionResult> => {
+      const token = await executeRecaptcha("forgot_password");
+      if (token) formData.set("captcha_token", token);
+      return action(prev, formData);
+    },
+    null,
+  );
 
   if (state?.ok) {
     return <AlertBanner variant="success">{t("successMessage")}</AlertBanner>;

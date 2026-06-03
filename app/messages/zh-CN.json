@@ -400,6 +400,7 @@
     "password_too_short": "密码长度至少为 10 个字符",
     "profile_load_failed": "加载个人资料失败",
     "session_expired": "会话已过期,请重新登录。",
+    "captcha_failed": "安全验证失败。请重试。",
     "unknown_error": "出了点问题,请重试。",
     "unsupported_image": "不支持的图片类型",
     "message_required": "请输入消息内容。",

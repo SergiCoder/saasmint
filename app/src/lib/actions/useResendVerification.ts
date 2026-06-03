@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { resendVerificationEmail } from "@/app/actions/auth";
+import { useRecaptcha } from "@/lib/recaptcha/useRecaptcha";
 import { useActionErrorMessage } from "./useActionErrorMessage";
 
 export type ResendVerificationStatus = "idle" | "sent" | "error";
@@ -15,6 +16,7 @@ export interface UseResendVerificationResult {
 
 export function useResendVerification(): UseResendVerificationResult {
   const translateError = useActionErrorMessage();
+  const executeRecaptcha = useRecaptcha();
   const [pending, startTransition] = useTransition();
   const [status, setStatus] = useState<ResendVerificationStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -23,7 +25,8 @@ export function useResendVerification(): UseResendVerificationResult {
     setStatus("idle");
     setErrorMessage(null);
     startTransition(async () => {
-      const result = await resendVerificationEmail(email);
+      const token = await executeRecaptcha("resend_verification");
+      const result = await resendVerificationEmail(email, token ?? undefined);
       if (result.ok) {
         setStatus("sent");
       } else {

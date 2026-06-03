@@ -55,8 +55,11 @@ describe("useResendVerification", () => {
     await waitFor(() => {
       expect(screen.getByTestId("status")).toHaveTextContent("sent");
     });
+    // Second arg is the captcha token — undefined here because no site key is
+    // configured in the test env, so useRecaptcha short-circuits to null.
     expect(mockResendVerificationEmail).toHaveBeenCalledWith(
       "user@example.com",
+      undefined,
     );
     expect(screen.getByTestId("error")).toHaveTextContent("");
   });
@@ -126,6 +129,7 @@ describe("useResendVerification", () => {
     await waitFor(() => {
       expect(mockResendVerificationEmail).toHaveBeenCalledWith(
         "custom@domain.org",
+        undefined,
       );
     });
   });
