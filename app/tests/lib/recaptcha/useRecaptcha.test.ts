@@ -13,6 +13,7 @@ interface MockGrecaptcha {
 afterEach(() => {
   vi.unstubAllEnvs();
   vi.resetModules();
+  vi.useRealTimers();
   delete (window as unknown as { grecaptcha?: MockGrecaptcha }).grecaptcha;
 });
 
@@ -56,5 +57,22 @@ describe("useRecaptcha", () => {
     const { result } = renderHook(() => useRecaptcha());
 
     await expect(result.current("forgot_password")).resolves.toBeNull();
+  });
+
+  it("resolves null when grecaptcha never appears on window before the timeout", async () => {
+    vi.stubEnv("NEXT_PUBLIC_RECAPTCHA_SITE_KEY", "site-key");
+    // Deliberately do NOT set window.grecaptcha — simulates a script load failure.
+    vi.useFakeTimers();
+
+    const useRecaptcha = await loadHook();
+    const { result } = renderHook(() => useRecaptcha());
+
+    // Start the execute call (polls every 100 ms with a 5 s timeout).
+    const executePromise = result.current("register");
+
+    // Advance time past the 5 000 ms timeout so the while-loop exits.
+    await vi.advanceTimersByTimeAsync(6000);
+
+    await expect(executePromise).resolves.toBeNull();
   });
 });
