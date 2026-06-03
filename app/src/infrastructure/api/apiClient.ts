@@ -125,7 +125,7 @@ export async function apiFetch(
  * for endpoints that personalize the response for logged-in users but work
  * anonymously too (e.g. plans list, where pricing adjusts to the user's
  * preferred currency). A stale/invalid token that makes it past the
- * middleware refresh must not crash the anonymous render path.
+ * proxy refresh must not crash the anonymous render path.
  */
 export async function apiFetchOptional(
   path: string,

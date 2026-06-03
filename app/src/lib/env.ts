@@ -1,7 +1,7 @@
 /**
  * Boot-time environment validator. Intentionally zod-free so this module
- * can be imported from Edge middleware (`src/middleware.ts`) without pulling
- * zod into the per-request middleware bundle.
+ * can be imported from the proxy (`src/proxy.ts`) without pulling
+ * zod into the per-request proxy bundle.
  */
 function requireUrl(name: string): string {
   const value = process.env[name];

@@ -46,7 +46,7 @@ import {
 async function assertCanManageBilling(
   context?: SubscriptionContext,
 ): Promise<Subscription> {
-  // The user ID comes straight from the JWT cookie — the middleware has
+  // The user ID comes straight from the JWT cookie — the proxy has
   // already verified the token's expiry and the backend re-validates on
   // every API call. Fetching the full /account/ payload here would add a
   // round-trip to every billing mutation just to read `id`.

@@ -2,7 +2,7 @@ import { isRecord } from "@/lib/typeGuards";
 
 /**
  * Edge-safe JWT payload decoder. Pure base64+JSON; no signature verification,
- * no cookie dependency. The middleware vets expiry; the backend re-validates
+ * no cookie dependency. The proxy vets expiry; the backend re-validates
  * on every request — this helper only needs to read claims.
  *
  * Returns `null` when the token is missing or malformed; never throws.
