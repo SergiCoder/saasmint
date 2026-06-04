@@ -63,6 +63,32 @@ One committed `.env.example` at root, sectioned `# core` / `# app`, copied to `.
 
 Django checks run on `core/**`, Next checks on `app/**`, via `paths:` filters. The two predecessor deploy workflows merge into `deploy-staging.yml`. `prism:install-ci-review` installs the review workflow once for the whole repo.
 
+### D8 — Consolidated VS Code workspace for full local run
+
+**Decision.** Adopt a **multi-root `.code-workspace`** at the monorepo root (`saasmint.code-workspace`) declaring three folders — `core` (Django), `app` (Next.js), and `root` (`.`, for shared `infra/`) — as the single home for the **shared** launch configs, compounds, and tasks, with **per-folder editor tooling** in `core/.vscode/settings.json` (Python -> `core/.venv`) and `app/.vscode/settings.json` (ESLint/Prettier/TS/Vitest -> `app/node_modules`). Backend debugging uses a **debugpy-over-compose override** (`infra/docker-compose.debug.yml` + `core/infra/entrypoint.debug.sh`).
+
+**Why this model.**
+- A multi-root workspace is the only model where a **compound** launch and a **`dependsOrder: parallel`** build task can span *both* folders — two separate per-folder `launch.json` files cannot reference each other. This is what makes "one action runs everything" and "one F5 debugs both" possible.
+- Per-folder `settings.json` gives clean, idiomatic polyglot scoping: Python tooling (Pylance/ruff/mypy) resolves against `core/` with **zero** ESLint/TS leakage into `core/`, and Node tooling resolves against `app/node_modules` with no Python leakage into `app/`.
+- It honors the real, locked topology: backend + infra stay in Docker (`make dev`, uvicorn `--reload`, auto migrate/seed/sync-stripe), frontend stays on host (fast Turbopack HMR + host TLS). Nothing is re-architected.
+
+**Alternatives rejected.**
+- *Single-root `.vscode/` at the monorepo root.* One interpreter/one ESLint working dir for the whole repo forces brittle per-glob overrides and cross-contaminates Python and Node tooling. Rejected for tooling-scope hygiene — but its good ideas were grafted in (pytest Test Explorer, `files.watcherExclude`, explicitly pinned ruff/mypy interpreter, a browser-attach config).
+- *Docker-first (add an `app` service, debug everything in containers).* Kills Turbopack HMR speed and host-TLS simplicity for the frontend. Rejected as the default — but kept as an **opt-in compose `profile: [full-docker]`** for occasional full-parity runs, and its hardening ideas were grafted (pin attach hosts to `127.0.0.1`, `restart: true` on attach configs, a non-`--wait-for-client` debug boot).
+
+**How "run everything" works (one action).** The default build task **"Run Everything Local"** (`Ctrl+Shift+B`) has `dependsOrder: parallel` over two background tasks:
+1. **`backend: make dev`** (cwd = `root`) -> `make dev` => `docker compose up --build` brings up postgres/redis/django-uvicorn:8001/celery/caddy:8443/stripe-cli; `entrypoint.dev.sh` auto-runs `migrate` + `seed_dev_data --sync-stripe` under `config.settings.dev`.
+2. **`frontend: pnpm dev`** (cwd = `app`) -> `pnpm dev` => `next dev --turbo --experimental-https` on `https://localhost:3000`.
+
+Each task is `isBackground` with a **background problemMatcher** (`beginsPattern`/`endsPattern`) so VS Code reports "ready" instead of spinning forever; the umbrella task then completes cleanly. Cert paths are post-merge-correct (`../infra/certs/*.pem` from `app/`), and the frontend loads root env via a **real** `dotenv-cli` wrapper (see env note below).
+
+**The debug story.**
+- **Backend (attach debugpy to the container).** `make dev` runs uvicorn with `--reload`, which is hostile to a stable attach (the reloader forks a child the debugger can't follow; breakpoints vanish on restart). So debugging uses a dedicated path: launch **"Backend: attach debugpy (start stack)"** has `preLaunchTask: "backend: make dev (debugpy)"`, which runs `docker compose -p saasmint-debug -f docker-compose.yml -f infra/docker-compose.debug.yml up --build` **after a `down`** of any running stack, so it cannot collide on `5678`/`8001` with a plain `make dev`. The override swaps the entrypoint to `entrypoint.debug.sh` (still migrate + seed under `config.settings.dev`) and runs `uv run --with debugpy python -m debugpy --listen 0.0.0.0:5678 -m uvicorn config.asgi:application ... --port 8001` **without `--reload`**, publishing `5678`. `debugpy` is injected ephemerally via `uv run --with` (it is not a pyproject dep, so production is untouched). VS Code attaches over `connect 127.0.0.1:5678` (not `localhost`, to dodge IPv6 flakiness) with `pathMappings localRoot=core <-> remoteRoot=/app` and `django: true`; breakpoints in `core/apps/**`, `core/config/**`, `core/core/saasmint_core/**`, DRF views and Celery-invoked code all bind, and `justMyCode: false` steps into Django/DRF. A **standalone** **"Backend: attach debugpy (already running)"** config (no `preLaunchTask`, `connect 127.0.0.1:5678`) covers the common "stack already up, attach now" workflow.
+- **Frontend (Node `next dev`).** Launch **"Frontend: next dev (--inspect)"** runs `pnpm exec dotenv -e ../.env.local -- next dev --turbo --experimental-https ...` from `app/` as a `type: node` launch with `autoAttachChildProcesses: true`; the VS Code launcher manages the inspector itself (we do **not** add `--inspect` to `NODE_OPTIONS`, which would double-open the inspector and fight for `9229`). Breakpoints bind in server components, route handlers, middleware, and next-intl server code. `serverReadyAction` with `action: debugWithChrome` auto-launches Chrome against `https://localhost:3000` so **client-side React breakpoints are also covered**. A companion **"Frontend: attach to running next dev"** (`attach 9229`, `restart: true`) survives Turbopack restarts.
+- **Both at once.** Compound **"Run Everything Local (debug both)"** starts the backend debugpy attach (its `preLaunchTask` brings up the debug stack) plus the frontend `--inspect` launch, with `stopAll: true` so stopping one tears down both.
+
+Concrete file contents for all of the above (workspace file, per-folder settings, debug compose override, debug entrypoint) live in [`vscode-config-reference.md`](./vscode-config-reference.md).
+
 ## Risks / Trade-offs
 
 - **Tag collision on merge** → handled by D3 (drop predecessor tags before fetching).
@@ -85,4 +111,4 @@ Django checks run on `core/**`, Next checks on `app/**`, via `paths:` filters. T
 
 - Optional polish: rename `config.settings.dev` → `config.settings.local` so the Django settings module name matches the env spine (touches code; deferrable).
 - Confirm `CLAUDE.md` division of labor (behavior → specs, runbooks/gotchas → CLAUDE.md) before the separate spec-seeding effort begins.
-- Single root `docker-compose.yml` adding the `app` service for full local parity, or keep the app on host `next dev`? (Affects whether local mirrors staging 1:1.)
+- ~~Host `next dev` vs a dockerized `app` service for local parity.~~ **Resolved (D8):** keep `next dev` on host as the default; add a containerized `app` only as an opt-in `full-docker` compose profile, to preserve Turbopack HMR + host TLS and avoid the localhost-in-container SSR trap.
