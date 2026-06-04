@@ -58,7 +58,7 @@ services:
 
   django:
     build:
-      context: .
+      context: ./core
       dockerfile: infra/Dockerfile
     entrypoint: ["/app/infra/entrypoint.dev.sh"]
     ports:
@@ -74,13 +74,13 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - .:/app
+      - ./core:/app
 
   # ─── Celery worker ────────────────────────────────────────────────────────
 
   celery:
     build:
-      context: .
+      context: ./core
       dockerfile: infra/Dockerfile
     command: uv run celery -A config.celery worker --loglevel=info
     env_file:
@@ -94,7 +94,7 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - .:/app
+      - ./core:/app
 
   # ─── Stripe webhook forwarder ─────────────────────────────────────────────
 

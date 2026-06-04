@@ -1,4 +1,4 @@
-# SaasMint Core — Makefile
+# SaaSmint — Makefile (monorepo root)
 
 SHELL := bash
 unexport VIRTUAL_ENV  # prevent uv from using a stale venv from the parent shell
@@ -55,32 +55,40 @@ schema: ## Regenerate schema.yml from drf-spectacular (stack must be running)
 
 .PHONY: test
 test: ## Run Django tests
-	uv run --extra dev pytest -v
+	cd core && uv run --extra dev pytest -v
 
 .PHONY: test-core
 test-core: ## Run core unit tests
-	cd core && uv run --extra dev pytest -v
+	cd core/core && uv run --extra dev pytest -v
+
+.PHONY: test-app
+test-app: ## Run frontend tests
+	cd app && pnpm test
 
 # ─── Linting ──────────────────────────────────────────────────────────────────
 
 .PHONY: lint
 lint: ## Lint with Ruff
-	uv run ruff check .
+	cd core && uv run ruff check .
+	cd app && pnpm lint
 
 .PHONY: format
 format: ## Format with Ruff
-	uv run ruff format .
+	cd core && uv run ruff format .
+	cd app && pnpm format
 
 .PHONY: typecheck
 typecheck: ## Run mypy (django + core)
-	uv run mypy .
 	cd core && uv run mypy .
+	cd core/core && uv run mypy .
+	cd app && pnpm typecheck
 
 # ─── Setup ────────────────────────────────────────────────────────────────────
 
 .PHONY: install
 install: ## Install all Python dependencies
-	uv sync
+	cd core && uv sync
+	cd app && pnpm install
 
 .PHONY: https-setup
 https-setup: ## Generate mkcert TLS certs for local HTTPS (run once per machine)
@@ -103,7 +111,7 @@ https-setup: ## Generate mkcert TLS certs for local HTTPS (run once per machine)
 
 .PHONY: setup
 setup: install https-setup ## Full first-time project setup
-	@cp -n .env.base .env.local 2>/dev/null || true
+	@cp -n .env.example .env.local 2>/dev/null || true
 	@echo ""
 	@echo "Setup complete. Next steps:"
 	@echo "  1. Fill in .env.local with your Stripe test keys"
