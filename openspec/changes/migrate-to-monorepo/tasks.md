@@ -16,17 +16,17 @@
 ## 3. Relocate shared infra and rewire cross-boundary paths
 
 - [x] 3.1 Move shared infra (certs, Caddyfile, nginx, entrypoints) from `core/infra/` to root `infra/`
-- [ ] 3.2 Update `app/package.json` dev script cert path `../saasmint-core/infra/certs` → `../infra/certs`
+- [x] 3.2 Update `app/package.json` dev script cert path `../saasmint-core/infra/certs` → `../infra/certs`
 - [x] 3.3 Update `docker-compose.yml` build context `.` → `./core` and Dockerfile path references
-- [ ] 3.4 Update any remaining `saasmint-core` / `saasmint-app` path references across both packages
+- [x] 3.4 Update any remaining `saasmint-core` / `saasmint-app` path references across both packages
 
 ## 4. Unify environment configuration
 
-- [ ] 4.1 Create one root `.env.example`, sectioned `# core` / `# app`, covering every var from both old templates
-- [ ] 4.2 Note derived/boundary vars once (e.g. `FRONTEND_URL` == `NEXT_PUBLIC_APP_URL`); remove `core/.env.base` and `app/.env.example`
-- [ ] 4.3 Point root `docker-compose.yml` at root `.env.local`; pass `NEXT_PUBLIC_*` to the app build as args
-- [ ] 4.4 Wrap `next dev` to load root config: `dotenv -e ../.env.local -- next dev …`
-- [ ] 4.5 Update root `.gitignore` to ignore `.env.local` / `.env.staging` / `.env.production` and commit only `.env.example`
+- [x] 4.1 Create one root `.env.example`, sectioned `# core` / `# app`, covering every var from both old templates
+- [x] 4.2 Note derived/boundary vars once (e.g. `FRONTEND_URL` == `NEXT_PUBLIC_APP_URL`); remove `core/.env.base` and `app/.env.example`
+- [x] 4.3 Point root `docker-compose.yml` at root `.env.local`; pass `NEXT_PUBLIC_*` to the app build as args
+- [x] 4.4 Wrap `next dev` to load root config: `dotenv -e ../.env.local -- next dev …`
+- [x] 4.5 Update root `.gitignore` to ignore `.env.local` / `.env.staging` / `.env.production` and commit only `.env.example`
 - [ ] 4.6 Verify locally: `next dev` over HTTPS picks up `NEXT_PUBLIC_*` from root `.env.local`
 
 ## 5. Rename the deployed environment `dev` → `staging` (the ripple)
