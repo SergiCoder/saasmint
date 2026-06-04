@@ -1,0 +1,27 @@
+{
+  "eslint.workingDirectories": [{ "mode": "location" }],
+  "eslint.runtime": "node",
+  "prettier.prettierPath": "${workspaceFolder}/node_modules/prettier",
+  "typescript.tsdk": "${workspaceFolder}/node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "vitest.rootConfig": "${workspaceFolder}/vitest.config.ts",
+  "npm.packageManager": "pnpm",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" }
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" }
+  },
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "files.exclude": { "**/.next": true, "**/.turbo": true },
+  "files.watcherExclude": {
+    "**/.next/**": true,
+    "**/.turbo/**": true,
+    "**/node_modules/**": true
+  }
+}
