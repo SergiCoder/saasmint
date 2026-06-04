@@ -46,6 +46,8 @@ Both repos own `v0.4.0`/`v0.7.0`/`v0.11.0`/`v0.12.0` — they would collide on m
 
 Certs, Caddyfile, nginx, entrypoints, and compose move to root `infra/`. The app dev cert path `../saasmint-core/infra/certs` becomes `../infra/certs`; Docker build context for the backend becomes `./core`.
 
+- **Refined during apply:** the Django **Dockerfile + entrypoints + uvicorn config stay under `core/infra/`** (they need the image build context); only the shared/orchestration assets (certs, Caddyfile, nginx, redis.conf, compose files, deploy scripts) move to root `infra/`. The root `Makefile` runs docker targets at root and Python/Node targets scoped into `core/` and `app/`.
+
 ### D5 — Single root env file per environment (mirror what staging already does)
 
 One committed `.env.example` at root, sectioned `# core` / `# app`, copied to `.env.local` (dev) and `.env.<environment>` on each server. `NEXT_PUBLIC_*` remain build args; runtime vars flow via `env_file`. `next dev` is wrapped to load root `.env.local` (`dotenv -e ../.env.local -- next dev …`).

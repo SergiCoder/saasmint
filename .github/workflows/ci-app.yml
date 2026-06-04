@@ -3,12 +3,19 @@ name: CI
 on:
   pull_request:
     branches: [main, dev]
+    paths: ["app/**", ".github/workflows/ci-app.yml"]
   push:
     branches: [main]
+    paths: ["app/**", ".github/workflows/ci-app.yml"]
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-app-${{ github.ref }}
   cancel-in-progress: true
+
+# Frontend project is rooted at app/.
+defaults:
+  run:
+    working-directory: app
 
 jobs:
   # ─── Lint ─────────────────────────────────────────────────────────────────
@@ -18,10 +25,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v5
+        with:
+          package_json_file: app/package.json
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
 
@@ -32,10 +42,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v5
+        with:
+          package_json_file: app/package.json
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
 
@@ -46,10 +59,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v5
+        with:
+          package_json_file: app/package.json
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
 
@@ -64,10 +80,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v5
+        with:
+          package_json_file: app/package.json
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
@@ -82,10 +101,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v5
+        with:
+          package_json_file: app/package.json
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
 
       - name: Vulnerability audit

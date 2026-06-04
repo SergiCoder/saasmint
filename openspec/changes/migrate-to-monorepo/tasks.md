@@ -1,17 +1,17 @@
 ## 1. Prepare the merge (work on clones — never touch the originals)
 
-- [ ] 1.1 Install `git filter-repo` and confirm `git filter-repo --version` runs
-- [ ] 1.2 Clone `saasmint-core` to a scratch dir; `git filter-repo --to-subdirectory-filter core` and strip all tags
-- [ ] 1.3 Clone `saasmint-app` to a scratch dir; `git filter-repo --to-subdirectory-filter app` and strip all tags
-- [ ] 1.4 In `saasmint/`, `git init` and commit the existing scaffolding (`openspec/`, `.claude/`, `.opencode/`) as the root commit
+- [x] 1.1 Install `git filter-repo` and confirm `git filter-repo --version` runs
+- [x] 1.2 Clone `saasmint-core` to a scratch dir; `git filter-repo --to-subdirectory-filter core` and strip all tags
+- [x] 1.3 Clone `saasmint-app` to a scratch dir; `git filter-repo --to-subdirectory-filter app` and strip all tags
+- [x] 1.4 In `saasmint/`, `git init` and commit the existing scaffolding (`openspec/`, `.claude/`, `.opencode/`) as the root commit
 
 ## 2. Merge histories
 
-- [ ] 2.1 Add the rewritten core clone as a remote, fetch, and `git merge --allow-unrelated-histories` (brings `core/`)
-- [ ] 2.2 Add the rewritten app clone as a remote, fetch, and `git merge --allow-unrelated-histories` (brings `app/`)
-- [ ] 2.3 Verify `git blame core/apps/billing/models.py` resolves to original pre-merge commits (not a squash)
-- [ ] 2.4 Verify `git blame app/src/domain/...` resolves to original frontend commits
-- [ ] 2.5 Remove the temporary remotes
+- [x] 2.1 Add the rewritten core clone as a remote, fetch, and `git merge --allow-unrelated-histories` (brings `core/`)
+- [x] 2.2 Add the rewritten app clone as a remote, fetch, and `git merge --allow-unrelated-histories` (brings `app/`)
+- [x] 2.3 Verify `git blame core/apps/billing/models.py` resolves to original pre-merge commits (not a squash)
+- [x] 2.4 Verify `git blame app/src/domain/...` resolves to original frontend commits
+- [x] 2.5 Remove the temporary remotes
 
 ## 3. Relocate shared infra and rewire cross-boundary paths
 
@@ -39,7 +39,7 @@
 
 ## 6. Unify CI and install prism review
 
-- [ ] 6.1 Merge both repos' `.github/workflows/` into one set with `paths:` filters (`core/**` → Django checks, `app/**` → Next checks)
+- [x] 6.1 Merge both repos' `.github/workflows/` into one set with `paths:` filters (`core/**` → Django checks, `app/**` → Next checks)
 - [ ] 6.2 Run `/prism:install-ci-review` once for the repo and add `ANTHROPIC_API_KEY` as a repo secret
 - [ ] 6.3 Open a throwaway PR touching both `core/` and `app/`; confirm both stacks' checks + prism review fire
 
@@ -53,7 +53,7 @@
 
 - [ ] 8.1 Tag the monorepo `v1.0.0`
 - [ ] 8.2 Set `saasmint-core` and `saasmint-app` to read-only/archived on the remote
-- [ ] 8.3 Update root `README.md` + `CLAUDE.md` to point at the new layout and reference the archived repos for pre-merge history
+- [x] 8.3 Update root `README.md` + `CLAUDE.md` to point at the new layout and reference the archived repos for pre-merge history
 
 ## 9. VS Code workspace for local dev
 
