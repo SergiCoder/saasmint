@@ -26,7 +26,7 @@ services:
 
   django:
     build:
-      context: ..
+      context: ../core
       dockerfile: infra/Dockerfile
     restart: unless-stopped
     entrypoint: ["/app/infra/entrypoint.sh"]
@@ -45,7 +45,7 @@ services:
 
   celery:
     build:
-      context: ..
+      context: ../core
       dockerfile: infra/Dockerfile
     restart: unless-stopped
     command: uv run celery -A config.celery worker -B --loglevel=info

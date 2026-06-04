@@ -15,9 +15,9 @@
 
 ## 3. Relocate shared infra and rewire cross-boundary paths
 
-- [ ] 3.1 Move shared infra (certs, Caddyfile, nginx, entrypoints) from `core/infra/` to root `infra/`
+- [x] 3.1 Move shared infra (certs, Caddyfile, nginx, entrypoints) from `core/infra/` to root `infra/`
 - [ ] 3.2 Update `app/package.json` dev script cert path `../saasmint-core/infra/certs` → `../infra/certs`
-- [ ] 3.3 Update `docker-compose.yml` build context `.` → `./core` and Dockerfile path references
+- [x] 3.3 Update `docker-compose.yml` build context `.` → `./core` and Dockerfile path references
 - [ ] 3.4 Update any remaining `saasmint-core` / `saasmint-app` path references across both packages
 
 ## 4. Unify environment configuration
