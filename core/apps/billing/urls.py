@@ -1,0 +1,35 @@
+"""URL patterns for the billing app."""
+
+from django.urls import path
+
+from apps.billing.views import (
+    BillingCurrenciesView,
+    CheckoutSessionView,
+    CreditBalanceView,
+    PlanListView,
+    PortalSessionView,
+    ProductCheckoutSessionView,
+    ProductListView,
+    ScheduledChangeView,
+    SubscriptionView,
+)
+
+urlpatterns = [
+    path("plans/", PlanListView.as_view(), name="billing-plans"),
+    path("products/", ProductListView.as_view(), name="billing-products"),
+    path("currencies/", BillingCurrenciesView.as_view(), name="billing-currencies"),
+    path("checkout-sessions/", CheckoutSessionView.as_view(), name="billing-checkout"),
+    path(
+        "product-checkout-sessions/",
+        ProductCheckoutSessionView.as_view(),
+        name="billing-product-checkout",
+    ),
+    path("portal-sessions/", PortalSessionView.as_view(), name="billing-portal"),
+    path("subscriptions/me/", SubscriptionView.as_view(), name="billing-subscription"),
+    path(
+        "subscriptions/me/scheduled-change/",
+        ScheduledChangeView.as_view(),
+        name="billing-subscription-scheduled-change",
+    ),
+    path("credits/me/", CreditBalanceView.as_view(), name="billing-credits"),
+]

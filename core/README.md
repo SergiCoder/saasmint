@@ -1,0 +1,211 @@
+# SaasMint Core
+
+A production-ready Django backend for building SaaS applications with Stripe billing. Fork it, configure your Stripe keys, and start building.
+
+## What you get
+
+- **Stripe integration** — subscriptions, one-time payments, customer portal, and webhook handling
+- **Django backend** — custom JWT auth (email/password + OAuth), user management, and admin panel
+- **Admin dashboard** — extended Django admin with subscription status, Stripe event log, and user impersonation via django-hijack
+- **Webhook processing** — idempotent event handling with database-backed deduplication
+- **Async jobs** — Celery + Redis for background tasks (email delivery, exchange-rate sync, webhook processing)
+- **Organizations** — multi-tenant orgs with role-based membership (owner, admin, member), email invitations, and ownership transfer
+- **Multi-plan support** — personal and team plans (basic, pro) with seat-based team pricing, or define your own
+- **One-time products** — credit packs (Boost) for non-subscription purchases via Stripe Checkout
+- **Multi-currency display** — USD-only catalog with daily exchange rates from [open.er-api.com](https://open.er-api.com) for display-time conversion to 20+ currencies
+- **Dev seed data** — one command to populate the database with realistic test users, orgs, and subscriptions
+- **CI/CD** — GitHub Actions for lint, typecheck, and tests out of the box
+
+## Quick start
+
+```bash
+# 1. Fork and clone
+gh repo fork SergiCoder/saasmint-core --clone
+
+# 2. Install dependencies
+uv sync
+
+# 3. Set up environment variables
+cp .env.base .env.local
+# Edit .env.local with your Stripe keys and database URL
+
+# 4. Start the Docker stack (PostgreSQL, Redis, Django, Celery)
+make dev
+
+# 5. In a separate terminal, run migrations
+make migrate
+
+# 6. (Optional) Seed dev data with test users and orgs
+make seed
+```
+
+## Local HTTPS
+
+The dev stack includes a [Caddy](https://caddyserver.com/) reverse proxy that terminates TLS at `https://localhost:8443` and forwards to Django. This requires a one-time [mkcert](https://github.com/FiloSottile/mkcert) setup per machine.
+
+**Install mkcert (once per machine):**
+
+| Platform | Command |
+|---|---|
+| macOS | `brew install mkcert` |
+| Ubuntu | `sudo apt install mkcert` |
+| Windows | `winget install FiloSottile.mkcert` or `choco install mkcert` |
+
+**Generate locally-trusted certs:**
+
+```bash
+mkdir -p infra/certs
+mkcert -install
+mkcert -key-file infra/certs/localhost-key.pem -cert-file infra/certs/localhost.pem localhost
+```
+
+After that, `make dev` serves Django at both:
+- `http://localhost:8001` — direct (no TLS)
+- `https://localhost:8443` — via Caddy (TLS, green padlock)
+
+The `infra/certs/` directory is gitignored. Certs are never committed.
+
+> Run `make https-setup` at any time to see these instructions again.
+
+## API documentation
+
+When `DEBUG=True`, interactive API docs are served at:
+
+- `/api/docs/` — Swagger UI
+- `/api/redoc/` — ReDoc
+- `/api/schema/` — raw OpenAPI 3 JSON schema
+
+Links to Swagger and ReDoc also appear in the Django admin header (debug only).
+
+## Environment variables
+
+| Variable | Description |
+|---|---|
+| `ENVIRONMENT` | Environment name (`local`, `development`, `production`) — selects which env file to load |
+| `DJANGO_SECRET_KEY` | Django secret key |
+| `JWT_SIGNING_KEY` | Signing key for access/refresh JWTs. Keep separate from `DJANGO_SECRET_KEY` so it can be rotated independently; falls back to `DJANGO_SECRET_KEY` if unset |
+| `SCHEMA_PUBLIC` | Set to `True` to expose `/api/schema/`, `/api/docs/`, `/api/redoc/` outside `DEBUG`. Always on when `DEBUG=True` |
+| `DATABASE_URL` | PostgreSQL connection string |
+| `STRIPE_SECRET_KEY` | Stripe API secret key |
+| `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret |
+| `BILLING_CURRENCIES` | JSON array of ISO 4217 codes Stripe charges in (e.g. `["usd","eur","gbp"]`). Defaults to `["usd","eur","gbp","jpy","cny"]`. `usd` must always be included. Add a code here to mint real Stripe Prices for it; display-only currencies do not need to be listed here |
+| `REDIS_URL` | Redis connection string (defaults to `redis://localhost:6379/0`) |
+| `DEBUG` | Set to `True` for local development |
+| `ALLOWED_HOSTS` | JSON array of allowed hosts (e.g. `["localhost","127.0.0.1"]`) |
+| `CORS_ALLOWED_ORIGINS` | JSON array of allowed CORS origins |
+| `CORS_ALLOW_ALL_ORIGINS` | Set to `True` to allow all CORS origins (dev only) |
+| `CSRF_TRUSTED_ORIGINS` | JSON array of trusted origins for CSRF (e.g. `["https://localhost:8443"]`) |
+| `DJANGO_SETTINGS_MODULE` | Python dotted path to the Django settings module (e.g. `config.settings.dev`) |
+| `RESEND_API_KEY` | [Resend](https://resend.com) API key for transactional email (verification, password reset) |
+| `EMAIL_FROM_ADDRESS` | Sender address for outbound email (defaults to `noreply@saasmint.net`) |
+| `FRONTEND_URL` | Base URL of the frontend app, used in email links (defaults to `https://localhost:3000`) |
+| `MARKETING_INQUIRIES_TO` | Inbox that receives landing-page CTA + Contact form submissions. Required at runtime — `POST /api/v1/marketing/inquiries/` returns 500 if unset |
+| `OAUTH_GOOGLE_CLIENT_ID` | Google OAuth 2.0 client ID (optional) |
+| `OAUTH_GOOGLE_CLIENT_SECRET` | Google OAuth 2.0 client secret (optional) |
+| `OAUTH_GITHUB_CLIENT_ID` | GitHub OAuth app client ID (optional) |
+| `OAUTH_GITHUB_CLIENT_SECRET` | GitHub OAuth app client secret (optional) |
+| `OAUTH_MICROSOFT_CLIENT_ID` | Microsoft OAuth app client ID (optional) |
+| `OAUTH_MICROSOFT_CLIENT_SECRET` | Microsoft OAuth app client secret (optional) |
+| `ENABLE_SESSION_AUTH` | Set to `True` to enable DRF browsable API session auth (dev only — production boot fails if this is set) |
+
+## Project structure
+
+```
+saasmint-core/
+├── core/                # Framework-agnostic shared business logic (saasmint-core-lib)
+│   ├── saasmint_core/
+│   │   ├── domain/      # Pydantic domain models (User, Org, Subscription, …)
+│   │   ├── services/    # Business logic (billing, webhooks, GDPR, …)
+│   │   ├── repositories/ # Repository protocols (async, framework-agnostic)
+│   │   └── exceptions/  # Domain exceptions
+│   └── tests/           # Core unit tests
+├── config/              # Django settings, URLs, WSGI/ASGI
+├── apps/                # Django apps
+│   ├── admin_panel/     # Extended Django admin (subscription status column, site_url → /dashboard/)
+│   ├── billing/         # Stripe billing, subscriptions, and webhook processing
+│   ├── dashboard/       # Server-rendered dashboard, hijack impersonation landing views
+│   ├── marketing/       # Public landing-page CTA + Contact form (POST /api/v1/marketing/inquiries/)
+│   ├── orgs/            # Organization management and membership
+│   └── users/           # User auth, Django JWT authentication, and profile management
+├── middleware/           # Django middleware — security.py (CSP / security headers), exceptions.py (DRF error-envelope normalisation)
+├── infra/               # Docker, Caddy TLS proxy, and dev entrypoint
+├── templates/           # Shared HTML templates (admin overrides, DRF browsable API, topbar)
+├── scripts/             # CI helper scripts (dependency parser)
+├── .github/             # CI workflows and PR template
+├── helpers.py           # Shared Django helpers (get_user, aget_or_none, aget_latest_or_none)
+└── manage.py
+```
+
+## Tech stack
+
+- **Python 3.12+** with Django
+- **PostgreSQL** as the database
+- **Stripe** for payments and billing
+- **Resend** for transactional email (verification, password reset)
+- **django-hijack** for admin user impersonation
+- **drf-spectacular** for OpenAPI schema, Swagger UI, and ReDoc
+- **Caddy** as local TLS reverse proxy
+- **uv** for dependency management
+- **Ruff** for linting
+- **mypy** for type checking
+- **pytest** for testing
+
+## Development
+
+```bash
+# Run Django tests
+make test
+
+# Run core package tests
+make test-core
+
+# Lint
+make lint
+
+# Typecheck (django + core)
+make typecheck
+
+# Format
+make format
+
+# Seed dev data (requires Docker stack running and DEBUG=True)
+make seed
+```
+
+## Stripe setup
+
+1. Create a [Stripe account](https://dashboard.stripe.com/register).
+2. Get your API keys from the [Stripe Dashboard](https://dashboard.stripe.com/apikeys) and put them in the env file for your target environment — `.env.local` (default), `.env.dev`, or `.env.prod`. The active file is selected by `ENVIRONMENT` (`local` | `development` | `production`).
+3. Start the stack — `infra/entrypoint.sh` runs `migrate`, then `seed_catalog` (idempotent; creates default Plans, PlanPrices, and Boost Products with placeholder `stripe_price_id` values), then `sync_localized_prices` (recomputes `LocalizedPrice` rows from the FX feed; non-fatal if the upstream is flaky — existing rows are kept), then `sync_stripe_catalog` (idempotent via Stripe `lookup_key`s; creates/updates Stripe Products/Prices and writes real `stripe_price_id`s back onto the DB rows for USD on `PlanPrice`/`ProductPrice` and onto `LocalizedPrice` for non-USD billing currencies). The `sync_localized_prices` step must run before `sync_stripe_catalog` because the latter reads `LocalizedPrice.amount_minor` when minting non-USD Stripe Prices. No manual steps are needed after deploy. To customize the catalog, edit `apps/billing/management/commands/seed_catalog.py`; to push changes manually, run `make sync-stripe`.
+4. Webhook forwarding for local development is handled automatically by the bundled `stripe-cli` service in `docker-compose.yml`. Mount your host `~/.config/stripe` read-write into the container (the CLI writes auth state back to its config) and run `stripe login` once on the host — then `make dev` starts the forwarder alongside Django. Tail it with `make stripe-logs`.
+5. In production, set up a webhook endpoint pointing to `/api/v1/webhooks/stripe/` with these events:
+   - `checkout.session.completed`
+   - `customer.subscription.created`
+   - `customer.subscription.updated`
+   - `customer.subscription.deleted`
+   - `invoice.payment_succeeded`
+   - `invoice.payment_failed`
+   - `subscription_schedule.created`
+   - `subscription_schedule.updated`
+   - `subscription_schedule.released`
+   - `subscription_schedule.canceled`
+   - `subscription_schedule.aborted`
+
+## Deploying
+
+This template works with any platform that supports Django:
+
+- **Railway** — `railway up`
+- **Render** — connect your repo and deploy
+- **Fly.io** — `fly launch`
+- **VPS** — Gunicorn + Nginx + PostgreSQL
+
+Make sure to set all environment variables and run migrations in production.
+
+## Plugins
+
+- [Prism](https://github.com/SergiCoder/prism) — Claude Code plugin for multi-profile code review, conventional commits, branching, and PR workflows
+
+## License
+
+[MIT](https://github.com/SergiCoder/saasmint-core/blob/main/LICENSE)

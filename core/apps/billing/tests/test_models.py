@@ -1,0 +1,304 @@
+"""Tests for billing models."""
+
+from __future__ import annotations
+
+from datetime import UTC, datetime
+
+import pytest
+from django.db import IntegrityError
+
+from apps.billing.models import (
+    ACTIVE_SUBSCRIPTION_STATUSES,
+    CreditBalance,
+    CreditTransaction,
+    PlanPrice,
+    PlanTier,
+    StripeEvent,
+    Subscription,
+    SubscriptionStatus,
+)
+
+
+@pytest.mark.django_db
+class TestPlan:
+    def test_str(self, plan):
+        assert str(plan) == "Personal Monthly (month)"
+
+    def test_defaults(self, plan):
+        assert plan.is_active is True
+
+
+@pytest.mark.django_db
+class TestPlanPrice:
+    def test_str(self, plan_price):
+        assert "$9.99" in str(plan_price)
+
+    def test_unique_plan(self, plan, plan_price):
+        with pytest.raises(IntegrityError):
+            PlanPrice.objects.create(
+                plan=plan,
+                stripe_price_id="price_dup",
+                amount=1999,
+            )
+
+
+@pytest.mark.django_db
+class TestStripeCustomer:
+    def test_str(self, stripe_customer):
+        assert str(stripe_customer) == "cus_test_123"
+
+    def test_constraint_rejects_both_null(self, db):
+        """StripeCustomer must have exactly one owner — neither user nor org."""
+        from apps.billing.models import StripeCustomer
+
+        with pytest.raises(IntegrityError):
+            StripeCustomer.objects.create(
+                stripe_id="cus_no_owner",
+                livemode=False,
+            )
+
+    def test_constraint_rejects_both_set(self, db):
+        """StripeCustomer must have exactly one owner — not both user and org."""
+        from apps.billing.models import StripeCustomer
+        from apps.orgs.models import Org
+        from apps.users.models import User
+
+        user = User.objects.create_user(email="constraint_user@example.com")
+        org = Org.objects.create(name="Constraint Org", slug="constraint-org", created_by=user)
+        with pytest.raises(IntegrityError):
+            StripeCustomer.objects.create(
+                stripe_id="cus_both_owners",
+                user=user,
+                org=org,
+                livemode=False,
+            )
+
+
+@pytest.mark.django_db
+class TestSubscription:
+    def test_str(self, subscription):
+        assert "sub_test_123" in str(subscription)
+        assert "active" in str(subscription)
+
+    def test_default_status(self, stripe_customer, plan):
+        sub = Subscription.objects.create(
+            stripe_id="sub_default",
+            stripe_customer=stripe_customer,
+            plan=plan,
+            current_period_start=datetime(2026, 1, 1, tzinfo=UTC),
+            current_period_end=datetime(2026, 2, 1, tzinfo=UTC),
+        )
+        assert sub.status == SubscriptionStatus.INCOMPLETE
+
+
+@pytest.mark.django_db
+class TestStripeEvent:
+    def test_str(self, db):
+        event = StripeEvent.objects.create(
+            stripe_id="evt_test_123",
+            type="checkout.session.completed",
+            livemode=False,
+            payload={"id": "evt_test_123"},
+        )
+        assert "evt_test_123" in str(event)
+        assert "checkout.session.completed" in str(event)
+
+
+@pytest.mark.django_db
+class TestPlanUniqueConstraint:
+    def test_duplicate_active_context_tier_interval_rejected(self, db):
+        from apps.billing.models import Plan
+
+        Plan.objects.create(
+            name="Personal Basic Monthly",
+            context="personal",
+            tier=PlanTier.BASIC,
+            interval="month",
+            is_active=True,
+        )
+        with pytest.raises(IntegrityError):
+            Plan.objects.create(
+                name="Personal Basic Monthly v2",
+                context="personal",
+                tier=PlanTier.BASIC,
+                interval="month",
+                is_active=True,
+            )
+
+    def test_inactive_duplicates_allowed(self, db):
+        from apps.billing.models import Plan
+
+        Plan.objects.create(
+            name="Legacy 1",
+            context="personal",
+            tier=PlanTier.PRO,
+            interval="year",
+            is_active=False,
+        )
+        Plan.objects.create(
+            name="Legacy 2",
+            context="personal",
+            tier=PlanTier.PRO,
+            interval="year",
+            is_active=False,
+        )
+        # No error — inactive plans are not constrained
+
+
+@pytest.mark.django_db
+class TestProduct:
+    def test_str(self, db):
+        from apps.billing.models import Product
+
+        product = Product.objects.create(
+            name="100 Credits", type="one_time", credits=100, is_active=True
+        )
+        assert "100 Credits" in str(product)
+        assert "100 credits" in str(product)
+
+
+@pytest.mark.django_db
+class TestProductPrice:
+    def test_str(self, db):
+        from apps.billing.models import Product, ProductPrice
+
+        product = Product.objects.create(
+            name="500 Credits", type="one_time", credits=500, is_active=True
+        )
+        price = ProductPrice.objects.create(
+            product=product, stripe_price_id="price_pp_str", amount=4999
+        )
+        assert "$49.99" in str(price)
+
+
+@pytest.mark.django_db
+class TestLocalizedPrice:
+    def _plan_price(self, amount: int = 999):
+        from apps.billing.models import Plan, PlanPrice
+
+        plan = Plan.objects.create(name="P", context="personal", tier=3, interval="month")
+        return PlanPrice.objects.create(
+            plan=plan, stripe_price_id=f"price_{plan.id}", amount=amount
+        )
+
+    def _product_price(self, amount: int = 1500):
+        from apps.billing.models import Product, ProductPrice
+
+        product = Product.objects.create(name="Pack", type="one_time", credits=10)
+        return ProductPrice.objects.create(
+            product=product, stripe_price_id=f"price_{product.id}", amount=amount
+        )
+
+    def test_str(self, db):
+        from apps.billing.models import LocalizedPrice
+
+        plan_price = self._plan_price(999)
+        lp = LocalizedPrice.objects.create(
+            plan_price=plan_price,
+            currency="eur",
+            amount_minor=899,
+            synced_at=datetime(2026, 4, 1, tzinfo=UTC),
+        )
+        assert "EUR" in str(lp)
+        assert "899" in str(lp)
+
+    def test_xor_owner_constraint_rejects_both_set(self, db):
+        from apps.billing.models import LocalizedPrice
+
+        plan_price = self._plan_price(999)
+        product_price = self._product_price(1500)
+        with pytest.raises(IntegrityError):
+            LocalizedPrice.objects.create(
+                plan_price=plan_price,
+                product_price=product_price,
+                currency="eur",
+                amount_minor=899,
+                synced_at=datetime(2026, 4, 1, tzinfo=UTC),
+            )
+
+    def test_xor_owner_constraint_rejects_neither_set(self, db):
+        from apps.billing.models import LocalizedPrice
+
+        with pytest.raises(IntegrityError):
+            LocalizedPrice.objects.create(
+                currency="eur",
+                amount_minor=899,
+                synced_at=datetime(2026, 4, 1, tzinfo=UTC),
+            )
+
+    def test_unique_per_plan_price_currency(self, db):
+        from apps.billing.models import LocalizedPrice
+
+        plan_price = self._plan_price(999)
+        LocalizedPrice.objects.create(
+            plan_price=plan_price,
+            currency="eur",
+            amount_minor=899,
+            synced_at=datetime(2026, 4, 1, tzinfo=UTC),
+        )
+        with pytest.raises(IntegrityError):
+            LocalizedPrice.objects.create(
+                plan_price=plan_price,
+                currency="eur",
+                amount_minor=999,
+                synced_at=datetime(2026, 4, 2, tzinfo=UTC),
+            )
+
+
+class TestActiveSubscriptionStatuses:
+    def test_contains_active_and_trialing(self):
+        values = [s.value for s in ACTIVE_SUBSCRIPTION_STATUSES]
+        assert "active" in values
+        assert "trialing" in values
+
+    def test_excludes_canceled(self):
+        values = [s.value for s in ACTIVE_SUBSCRIPTION_STATUSES]
+        assert "canceled" not in values
+
+
+# ---------------------------------------------------------------------------
+# DB-level CheckConstraint coverage — these complement the StripeCustomer
+# constraint tests above. Each row must satisfy XOR(user, org) and the
+# numeric guards (balance >= 0, amount != 0).
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.django_db
+class TestCreditBalanceConstraints:
+    def test_xor_owner_rejects_both_user_and_org_set(self, user):
+        from apps.orgs.models import Org
+
+        org = Org.objects.create(name="CB Both", slug="cb-both", created_by=user)
+        with pytest.raises(IntegrityError):
+            CreditBalance.objects.create(user=user, org=org, balance=100)
+
+    def test_xor_owner_rejects_neither_user_nor_org(self, db):
+        with pytest.raises(IntegrityError):
+            CreditBalance.objects.create(balance=100)
+
+    def test_balance_non_negative_rejects_negative(self, user):
+        with pytest.raises(IntegrityError):
+            CreditBalance.objects.create(user=user, balance=-1)
+
+
+@pytest.mark.django_db
+class TestCreditTransactionConstraints:
+    def test_xor_owner_rejects_both_user_and_org(self, user):
+        from apps.orgs.models import Org
+
+        org = Org.objects.create(name="CT Both", slug="ct-both", created_by=user)
+        with pytest.raises(IntegrityError):
+            CreditTransaction.objects.create(
+                user=user,
+                org=org,
+                amount=10,
+                reason="test",
+            )
+
+    def test_amount_nonzero_rejects_zero(self, user):
+        with pytest.raises(IntegrityError):
+            CreditTransaction.objects.create(
+                user=user,
+                amount=0,
+                reason="test",
+            )
