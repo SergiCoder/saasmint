@@ -1,0 +1,21 @@
+import { DjangoApiAuthGateway } from "./api/DjangoApiAuthGateway";
+import { DjangoApiCreditsGateway } from "./api/DjangoApiCreditsGateway";
+import { DjangoApiInquiryGateway } from "./api/DjangoApiInquiryGateway";
+import { DjangoApiInvitationGateway } from "./api/DjangoApiInvitationGateway";
+import { DjangoApiOrgGateway } from "./api/DjangoApiOrgGateway";
+import { DjangoApiOrgMemberGateway } from "./api/DjangoApiOrgMemberGateway";
+import { DjangoApiPlanGateway } from "./api/DjangoApiPlanGateway";
+import { DjangoApiProductGateway } from "./api/DjangoApiProductGateway";
+import { DjangoApiSubscriptionGateway } from "./api/DjangoApiSubscriptionGateway";
+import { DjangoApiUserGateway } from "./api/DjangoApiUserGateway";
+
+export const authGateway = new DjangoApiAuthGateway();
+export const userGateway = new DjangoApiUserGateway();
+export const planGateway = new DjangoApiPlanGateway();
+export const productGateway = new DjangoApiProductGateway();
+export const subscriptionGateway = new DjangoApiSubscriptionGateway();
+export const orgGateway = new DjangoApiOrgGateway();
+export const orgMemberGateway = new DjangoApiOrgMemberGateway();
+export const invitationGateway = new DjangoApiInvitationGateway();
+export const inquiryGateway = new DjangoApiInquiryGateway();
+export const creditsGateway = new DjangoApiCreditsGateway();
