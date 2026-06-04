@@ -1,0 +1,292 @@
+"""Django ORM implementations of billing repository protocols."""
+
+from __future__ import annotations
+
+import asyncio
+import logging
+from dataclasses import dataclass
+from datetime import UTC, datetime
+from typing import TYPE_CHECKING, Any
+from uuid import UUID
+
+from saasmint_core.domain.product import Product, ProductType
+from saasmint_core.domain.stripe_customer import StripeCustomer
+from saasmint_core.domain.stripe_event import StripeEvent
+from saasmint_core.domain.subscription import (
+    ACTIVE_SUBSCRIPTION_STATUSES,
+    Plan,
+    PlanContext,
+    PlanInterval,
+    PlanPrice,
+    PlanTier,
+    Subscription,
+    SubscriptionStatus,
+)
+
+from apps.billing.models import Plan as PlanModel
+from apps.billing.models import PlanPrice as PlanPriceModel
+from apps.billing.models import Product as ProductModel
+from apps.billing.models import StripeCustomer as StripeCustomerModel
+from apps.billing.models import StripeEvent as StripeEventModel
+from apps.billing.models import Subscription as SubscriptionModel
+from helpers import aget_latest_or_none, aget_or_none
+
+if TYPE_CHECKING:
+    from saasmint_core.services.webhooks import WebhookRepos
+
+logger = logging.getLogger(__name__)
+
+
+class DjangoStripeCustomerRepository:
+    @staticmethod
+    def _to_domain(obj: StripeCustomerModel) -> StripeCustomer:
+        return StripeCustomer(
+            id=obj.id,
+            stripe_id=obj.stripe_id,
+            user_id=obj.user_id,
+            org_id=obj.org_id,
+            livemode=obj.livemode,
+            created_at=obj.created_at,
+        )
+
+    async def get_by_id(self, customer_id: UUID) -> StripeCustomer | None:
+        return await aget_or_none(StripeCustomerModel, self._to_domain, id=customer_id)
+
+    async def get_by_stripe_id(self, stripe_id: str) -> StripeCustomer | None:
+        return await aget_or_none(StripeCustomerModel, self._to_domain, stripe_id=stripe_id)
+
+    async def get_by_user_id(self, user_id: UUID) -> StripeCustomer | None:
+        return await aget_or_none(StripeCustomerModel, self._to_domain, user_id=user_id)
+
+    async def get_by_org_id(self, org_id: UUID) -> StripeCustomer | None:
+        return await aget_or_none(StripeCustomerModel, self._to_domain, org_id=org_id)
+
+    async def save(self, customer: StripeCustomer) -> StripeCustomer:
+        # ``lookup`` is spread as ``**kwargs`` into ``aupdate_or_create``, which
+        # expects ``Mapping[str, Any]``. ``defaults`` is passed by value and can
+        # use the stricter ``dict[str, object]`` — DO NOT unify the two.
+        lookup: dict[str, Any] = {}
+        if customer.user_id:
+            lookup["user_id"] = customer.user_id
+        elif customer.org_id:
+            lookup["org_id"] = customer.org_id
+        else:
+            lookup["id"] = customer.id
+
+        defaults: dict[str, object] = {
+            "stripe_id": customer.stripe_id,
+            "user_id": customer.user_id,
+            "org_id": customer.org_id,
+            "livemode": customer.livemode,
+        }
+
+        await StripeCustomerModel.objects.aupdate_or_create(
+            **lookup,
+            defaults=defaults,
+        )
+        return customer
+
+    async def delete(self, customer_id: UUID) -> None:
+        await StripeCustomerModel.objects.filter(id=customer_id).adelete()
+
+
+class DjangoSubscriptionRepository:
+    @staticmethod
+    def _to_domain(obj: SubscriptionModel) -> Subscription:
+        return Subscription(
+            id=obj.id,
+            stripe_id=obj.stripe_id,
+            stripe_customer_id=obj.stripe_customer_id,
+            user_id=obj.user_id,
+            status=SubscriptionStatus(obj.status),
+            plan_id=obj.plan_id,
+            seat_limit=obj.seat_limit,
+            trial_ends_at=obj.trial_ends_at,
+            current_period_start=obj.current_period_start,
+            current_period_end=obj.current_period_end,
+            canceled_at=obj.canceled_at,
+            cancel_at=obj.cancel_at,
+            scheduled_plan_id=obj.scheduled_plan_id,
+            scheduled_change_at=obj.scheduled_change_at,
+            currency=obj.currency,
+            created_at=obj.created_at,
+        )
+
+    async def get_by_stripe_id(self, stripe_id: str) -> Subscription | None:
+        return await aget_or_none(SubscriptionModel, self._to_domain, stripe_id=stripe_id)
+
+    async def _get_latest_active(self, **filter_kwargs: object) -> Subscription | None:
+        return await aget_latest_or_none(
+            SubscriptionModel.objects.filter(
+                status__in=ACTIVE_SUBSCRIPTION_STATUSES,
+                **filter_kwargs,
+            ),
+            self._to_domain,
+        )
+
+    async def get_active_for_user(self, user_id: UUID) -> Subscription | None:
+        # Split the OR into two index-friendly queries — the OR'd predicate
+        # can't use either of `idx_sub_user_status` / `idx_sub_customer_status`
+        # and degenerates into a scan on hot dashboard paths. The two index
+        # lookups are independent, so fire them concurrently via gather().
+        base = SubscriptionModel.objects.filter(status__in=ACTIVE_SUBSCRIPTION_STATUSES)
+        by_user, by_customer = await asyncio.gather(
+            aget_latest_or_none(base.filter(user_id=user_id), self._to_domain),
+            aget_latest_or_none(base.filter(stripe_customer__user_id=user_id), self._to_domain),
+        )
+        candidates = [s for s in (by_user, by_customer) if s is not None]
+        return max(candidates, key=lambda s: s.created_at) if candidates else None
+
+    async def get_active_for_customer(self, stripe_customer_id: UUID) -> Subscription | None:
+        try:
+            obj = await SubscriptionModel.objects.aget(
+                stripe_customer_id=stripe_customer_id,
+                status__in=ACTIVE_SUBSCRIPTION_STATUSES,
+            )
+            return self._to_domain(obj)
+        except SubscriptionModel.DoesNotExist:
+            return None
+        except SubscriptionModel.MultipleObjectsReturned:
+            logger.error(
+                "Multiple active subscriptions for customer %s — returning latest",
+                stripe_customer_id,
+            )
+            return await self._get_latest_active(stripe_customer_id=stripe_customer_id)
+
+    async def save(self, subscription: Subscription) -> Subscription:
+        await SubscriptionModel.objects.aupdate_or_create(
+            id=subscription.id,
+            defaults={
+                "stripe_id": subscription.stripe_id,
+                "stripe_customer_id": subscription.stripe_customer_id,
+                "user_id": subscription.user_id,
+                "status": subscription.status.value,
+                "plan_id": subscription.plan_id,
+                "seat_limit": subscription.seat_limit,
+                "trial_ends_at": subscription.trial_ends_at,
+                "current_period_start": subscription.current_period_start,
+                "current_period_end": subscription.current_period_end,
+                "canceled_at": subscription.canceled_at,
+                "cancel_at": subscription.cancel_at,
+                "scheduled_plan_id": subscription.scheduled_plan_id,
+                "scheduled_change_at": subscription.scheduled_change_at,
+                "currency": subscription.currency,
+            },
+        )
+        return subscription
+
+
+class DjangoPlanRepository:
+    @staticmethod
+    def _plan_to_domain(obj: PlanModel) -> Plan:
+        return Plan(
+            id=obj.id,
+            name=obj.name,
+            description=obj.description,
+            context=PlanContext(obj.context),
+            tier=PlanTier(obj.tier),
+            interval=PlanInterval(obj.interval),
+            is_active=obj.is_active,
+        )
+
+    @staticmethod
+    def _price_to_domain(obj: PlanPriceModel) -> PlanPrice:
+        return PlanPrice(
+            id=obj.id,
+            plan_id=obj.plan_id,
+            stripe_price_id=obj.stripe_price_id,
+            amount=obj.amount,
+        )
+
+    async def list_active(self) -> list[Plan]:
+        return [self._plan_to_domain(obj) async for obj in PlanModel.objects.filter(is_active=True)]
+
+    async def get_price_by_stripe_id(self, stripe_price_id: str) -> PlanPrice | None:
+        return await aget_or_none(
+            PlanPriceModel, self._price_to_domain, stripe_price_id=stripe_price_id
+        )
+
+
+class DjangoProductRepository:
+    @staticmethod
+    def _product_to_domain(obj: ProductModel) -> Product:
+        return Product(
+            id=obj.id,
+            name=obj.name,
+            type=ProductType(obj.type),
+            credits=obj.credits,
+            is_active=obj.is_active,
+        )
+
+    async def list_active(self) -> list[Product]:
+        return [
+            self._product_to_domain(obj)
+            async for obj in ProductModel.objects.filter(is_active=True)
+        ]
+
+
+class DjangoStripeEventRepository:
+    async def exists(self, stripe_id: str) -> bool:
+        return await StripeEventModel.objects.filter(stripe_id=stripe_id).aexists()
+
+    async def save(self, event: StripeEvent) -> StripeEvent:
+        await StripeEventModel.objects.aupdate_or_create(
+            id=event.id,
+            defaults={
+                "stripe_id": event.stripe_id,
+                "type": event.type,
+                "livemode": event.livemode,
+                "payload": event.payload,
+                "processed_at": event.processed_at,
+                "error": event.error,
+            },
+        )
+        return event
+
+    async def mark_processed(self, stripe_id: str) -> None:
+        await StripeEventModel.objects.filter(stripe_id=stripe_id).aupdate(
+            processed_at=datetime.now(UTC),
+            error=None,
+        )
+
+    async def mark_failed(self, stripe_id: str, error: str) -> None:
+        await StripeEventModel.objects.filter(stripe_id=stripe_id).aupdate(error=error)
+
+
+def get_webhook_repos() -> WebhookRepos:
+    """Build the WebhookRepos used by webhook processing (view + Celery task)."""
+    from saasmint_core.services.webhooks import WebhookRepos
+
+    from apps.billing.services import on_product_checkout_completed
+    from apps.orgs.services import delete_org_on_subscription_cancel, on_team_checkout_completed
+
+    return WebhookRepos(
+        events=DjangoStripeEventRepository(),
+        subscriptions=DjangoSubscriptionRepository(),
+        customers=DjangoStripeCustomerRepository(),
+        plans=DjangoPlanRepository(),
+        on_team_checkout_completed=on_team_checkout_completed,
+        on_org_subscription_canceled=delete_org_on_subscription_cancel,
+        on_product_checkout_completed=on_product_checkout_completed,
+    )
+
+
+@dataclass(frozen=True)
+class BillingRepos:
+    """Bundle of billing repositories used by views and GDPR flows."""
+
+    customers: DjangoStripeCustomerRepository
+    subscriptions: DjangoSubscriptionRepository
+
+
+def get_billing_repos() -> BillingRepos:
+    """Build the repositories used by DRF views touching customers/subscriptions.
+
+    Exposed as a factory (mirroring ``get_webhook_repos``) so tests can swap a
+    single call target instead of patching module-level singletons in every
+    consumer module.
+    """
+    return BillingRepos(
+        customers=DjangoStripeCustomerRepository(),
+        subscriptions=DjangoSubscriptionRepository(),
+    )
