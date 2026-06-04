@@ -70,9 +70,9 @@ for repo in saasmint-core saasmint-app; do
     fi
 done
 
-echo "==> [5/7] Creating .env.dev template..."
-if [ ! -f "$SAASMINT_DIR/.env.dev" ]; then
-    cat > "$SAASMINT_DIR/.env.dev" <<'ENVEOF'
+echo "==> [5/7] Creating .env.staging template..."
+if [ ! -f "$SAASMINT_DIR/.env.staging" ]; then
+    cat > "$SAASMINT_DIR/.env.staging" <<'ENVEOF'
 # SaasMint dev VPS — fill in your secrets
 ENVIRONMENT=dev
 DJANGO_SETTINGS_MODULE=config.settings.dev
@@ -113,10 +113,10 @@ NEXT_PUBLIC_API_URL=https://api.saasmint.net
 NEXT_PUBLIC_APP_URL=https://app.saasmint.net
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_CHANGE_ME
 ENVEOF
-    chown "$DEPLOY_USER:$DEPLOY_USER" "$SAASMINT_DIR/.env.dev"
-    echo "  Created $SAASMINT_DIR/.env.dev — fill in real values before first deploy."
+    chown "$DEPLOY_USER:$DEPLOY_USER" "$SAASMINT_DIR/.env.staging"
+    echo "  Created $SAASMINT_DIR/.env.staging — fill in real values before first deploy."
 else
-    echo "  .env.dev already exists, skipping."
+    echo "  .env.staging already exists, skipping."
 fi
 
 echo "==> [6/7] Configuring nginx vhosts..."
@@ -143,7 +143,7 @@ echo ""
 echo "===== Bootstrap complete ====="
 echo ""
 echo "Next steps:"
-echo "  1. Fill in /opt/saasmint/.env.dev with real credentials"
+echo "  1. Fill in /opt/saasmint/.env.staging with real credentials"
 echo "  2. Run: certbot --nginx -d api.saasmint.net -d app.saasmint.net"
 echo "  3. Verify SSH as deploy user works, then disable password auth:"
 echo "     Edit /etc/ssh/sshd_config -> PasswordAuthentication no"
