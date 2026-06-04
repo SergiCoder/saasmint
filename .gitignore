@@ -1,0 +1,17 @@
+# Local Claude Code settings (machine-specific permissions)
+.claude/settings.local.json
+
+# Environment — never commit secrets; only .env.example is tracked
+.env
+.env.local
+.env.staging
+.env.production
+!.env.example
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*~
+
+# Note: core/ and app/ bring their own .gitignore files when merged
+# via the migrate-to-monorepo change (Python, Node, certs, staticfiles, media).
