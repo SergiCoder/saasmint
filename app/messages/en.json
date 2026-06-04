@@ -103,7 +103,9 @@
       "errorBackendRejected": "Authentication failed. Please try signing in again.",
       "errorOAuth": "Social login failed. Please try again.",
       "errorOAuthEmailUnverifiedCollision": "Your social account is registered with an email address that already has a password account here. Please sign in with your password first; you can link the social provider afterwards.",
-      "forgotPassword": "Forgot password?"
+      "forgotPassword": "Forgot password?",
+      "resendVerification": "Resend verification email",
+      "verificationEmailSent": "Verification email sent. Check your inbox."
     },
     "forgotPassword": {
       "pageTitle": "Forgot password",
@@ -146,6 +148,27 @@
       "completing": "Completing sign-in…",
       "noscript": "JavaScript is required to complete sign-in.",
       "backToLogin": "Return to sign-in"
+    },
+    "linkEmailSent": {
+      "pageTitle": "Check your email",
+      "title": "Check your inbox",
+      "body": "We've sent a confirmation link to the email on your existing account. Open it to finish linking your account. The link expires in 15 minutes."
+    },
+    "confirmLink": {
+      "pageTitle": "Confirm linking",
+      "title": "Confirm linking your account",
+      "body": "Click below to finish linking your social account.",
+      "button": "Confirm linking",
+      "verifying": "Linking your account…",
+      "backToLogin": "Back to sign in",
+      "error": {
+        "used": "This link has already been used.",
+        "expired": "This link has expired — try signing in with the provider again.",
+        "invalid": "This link is invalid.",
+        "inactive": "Your account is no longer active.",
+        "collision": "That provider account is already linked elsewhere.",
+        "generic": "We couldn't link your account. Please try again."
+      }
     },
     "register": {
       "title": "Create your account",
@@ -205,6 +228,8 @@
     "endsOn": "Ends on",
     "billedMonthly": "Billed monthly",
     "billedYearly": "Billed yearly",
+    "billedInLocalMonthly": "≈ {amount} — billed in {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/month, billed yearly in {currency}",
     "seat": "seat",
     "seats": "seats",
     "products": "Credit packs",
@@ -254,9 +279,11 @@
     "title": "Profile",
     "fullName": "Full name",
     "email": "Email",
+    "emailNotVerified": "Your email address is not verified yet.",
+    "resendVerification": "Resend verification email",
+    "verificationEmailSent": "Verification email sent. Check your inbox.",
     "preferredLocale": "Language",
     "preferredCurrency": "Currency",
-    "currencyLockedNote": "Your billing currency is set when you first subscribe and can't be changed afterwards.",
     "phonePrefix": "Country code",
     "phone": "Phone number",
     "phoneNumberRequired": "Please enter a phone number",
@@ -416,6 +443,7 @@
     "password_too_short": "Password must be at least 10 characters",
     "profile_load_failed": "Failed to load profile",
     "session_expired": "Session expired. Please log in again.",
+    "captcha_failed": "Security verification failed. Please try again.",
     "unknown_error": "Something went wrong. Please try again.",
     "unsupported_image": "Unsupported image type",
     "message_required": "Please include a message.",

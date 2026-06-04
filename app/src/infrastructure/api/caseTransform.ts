@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from "@/domain/models/Price";
 import { isRecord } from "@/lib/typeGuards";
 
 export function toSnakeCase(key: string): string {
@@ -11,8 +12,13 @@ export function toCamelCase(key: string): string {
 /**
  * Recursively convert all object keys to snake_case. Arrays are mapped;
  * plain objects walked; non-plain objects (Date, Map, etc.) left untouched.
- * Inverse of `keysToCamel`.
+ * Inverse of `keysToCamel`. The record overload preserves the input shape
+ * so callers don't need a downstream `as Record<string, unknown>` cast.
  */
+export function keysToSnake(
+  value: Record<string, unknown>,
+): Record<string, unknown>;
+export function keysToSnake(value: unknown): unknown;
 export function keysToSnake(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(keysToSnake);
   if (!isRecord(value)) return value;
@@ -26,9 +32,14 @@ export function keysToSnake(value: unknown): unknown {
 /**
  * Recursively convert all object keys to camelCase. Arrays are mapped; plain
  * objects walked; everything else returned as-is. Parse the result with a
- * schema (Zod) to get a typed value — the returned type is deliberately
- * `unknown` because this function does not validate shape.
+ * schema (Zod) to get a typed value — this function does not validate shape.
+ * The record overload preserves the input shape so callers don't need a
+ * downstream `as Record<string, unknown>` cast.
  */
+export function keysToCamel(
+  value: Record<string, unknown>,
+): Record<string, unknown>;
+export function keysToCamel(value: unknown): unknown;
 export function keysToCamel(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(keysToCamel);
   if (!isRecord(value)) return value;
@@ -48,14 +59,9 @@ export function flattenPhone(
   user: Record<string, unknown>,
 ): void {
   const phoneData = raw.phone;
-  if (
-    phoneData &&
-    typeof phoneData === "object" &&
-    "prefix" in phoneData &&
-    "number" in phoneData
-  ) {
-    user.phonePrefix = (phoneData as { prefix: unknown }).prefix;
-    user.phone = (phoneData as { number: unknown }).number;
+  if (isRecord(phoneData) && "prefix" in phoneData && "number" in phoneData) {
+    user.phonePrefix = phoneData.prefix;
+    user.phone = phoneData.number;
   } else {
     user.phonePrefix = null;
     user.phone = null;
@@ -69,32 +75,38 @@ export function flattenPhone(
  */
 export function applyPriceDefaults(
   camel: Record<string, unknown>,
-  fallbackCurrency = "usd",
+  fallbackCurrency: string = DEFAULT_CURRENCY,
 ): void {
+  // `isRecord` rejects arrays (`typeof [] === "object"`) and `null`,
+  // narrowing without an unchecked cast.
   const price = camel.price;
-  if (!price || typeof price !== "object") return;
-  const camelPrice = price as Record<string, unknown>;
-  if (
-    camelPrice.displayAmount === undefined &&
-    typeof camelPrice.amount === "number"
-  ) {
-    camelPrice.displayAmount = camelPrice.amount / 100;
+  if (!isRecord(price)) return;
+  if (price.displayAmount === undefined && typeof price.amount === "number") {
+    price.displayAmount = price.amount / 100;
   }
-  if (camelPrice.currency === undefined) {
-    camelPrice.currency = fallbackCurrency;
+  if (price.currency === undefined) {
+    price.currency = fallbackCurrency;
+  }
+  if (price.localDisplayAmount === undefined) {
+    price.localDisplayAmount = null;
+  }
+  if (price.localCurrency === undefined) {
+    price.localCurrency = null;
   }
 }
 
 /**
  * Convert a raw API object's keys to camelCase and fill in `price` defaults
- * (`displayAmount`, `currency`) when the API omits them. Covers Plan,
- * Product, and top-level Subscription responses.
+ * (`displayAmount`, `currency`) when the API omits them. Covers Plan and
+ * Product responses. Subscriptions wrap their plan one level deeper, so
+ * `DjangoApiSubscriptionGateway` uses `keysToCamel` + a private
+ * `applySubscriptionPriceDefaults` walk instead.
  */
 export function keysToCamelWithPrice(
   raw: Record<string, unknown>,
-  fallbackCurrency = "usd",
+  fallbackCurrency: string = DEFAULT_CURRENCY,
 ): Record<string, unknown> {
-  const result = keysToCamel(raw) as Record<string, unknown>;
+  const result = keysToCamel(raw);
   applyPriceDefaults(result, fallbackCurrency);
   return result;
 }

@@ -27,7 +27,7 @@ vi.mock("@/lib/i18n/routing", () => {
 const fetchSpy = vi.fn();
 vi.stubGlobal("fetch", fetchSpy);
 
-const { proxy } = await import("@/proxy");
+const { default: proxy } = await import("@/proxy");
 
 // Helper to create a JWT-like token with a given exp
 function makeToken(exp: number): string {
@@ -350,7 +350,7 @@ describe("proxy", () => {
 
   describe("anonymous routes skip token refresh", () => {
     // These routes never read the session user. Even with an expired access
-    // token and a valid refresh token, the middleware must NOT call Django —
+    // token and a valid refresh token, the proxy must NOT call Django —
     // the round-trip would just add latency to every navigation.
     const pastExp = () => Math.floor(Date.now() / 1000) - 60;
 

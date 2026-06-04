@@ -1,13 +1,18 @@
 import type { Plan, PlanTier } from "@/domain/models/Plan";
 import { PLAN_TIER_PRO } from "@/domain/models/Plan";
+import { DEFAULT_CURRENCY } from "@/domain/models/Price";
 import type { Product } from "@/domain/models/Product";
 import { formatCurrency } from "@/lib/formatCurrency";
+import type { DynamicPlanKey } from "@/lib/i18n/planTranslation";
 
 /**
  * Build translated plan name / description maps keyed by `"{context}.{tier}"`.
  * Consumers pass their typed `tPlans` directly; the `(key: never) => string`
  * parameter accepts any typed next-intl translator (never is the bottom
- * type) and localises the dynamic-key `as never` cast to this helper.
+ * type) and localises the dynamic-key `as never` cast to this helper. The
+ * `satisfies DynamicPlanKey` checks keep the constructed key strings in sync
+ * with the documented key union so a future tier or context addition is
+ * caught at compile time.
  */
 export function buildPlanTranslations(
   plans: Plan[],
@@ -21,14 +26,24 @@ export function buildPlanTranslations(
   for (const plan of plans) {
     const key = `${plan.context}.${plan.tier}`;
     if (!planNames[key]) {
-      planNames[key] = tPlans(`${plan.context}.${plan.tier}.name` as never);
-      planDescriptions[key] = tPlans(
-        `${plan.context}.${plan.tier}.description` as never,
-      );
+      const nameKey =
+        `${plan.context}.${plan.tier}.name` satisfies DynamicPlanKey;
+      const descKey =
+        `${plan.context}.${plan.tier}.description` satisfies DynamicPlanKey;
+      planNames[key] = tPlans(nameKey as never);
+      planDescriptions[key] = tPlans(descKey as never);
     }
   }
   return { planNames, planDescriptions };
 }
+
+/**
+ * Documented union of dynamic message keys read by buildProductTranslations.
+ * Products are keyed by their integer credit count; bumping this when a new
+ * SKU lands keeps the helper honest at compile time. New entries must match
+ * the keys present in `messages/<locale>.json` under the `products` namespace.
+ */
+export type DynamicProductKey = `${number}`;
 
 /**
  * Build the translated product name map keyed by credit count. Used by the
@@ -40,14 +55,101 @@ export function buildProductTranslations(
   tProducts: (key: never) => string,
 ): Record<number, string> {
   return Object.fromEntries(
-    products.map((p) => [p.credits, tProducts(`${p.credits}` as never)]),
+    products.map((p) => {
+      const key = `${p.credits}` satisfies DynamicProductKey;
+      return [p.credits, tProducts(key as never)];
+    }),
   );
+}
+
+/**
+ * Returns the `formatPriceSubLabelLocal` callback shape `buildPlanCardGroups`
+ * expects, wired to the caller's typed translator. Both the marketing
+ * pricing page and the subscription page need the exact same dispatch on
+ * `interval`, so the factory keeps the logic in one place.
+ */
+export function makeLocalSubLabelFormatter(
+  t: (
+    key: "billedInLocalMonthly" | "billedInLocalYearly",
+    values: Record<string, string>,
+  ) => string,
+): (ctx: {
+  interval: "month" | "year";
+  localAmount: string;
+  monthlyEquivalent: string;
+  billedCurrency: string;
+}) => string {
+  return ({ interval, localAmount, monthlyEquivalent, billedCurrency }) =>
+    interval === "year"
+      ? t("billedInLocalYearly", {
+          amount: localAmount,
+          monthly: monthlyEquivalent,
+          currency: billedCurrency,
+        })
+      : t("billedInLocalMonthly", {
+          amount: localAmount,
+          currency: billedCurrency,
+        });
+}
+
+/**
+ * Returns the `format` callback shape `buildProductPriceSubLabels` expects,
+ * wired to the caller's typed translator. Mirrors `makeLocalSubLabelFormatter`
+ * for the one-time product variant — both pricing surfaces share the exact
+ * `billedInLocalMonthly` template, so the lambda lives in one place.
+ */
+export function makeProductSubLabelFormatter(
+  t: (key: "billedInLocalMonthly", values: Record<string, string>) => string,
+): (params: { localAmount: string; billedCurrency: string }) => string {
+  return ({ localAmount, billedCurrency }) =>
+    t("billedInLocalMonthly", {
+      amount: localAmount,
+      currency: billedCurrency,
+    });
+}
+
+/**
+ * Build a `productId → priceSubLabel` map for the dual-currency disclosure
+ * shown beneath one-time product prices. Only emits an entry when the
+ * backend returned a non-null `localCurrency` that differs from the billed
+ * currency; products without a price or with matching currencies are
+ * omitted.
+ */
+export function buildProductPriceSubLabels(
+  products: Product[],
+  locale: string,
+  format: (params: { localAmount: string; billedCurrency: string }) => string,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const product of products) {
+    const price = product.price;
+    if (!price) continue;
+    const { localDisplayAmount, localCurrency, currency } = price;
+    if (
+      localDisplayAmount === null ||
+      localCurrency === null ||
+      localCurrency.toLowerCase() === currency.toLowerCase()
+    ) {
+      continue;
+    }
+    out[product.id] = format({
+      localAmount: formatCurrency(localDisplayAmount, localCurrency, locale),
+      billedCurrency: currency.toUpperCase(),
+    });
+  }
+  return out;
 }
 
 export interface PlanCardLabels {
   upgrade: string;
   /** Singular noun for one seat (e.g. "seat"). Used in team interval labels. */
   seat: string;
+  /**
+   * Localised "billed yearly" suffix. Used as a fallback for the yearly
+   * sub-label when no `formatPriceSubLabelLocal` is provided (i.e. when the
+   * user's preferred currency matches the billed currency).
+   */
+  billedYearly: string;
 }
 
 export interface PlanVariantView {
@@ -92,6 +194,12 @@ export interface BuildPlanCardGroupsOptions {
    */
   currentPlans?: Plan[];
   locale: string;
+  /**
+   * Currency used to format priceless plans (e.g. the synthesised personal-free
+   * card on the marketing page). When omitted, falls back to USD — keep the
+   * same currency the surrounding paid plans use to avoid mixed-currency rows.
+   */
+  fallbackCurrency?: string;
   labels: PlanCardLabels;
   /** Translated plan names keyed by "{context}.{tier}", e.g. "personal.1". */
   planNames: Record<string, string>;
@@ -110,6 +218,20 @@ export interface BuildPlanCardGroupsOptions {
     currency: string;
     ctaLabel: string;
   }) => React.ReactNode;
+  /**
+   * Composes the price sub-label when the user's preferred currency differs
+   * from the billed one. Receives pre-formatted amounts so callers only need
+   * to weave them into a localised template (`billedInLocalMonthly` /
+   * `billedInLocalYearly`). When omitted, the helper falls back to the
+   * monolingual yearly sub-label and renders nothing for monthly.
+   */
+  formatPriceSubLabelLocal?: (ctx: {
+    interval: "month" | "year";
+    isTeam: boolean;
+    localAmount: string;
+    monthlyEquivalent: string;
+    billedCurrency: string;
+  }) => string;
 }
 
 /**
@@ -153,19 +275,145 @@ function monthlyEquivalent(plan: Plan): number {
   return plan.interval === "year" ? amount / 12 : amount;
 }
 
+interface BuildVariantContext {
+  currentPlanIds: Set<string>;
+  currentByContext: Record<Plan["context"], Plan | undefined>;
+  locale: string;
+  fallbackCurrency: string | undefined;
+  labels: PlanCardLabels;
+  renderCta: BuildPlanCardGroupsOptions["renderCta"];
+  formatPriceSubLabelLocal: BuildPlanCardGroupsOptions["formatPriceSubLabelLocal"];
+}
+
+function buildPlanVariant(
+  plan: Plan,
+  ctx: BuildVariantContext,
+): PlanVariantView {
+  const {
+    currentPlanIds,
+    currentByContext,
+    locale,
+    fallbackCurrency,
+    labels,
+    renderCta,
+    formatPriceSubLabelLocal,
+  } = ctx;
+  const displayAmount = plan.price?.displayAmount ?? 0;
+  const currency = plan.price?.currency ?? fallbackCurrency ?? DEFAULT_CURRENCY;
+  const isTeam = plan.context === "team";
+  const isCurrent = currentPlanIds.has(plan.id);
+  const monthlyEq = monthlyEquivalent(plan);
+  // Compare each candidate against the user's current plan in the SAME
+  // context (concurrent personal+team are independent ladders). "Upgrade"
+  // means a tier promotion — switching interval within the same tier
+  // (e.g. Pro Yearly ↔ Pro Monthly) is just a cadence change and must NOT
+  // be labelled "Upgrade" or get the highlighted CTA. When the user has
+  // no plan in that context yet, treat any priced option as an upgrade.
+  const sameContextCurrent = currentByContext[plan.context];
+  const isUpgrade = sameContextCurrent
+    ? plan.tier > sameContextCurrent.tier
+    : monthlyEq > 0;
+  const ctaLabel = labels.upgrade;
+
+  const intervalLabel = isTeam
+    ? `${labels.seat}/${plan.interval}`
+    : plan.interval;
+
+  const priceSubLabel = computePriceSubLabel({
+    plan,
+    displayAmount,
+    currency,
+    locale,
+    isTeam,
+    labels,
+    formatPriceSubLabelLocal,
+  });
+
+  return {
+    price: formatCurrency(displayAmount, currency, locale),
+    intervalLabel,
+    priceSubLabel,
+    cta:
+      renderCta({
+        plan,
+        isCurrent,
+        isUpgrade,
+        isTeam,
+        displayAmount,
+        currency,
+        ctaLabel,
+      }) ?? null,
+  };
+}
+
+function computePriceSubLabel(args: {
+  plan: Plan;
+  displayAmount: number;
+  currency: string;
+  locale: string;
+  isTeam: boolean;
+  labels: PlanCardLabels;
+  formatPriceSubLabelLocal: BuildPlanCardGroupsOptions["formatPriceSubLabelLocal"];
+}): string | undefined {
+  const {
+    plan,
+    displayAmount,
+    currency,
+    locale,
+    isTeam,
+    labels,
+    formatPriceSubLabelLocal,
+  } = args;
+  const localDisplayAmount = plan.price?.localDisplayAmount ?? null;
+  const localCurrency = plan.price?.localCurrency ?? null;
+  const hasLocal =
+    localDisplayAmount !== null &&
+    localCurrency !== null &&
+    localCurrency.toLowerCase() !== currency.toLowerCase();
+
+  if (hasLocal && formatPriceSubLabelLocal && displayAmount > 0) {
+    const monthlyEqDisplay =
+      plan.interval === "year" ? displayAmount / 12 : displayAmount;
+    return formatPriceSubLabelLocal({
+      interval: plan.interval,
+      isTeam,
+      localAmount: formatCurrency(localDisplayAmount, localCurrency, locale),
+      monthlyEquivalent: formatCurrency(monthlyEqDisplay, currency, locale),
+      billedCurrency: currency.toUpperCase(),
+    });
+  }
+  if (plan.interval === "year" && displayAmount > 0) {
+    const monthlyEqDisplay = displayAmount / 12;
+    const formatted = formatCurrency(monthlyEqDisplay, currency, locale);
+    return isTeam
+      ? `${formatted}/${labels.seat}/month — ${labels.billedYearly}`
+      : `${formatted}/month — ${labels.billedYearly}`;
+  }
+  return undefined;
+}
+
 export function buildPlanCardGroups({
   plans,
   currentPlans = [],
   locale,
+  fallbackCurrency,
   labels,
   planNames,
   planDescriptions,
   renderCta,
+  formatPriceSubLabelLocal,
 }: BuildPlanCardGroupsOptions): PlanCardGroup[] {
-  const currentPlanIds = new Set(currentPlans.map((p) => p.id));
-  const currentByContext: Record<Plan["context"], Plan | undefined> = {
-    personal: currentPlans.find((p) => p.context === "personal"),
-    team: currentPlans.find((p) => p.context === "team"),
+  const ctx: BuildVariantContext = {
+    currentPlanIds: new Set(currentPlans.map((p) => p.id)),
+    currentByContext: {
+      personal: currentPlans.find((p) => p.context === "personal"),
+      team: currentPlans.find((p) => p.context === "team"),
+    },
+    locale,
+    fallbackCurrency,
+    labels,
+    renderCta,
+    formatPriceSubLabelLocal,
   };
 
   // Group by (context, tier).
@@ -183,61 +431,15 @@ export function buildPlanCardGroups({
     group.plans.push(plan);
   }
 
-  const buildVariant = (plan: Plan): PlanVariantView => {
-    const displayAmount = plan.price?.displayAmount ?? 0;
-    const currency = plan.price?.currency ?? "usd";
-    const isTeam = plan.context === "team";
-    const isCurrent = currentPlanIds.has(plan.id);
-    const monthlyEq = monthlyEquivalent(plan);
-    // Compare each candidate against the user's current plan in the SAME
-    // context (concurrent personal+team are independent ladders). When the
-    // user has no plan in that context yet, treat any priced option as an
-    // upgrade.
-    const sameContextCurrent = currentByContext[plan.context];
-    const isUpgrade = sameContextCurrent
-      ? monthlyEq > monthlyEquivalent(sameContextCurrent)
-      : monthlyEq > 0;
-    const ctaLabel = labels.upgrade;
-
-    const intervalLabel = isTeam
-      ? `${labels.seat}/${plan.interval}`
-      : plan.interval;
-
-    let priceSubLabel: string | undefined;
-    if (plan.interval === "year" && displayAmount > 0) {
-      const monthlyEqDisplay = displayAmount / 12;
-      const formatted = formatCurrency(monthlyEqDisplay, currency, locale);
-      priceSubLabel = isTeam
-        ? `${formatted}/${labels.seat}/month billed yearly`
-        : `${formatted}/month billed yearly`;
-    }
-
-    return {
-      price: plan.price
-        ? formatCurrency(displayAmount, currency, locale)
-        : formatCurrency(0, currency, locale),
-      intervalLabel,
-      priceSubLabel,
-      cta:
-        renderCta({
-          plan,
-          isCurrent,
-          isUpgrade,
-          isTeam,
-          displayAmount,
-          currency,
-          ctaLabel,
-        }) ?? null,
-    };
-  };
-
   const result: PlanCardGroup[] = [];
   for (const group of groups.values()) {
     const monthlyPlan = group.plans.find((p) => p.interval === "month");
     const yearlyPlan = group.plans.find((p) => p.interval === "year");
 
-    const monthly = monthlyPlan ? buildVariant(monthlyPlan) : undefined;
-    const yearly = yearlyPlan ? buildVariant(yearlyPlan) : undefined;
+    const monthly = monthlyPlan
+      ? buildPlanVariant(monthlyPlan, ctx)
+      : undefined;
+    const yearly = yearlyPlan ? buildPlanVariant(yearlyPlan, ctx) : undefined;
 
     let yearlySavingsPct: number | undefined;
     if (

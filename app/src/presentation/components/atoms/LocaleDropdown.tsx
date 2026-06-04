@@ -16,7 +16,8 @@ export function LocaleDropdown() {
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      if (!(e.target instanceof Node)) return;
+      if (ref.current && !ref.current.contains(e.target)) {
         setOpen(false);
       }
     }

@@ -6,7 +6,7 @@ vi.mock("@/infrastructure/registry", () => ({
   creditsGateway: { listBalances: () => mockListBalances() },
 }));
 
-let getCreditBalances: typeof import("@/app/[locale]/(app)/_data/getCreditBalances").getCreditBalances;
+let getCreditBalances: typeof import("@/app/[locale]/_data/getCreditBalances").getCreditBalances;
 
 beforeEach(async () => {
   vi.clearAllMocks();
@@ -15,7 +15,7 @@ beforeEach(async () => {
   // otherwise the first test's resolved value would be returned for subsequent
   // calls, masking gateway invocation differences.
   ({ getCreditBalances } =
-    await import("@/app/[locale]/(app)/_data/getCreditBalances"));
+    await import("@/app/[locale]/_data/getCreditBalances"));
 });
 
 describe("getCreditBalances", () => {

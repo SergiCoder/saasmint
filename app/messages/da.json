@@ -96,7 +96,9 @@
       "errorBackendRejected": "Godkendelse mislykkedes. Prøv at logge ind igen.",
       "errorOAuth": "Socialt login mislykkedes. Prøv venligst igen.",
       "errorOAuthEmailUnverifiedCollision": "Din sociale konto er registreret med en e-mailadresse, der allerede har en adgangskode-konto her. Log venligst ind med din adgangskode først; du kan tilknytte den sociale udbyder bagefter.",
-      "forgotPassword": "Glemt adgangskode?"
+      "forgotPassword": "Glemt adgangskode?",
+      "resendVerification": "Send bekræftelsesmail igen",
+      "verificationEmailSent": "Bekræftelsesmail sendt. Tjek din indbakke."
     },
     "forgotPassword": {
       "pageTitle": "Glemt adgangskode",
@@ -122,6 +124,27 @@
       "completing": "Fuldfører login…",
       "noscript": "JavaScript kræves for at fuldføre loginnet.",
       "backToLogin": "Tilbage til login"
+    },
+    "linkEmailSent": {
+      "pageTitle": "Tjek din e-mail",
+      "title": "Tjek din indbakke",
+      "body": "Vi har sendt et bekræftelseslink til e-mailen på din eksisterende konto. Åbn det for at færdiggøre sammenkædningen af din konto. Linket udløber om 15 minutter."
+    },
+    "confirmLink": {
+      "pageTitle": "Bekræft sammenkædning",
+      "title": "Bekræft sammenkædning af din konto",
+      "body": "Klik nedenfor for at færdiggøre sammenkædningen af din sociale konto.",
+      "button": "Bekræft sammenkædning",
+      "verifying": "Sammenkæder din konto…",
+      "backToLogin": "Tilbage til login",
+      "error": {
+        "used": "Dette link er allerede brugt.",
+        "expired": "Dette link er udløbet — prøv at logge ind med udbyderen igen.",
+        "invalid": "Dette link er ugyldigt.",
+        "inactive": "Din konto er ikke længere aktiv.",
+        "collision": "Den udbyderkonto er allerede sammenkædet andetsteds.",
+        "generic": "Vi kunne ikke sammenkæde din konto. Prøv venligst igen."
+      }
     },
     "register": {
       "title": "Opret din konto",
@@ -205,6 +228,8 @@
     "endsOn": "Slutter den",
     "billedMonthly": "Faktureret månedligt",
     "billedYearly": "Faktureret årligt",
+    "billedInLocalMonthly": "≈ {amount} — faktureres i {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/måned, faktureres årligt i {currency}",
     "seat": "plads",
     "seats": "pladser",
     "products": "Kreditpakker",
@@ -252,9 +277,11 @@
     "profile": "Profil",
     "fullName": "Fulde navn",
     "email": "E-mail",
+    "emailNotVerified": "Din e-mailadresse er endnu ikke bekræftet.",
+    "resendVerification": "Send bekræftelsesmail igen",
+    "verificationEmailSent": "Bekræftelsesmail sendt. Tjek din indbakke.",
     "preferredLocale": "Sprog",
     "preferredCurrency": "Valuta",
-    "currencyLockedNote": "Din faktureringsvaluta fastsættes, når du tegner abonnement første gang, og kan ikke ændres bagefter.",
     "phonePrefix": "Landekode",
     "phone": "Telefon",
     "phoneNumberRequired": "Indtast et telefonnummer",
@@ -373,6 +400,7 @@
     "password_too_short": "Adgangskoden skal være mindst 10 tegn",
     "profile_load_failed": "Profilen kunne ikke indlæses",
     "session_expired": "Sessionen er udløbet. Log venligst ind igen.",
+    "captcha_failed": "Sikkerhedsverificeringen mislykkedes. Prøv igen.",
     "unknown_error": "Noget gik galt. Prøv venligst igen.",
     "unsupported_image": "Billedtypen understøttes ikke",
     "message_required": "Tilføj venligst en besked.",

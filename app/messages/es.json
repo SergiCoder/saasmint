@@ -96,7 +96,9 @@
       "errorBackendRejected": "Error de autenticación. Intenta iniciar sesión de nuevo.",
       "errorOAuth": "El inicio de sesión social falló. Por favor, inténtalo de nuevo.",
       "errorOAuthEmailUnverifiedCollision": "Tu cuenta social está registrada con una dirección de correo electrónico que ya tiene una cuenta con contraseña aquí. Inicia sesión con tu contraseña primero; podrás vincular el proveedor social después.",
-      "forgotPassword": "¿Olvidaste tu contraseña?"
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "resendVerification": "Reenviar correo de verificación",
+      "verificationEmailSent": "Correo de verificación enviado. Revisa tu bandeja de entrada."
     },
     "forgotPassword": {
       "pageTitle": "Olvidé mi contraseña",
@@ -122,6 +124,27 @@
       "completing": "Completando inicio de sesión…",
       "noscript": "Se requiere JavaScript para completar el inicio de sesión.",
       "backToLogin": "Volver a iniciar sesión"
+    },
+    "linkEmailSent": {
+      "pageTitle": "Revisa tu correo",
+      "title": "Revisa tu bandeja de entrada",
+      "body": "Hemos enviado un enlace de confirmación al correo de tu cuenta existente. Ábrelo para terminar de vincular tu cuenta. El enlace caduca en 15 minutos."
+    },
+    "confirmLink": {
+      "pageTitle": "Confirmar vinculación",
+      "title": "Confirma la vinculación de tu cuenta",
+      "body": "Haz clic abajo para terminar de vincular tu cuenta social.",
+      "button": "Confirmar vinculación",
+      "verifying": "Vinculando tu cuenta…",
+      "backToLogin": "Volver a iniciar sesión",
+      "error": {
+        "used": "Este enlace ya se ha utilizado.",
+        "expired": "Este enlace ha caducado — vuelve a iniciar sesión con el proveedor.",
+        "invalid": "Este enlace no es válido.",
+        "inactive": "Tu cuenta ya no está activa.",
+        "collision": "Esa cuenta del proveedor ya está vinculada en otro lugar.",
+        "generic": "No pudimos vincular tu cuenta. Por favor, inténtalo de nuevo."
+      }
     },
     "register": {
       "title": "Crea tu cuenta",
@@ -205,6 +228,8 @@
     "endsOn": "Finaliza el",
     "billedMonthly": "Facturación mensual",
     "billedYearly": "Facturación anual",
+    "billedInLocalMonthly": "≈ {amount} — facturado en {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/mes, facturado anualmente en {currency}",
     "seat": "plaza",
     "seats": "plazas",
     "products": "Paquetes de créditos",
@@ -252,9 +277,11 @@
     "profile": "Perfil",
     "fullName": "Nombre completo",
     "email": "Correo electrónico",
+    "emailNotVerified": "Tu dirección de correo electrónico aún no está verificada.",
+    "resendVerification": "Reenviar correo de verificación",
+    "verificationEmailSent": "Correo de verificación enviado. Revisa tu bandeja de entrada.",
     "preferredLocale": "Idioma",
     "preferredCurrency": "Moneda",
-    "currencyLockedNote": "La moneda de facturación se establece cuando te suscribes por primera vez y no se puede cambiar después.",
     "phonePrefix": "Código de país",
     "phone": "Teléfono",
     "phoneNumberRequired": "Introduce un número de teléfono",
@@ -373,6 +400,7 @@
     "password_too_short": "La contraseña debe tener al menos 10 caracteres",
     "profile_load_failed": "No se pudo cargar el perfil",
     "session_expired": "La sesión ha caducado. Vuelve a iniciar sesión.",
+    "captcha_failed": "La verificación de seguridad falló. Inténtalo de nuevo.",
     "unknown_error": "Algo salió mal. Inténtalo de nuevo.",
     "unsupported_image": "Tipo de imagen no admitido",
     "message_required": "Por favor, incluye un mensaje.",

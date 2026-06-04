@@ -1,22 +1,20 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import {
-  planGateway,
-  productGateway,
-  subscriptionGateway,
-} from "@/infrastructure/registry";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
 import { GetStartedButton } from "./_components/GetStartedButton";
 import { ProductsCheckoutSection } from "@/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection";
 import { renderPlanUpgradeCta } from "@/app/[locale]/(app)/subscription/_lib/renderPlanUpgradeCta";
-import { getOrgMembers } from "@/app/[locale]/(app)/_data/getOrgMembers";
-import { getUserOrgs } from "@/app/[locale]/(app)/_data/getUserOrgs";
+import { getOrgMembers } from "@/app/[locale]/_data/getOrgMembers";
+import { getPricingCatalog } from "@/app/[locale]/_data/getPricingCatalog";
 import { canManageBilling } from "@/app/[locale]/(app)/subscription/_data/canManageBilling";
 import { getOptionalUser } from "../_data/getOptionalUser";
 import {
   buildPlanCardGroups,
   buildPlanTranslations,
+  buildProductPriceSubLabels,
   buildProductTranslations,
+  makeLocalSubLabelFormatter,
+  makeProductSubLabelFormatter,
   splitPlanGroupsByContext,
 } from "@/app/[locale]/_lib/buildPlanCards";
 import {
@@ -25,11 +23,9 @@ import {
 } from "@/app/[locale]/_lib/pricingInterval";
 import type { Plan } from "@/domain/models/Plan";
 import { PLAN_TIER_FREE, PLAN_TIER_PRO } from "@/domain/models/Plan";
-import type { Product } from "@/domain/models/Product";
 import {
   findPersonalSubscription,
   findTeamSubscription,
-  type Subscription,
 } from "@/domain/models/Subscription";
 
 /**
@@ -66,31 +62,26 @@ export default async function PricingPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, tPlans, tProducts, user, query] = await Promise.all([
+  // The catalog fan-out chains off the user fetch so plans/subscriptions/
+  // products/orgs all start as soon as the user resolves, overlapping with
+  // the translation loads on the same Promise.all. Anonymous visitors (the
+  // majority on /pricing) skip the authenticated calls and fall back to
+  // empty lists.
+  const userPromise = getOptionalUser();
+  const catalogPromise = userPromise.then(getPricingCatalog);
+  const [t, tPlans, tProducts, user, query, catalog] = await Promise.all([
     getTranslations("billing"),
     getTranslations("plans"),
     getTranslations("products"),
-    getOptionalUser(),
+    userPromise,
     searchParams,
+    catalogPromise,
   ]);
+  const { plans, subscriptions, products, userOrgs } = catalog;
 
   const selectedInterval = parseIntervalParam(query.interval);
 
   const currency = user?.preferredCurrency;
-
-  const [plans, subscriptions, products, userOrgs] = await Promise.all([
-    planGateway.listPlans(currency).catch((err: unknown): Plan[] => {
-      console.error("Failed to fetch plans", err);
-      return [];
-    }),
-    user
-      ? subscriptionGateway.listSubscriptions(currency).catch(() => [])
-      : Promise.resolve([] as Subscription[]),
-    user
-      ? productGateway.listProducts(currency).catch((): Product[] => [])
-      : Promise.resolve([] as Product[]),
-    user ? getUserOrgs() : Promise.resolve([]),
-  ]);
 
   const hasOrg = userOrgs.length > 0;
   const isConcurrent = subscriptions.length > 1;
@@ -108,24 +99,29 @@ export default async function PricingPage({ params, searchParams }: Props) {
   // both contexts here is free when the user only happens to land on
   // /pricing first. Both calls run concurrently; either side resolves to
   // false when the user has no sub in that context (cheap default).
-  const [personalCanManage, teamCanManage] = await Promise.all([
+  // The org-members fetch is gated on the same signals that drive the
+  // products picker (signed-in concurrent-billing user with at least one
+  // org) and runs alongside `canManageBilling` so the roundtrip is overlapped
+  // with stage 3 instead of waiting for it serially.
+  const firstOrg = userOrgs.at(0);
+  const orgMembersPromise =
+    user && isConcurrent && firstOrg
+      ? getOrgMembers(firstOrg.id)
+      : Promise.resolve([]);
+
+  const [personalCanManage, teamCanManage, orgMembers] = await Promise.all([
     user && personalSubscription
-      ? canManageBilling(user, personalSubscription)
+      ? canManageBilling(user.id, personalSubscription)
       : Promise.resolve(false),
     user && teamSubscription
-      ? canManageBilling(user, teamSubscription)
+      ? canManageBilling(user.id, teamSubscription)
       : Promise.resolve(false),
+    orgMembersPromise,
   ]);
 
-  // Resolve org-owner flag only when both signals that gate the picker are
-  // already true (signed-in user with concurrent personal+team subs). Skips
-  // the orgMembers roundtrip in every other case — most page renders.
-  const firstOrg = userOrgs.at(0);
   const isCurrentUserOrgOwner =
     user && isConcurrent && firstOrg
-      ? (await getOrgMembers(firstOrg.id)).some(
-          (m) => m.user.id === user.id && m.role === "owner",
-        )
+      ? orgMembers.some((m) => m.user.id === user.id && m.role === "owner")
       : false;
 
   const allPlans = [...SYNTHETIC_FREE_PLANS, ...plans];
@@ -138,12 +134,15 @@ export default async function PricingPage({ params, searchParams }: Props) {
     plans: allPlans,
     currentPlans,
     locale,
+    fallbackCurrency: plans.find((p) => p.price)?.price?.currency ?? currency,
     labels: {
       upgrade: t("upgrade"),
       seat: t("seat"),
+      billedYearly: t("billedYearly"),
     },
     planNames,
     planDescriptions,
+    formatPriceSubLabelLocal: makeLocalSubLabelFormatter(t),
     renderCta: ({
       plan,
       isCurrent,
@@ -269,6 +268,11 @@ export default async function PricingPage({ params, searchParams }: Props) {
           title={t("products")}
           products={products}
           productNames={buildProductTranslations(products, tProducts)}
+          priceSubLabels={buildProductPriceSubLabels(
+            products,
+            locale,
+            makeProductSubLabelFormatter(t),
+          )}
           creditsLabel={t("credits")}
           buyLabel={t("buy")}
           locale={locale}

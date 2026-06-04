@@ -147,19 +147,16 @@ describe("ChangePlanButton", () => {
   });
 
   it("displays an error message and keeps the dialog open on failure", async () => {
-    mockChangePlan.mockResolvedValueOnce({
-      ok: false,
-      code: "HTTP_500",
-      message: "Something went wrong",
-    });
+    mockChangePlan.mockResolvedValueOnce({ ok: false, code: "HTTP_500" });
     const user = userEvent.setup();
     render(<ChangePlanButton {...defaultProps}>Upgrade</ChangePlanButton>);
 
     await user.click(screen.getByRole("button", { name: "Upgrade" }));
     await user.click(screen.getByRole("button", { name: "Confirm" }));
 
+    // i18n stub falls back to "unknown_error" because actionErrors is empty.
     await waitFor(() => {
-      expect(screen.getByText("Something went wrong")).toBeInTheDocument();
+      expect(screen.getByText("unknown_error")).toBeInTheDocument();
     });
     expect(screen.getByText("Switch to Pro?")).toBeInTheDocument();
     expect(mockRouterRefresh).not.toHaveBeenCalled();
@@ -190,11 +187,7 @@ describe("ChangePlanButton", () => {
   });
 
   it("does not call router.refresh when the action fails", async () => {
-    mockChangePlan.mockResolvedValueOnce({
-      ok: false,
-      code: "HTTP_409",
-      message: "Already on this plan",
-    });
+    mockChangePlan.mockResolvedValueOnce({ ok: false, code: "HTTP_409" });
     const user = userEvent.setup();
     render(<ChangePlanButton {...defaultProps}>Upgrade</ChangePlanButton>);
 
@@ -202,7 +195,7 @@ describe("ChangePlanButton", () => {
     await user.click(screen.getByRole("button", { name: "Confirm" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Already on this plan")).toBeInTheDocument();
+      expect(screen.getByText("unknown_error")).toBeInTheDocument();
     });
     expect(mockRouterRefresh).not.toHaveBeenCalled();
   });

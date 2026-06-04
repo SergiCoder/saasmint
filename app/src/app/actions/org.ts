@@ -1,30 +1,35 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import type { OrgMember } from "@/domain/models/OrgMember";
 import {
-  authGateway,
   invitationGateway,
   orgGateway,
   orgMemberGateway,
 } from "@/infrastructure/registry";
 import {
+  ACTION_CODE_INVALID_INPUT,
+  ACTION_CODE_NOT_AUTHORIZED,
   ok,
   fail,
   toActionError,
   type ActionResult,
 } from "@/lib/actions/ActionResult";
 import { getString } from "@/lib/actions/parseFormData";
+import { getCurrentUserIdFromCookie } from "@/lib/jwt";
+import { revalidateLocalizedPath } from "@/lib/revalidate";
+import { isMemberOf } from "@/lib/typeGuards";
 
 const assignableRoles = ["admin", "member"] as const;
 type AssignableRole = (typeof assignableRoles)[number];
 
 function isAssignableRole(value: unknown): value is AssignableRole {
-  return (
-    typeof value === "string" &&
-    (assignableRoles as readonly string[]).includes(value)
-  );
+  return isMemberOf(assignableRoles, value);
 }
+
+// RFC 5321 caps SMTP path length at 254 chars. The backend validates too;
+// this mirrors `marketing.ts` so a misbehaving client can't push oversized
+// strings through the action.
+const MAX_EMAIL_LENGTH = 254;
 
 type OrgRole = OrgMember["role"];
 
@@ -32,12 +37,14 @@ async function assertOrgRole(
   orgId: string,
   allowed: readonly OrgRole[],
 ): Promise<boolean> {
+  // Read the user ID directly from the JWT cookie to avoid a full
+  // GET /account/ round-trip on every org mutation. The proxy has
+  // already vetted token expiry; the backend re-validates membership.
+  const userId = await getCurrentUserIdFromCookie();
+  if (!userId) return false;
   try {
-    const [user, members] = await Promise.all([
-      authGateway.getCurrentUser(),
-      orgMemberGateway.listMembers(orgId),
-    ]);
-    const me = members.find((m) => m.user.id === user.id);
+    const members = await orgMemberGateway.listMembers(orgId);
+    const me = members.find((m) => m.user.id === userId);
     return me ? allowed.includes(me.role) : false;
   } catch {
     return false;
@@ -52,12 +59,17 @@ export async function inviteMember(
   const email = getString(formData, "email");
   const role = formData.get("role");
 
-  if (!orgId || !email || !isAssignableRole(role)) {
-    return fail("invalid_input");
+  if (
+    !orgId ||
+    !email ||
+    email.length > MAX_EMAIL_LENGTH ||
+    !isAssignableRole(role)
+  ) {
+    return fail(ACTION_CODE_INVALID_INPUT);
   }
 
   if (!(await assertOrgRole(orgId, ["owner", "admin"]))) {
-    return fail("not_authorized");
+    return fail(ACTION_CODE_NOT_AUTHORIZED);
   }
 
   try {
@@ -66,7 +78,7 @@ export async function inviteMember(
     return toActionError(err);
   }
 
-  revalidatePath("/org", "layout");
+  revalidateLocalizedPath("/org", "layout");
   return ok();
 }
 
@@ -84,7 +96,7 @@ export async function cancelInvitation(formData: FormData): Promise<void> {
     console.error("Failed to cancel invitation", err);
     return;
   }
-  revalidatePath("/org", "layout");
+  revalidateLocalizedPath("/org", "layout");
 }
 
 export async function removeMember(formData: FormData): Promise<void> {
@@ -98,7 +110,7 @@ export async function removeMember(formData: FormData): Promise<void> {
     console.error("Failed to remove member", err);
     return;
   }
-  revalidatePath("/org", "layout");
+  revalidateLocalizedPath("/org", "layout");
 }
 
 export async function updateMemberRole(formData: FormData): Promise<void> {
@@ -113,7 +125,7 @@ export async function updateMemberRole(formData: FormData): Promise<void> {
     console.error("Failed to update member role", err);
     return;
   }
-  revalidatePath("/org", "layout");
+  revalidateLocalizedPath("/org", "layout");
 }
 
 export async function transferOwnership(
@@ -123,10 +135,10 @@ export async function transferOwnership(
   const orgId = getString(formData, "orgId");
   const userId = getString(formData, "userId");
 
-  if (!orgId || !userId) return fail("invalid_input");
+  if (!orgId || !userId) return fail(ACTION_CODE_INVALID_INPUT);
 
   if (!(await assertOrgRole(orgId, ["owner"]))) {
-    return fail("not_authorized");
+    return fail(ACTION_CODE_NOT_AUTHORIZED);
   }
 
   try {
@@ -135,7 +147,7 @@ export async function transferOwnership(
     return toActionError(err);
   }
 
-  revalidatePath("/org", "layout");
+  revalidateLocalizedPath("/org", "layout");
   return ok();
 }
 
@@ -145,10 +157,10 @@ export async function deleteOrg(
 ): Promise<ActionResult> {
   const orgId = getString(formData, "orgId");
 
-  if (!orgId) return fail("invalid_input");
+  if (!orgId) return fail(ACTION_CODE_INVALID_INPUT);
 
   if (!(await assertOrgRole(orgId, ["owner"]))) {
-    return fail("not_authorized");
+    return fail(ACTION_CODE_NOT_AUTHORIZED);
   }
 
   try {
@@ -158,6 +170,6 @@ export async function deleteOrg(
     return toActionError(err);
   }
 
-  revalidatePath("/", "layout");
+  revalidateLocalizedPath("/", "layout");
   return ok();
 }

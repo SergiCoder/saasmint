@@ -1,4 +1,4 @@
-import type { Invitation } from "@/domain/models/Invitation";
+import type { Invitation, PublicInvitation } from "@/domain/models/Invitation";
 
 export interface CreateInvitationInput {
   email: string;
@@ -12,7 +12,7 @@ export interface IInvitationGateway {
   ): Promise<Invitation>;
   listInvitations(orgId: string): Promise<Invitation[]>;
   cancelInvitation(orgId: string, invitationId: string): Promise<void>;
-  getByToken(token: string): Promise<Invitation>;
+  getByToken(token: string): Promise<PublicInvitation>;
   acceptInvitation(
     token: string,
     input: { fullName: string; password: string },

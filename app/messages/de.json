@@ -96,7 +96,9 @@
       "errorBackendRejected": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
       "errorOAuth": "Social-Login fehlgeschlagen. Bitte versuchen Sie es erneut.",
       "errorOAuthEmailUnverifiedCollision": "Ihr Social-Konto ist mit einer E-Mail-Adresse registriert, die hier bereits ein Passwort-Konto hat. Bitte melden Sie sich zuerst mit Ihrem Passwort an; danach können Sie den Social-Anbieter verknüpfen.",
-      "forgotPassword": "Passwort vergessen?"
+      "forgotPassword": "Passwort vergessen?",
+      "resendVerification": "Bestätigungs-E-Mail erneut senden",
+      "verificationEmailSent": "Bestätigungs-E-Mail gesendet. Bitte prüfen Sie Ihren Posteingang."
     },
     "forgotPassword": {
       "pageTitle": "Passwort vergessen",
@@ -122,6 +124,27 @@
       "completing": "Anmeldung wird abgeschlossen…",
       "noscript": "JavaScript wird benötigt, um die Anmeldung abzuschließen.",
       "backToLogin": "Zurück zur Anmeldung"
+    },
+    "linkEmailSent": {
+      "pageTitle": "Prüfen Sie Ihre E-Mails",
+      "title": "Prüfen Sie Ihren Posteingang",
+      "body": "Wir haben einen Bestätigungslink an die E-Mail-Adresse Ihres bestehenden Kontos gesendet. Öffnen Sie ihn, um die Verknüpfung Ihres Kontos abzuschließen. Der Link läuft in 15 Minuten ab."
+    },
+    "confirmLink": {
+      "pageTitle": "Verknüpfung bestätigen",
+      "title": "Verknüpfung Ihres Kontos bestätigen",
+      "body": "Klicken Sie unten, um die Verknüpfung Ihres sozialen Kontos abzuschließen.",
+      "button": "Verknüpfung bestätigen",
+      "verifying": "Ihr Konto wird verknüpft…",
+      "backToLogin": "Zurück zur Anmeldung",
+      "error": {
+        "used": "Dieser Link wurde bereits verwendet.",
+        "expired": "Dieser Link ist abgelaufen — bitte versuchen Sie erneut, sich beim Anbieter anzumelden.",
+        "invalid": "Dieser Link ist ungültig.",
+        "inactive": "Ihr Konto ist nicht mehr aktiv.",
+        "collision": "Dieses Anbieter-Konto ist bereits anderweitig verknüpft.",
+        "generic": "Wir konnten Ihr Konto nicht verknüpfen. Bitte versuchen Sie es erneut."
+      }
     },
     "register": {
       "title": "Konto erstellen",
@@ -205,6 +228,8 @@
     "endsOn": "Endet am",
     "billedMonthly": "Monatlich abgerechnet",
     "billedYearly": "Jährlich abgerechnet",
+    "billedInLocalMonthly": "≈ {amount} — Abrechnung in {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/Monat, jährliche Abrechnung in {currency}",
     "seat": "Platz",
     "seats": "Plätze",
     "products": "Guthaben-Pakete",
@@ -252,9 +277,11 @@
     "profile": "Profil",
     "fullName": "Vollständiger Name",
     "email": "E-Mail",
+    "emailNotVerified": "Ihre E-Mail-Adresse ist noch nicht bestätigt.",
+    "resendVerification": "Bestätigungs-E-Mail erneut senden",
+    "verificationEmailSent": "Bestätigungs-E-Mail gesendet. Bitte prüfen Sie Ihren Posteingang.",
     "preferredLocale": "Sprache",
     "preferredCurrency": "Währung",
-    "currencyLockedNote": "Ihre Abrechnungswährung wird bei Ihrem ersten Abonnement festgelegt und kann anschließend nicht mehr geändert werden.",
     "phonePrefix": "Ländervorwahl",
     "phone": "Telefonnummer",
     "phoneNumberRequired": "Bitte geben Sie eine Telefonnummer ein",
@@ -373,6 +400,7 @@
     "password_too_short": "Das Passwort muss mindestens 10 Zeichen lang sein",
     "profile_load_failed": "Profil konnte nicht geladen werden",
     "session_expired": "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
+    "captcha_failed": "Sicherheitsüberprüfung fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "unknown_error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "unsupported_image": "Nicht unterstützter Bildtyp",
     "message_required": "Bitte fügen Sie eine Nachricht hinzu.",

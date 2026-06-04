@@ -96,7 +96,9 @@
       "errorBackendRejected": "認証に失敗しました。再度ログインしてください。",
       "errorOAuth": "ソーシャルログインに失敗しました。もう一度お試しください。",
       "errorOAuthEmailUnverifiedCollision": "ソーシャルアカウントは、こちらで既にパスワードアカウントを持っているメールアドレスで登録されています。最初にパスワードでサインインしてください。その後でソーシャルプロバイダーを連携できます。",
-      "forgotPassword": "パスワードを忘れましたか？"
+      "forgotPassword": "パスワードを忘れましたか？",
+      "resendVerification": "確認メールを再送信",
+      "verificationEmailSent": "確認メールを送信しました。受信トレイをご確認ください。"
     },
     "forgotPassword": {
       "pageTitle": "パスワードを忘れた場合",
@@ -122,6 +124,27 @@
       "completing": "サインインを完了しています…",
       "noscript": "サインインを完了するには JavaScript が必要です。",
       "backToLogin": "サインインに戻る"
+    },
+    "linkEmailSent": {
+      "pageTitle": "メールをご確認ください",
+      "title": "受信トレイをご確認ください",
+      "body": "既存のアカウントのメールアドレスに確認リンクをお送りしました。リンクを開いてアカウントの連携を完了してください。リンクの有効期限は 15 分です。"
+    },
+    "confirmLink": {
+      "pageTitle": "連携の確認",
+      "title": "アカウントの連携を確認",
+      "body": "下のボタンをクリックして、ソーシャルアカウントの連携を完了してください。",
+      "button": "連携を確認",
+      "verifying": "アカウントを連携しています…",
+      "backToLogin": "サインインに戻る",
+      "error": {
+        "used": "このリンクはすでに使用されています。",
+        "expired": "このリンクの有効期限が切れました — もう一度プロバイダーでサインインしてください。",
+        "invalid": "このリンクは無効です。",
+        "inactive": "アカウントは現在利用できません。",
+        "collision": "そのプロバイダーアカウントはすでに別の場所で連携されています。",
+        "generic": "アカウントを連携できませんでした。もう一度お試しください。"
+      }
     },
     "register": {
       "title": "アカウントを作成",
@@ -205,6 +228,8 @@
     "endsOn": "終了日",
     "billedMonthly": "月額請求",
     "billedYearly": "年額請求",
+    "billedInLocalMonthly": "≈ {amount}（{currency}で請求）",
+    "billedInLocalYearly": "≈ {amount}（{monthly}/月、{currency}で年額請求）",
     "seat": "シート",
     "seats": "シート",
     "products": "クレジットパック",
@@ -252,9 +277,11 @@
     "profile": "プロフィール",
     "fullName": "氏名",
     "email": "メール",
+    "emailNotVerified": "メールアドレスはまだ確認されていません。",
+    "resendVerification": "確認メールを再送信",
+    "verificationEmailSent": "確認メールを送信しました。受信トレイをご確認ください。",
     "preferredLocale": "言語",
     "preferredCurrency": "通貨",
-    "currencyLockedNote": "請求通貨は最初のサブスクリプション時に設定され、後で変更することはできません。",
     "phonePrefix": "国番号",
     "phone": "電話番号",
     "phoneNumberRequired": "電話番号を入力してください",
@@ -373,6 +400,7 @@
     "password_too_short": "パスワードは 10 文字以上で入力してください",
     "profile_load_failed": "プロフィールを読み込めませんでした",
     "session_expired": "セッションの有効期限が切れました。もう一度ログインしてください。",
+    "captcha_failed": "セキュリティ認証に失敗しました。もう一度お試しください。",
     "unknown_error": "問題が発生しました。もう一度お試しください。",
     "unsupported_image": "サポートされていない画像形式です",
     "message_required": "メッセージを入力してください。",

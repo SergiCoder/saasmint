@@ -1,8 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { User } from "@/domain/models/User";
-import type { PhonePrefix } from "@/domain/models/PhonePrefix";
 
 // --- Mocks ---------------------------------------------------------------
 
@@ -13,6 +12,20 @@ const mockDeleteAvatar = vi.fn();
 const mockCompressImage = vi.fn(
   async (file: File) => new File([file], "compressed.webp"),
 );
+
+// Controllable stub for the useResendVerification hook so tests can drive
+// the resend banner state without invoking the real server action.
+const mockSubmitResend = vi.fn();
+const mockResendHook = vi.hoisted(() => ({
+  pending: false,
+  status: "idle" as "idle" | "sent" | "error",
+  errorMessage: null as string | null,
+  submit: (...args: unknown[]) => mockSubmitResend(...args),
+}));
+
+vi.mock("@/lib/actions/useResendVerification", () => ({
+  useResendVerification: () => mockResendHook,
+}));
 
 vi.mock("@/app/actions/user", () => ({
   updateProfile: (...args: unknown[]) => mockUpdateProfile(...args),
@@ -33,6 +46,15 @@ vi.mock("@/lib/i18n/locales", () => ({
   LOCALES: [
     { code: "en", label: "English" },
     { code: "es", label: "Español" },
+  ],
+}));
+
+// Keep the phone-prefix list short and predictable — the component now
+// imports PHONE_PREFIXES directly from the domain data layer.
+vi.mock("@/domain/data/phonePrefixes", () => ({
+  PHONE_PREFIXES: [
+    { prefix: "+1", label: "US" },
+    { prefix: "+34", label: "ES" },
   ],
 }));
 
@@ -64,44 +86,29 @@ function makeUser(overrides: Partial<User> = {}): User {
   };
 }
 
-const phonePrefixes: PhonePrefix[] = [
-  { prefix: "+1", label: "US" },
-  { prefix: "+34", label: "ES" },
-];
-
-function renderForm(
-  userOverrides: Partial<User> = {},
-  extra: { currencyLocked?: boolean } = {},
-) {
+function renderForm(userOverrides: Partial<User> = {}) {
   return render(
     <ProfileForm
       user={makeUser(userOverrides)}
-      phonePrefixes={phonePrefixes}
-      timezones={["UTC", "Europe/Madrid"]}
-      currencyLocked={extra.currencyLocked}
+      phonePrefixes={[
+        { prefix: "+1", label: "US/CA" },
+        { prefix: "+34", label: "ES" },
+      ]}
     />,
   );
 }
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // Reset hook state to idle defaults before each test.
+  mockResendHook.pending = false;
+  mockResendHook.status = "idle";
+  mockResendHook.errorMessage = null;
 });
 
 // --- Tests ----------------------------------------------------------------
 
 describe("ProfileForm", () => {
-  it("hides the currency-locked note by default (no Stripe customer)", () => {
-    renderForm();
-
-    expect(screen.queryByText("currencyLockedNote")).not.toBeInTheDocument();
-  });
-
-  it("renders the currency-locked note under the picker when currencyLocked is true", () => {
-    renderForm({}, { currencyLocked: true });
-
-    expect(screen.getByText("currencyLockedNote")).toBeInTheDocument();
-  });
-
   it("renders the user's email as a disabled input (server-owned field)", () => {
     renderForm({ email: "alice@example.com" });
 
@@ -165,7 +172,6 @@ describe("ProfileForm", () => {
     mockUploadAvatar.mockResolvedValue({
       ok: false,
       code: "unknown_error",
-      message: "boom",
     });
 
     const user = userEvent.setup();
@@ -175,7 +181,9 @@ describe("ProfileForm", () => {
     const file = new File(["x"], "avatar.png", { type: "image/png" });
     await user.upload(input, file);
 
-    expect(await screen.findByText("boom")).toBeInTheDocument();
+    // i18n stub falls back to "unknown_error" because the global mock has an
+    // empty `actionErrors` namespace.
+    expect(await screen.findByText("unknown_error")).toBeInTheDocument();
     expect(mockUpdateAvatarUrl).not.toHaveBeenCalled();
   });
 
@@ -189,20 +197,26 @@ describe("ProfileForm", () => {
     expect(values).toEqual(["en", "es"]);
   });
 
-  it("includes the supplied timezones in the timezone select", () => {
+  it("populates the timezone select from Intl.supportedValuesOf", () => {
+    // Lazily-initialised inside the client so the ~10 KB IANA timezone list
+    // doesn't ship in the RSC payload. The exact entries are
+    // platform-dependent — assert the list is non-empty and contains a
+    // canonical zone we know exists everywhere.
     renderForm();
 
     const select = screen.getByLabelText("timezone") as HTMLSelectElement;
     const values = Array.from(select.options).map((o) => o.value);
-    expect(values).toEqual(["UTC", "Europe/Madrid"]);
+    expect(values.length).toBeGreaterThan(50);
+    expect(values).toContain("Europe/Madrid");
   });
 
-  it("includes the supplied phone prefixes in the phonePrefix select", () => {
+  it("renders PHONE_PREFIXES in the phonePrefix select", () => {
     renderForm();
 
     const select = screen.getByLabelText("phonePrefix") as HTMLSelectElement;
     const values = Array.from(select.options).map((o) => o.value);
-    // First entry is the empty/placeholder option; rest match the prop.
+    // First entry is the empty/placeholder option; rest come from PHONE_PREFIXES
+    // (mocked to ["+1", "+34"] above for a deterministic, short list).
     expect(values).toEqual(["", "+1", "+34"]);
   });
 
@@ -256,7 +270,6 @@ describe("ProfileForm", () => {
     mockDeleteAvatar.mockResolvedValue({
       ok: false,
       code: "unknown_error",
-      message: "delete failed",
     });
 
     const user = userEvent.setup();
@@ -265,8 +278,71 @@ describe("ProfileForm", () => {
     const removeButton = screen.getByRole("button", { name: /avatarRemove/i });
     await user.click(removeButton);
 
-    expect(await screen.findByText("delete failed")).toBeInTheDocument();
+    expect(await screen.findByText("unknown_error")).toBeInTheDocument();
     // If the API call failed, we must NOT persist a null avatarUrl.
     expect(mockUpdateAvatarUrl).not.toHaveBeenCalled();
+  });
+
+  describe("email-not-verified banner", () => {
+    it("shows the warning banner with a resend button when user.isVerified is false", () => {
+      renderForm({ isVerified: false });
+
+      // The banner must be visible and contain a resend affordance.
+      expect(screen.getByText("emailNotVerified")).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "resendVerification" }),
+      ).toBeInTheDocument();
+    });
+
+    it("does not show the email-not-verified banner when the user is already verified", () => {
+      renderForm({ isVerified: true });
+
+      expect(screen.queryByText("emailNotVerified")).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: "resendVerification" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("calls hook submit with the user's email when the resend button is clicked", async () => {
+      const user = userEvent.setup();
+
+      renderForm({ isVerified: false, email: "alice@example.com" });
+      await user.click(
+        screen.getByRole("button", { name: "resendVerification" }),
+      );
+
+      expect(mockSubmitResend).toHaveBeenCalledWith("alice@example.com");
+    });
+
+    it("shows the success banner and hides the warning when hook status is sent", () => {
+      mockResendHook.status = "sent";
+
+      renderForm({ isVerified: false });
+
+      expect(screen.getByText("verificationEmailSent")).toBeInTheDocument();
+      // Warning banner is hidden when status is sent.
+      expect(screen.queryByText("emailNotVerified")).not.toBeInTheDocument();
+    });
+
+    it("renders an error banner when hook status is error", () => {
+      mockResendHook.status = "error";
+      mockResendHook.errorMessage = "Too many requests.";
+
+      renderForm({ isVerified: false });
+
+      expect(screen.getByText("Too many requests.")).toBeInTheDocument();
+      // Warning banner stays visible so the user can retry.
+      expect(screen.getByText("emailNotVerified")).toBeInTheDocument();
+    });
+
+    it("disables the resend button while hook pending is true", () => {
+      mockResendHook.pending = true;
+
+      renderForm({ isVerified: false });
+
+      expect(
+        screen.getByRole("button", { name: "resendVerification" }),
+      ).toBeDisabled();
+    });
   });
 });

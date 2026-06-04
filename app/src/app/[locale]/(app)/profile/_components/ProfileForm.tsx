@@ -7,56 +7,67 @@ import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { PronounsPicker } from "@/presentation/components/molecules/PronounsPicker";
 import { AvatarUpload } from "@/presentation/components/atoms/AvatarUpload";
 import { Button } from "@/presentation/components/atoms/Button";
+import { INPUT_DEFAULT_CLASS } from "@/presentation/components/atoms/Input";
 import { Label } from "@/presentation/components/atoms/Label";
 import { uploadAvatar, deleteAvatar } from "@/app/actions/avatar";
 import { compressImage } from "@/lib/compressImage";
 import { updateProfile, updateAvatarUrl } from "@/app/actions/user";
 import { LOCALES } from "@/lib/i18n/locales";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
+import { useResendVerification } from "@/lib/actions/useResendVerification";
+import { SUPPORTED_CURRENCY_CODES } from "@/lib/supportedCurrencies";
 import type { User } from "@/domain/models/User";
 import type { PhonePrefix } from "@/domain/models/PhonePrefix";
 
-const SUPPORTED_CURRENCIES = [
-  { value: "usd", label: "USD — US Dollar" },
-  { value: "eur", label: "EUR — Euro" },
-  { value: "gbp", label: "GBP — British Pound" },
-  { value: "cad", label: "CAD — Canadian Dollar" },
-  { value: "aud", label: "AUD — Australian Dollar" },
-  { value: "chf", label: "CHF — Swiss Franc" },
-  { value: "jpy", label: "JPY — Japanese Yen" },
-  { value: "cny", label: "CNY — Chinese Yuan" },
-  { value: "twd", label: "TWD — New Taiwan Dollar" },
-  { value: "krw", label: "KRW — South Korean Won" },
-  { value: "brl", label: "BRL — Brazilian Real" },
-  { value: "sek", label: "SEK — Swedish Krona" },
-  { value: "nok", label: "NOK — Norwegian Krone" },
-  { value: "dkk", label: "DKK — Danish Krone" },
-  { value: "pln", label: "PLN — Polish Złoty" },
-  { value: "try", label: "TRY — Turkish Lira" },
-  { value: "idr", label: "IDR — Indonesian Rupiah" },
-  { value: "rub", label: "RUB — Russian Ruble" },
-  { value: "sar", label: "SAR — Saudi Riyal" },
-  { value: "aed", label: "AED — UAE Dirham" },
-] as const;
+const CURRENCY_LABELS: Record<
+  (typeof SUPPORTED_CURRENCY_CODES)[number],
+  string
+> = {
+  usd: "USD — US Dollar",
+  eur: "EUR — Euro",
+  gbp: "GBP — British Pound",
+  cad: "CAD — Canadian Dollar",
+  aud: "AUD — Australian Dollar",
+  chf: "CHF — Swiss Franc",
+  jpy: "JPY — Japanese Yen",
+  cny: "CNY — Chinese Yuan",
+  twd: "TWD — New Taiwan Dollar",
+  krw: "KRW — South Korean Won",
+  brl: "BRL — Brazilian Real",
+  sek: "SEK — Swedish Krona",
+  nok: "NOK — Norwegian Krone",
+  dkk: "DKK — Danish Krone",
+  pln: "PLN — Polish Złoty",
+  try: "TRY — Turkish Lira",
+  idr: "IDR — Indonesian Rupiah",
+  rub: "RUB — Russian Ruble",
+  sar: "SAR — Saudi Riyal",
+  aed: "AED — UAE Dirham",
+};
+
+const SUPPORTED_CURRENCIES = SUPPORTED_CURRENCY_CODES.map((value) => ({
+  value,
+  label: CURRENCY_LABELS[value],
+}));
 
 interface ProfileFormProps {
   user: User;
-  phonePrefixes: PhonePrefix[];
-  timezones: readonly string[];
   /**
-   * When `true`, the currency picker shows a locked-at-first-purchase note
-   * below the select. Stripe locks the customer's currency at first
-   * purchase, so changes to `preferredCurrency` no longer affect billing.
+   * Phone-prefix options. Passed from the server page so the ~8 KB
+   * `PHONE_PREFIXES` table doesn't ship in the client bundle.
    */
-  currencyLocked?: boolean;
+  phonePrefixes: readonly PhonePrefix[];
 }
 
-export function ProfileForm({
-  user,
-  phonePrefixes,
-  timezones,
-  currencyLocked = false,
-}: ProfileFormProps) {
+export function ProfileForm({ user, phonePrefixes }: ProfileFormProps) {
+  // Lazy-initialise the timezone list on first render so the ~10 KB IANA
+  // string array stays out of the RSC payload (the server would otherwise
+  // serialise it on every profile-page hit, even when the picker never
+  // opens). `Intl.supportedValuesOf` is available in all the browsers we
+  // support, so the client can compute it just-in-time.
+  const [timezones] = useState<readonly string[]>(() =>
+    Intl.supportedValuesOf("timeZone"),
+  );
   const t = useTranslations("profile");
   const translateError = useActionErrorMessage();
   const [state, formAction, pending] = useActionState(updateProfile, null);
@@ -68,6 +79,12 @@ export function ProfileForm({
   const [phonePrefix, setPhonePrefix] = useState(user.phonePrefix || "");
   const [phone, setPhone] = useState(user.phone || "");
   const [lastActionState, setLastActionState] = useState(state);
+  const {
+    pending: resendPending,
+    status: resendStatus,
+    errorMessage: resendError,
+    submit: submitResend,
+  } = useResendVerification();
 
   if (state !== lastActionState) {
     setLastActionState(state);
@@ -111,15 +128,13 @@ export function ProfileForm({
     }
   }
 
-  const selectClassName =
-    "block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50";
-
   return (
     <form
       key={formKey}
       action={formAction}
       onChange={(e) => {
-        if ((e.target as HTMLElement).closest("[data-auto-save]")) return;
+        if (!(e.target instanceof HTMLElement)) return;
+        if (e.target.closest("[data-auto-save]")) return;
         setDirty(true);
       }}
       className="space-y-6"
@@ -128,6 +143,28 @@ export function ProfileForm({
         <AlertBanner variant="error">{translateError(state)}</AlertBanner>
       )}
       {saved && <AlertBanner variant="success">{t("saved")}</AlertBanner>}
+
+      {!user.isVerified && resendStatus !== "sent" && (
+        <AlertBanner variant="warning">
+          <span className="mr-2">{t("emailNotVerified")}</span>
+          <button
+            type="button"
+            onClick={() => submitResend(user.email)}
+            disabled={resendPending}
+            className="text-primary-700 hover:text-primary-800 font-medium underline underline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {t("resendVerification")}
+          </button>
+        </AlertBanner>
+      )}
+      {resendStatus === "sent" && (
+        <AlertBanner variant="success">
+          {t("verificationEmailSent")}
+        </AlertBanner>
+      )}
+      {resendStatus === "error" && resendError && (
+        <AlertBanner variant="error">{resendError}</AlertBanner>
+      )}
 
       <AvatarUpload
         currentSrc={avatarUrl}
@@ -157,13 +194,14 @@ export function ProfileForm({
       <FormField
         label={t("jobTitle")}
         name="jobTitle"
+        maxLength={255}
         defaultValue={user.jobTitle ?? ""}
       />
       <PronounsPicker
         t={t}
         defaultValue={user.pronouns}
         onDirty={() => setDirty(true)}
-        selectClassName={selectClassName}
+        selectClassName={INPUT_DEFAULT_CLASS}
       />
       <div className="space-y-1">
         <Label htmlFor="phone">{t("phone")}</Label>
@@ -175,7 +213,7 @@ export function ProfileForm({
               value={phonePrefix}
               onChange={(e) => setPhonePrefix(e.target.value)}
               aria-label={t("phonePrefix")}
-              className="focus:border-primary-500 focus:ring-primary-500 w-full min-w-0 truncate rounded-md border border-gray-300 py-2 pr-8 pl-3 text-sm shadow-sm transition-colors focus:ring-2 focus:ring-offset-0 focus:outline-none"
+              className={`${INPUT_DEFAULT_CLASS} min-w-0 truncate pr-8 pl-3`}
             >
               <option value="">{t("phonePrefix")}</option>
               {phonePrefixes.map((p) => (
@@ -197,7 +235,7 @@ export function ProfileForm({
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-offset-0 focus:outline-none"
+              className={INPUT_DEFAULT_CLASS}
             />
             {(fieldErrors?.phone === "phoneNumberRequired" ||
               fieldErrors?.phone === "phoneTooShort") && (
@@ -216,7 +254,7 @@ export function ProfileForm({
             id="preferredLocale"
             name="preferredLocale"
             defaultValue={user.preferredLocale}
-            className={selectClassName}
+            className={INPUT_DEFAULT_CLASS}
           >
             {LOCALES.map(({ code, label }) => (
               <option key={code} value={code}>
@@ -231,7 +269,7 @@ export function ProfileForm({
             id="preferredCurrency"
             name="preferredCurrency"
             defaultValue={user.preferredCurrency}
-            className={selectClassName}
+            className={INPUT_DEFAULT_CLASS}
           >
             {SUPPORTED_CURRENCIES.map((currency) => (
               <option key={currency.value} value={currency.value}>
@@ -239,9 +277,6 @@ export function ProfileForm({
               </option>
             ))}
           </select>
-          {currencyLocked && (
-            <p className="text-xs text-gray-500">{t("currencyLockedNote")}</p>
-          )}
         </div>
         <div className="space-y-1">
           <Label htmlFor="timezone">{t("timezone")}</Label>
@@ -251,7 +286,7 @@ export function ProfileForm({
             defaultValue={
               user.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone
             }
-            className={selectClassName}
+            className={INPUT_DEFAULT_CLASS}
           >
             {timezones.map((tz) => (
               <option key={tz} value={tz}>
@@ -268,9 +303,10 @@ export function ProfileForm({
           id="bio"
           name="bio"
           rows={3}
+          maxLength={500}
           defaultValue={user.bio ?? ""}
           placeholder={t("bioPlaceholder")}
-          className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-offset-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className={INPUT_DEFAULT_CLASS}
         />
       </div>
       <Button type="submit" loading={pending} disabled={!dirty}>

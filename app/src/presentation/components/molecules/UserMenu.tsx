@@ -25,7 +25,8 @@ export function UserMenu({ user, menuItems, signOutSlot }: UserMenuProps) {
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      if (!(e.target instanceof Node)) return;
+      if (ref.current && !ref.current.contains(e.target)) {
         setOpen(false);
       }
     }
@@ -49,7 +50,7 @@ export function UserMenu({ user, menuItems, signOutSlot }: UserMenuProps) {
         aria-expanded={open}
         aria-haspopup="menu"
       >
-        <Avatar src={user.avatarUrl} alt={user.fullName} size="sm" />
+        <Avatar src={user.avatarUrl} alt={user.fullName} size="sm" priority />
       </button>
 
       {open && (

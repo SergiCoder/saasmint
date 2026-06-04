@@ -50,4 +50,15 @@ describe("AuthLayout", () => {
     );
     expect(screen.getByRole("button", { name: "Submit" })).toBeInTheDocument();
   });
+
+  it("renders the locale dropdown so unauthenticated users can switch language", () => {
+    render(
+      <AuthLayout appName="Acme" title="Sign in">
+        <form />
+      </AuthLayout>,
+    );
+    // LocaleDropdown's button shows the active locale code in uppercase.
+    // The global next-intl stub returns "en", so we expect an "EN" button.
+    expect(screen.getByRole("button", { name: /EN/i })).toBeInTheDocument();
+  });
 });

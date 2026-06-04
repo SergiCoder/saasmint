@@ -9,11 +9,17 @@ vi.mock("next/navigation", () => ({
 }));
 
 const mockRevalidatePath = vi.fn();
-vi.mock("next/cache", () => ({
-  revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
+vi.mock("@/lib/revalidate", () => ({
+  // The action calls `revalidateLocalizedPath`; assert on the bare path so
+  // tests don't have to enumerate every supported locale.
+  revalidateLocalizedPath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 
-const mockGetCurrentUser = vi.fn();
+const mockGetCurrentUserIdFromCookie = vi.fn<() => Promise<string | null>>();
+vi.mock("@/lib/jwt", () => ({
+  getCurrentUserIdFromCookie: () => mockGetCurrentUserIdFromCookie(),
+}));
+
 const mockListSubscriptions = vi.fn();
 const mockCreateCheckoutSession = vi.fn();
 const mockCreateBillingPortalSession = vi.fn();
@@ -25,7 +31,6 @@ const mockReleaseScheduledChange = vi.fn();
 const mockChangePlan = vi.fn();
 
 vi.mock("@/infrastructure/registry", () => ({
-  authGateway: { getCurrentUser: mockGetCurrentUser },
   subscriptionGateway: {
     listSubscriptions: mockListSubscriptions,
     createCheckoutSession: mockCreateCheckoutSession,
@@ -44,6 +49,14 @@ vi.mock("@/infrastructure/registry", () => ({
 const mockCanManageBilling = vi.fn();
 vi.mock("@/app/[locale]/(app)/subscription/_data/canManageBilling", () => ({
   canManageBilling: (...args: unknown[]) => mockCanManageBilling(...args),
+}));
+
+// `assertCanManageBilling` now speculatively kicks off `getUserOrgs()` in
+// parallel with `listSubscriptions()` to avoid a serial round-trip on the
+// team-billing path. Stub it so tests don't reach into the org gateway.
+const mockGetUserOrgs = vi.fn(async () => [] as unknown[]);
+vi.mock("@/app/[locale]/_data/getUserOrgs", () => ({
+  getUserOrgs: () => mockGetUserOrgs(),
 }));
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
@@ -185,7 +198,6 @@ describe("billing server actions", () => {
       expect(result).toEqual({
         ok: false,
         code: "payment_provider_error",
-        message: "Payment provider error. Please try again.",
       });
       expect(mockRedirect).not.toHaveBeenCalled();
     });
@@ -362,7 +374,7 @@ describe("billing server actions", () => {
     const portalSubscription = { id: "s1", plan: { context: "personal" } };
 
     beforeEach(() => {
-      mockGetCurrentUser.mockResolvedValue(portalUser);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(portalUser.id);
       mockListSubscriptions.mockResolvedValue([portalSubscription]);
       mockCanManageBilling.mockResolvedValue(true);
     });
@@ -386,20 +398,20 @@ describe("billing server actions", () => {
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await openBillingPortal();
-      expect(result).toBeUndefined();
+      expect(result).toEqual({ ok: false, code: "not_billing_member" });
       expect(mockCreateBillingPortalSession).not.toHaveBeenCalled();
       expect(mockRedirect).not.toHaveBeenCalled();
       errSpy.mockRestore();
     });
 
-    it("swallows non-redirect errors and returns without redirecting", async () => {
+    it("returns an error envelope and skips the redirect on non-redirect failures", async () => {
       mockCreateBillingPortalSession.mockRejectedValue(
         new Error("portal down"),
       );
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await openBillingPortal();
-      expect(result).toBeUndefined();
+      expect(result).toEqual({ ok: false, code: "unknown_error" });
       expect(mockRedirect).not.toHaveBeenCalled();
       errSpy.mockRestore();
     });
@@ -473,7 +485,7 @@ describe("billing server actions", () => {
     const subscription = { id: "s1", plan: { context: "personal" } };
 
     it("cancels the subscription and revalidates when allowed", async () => {
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([subscription]);
       mockCanManageBilling.mockResolvedValue(true);
       mockCancelSubscription.mockResolvedValue(undefined);
@@ -489,7 +501,7 @@ describe("billing server actions", () => {
     });
 
     it("returns not_billing_member when caller cannot manage billing", async () => {
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([subscription]);
       mockCanManageBilling.mockResolvedValue(false);
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -503,7 +515,7 @@ describe("billing server actions", () => {
     });
 
     it("returns no_subscription when there is no active subscription", async () => {
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([]);
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -518,7 +530,7 @@ describe("billing server actions", () => {
     it("forwards context=personal to the gateway and selects the personal sub when concurrent", async () => {
       const personalSub = { id: "sub_p", plan: { context: "personal" } };
       const teamSub = { id: "sub_t", plan: { context: "team" } };
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([teamSub, personalSub]);
       mockCanManageBilling.mockResolvedValue(true);
       mockCancelSubscription.mockResolvedValue(undefined);
@@ -526,7 +538,7 @@ describe("billing server actions", () => {
       const result = await cancelRenewal("personal");
 
       // Authorization check ran against the personal sub, not the team one.
-      expect(mockCanManageBilling).toHaveBeenCalledWith(user, personalSub);
+      expect(mockCanManageBilling).toHaveBeenCalledWith(user.id, personalSub);
       expect(mockCancelSubscription).toHaveBeenCalledWith("personal");
       expect(result.ok).toBe(true);
     });
@@ -534,21 +546,27 @@ describe("billing server actions", () => {
     it("forwards context=team to the gateway and selects the team sub when concurrent", async () => {
       const personalSub = { id: "sub_p", plan: { context: "personal" } };
       const teamSub = { id: "sub_t", plan: { context: "team" } };
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([personalSub, teamSub]);
       mockCanManageBilling.mockResolvedValue(true);
       mockCancelSubscription.mockResolvedValue(undefined);
 
       await cancelRenewal("team");
 
-      expect(mockCanManageBilling).toHaveBeenCalledWith(user, teamSub);
+      // Team-context calls pass a `{ preloadedOrgs }` options arg so
+      // canManageBilling can skip the redundant getUserOrgs round-trip.
+      expect(mockCanManageBilling).toHaveBeenCalledWith(
+        user.id,
+        teamSub,
+        expect.objectContaining({ preloadedOrgs: expect.any(Array) }),
+      );
       expect(mockCancelSubscription).toHaveBeenCalledWith("team");
     });
 
     it("normalizes a tampered context arg to undefined before touching the gateway", async () => {
       // The TS signature does not survive RPC: a malicious caller could pass
       // anything. The action must drop unknown values to undefined.
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([subscription]);
       mockCanManageBilling.mockResolvedValue(true);
       mockCancelSubscription.mockResolvedValue(undefined);
@@ -561,7 +579,7 @@ describe("billing server actions", () => {
 
     it("returns no_subscription when context targets a row that doesn't exist (e.g. only team sub but personal requested)", async () => {
       const teamSub = { id: "sub_t", plan: { context: "team" } };
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([teamSub]);
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -578,7 +596,7 @@ describe("billing server actions", () => {
       // backend dispatches on its own default. The action must reject.
       const personalSub = { id: "sub_p", plan: { context: "personal" } };
       const teamSub = { id: "sub_t", plan: { context: "team" } };
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([personalSub, teamSub]);
       mockCanManageBilling.mockResolvedValue(true);
 
@@ -592,7 +610,7 @@ describe("billing server actions", () => {
     it("returns context_required when concurrent subs and a tampered context is normalized to undefined", async () => {
       const personalSub = { id: "sub_p", plan: { context: "personal" } };
       const teamSub = { id: "sub_t", plan: { context: "team" } };
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([personalSub, teamSub]);
       mockCanManageBilling.mockResolvedValue(true);
 
@@ -608,7 +626,7 @@ describe("billing server actions", () => {
     const subscription = { id: "s1", plan: { context: "team" } };
 
     it("resumes and revalidates when user can manage billing", async () => {
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([subscription]);
       mockCanManageBilling.mockResolvedValue(true);
       mockResumeSubscription.mockResolvedValue(undefined);
@@ -624,7 +642,7 @@ describe("billing server actions", () => {
     });
 
     it("returns not_billing_member when user cannot manage billing", async () => {
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([subscription]);
       mockCanManageBilling.mockResolvedValue(false);
       const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -639,19 +657,19 @@ describe("billing server actions", () => {
     it("forwards context=personal to the gateway and authorizes against the personal sub when concurrent", async () => {
       const personalSub = { id: "sub_p", plan: { context: "personal" } };
       const teamSub = { id: "sub_t", plan: { context: "team" } };
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([personalSub, teamSub]);
       mockCanManageBilling.mockResolvedValue(true);
       mockResumeSubscription.mockResolvedValue(undefined);
 
       await resumeSubscription("personal");
 
-      expect(mockCanManageBilling).toHaveBeenCalledWith(user, personalSub);
+      expect(mockCanManageBilling).toHaveBeenCalledWith(user.id, personalSub);
       expect(mockResumeSubscription).toHaveBeenCalledWith("personal");
     });
 
     it("normalizes a tampered context arg to undefined", async () => {
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([subscription]);
       mockCanManageBilling.mockResolvedValue(true);
       mockResumeSubscription.mockResolvedValue(undefined);
@@ -664,7 +682,7 @@ describe("billing server actions", () => {
     it("returns context_required when caller has both personal and team subs and no context is supplied", async () => {
       const personalSub = { id: "sub_p", plan: { context: "personal" } };
       const teamSub = { id: "sub_t", plan: { context: "team" } };
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([personalSub, teamSub]);
       mockCanManageBilling.mockResolvedValue(true);
 
@@ -681,7 +699,7 @@ describe("billing server actions", () => {
     const subscription = { id: "s1", plan: { context: "personal" } };
 
     it("releases the scheduled change and revalidates when allowed", async () => {
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([subscription]);
       mockCanManageBilling.mockResolvedValue(true);
       mockReleaseScheduledChange.mockResolvedValue(undefined);
@@ -697,7 +715,7 @@ describe("billing server actions", () => {
     });
 
     it("returns not_billing_member when caller cannot manage billing", async () => {
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([subscription]);
       mockCanManageBilling.mockResolvedValue(false);
 
@@ -709,7 +727,7 @@ describe("billing server actions", () => {
     });
 
     it("returns no_subscription when there is no active subscription", async () => {
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([]);
 
       const result = await releaseScheduledChange();
@@ -722,21 +740,21 @@ describe("billing server actions", () => {
     it("forwards context=personal to the gateway when supplied", async () => {
       const personalSub = { id: "sub_p", plan: { context: "personal" } };
       const teamSub = { id: "sub_t", plan: { context: "team" } };
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([personalSub, teamSub]);
       mockCanManageBilling.mockResolvedValue(true);
       mockReleaseScheduledChange.mockResolvedValue(undefined);
 
       const result = await releaseScheduledChange("personal");
 
-      expect(mockCanManageBilling).toHaveBeenCalledWith(user, personalSub);
+      expect(mockCanManageBilling).toHaveBeenCalledWith(user.id, personalSub);
       expect(mockReleaseScheduledChange).toHaveBeenCalledWith("personal");
       expect(result.ok).toBe(true);
     });
 
     it("maps a gateway ApiError 404 to no_subscription", async () => {
       const { ApiError } = await import("@/domain/errors/ApiError");
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([subscription]);
       mockCanManageBilling.mockResolvedValue(true);
       mockReleaseScheduledChange.mockRejectedValue(new ApiError(404, {}));
@@ -749,7 +767,7 @@ describe("billing server actions", () => {
 
     it("maps a gateway ApiError 403 code to not_billing_member", async () => {
       const { ApiError } = await import("@/domain/errors/ApiError");
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([subscription]);
       mockCanManageBilling.mockResolvedValue(true);
       mockReleaseScheduledChange.mockRejectedValue(
@@ -768,7 +786,7 @@ describe("billing server actions", () => {
     const teamSubscription = { id: "s1", plan: { context: "team" } };
 
     beforeEach(() => {
-      mockGetCurrentUser.mockResolvedValue(seatsUser);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(seatsUser.id);
       mockListSubscriptions.mockResolvedValue([teamSubscription]);
       mockCanManageBilling.mockResolvedValue(true);
     });
@@ -821,7 +839,11 @@ describe("billing server actions", () => {
 
       await updateSeats(undefined, formData);
 
-      expect(mockCanManageBilling).toHaveBeenCalledWith(seatsUser, teamSub);
+      expect(mockCanManageBilling).toHaveBeenCalledWith(
+        seatsUser.id,
+        teamSub,
+        expect.objectContaining({ preloadedOrgs: expect.any(Array) }),
+      );
       expect(mockUpdateSeats).toHaveBeenCalledWith(5, "team");
     });
 
@@ -890,7 +912,7 @@ describe("billing server actions", () => {
     };
 
     beforeEach(() => {
-      mockGetCurrentUser.mockResolvedValue(user);
+      mockGetCurrentUserIdFromCookie.mockResolvedValue(user.id);
       mockListSubscriptions.mockResolvedValue([subscription]);
       mockCanManageBilling.mockResolvedValue(true);
     });
@@ -947,7 +969,7 @@ describe("billing server actions", () => {
 
       const result = await changePlan("price_basic", "personal");
 
-      expect(mockCanManageBilling).toHaveBeenCalledWith(user, personalSub);
+      expect(mockCanManageBilling).toHaveBeenCalledWith(user.id, personalSub);
       expect(mockChangePlan).toHaveBeenCalledWith("price_basic", "personal");
       expect(result.ok).toBe(true);
     });
@@ -968,7 +990,11 @@ describe("billing server actions", () => {
 
       await changePlan("price_team_pro", "team");
 
-      expect(mockCanManageBilling).toHaveBeenCalledWith(user, teamSub);
+      expect(mockCanManageBilling).toHaveBeenCalledWith(
+        user.id,
+        teamSub,
+        expect.objectContaining({ preloadedOrgs: expect.any(Array) }),
+      );
       expect(mockChangePlan).toHaveBeenCalledWith("price_team_pro", "team");
     });
 

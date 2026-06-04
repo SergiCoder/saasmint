@@ -8,11 +8,13 @@ vi.mock("next/navigation", () => ({
 }));
 
 const mockRevalidatePath = vi.fn();
-vi.mock("next/cache", () => ({
-  revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
+vi.mock("@/lib/revalidate", () => ({
+  // The action calls `revalidateLocalizedPath`; assert on the bare path so
+  // tests don't have to enumerate every supported locale.
+  revalidateLocalizedPath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 
-const mockGetCurrentUser = vi.fn();
+const mockGetCurrentUserIdFromCookie = vi.fn();
 const mockListMembers = vi.fn();
 const mockCreateInvitation = vi.fn();
 const mockCancelInvitation = vi.fn();
@@ -21,8 +23,11 @@ const mockUpdateMemberRole = vi.fn();
 const mockTransferOwnership = vi.fn();
 const mockDeleteOrg = vi.fn();
 
+vi.mock("@/lib/jwt", () => ({
+  getCurrentUserIdFromCookie: () => mockGetCurrentUserIdFromCookie(),
+}));
+
 vi.mock("@/infrastructure/registry", () => ({
-  authGateway: { getCurrentUser: mockGetCurrentUser },
   orgGateway: { deleteOrg: mockDeleteOrg },
   orgMemberGateway: {
     listMembers: mockListMembers,
@@ -37,7 +42,7 @@ vi.mock("@/infrastructure/registry", () => ({
 }));
 
 function mockRole(role: "owner" | "admin" | "member") {
-  mockGetCurrentUser.mockResolvedValue({ id: "user_me" });
+  mockGetCurrentUserIdFromCookie.mockResolvedValue("user_me");
   mockListMembers.mockResolvedValue([{ user: { id: "user_me" }, role }]);
 }
 

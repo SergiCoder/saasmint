@@ -3,8 +3,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 vi.mock("next/navigation", () => ({ redirect: vi.fn() }));
 
 const mockRevalidatePath = vi.fn();
-vi.mock("next/cache", () => ({
-  revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
+vi.mock("@/lib/revalidate", () => ({
+  // The action calls `revalidateLocalizedPath`; assert on the bare path so
+  // tests don't have to enumerate every supported locale.
+  revalidateLocalizedPath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 
 const mockGetCurrentUser = vi.fn();
@@ -59,7 +61,6 @@ describe("user server actions", () => {
       formData.set("preferredCurrency", "eur");
 
       const result = await updateProfile(undefined, formData);
-      expect(mockGetCurrentUser).toHaveBeenCalledOnce();
       expect(mockUpdateProfile).toHaveBeenCalledWith({
         fullName: "Jane Doe",
         preferredLocale: "fr",
@@ -71,7 +72,7 @@ describe("user server actions", () => {
         pronouns: null,
         bio: null,
       });
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/profile");
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/profile", "layout");
       expect(result).toEqual({ ok: true });
     });
 
@@ -177,9 +178,9 @@ describe("user server actions", () => {
       expect(mockUpdateProfile).not.toHaveBeenCalled();
     });
 
-    it("returns session_expired when getCurrentUser throws AuthError", async () => {
+    it("returns session_expired when the gateway throws AuthError", async () => {
       const { AuthError } = await import("@/domain/errors/AuthError");
-      mockGetCurrentUser.mockRejectedValue(
+      mockUpdateProfile.mockRejectedValue(
         new AuthError("No active session", "NO_SESSION"),
       );
 
@@ -188,7 +189,6 @@ describe("user server actions", () => {
 
       const result = await updateProfile(undefined, formData);
       expect(result).toEqual({ ok: false, code: "session_expired" });
-      expect(mockUpdateProfile).not.toHaveBeenCalled();
     });
   });
 
@@ -196,11 +196,10 @@ describe("user server actions", () => {
     it("updates avatar URL and revalidates /", async () => {
       mockUpdateProfile.mockResolvedValue(undefined);
 
-      await updateAvatarUrl("https://example.com/avatar.webp");
+      await updateAvatarUrl("https://lh3.googleusercontent.com/a/avatar.webp");
 
-      expect(mockGetCurrentUser).toHaveBeenCalledOnce();
       expect(mockUpdateProfile).toHaveBeenCalledWith({
-        avatarUrl: "https://example.com/avatar.webp",
+        avatarUrl: "https://lh3.googleusercontent.com/a/avatar.webp",
       });
       expect(mockRevalidatePath).toHaveBeenCalledWith("/", "layout");
     });
@@ -213,20 +212,44 @@ describe("user server actions", () => {
       expect(mockUpdateProfile).toHaveBeenCalledWith({ avatarUrl: null });
     });
 
-    it("returns session_expired when getCurrentUser throws AuthError", async () => {
+    it("rejects non-https avatar URLs (defence-in-depth)", async () => {
+      const result = await updateAvatarUrl("javascript:alert(document.cookie)");
+      expect(result).toEqual({
+        ok: false,
+        code: "invalid_input",
+        fieldErrors: { avatarUrl: "invalid" },
+      });
+      expect(mockUpdateProfile).not.toHaveBeenCalled();
+    });
+
+    it("rejects HTTPS URLs from origins outside the avatar allowlist", async () => {
+      const result = await updateAvatarUrl("https://attacker.com/pixel.png");
+      expect(result).toEqual({
+        ok: false,
+        code: "invalid_input",
+        fieldErrors: { avatarUrl: "invalid" },
+      });
+      expect(mockUpdateProfile).not.toHaveBeenCalled();
+    });
+
+    it("returns session_expired when the gateway throws AuthError", async () => {
       const { AuthError } = await import("@/domain/errors/AuthError");
-      mockGetCurrentUser.mockRejectedValue(
+      mockUpdateProfile.mockRejectedValue(
         new AuthError("No active session", "NO_SESSION"),
       );
 
-      const result = await updateAvatarUrl("https://example.com/avatar.webp");
+      const result = await updateAvatarUrl(
+        "https://lh3.googleusercontent.com/a/avatar.webp",
+      );
       expect(result).toEqual({ ok: false, code: "session_expired" });
     });
 
     it("returns unknown_error for a generic non-auth failure", async () => {
       mockUpdateProfile.mockRejectedValue(new Error("Server error"));
 
-      const result = await updateAvatarUrl("https://example.com/avatar.webp");
+      const result = await updateAvatarUrl(
+        "https://lh3.googleusercontent.com/a/avatar.webp",
+      );
       expect(result).toEqual({ ok: false, code: "unknown_error" });
     });
 
@@ -239,12 +262,10 @@ describe("user server actions", () => {
         }),
       );
 
-      const result = await updateAvatarUrl("https://example.com/avatar.webp");
-      expect(result).toEqual({
-        ok: false,
-        code: "image_too_large",
-        message: "Image too large.",
-      });
+      const result = await updateAvatarUrl(
+        "https://lh3.googleusercontent.com/a/avatar.webp",
+      );
+      expect(result).toEqual({ ok: false, code: "image_too_large" });
     });
   });
 
@@ -261,6 +282,21 @@ describe("user server actions", () => {
       mockUpdateProfile.mockRejectedValue(new Error("API 500"));
 
       await expect(updatePreferredLocale("fr")).resolves.toBeUndefined();
+    });
+
+    it("does not call the gateway for an invalid locale string", async () => {
+      // isLocale() rejects values not in the supported-locale allow-list.
+      // The action must not forward arbitrary client-supplied strings to the
+      // backend, so it returns early without touching the gateway.
+      await updatePreferredLocale("xx");
+
+      expect(mockUpdateProfile).not.toHaveBeenCalled();
+    });
+
+    it("does not call the gateway for an empty locale string", async () => {
+      await updatePreferredLocale("");
+
+      expect(mockUpdateProfile).not.toHaveBeenCalled();
     });
   });
 
@@ -293,11 +329,7 @@ describe("user server actions", () => {
 
       const result = await deleteAccount();
 
-      expect(result).toEqual({
-        ok: false,
-        code: "sole_owner",
-        message: "Cannot delete: you are the sole owner of an active org.",
-      });
+      expect(result).toEqual({ ok: false, code: "sole_owner" });
     });
 
     it("returns session_expired when the gateway throws AuthError", async () => {

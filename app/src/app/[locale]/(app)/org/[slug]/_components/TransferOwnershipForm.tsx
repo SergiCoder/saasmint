@@ -4,6 +4,7 @@ import { useActionState, useRef, useState, useTransition } from "react";
 import { transferOwnership } from "@/app/actions/org";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { Button } from "@/presentation/components/atoms/Button";
+import { INPUT_DEFAULT_CLASS } from "@/presentation/components/atoms/Input";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
 import {
   ConfirmDialog,
@@ -77,7 +78,7 @@ export function TransferOwnershipForm({
             id="transfer-user"
             value={selectedUserId}
             onChange={(e) => setSelectedUserId(e.target.value)}
-            className="focus:border-primary-500 focus:ring-primary-500 block w-full cursor-pointer rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:ring-2 focus:ring-offset-0 focus:outline-none"
+            className={`${INPUT_DEFAULT_CLASS} cursor-pointer`}
           >
             <option value="" disabled>
               —

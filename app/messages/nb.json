@@ -96,7 +96,9 @@
       "errorBackendRejected": "Autentisering mislyktes. Prøv å logge inn igjen.",
       "errorOAuth": "Sosial pålogging mislyktes. Vennligst prøv igjen.",
       "errorOAuthEmailUnverifiedCollision": "Den sosiale kontoen din er registrert med en e-postadresse som allerede har en passordkonto her. Logg inn med passordet ditt først; du kan koble den sosiale leverandøren etterpå.",
-      "forgotPassword": "Glemt passord?"
+      "forgotPassword": "Glemt passord?",
+      "resendVerification": "Send bekreftelses-e-post på nytt",
+      "verificationEmailSent": "Bekreftelses-e-post sendt. Sjekk innboksen din."
     },
     "forgotPassword": {
       "pageTitle": "Glemt passord",
@@ -122,6 +124,27 @@
       "completing": "Fullfører innlogging…",
       "noscript": "JavaScript kreves for å fullføre innloggingen.",
       "backToLogin": "Tilbake til innlogging"
+    },
+    "linkEmailSent": {
+      "pageTitle": "Sjekk e-posten din",
+      "title": "Sjekk innboksen din",
+      "body": "Vi har sendt en bekreftelseslenke til e-postadressen på din eksisterende konto. Åpne den for å fullføre kobling av kontoen din. Lenken utløper om 15 minutter."
+    },
+    "confirmLink": {
+      "pageTitle": "Bekreft kobling",
+      "title": "Bekreft kobling av kontoen din",
+      "body": "Klikk nedenfor for å fullføre koblingen av den sosiale kontoen din.",
+      "button": "Bekreft kobling",
+      "verifying": "Kobler kontoen din…",
+      "backToLogin": "Tilbake til innlogging",
+      "error": {
+        "used": "Denne lenken er allerede brukt.",
+        "expired": "Denne lenken er utløpt — prøv å logge inn med leverandøren igjen.",
+        "invalid": "Denne lenken er ugyldig.",
+        "inactive": "Kontoen din er ikke lenger aktiv.",
+        "collision": "Den leverandørkontoen er allerede koblet et annet sted.",
+        "generic": "Vi kunne ikke koble kontoen din. Prøv igjen."
+      }
     },
     "register": {
       "title": "Opprett kontoen din",
@@ -205,6 +228,8 @@
     "endsOn": "Avsluttes den",
     "billedMonthly": "Fakturert månedlig",
     "billedYearly": "Fakturert årlig",
+    "billedInLocalMonthly": "≈ {amount} — faktureres i {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/måned, faktureres årlig i {currency}",
     "seat": "plass",
     "seats": "plasser",
     "products": "Kredittpakker",
@@ -252,9 +277,11 @@
     "profile": "Profil",
     "fullName": "Fullt navn",
     "email": "E-post",
+    "emailNotVerified": "E-postadressen din er ikke bekreftet ennå.",
+    "resendVerification": "Send bekreftelses-e-post på nytt",
+    "verificationEmailSent": "Bekreftelses-e-post sendt. Sjekk innboksen din.",
     "preferredLocale": "Språk",
     "preferredCurrency": "Valuta",
-    "currencyLockedNote": "Faktureringsvalutaen din settes når du abonnerer første gang og kan ikke endres senere.",
     "phonePrefix": "Landskode",
     "phone": "Telefon",
     "phoneNumberRequired": "Skriv inn et telefonnummer",
@@ -373,6 +400,7 @@
     "password_too_short": "Passordet må være minst 10 tegn",
     "profile_load_failed": "Kunne ikke laste profilen",
     "session_expired": "Økten er utløpt. Logg inn igjen.",
+    "captcha_failed": "Sikkerhetsverifiseringen mislyktes. Prøv igjen.",
     "unknown_error": "Noe gikk galt. Prøv igjen.",
     "unsupported_image": "Bildetype støttes ikke",
     "message_required": "Vennligst legg ved en melding.",

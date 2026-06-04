@@ -96,7 +96,9 @@
       "errorBackendRejected": "驗證失敗。請重新登入。",
       "errorOAuth": "社群登入失敗。請重試。",
       "errorOAuthEmailUnverifiedCollision": "您的社交帳戶使用的電子郵件地址在此已有密碼帳戶。請先使用密碼登入，之後可以關聯社交帳戶。",
-      "forgotPassword": "忘記密碼？"
+      "forgotPassword": "忘記密碼？",
+      "resendVerification": "重新發送驗證郵件",
+      "verificationEmailSent": "驗證郵件已發送，請查看您的收件匣。"
     },
     "forgotPassword": {
       "pageTitle": "忘記密碼",
@@ -122,6 +124,27 @@
       "completing": "正在完成登入…",
       "noscript": "完成登入需要 JavaScript。",
       "backToLogin": "返回登入"
+    },
+    "linkEmailSent": {
+      "pageTitle": "請查收郵件",
+      "title": "請查看您的收件匣",
+      "body": "我們已向您現有帳戶的電子郵件寄送確認連結。開啟連結以完成帳戶連結。連結將在 15 分鐘後失效。"
+    },
+    "confirmLink": {
+      "pageTitle": "確認連結",
+      "title": "確認連結您的帳戶",
+      "body": "點擊下方按鈕，完成與社交帳戶的連結。",
+      "button": "確認連結",
+      "verifying": "正在連結您的帳戶…",
+      "backToLogin": "返回登入",
+      "error": {
+        "used": "此連結已被使用。",
+        "expired": "此連結已過期 —— 請重新透過該服務商登入。",
+        "invalid": "此連結無效。",
+        "inactive": "您的帳戶已不再處於啟用狀態。",
+        "collision": "該服務商帳戶已與其他帳戶連結。",
+        "generic": "無法連結您的帳戶。請再試一次。"
+      }
     },
     "register": {
       "title": "建立您的帳戶",
@@ -205,6 +228,8 @@
     "endsOn": "結束日期",
     "billedMonthly": "按月計費",
     "billedYearly": "按年計費",
+    "billedInLocalMonthly": "≈ {amount}（以 {currency} 計費）",
+    "billedInLocalYearly": "≈ {amount}（{monthly}/月，按年以 {currency} 計費）",
     "seat": "席位",
     "seats": "席位",
     "products": "點數包",
@@ -252,9 +277,11 @@
     "profile": "個人資料",
     "fullName": "全名",
     "email": "電子郵件",
+    "emailNotVerified": "您的電子郵件地址尚未驗證。",
+    "resendVerification": "重新發送驗證郵件",
+    "verificationEmailSent": "驗證郵件已發送，請查看您的收件匣。",
     "preferredLocale": "語言",
     "preferredCurrency": "貨幣",
-    "currencyLockedNote": "您的結算貨幣在首次訂閱時設定，之後無法變更。",
     "phonePrefix": "國碼",
     "phone": "電話號碼",
     "phoneNumberRequired": "請輸入電話號碼",
@@ -373,6 +400,7 @@
     "password_too_short": "密碼長度至少為 10 個字元",
     "profile_load_failed": "載入個人資料失敗",
     "session_expired": "工作階段已過期,請重新登入。",
+    "captcha_failed": "安全驗證失敗。請重試。",
     "unknown_error": "發生錯誤,請再試一次。",
     "unsupported_image": "不支援的圖片類型",
     "message_required": "請輸入訊息內容。",

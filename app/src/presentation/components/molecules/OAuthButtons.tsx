@@ -12,17 +12,17 @@ import type { OAuthProvider } from "@/infrastructure/auth/oauth";
 
 const providers = [
   {
-    id: "google" as OAuthProvider,
+    id: "google" satisfies OAuthProvider,
     icon: GoogleIcon,
     labelKey: "continueWithGoogle",
   },
   {
-    id: "github" as OAuthProvider,
+    id: "github" satisfies OAuthProvider,
     icon: GitHubIcon,
     labelKey: "continueWithGitHub",
   },
   {
-    id: "microsoft" as OAuthProvider,
+    id: "microsoft" satisfies OAuthProvider,
     icon: MicrosoftIcon,
     labelKey: "continueWithMicrosoft",
   },
@@ -38,9 +38,11 @@ export function OAuthButtons({ plan, context }: OAuthButtonsProps = {}) {
   const [loadingProvider, setLoadingProvider] = useState<OAuthProvider | null>(
     null,
   );
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function handleOAuth(provider: OAuthProvider) {
     setLoadingProvider(provider);
+    setErrorMessage(null);
     const isTeam = context === "team";
     // The server action re-validates the plan slug and `next` path via
     // validateNext / isValidPlanSlug, so no client-side sanitation is needed.
@@ -55,6 +57,7 @@ export function OAuthButtons({ plan, context }: OAuthButtonsProps = {}) {
       window.location.assign(redirectUrl);
     } catch {
       setLoadingProvider(null);
+      setErrorMessage(t("error"));
     }
   }
 
@@ -75,6 +78,11 @@ export function OAuthButtons({ plan, context }: OAuthButtonsProps = {}) {
           </Button>
         ))}
       </div>
+      {errorMessage ? (
+        <p className="mt-3 text-sm text-red-600" role="alert">
+          {errorMessage}
+        </p>
+      ) : null}
       <Divider text={t("divider")} className="my-6" />
     </div>
   );

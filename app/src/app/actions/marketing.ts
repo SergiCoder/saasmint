@@ -2,12 +2,14 @@
 
 import { inquiryGateway } from "@/infrastructure/registry";
 import {
+  ACTION_CODE_INVALID_INPUT,
   ok,
   fail,
   toActionError,
   type ActionResult,
 } from "@/lib/actions/ActionResult";
 import { getString } from "@/lib/actions/parseFormData";
+import { isMemberOf } from "@/lib/typeGuards";
 import type { InquirySource } from "@/application/ports/IInquiryGateway";
 
 const VALID_SOURCES = [
@@ -19,10 +21,7 @@ const MAX_MESSAGE_LENGTH = 5000;
 const MAX_EMAIL_LENGTH = 254;
 
 function isValidSource(value: unknown): value is InquirySource {
-  return (
-    typeof value === "string" &&
-    (VALID_SOURCES as readonly string[]).includes(value)
-  );
+  return isMemberOf(VALID_SOURCES, value);
 }
 
 export async function submitInquiry(
@@ -42,7 +41,7 @@ export async function submitInquiry(
   const message = rawMessage?.trim();
   const source = getString(formData, "source");
 
-  if (!isValidSource(source)) return fail("invalid_input");
+  if (!isValidSource(source)) return fail(ACTION_CODE_INVALID_INPUT);
   if (!email || email.length > MAX_EMAIL_LENGTH) return fail("email_required");
   if (source === "contact-page" && (!message || message.length === 0)) {
     return fail("message_required");

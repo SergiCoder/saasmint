@@ -38,6 +38,7 @@ export {
   type SubscriptionCardProps,
 } from "./SubscriptionCard";
 export { CtaSection, type CtaSectionProps } from "./CtaSection";
+export { DangerZone, type DangerZoneProps } from "./DangerZone";
 export {
   DashboardMock,
   type DashboardMockProps,

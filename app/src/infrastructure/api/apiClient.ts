@@ -88,13 +88,35 @@ async function raw(
   return res;
 }
 
-export async function apiFetch<T>(
+/**
+ * Every typed `apiFetch*` returns a JSON object — i.e. a `Record<string,
+ * unknown>`. Callers MUST narrow the result through a Zod schema (`SomeSchema
+ * .parse(raw)`) before reading typed fields; the schema parse is the only
+ * runtime guarantee. The previous signature accepted a generic `T` so
+ * callers could declare the typed shape upfront, but the underlying cast was
+ * unsound — TypeScript cannot prove the response shape at runtime — so the
+ * generic has been removed in favour of always handing the caller the raw
+ * record and letting `parse()` do the narrowing.
+ */
+async function readJson(res: Response): Promise<Record<string, unknown>> {
+  // `res.json()` returns `unknown`. Validate the object shape here so a
+  // backend that returns an array, primitive, or `null` surfaces as a clean
+  // `ApiError` instead of crashing inside `keysToCamel`/`Object.entries` in
+  // a downstream gateway. Downstream callers still narrow via Zod.
+  const json: unknown = await res.json();
+  if (!isRecord(json)) {
+    throw new ApiError(res.status, json, "UNEXPECTED_RESPONSE_SHAPE");
+  }
+  return json;
+}
+
+export async function apiFetch(
   path: string,
   options: RequestInit = {},
-): Promise<T> {
+): Promise<Record<string, unknown>> {
   const token = await getAuthToken();
   const res = await raw(path, options, token);
-  return (await res.json()) as T;
+  return readJson(res);
 }
 
 /**
@@ -102,21 +124,21 @@ export async function apiFetch<T>(
  * to an unauthenticated request when the token is missing OR rejected. Use
  * for endpoints that personalize the response for logged-in users but work
  * anonymously too (e.g. plans list, where pricing adjusts to the user's
- * preferred currency). A stale/invalid token that makes it past the proxy
- * refresh must not crash the anonymous render path.
+ * preferred currency). A stale/invalid token that makes it past the
+ * proxy refresh must not crash the anonymous render path.
  */
-export async function apiFetchOptional<T>(
+export async function apiFetchOptional(
   path: string,
   options: RequestInit = {},
-): Promise<T> {
+): Promise<Record<string, unknown>> {
   const token = await getAccessToken();
   try {
     const res = await raw(path, options, token ?? null);
-    return (await res.json()) as T;
+    return readJson(res);
   } catch (err) {
     if (token && err instanceof AuthError) {
       const res = await raw(path, options, null);
-      return (await res.json()) as T;
+      return readJson(res);
     }
     throw err;
   }
@@ -130,12 +152,12 @@ export async function apiFetchVoid(
   await raw(path, options, token);
 }
 
-export async function publicApiFetch<T>(
+export async function publicApiFetch(
   path: string,
   options: RequestInit = {},
-): Promise<T> {
+): Promise<Record<string, unknown>> {
   const res = await raw(path, options, null);
-  return (await res.json()) as T;
+  return readJson(res);
 }
 
 export async function publicApiFetchVoid(

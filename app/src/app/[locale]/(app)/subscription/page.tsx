@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { getCurrentUser } from "../_data/getCurrentUser";
+import { getCurrentUser } from "../../_data/getCurrentUser";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
 import { renderPlanUpgradeCta } from "./_lib/renderPlanUpgradeCta";
@@ -8,12 +8,15 @@ import { CurrentSubscriptionCard } from "./_components/CurrentSubscriptionCard";
 import { CreditBalanceCard } from "./_components/CreditBalanceCard";
 import { FreePlanCard } from "./_components/FreePlanCard";
 import { ProductsCheckoutSection } from "./_components/ProductsCheckoutSection";
-import { getCreditBalances } from "../_data/getCreditBalances";
+import { getCreditBalances } from "../../_data/getCreditBalances";
 import { getSubscriptionPageData } from "./_data/getSubscriptionPageData";
 import {
   buildPlanCardGroups,
   buildPlanTranslations,
+  buildProductPriceSubLabels,
   buildProductTranslations,
+  makeLocalSubLabelFormatter,
+  makeProductSubLabelFormatter,
   splitPlanGroupsByContext,
 } from "@/app/[locale]/_lib/buildPlanCards";
 import {
@@ -104,9 +107,11 @@ export default async function BillingPage({
     labels: {
       upgrade: t("upgrade"),
       seat: t("seat"),
+      billedYearly: t("billedYearly"),
     },
     planNames,
     planDescriptions,
+    formatPriceSubLabelLocal: makeLocalSubLabelFormatter(t),
     renderCta: ({
       plan,
       isCurrent,
@@ -213,6 +218,8 @@ export default async function BillingPage({
                 planName={translatePlanName(tPlans, s.plan)}
                 canManage={canManageById[s.id] === true}
                 teamOwnerName={s.plan.context === "team" ? teamOwnerName : null}
+                tBilling={t}
+                tPlans={tPlans}
                 teamOrgSlug={
                   s.plan.context === "team"
                     ? (userOrgs.at(0)?.slug ?? null)
@@ -254,9 +261,7 @@ export default async function BillingPage({
         </div>
       )}
 
-      {groups.length === 0 ? (
-        <p className="text-sm text-gray-500">{t("changePlan")}</p>
-      ) : (
+      {groups.length > 0 && (
         <>
           {personalGroups.length > 0 && (
             <PricingSection
@@ -295,6 +300,11 @@ export default async function BillingPage({
         title={t("products")}
         products={products}
         productNames={buildProductTranslations(products, tProducts)}
+        priceSubLabels={buildProductPriceSubLabels(
+          products,
+          locale,
+          makeProductSubLabelFormatter(t),
+        )}
         creditsLabel={t("credits")}
         buyLabel={t("buy")}
         locale={locale}

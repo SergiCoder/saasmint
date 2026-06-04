@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { getUserOrgs } from "../_data/getUserOrgs";
+import { getUserOrgs } from "../../_data/getUserOrgs";
 import { OrgCard } from "@/presentation/components/molecules/OrgCard";
 
 interface Props {
@@ -21,11 +21,11 @@ export default async function OrgListPage({ params }: Props) {
   const [t, orgs] = await Promise.all([getTranslations("org"), getUserOrgs()]);
 
   if (orgs.length === 0) {
-    redirect("/subscription");
+    redirect(`/${locale}/subscription`);
   }
 
   if (orgs.length === 1 && orgs[0]) {
-    redirect(`/org/${orgs[0].slug}`);
+    redirect(`/${locale}/org/${orgs[0].slug}`);
   }
 
   return (

@@ -1,11 +1,21 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { apiFetch, publicApiFetch } from "@/infrastructure/api/apiClient";
-import { ApiError } from "@/domain/errors/ApiError";
-import { authGateway, planGateway } from "@/infrastructure/registry";
 import {
-  clearAuthCookies,
+  apiFetch,
+  publicApiFetch,
+  publicApiFetchVoid,
+} from "@/infrastructure/api/apiClient";
+import {
+  OAuthExchangeResponseSchema,
+  TokenResponseSchema,
+  type OAuthExchangeResponse,
+  type TokenResponse,
+} from "@/infrastructure/api/schemas";
+import { ApiError } from "@/domain/errors/ApiError";
+import { authGateway } from "@/infrastructure/registry";
+import { getPlanRouting } from "@/lib/planRoutingCache";
+import {
   consumeOAuthFlowCookies,
   consumePendingPlan,
   setAuthCookies,
@@ -26,19 +36,17 @@ import {
   type ActionResult,
 } from "@/lib/actions/ActionResult";
 import { getString } from "@/lib/actions/parseFormData";
-import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
+import { getLocale } from "@/lib/pathname";
+import { validateNewPassword } from "@/lib/passwordPolicy";
+import { isValidPlanSlug } from "@/lib/planSlug";
+import { validateFullName } from "@/lib/validateFullName";
 
-interface TokenResponse {
-  access_token: string;
-  refresh_token: string;
-  token_type?: string;
-}
-
-interface OAuthExchangeResponse {
-  access_token: string;
-  refresh_token: string;
-  token_type?: string;
-  expires_in?: number;
+/** Conditionally adds `captcha_token` to a request body. */
+function withCaptcha(
+  body: Record<string, unknown>,
+  captchaToken: string | undefined | null,
+): Record<string, unknown> {
+  return captchaToken ? { ...body, captcha_token: captchaToken } : body;
 }
 
 export type StartOAuthResult = { redirectUrl: string };
@@ -53,16 +61,6 @@ export type ExchangeOAuthResult =
         | "oauth_email_unverified_collision";
     };
 
-const PLAN_SLUG_RE = /^[A-Za-z0-9_-]{1,64}$/;
-
-function isValidPlanSlug(value: unknown): value is string {
-  return typeof value === "string" && PLAN_SLUG_RE.test(value);
-}
-
-interface PlanRouting {
-  context: "personal" | "team";
-}
-
 /**
  * Look up the plan by price id and return its routing info, or undefined when
  * the id is unknown. Treats the plan catalog — not untrusted form fields — as
@@ -73,21 +71,18 @@ interface PlanRouting {
  */
 async function resolvePlanRouting(
   priceId: string,
-): Promise<PlanRouting | undefined> {
+): Promise<{ context: "personal" | "team" } | undefined> {
   try {
-    const plans = await planGateway.listPlans();
-    for (const plan of plans) {
-      if (plan.price?.id === priceId) {
-        return { context: plan.context };
-      }
-    }
+    const routing = await getPlanRouting();
+    const context = routing.get(priceId);
+    return context ? { context } : undefined;
   } catch (err) {
     // Swallow on a genuine outage so signup still proceeds as personal,
     // but surface the failure server-side so a misrouted team signup isn't
     // invisible to operators.
     console.error("resolvePlanRouting failed", err);
+    return undefined;
   }
-  return undefined;
 }
 
 interface Credentials {
@@ -117,10 +112,11 @@ export async function signIn(
 
   let data: TokenResponse;
   try {
-    data = await publicApiFetch<TokenResponse>("/auth/login/", {
+    const raw = await publicApiFetch("/auth/login/", {
       method: "POST",
       body: JSON.stringify(credentials),
     });
+    data = TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Sign-in failed", err);
     return toActionError(err);
@@ -128,6 +124,7 @@ export async function signIn(
 
   await setAuthCookies(data.access_token, data.refresh_token);
 
+  const locale = await getLocale();
   const plan = formData.get("plan");
   if (isValidPlanSlug(plan)) {
     const routing = await resolvePlanRouting(plan);
@@ -136,11 +133,11 @@ export async function signIn(
         routing.context === "team"
           ? "/subscription/team-checkout"
           : "/subscription/checkout";
-      redirect(`${checkoutPath}?plan=${encodeURIComponent(plan)}`);
+      redirect(`/${locale}${checkoutPath}?plan=${encodeURIComponent(plan)}`);
     }
   }
 
-  redirect("/dashboard");
+  redirect(`/${locale}/dashboard`);
 }
 
 export async function signUp(
@@ -151,9 +148,8 @@ export async function signUp(
   if (!credentials) return fail("email_and_password_required");
 
   const fullName = getString(formData, "fullName");
-  if (!fullName || fullName.length < 3 || fullName.length > 255) {
-    return fail("full_name_invalid");
-  }
+  const nameError = validateFullName(fullName);
+  if (nameError) return fail(nameError);
 
   const planField = formData.get("plan");
   const slug = isValidPlanSlug(planField) ? planField : undefined;
@@ -161,15 +157,26 @@ export async function signUp(
   const paidPlan = routing ? slug : undefined;
   const isTeam = routing?.context === "team";
 
+  const captchaToken = getString(formData, "captcha_token");
+
   try {
-    await publicApiFetch<TokenResponse>("/auth/register/", {
+    const raw = await publicApiFetch("/auth/register/", {
       method: "POST",
-      body: JSON.stringify({
-        email: credentials.email,
-        password: credentials.password,
-        full_name: fullName,
-      }),
+      body: JSON.stringify(
+        withCaptcha(
+          {
+            email: credentials.email,
+            password: credentials.password,
+            full_name: fullName,
+          },
+          captchaToken,
+        ),
+      ),
     });
+    // Registration returns a token envelope but we don't consume it — the
+    // user must verify their email before logging in. Parse anyway to fail
+    // loudly on a malformed backend response.
+    TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Sign-up failed", err);
     return toActionError(err);
@@ -187,7 +194,8 @@ export async function signUp(
   if (isTeam) {
     loginParams.set("context", "team");
   }
-  redirect(`/login?${loginParams.toString()}`);
+  const locale = await getLocale();
+  redirect(`/${locale}/login?${loginParams.toString()}`);
 }
 
 export async function resetPassword(
@@ -197,11 +205,15 @@ export async function resetPassword(
   const email = getString(formData, "email");
   if (!email) return fail("email_required");
 
+  const captchaToken = getString(formData, "captcha_token");
+
   // Fire-and-forget: always return success to avoid leaking whether the email exists.
   try {
     await publicApiFetch("/auth/forgot-password/", {
       method: "POST",
-      body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      body: JSON.stringify(
+        withCaptcha({ email: email.trim().toLowerCase() }, captchaToken),
+      ),
     });
   } catch {
     // Swallow errors — never reveal whether the email exists
@@ -219,16 +231,16 @@ export async function resetPasswordWithToken(
   const token = getString(formData, "token");
 
   if (!token) return fail("invalid_reset_link");
-  if (!password || password.length < PASSWORD_MIN_LENGTH)
-    return fail("password_too_short");
-  if (password !== confirmPassword) return fail("passwords_do_not_match");
+  const passwordError = validateNewPassword(password, confirmPassword);
+  if (passwordError) return fail(passwordError);
 
   let data: TokenResponse;
   try {
-    data = await publicApiFetch<TokenResponse>("/auth/reset-password/", {
+    const raw = await publicApiFetch("/auth/reset-password/", {
       method: "POST",
       body: JSON.stringify({ token, password }),
     });
+    data = TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Reset-password failed", err);
     return fail("invalid_reset_link");
@@ -247,19 +259,19 @@ export async function changePassword(
   const confirmPassword = getString(formData, "confirmPassword");
 
   if (!currentPassword) return fail("current_password_required");
-  if (!password || password.length < PASSWORD_MIN_LENGTH)
-    return fail("password_too_short");
-  if (password !== confirmPassword) return fail("passwords_do_not_match");
+  const passwordError = validateNewPassword(password, confirmPassword);
+  if (passwordError) return fail(passwordError);
 
   let data: TokenResponse;
   try {
-    data = await apiFetch<TokenResponse>("/auth/change-password/", {
+    const raw = await apiFetch("/auth/change-password/", {
       method: "POST",
       body: JSON.stringify({
         current_password: currentPassword,
         new_password: password,
       }),
     });
+    data = TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Change-password failed", err);
     return toActionError(err);
@@ -269,15 +281,41 @@ export async function changePassword(
   return ok();
 }
 
+export async function resendVerificationEmail(
+  email: string,
+  captchaToken?: string,
+): Promise<ActionResult> {
+  if (typeof email !== "string" || !email.trim()) {
+    return fail("email_required");
+  }
+
+  // Fire-and-forget: always return success to avoid leaking whether the email
+  // exists or is already verified — same pattern as resetPassword.
+  try {
+    await publicApiFetchVoid("/auth/resend-verification/", {
+      method: "POST",
+      body: JSON.stringify(
+        withCaptcha({ email: email.trim().toLowerCase() }, captchaToken),
+      ),
+    });
+  } catch (err) {
+    // Swallow errors — never reveal whether the email exists or is already verified
+    console.error("Resend-verification failed", err);
+  }
+
+  return ok();
+}
+
 export async function verifyEmail(
   token: string,
 ): Promise<ActionResult<{ pendingPlan?: string; isTeamPlan?: boolean }>> {
   let data: TokenResponse;
   try {
-    data = await publicApiFetch<TokenResponse>("/auth/verify-email/", {
+    const raw = await publicApiFetch("/auth/verify-email/", {
       method: "POST",
       body: JSON.stringify({ token }),
     });
+    data = TokenResponseSchema.parse(raw);
   } catch (err) {
     console.error("Verify-email failed", err);
     return toActionError(err);
@@ -290,8 +328,6 @@ export async function verifyEmail(
   );
 }
 
-const APP_URL = env.NEXT_PUBLIC_APP_URL;
-
 export async function startOAuth(
   provider: OAuthProvider,
   nextPath: string | undefined,
@@ -300,7 +336,7 @@ export async function startOAuth(
     throw new Error("Invalid OAuth provider");
   }
 
-  const safeNext = validateNext(nextPath, APP_URL);
+  const safeNext = validateNext(nextPath, env.NEXT_PUBLIC_APP_URL);
 
   // Login-fixation gate: HttpOnly flag cookie, not a nonce. Accepts a
   // seconds-wide race (victim mid-flow when they click attacker's link);
@@ -324,10 +360,11 @@ export async function exchangeOAuthCode(
 
   let data: OAuthExchangeResponse;
   try {
-    data = await publicApiFetch<OAuthExchangeResponse>(
-      "/auth/oauth/exchange/",
-      { method: "POST", body: JSON.stringify({ code }) },
-    );
+    const raw = await publicApiFetch("/auth/oauth/exchange/", {
+      method: "POST",
+      body: JSON.stringify({ code }),
+    });
+    data = OAuthExchangeResponseSchema.parse(raw);
   } catch (err) {
     console.error("OAuth exchange failed", err);
     if (
@@ -340,15 +377,52 @@ export async function exchangeOAuthCode(
   }
 
   await setAuthCookies(data.access_token, data.refresh_token, data.expires_in);
-  return { ok: true, next: validateNext(next, APP_URL) };
+  return { ok: true, next: validateNext(next, env.NEXT_PUBLIC_APP_URL) };
 }
 
-export async function signOut() {
+/**
+ * Cross-provider OAuth account-linking confirmation.
+ *
+ * The Django callback emails the existing account a single-use token when a
+ * second OAuth provider's email matches an unverified-trust scenario (e.g.
+ * Microsoft without `xms_edov`). This action posts that token back to
+ * `/auth/oauth/confirm-link/` and, on success, mints the same token envelope
+ * `/auth/oauth/exchange/` returns. Unlike `exchangeOAuthCode`, no
+ * `oauth_in_progress` cookie is required — the email click happens in a
+ * different session (often a different device) — so the caller redirects to
+ * the OAUTH_NEXT_FALLBACK destination on success.
+ */
+export async function confirmOAuthLink(
+  token: string,
+): Promise<ActionResult<void>> {
+  if (typeof token !== "string" || !token) {
+    return fail("invalid_token");
+  }
+
+  let data: OAuthExchangeResponse;
+  try {
+    const raw = await publicApiFetch("/auth/oauth/confirm-link/", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    });
+    data = OAuthExchangeResponseSchema.parse(raw);
+  } catch (err) {
+    console.error("OAuth confirm-link failed", err);
+    return toActionError(err);
+  }
+
+  await setAuthCookies(data.access_token, data.refresh_token, data.expires_in);
+  return ok();
+}
+
+export async function signOut(): Promise<void> {
+  const locale = await getLocale();
   try {
     await authGateway.signOut();
   } catch {
-    // Session already expired — clear cookies and redirect anyway
-    await clearAuthCookies();
+    // Backend revoke failed (already-expired session, network error, 5xx):
+    // the gateway's `finally` has already cleared local cookies, so we can
+    // swallow and proceed straight to the login redirect.
   }
-  redirect("/login");
+  redirect(`/${locale}/login`);
 }

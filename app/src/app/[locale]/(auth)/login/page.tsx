@@ -4,7 +4,10 @@ import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { OAuthButtons } from "@/presentation/components/molecules/OAuthButtons";
 import { signIn } from "@/app/actions/auth";
+import { APP_NAME } from "@/lib/appVersion";
 import { AuthForm } from "../_components/AuthForm";
+import { ResendVerificationLink } from "../_components/ResendVerificationLink";
+import { buildPlanParams } from "../_lib/planParams";
 
 export async function generateMetadata({
   params,
@@ -48,27 +51,19 @@ export default async function LoginPage({ params, searchParams }: Props) {
   const isTeam = context === "team";
 
   const errorKey = error ? ERROR_KEYS[error] : undefined;
-  const signupParams = new URLSearchParams();
-  if (plan) signupParams.set("plan", plan);
-  if (isTeam) signupParams.set("context", "team");
-  const signupHref =
-    signupParams.size > 0 ? `/signup?${signupParams.toString()}` : "/signup";
-
-  const hiddenFields: Record<string, string> = {};
-  if (plan) hiddenFields.plan = plan;
-  if (isTeam) hiddenFields.context = "team";
+  const planParams = buildPlanParams(plan, isTeam);
+  const signupHref = planParams.href("/signup");
+  const hiddenFields = planParams.hiddenFields;
 
   return (
-    <AuthLayout appName="SaaSmint" title={t("title")}>
+    <AuthLayout appName={APP_NAME} title={t("title")}>
       <OAuthButtons plan={plan} context={isTeam ? "team" : undefined} />
       <AuthForm
         action={signIn}
         translationNamespace="auth.login"
         passwordAutoComplete="current-password"
         forgotPasswordHref="/forgot-password"
-        hiddenFields={
-          Object.keys(hiddenFields).length > 0 ? hiddenFields : undefined
-        }
+        hiddenFields={hiddenFields}
         footerLink={{
           href: signupHref,
           textKey: "noAccount",
@@ -82,6 +77,7 @@ export default async function LoginPage({ params, searchParams }: Props) {
                 className="mb-4"
               >
                 {t(errorKey)}
+                {error === "email_not_verified" && <ResendVerificationLink />}
               </AlertBanner>
             )}
             {invited && (

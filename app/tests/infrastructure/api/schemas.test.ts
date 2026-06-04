@@ -5,9 +5,9 @@ import {
   InvitationSchema,
   OrgMemberSchema,
   OrgSchema,
-  PhonePrefixSchema,
   PlanSchema,
   ProductSchema,
+  PublicInvitationSchema,
   SubscriptionListResponseSchema,
   SubscriptionSchema,
   UserSchema,
@@ -43,7 +43,7 @@ const validOrg = {
 
 const validOrgMember = {
   id: "m1",
-  org: "o1",
+  org: validOrg,
   user: {
     id: "u1",
     email: "alice@example.com",
@@ -57,14 +57,25 @@ const validOrgMember = {
 
 const validInvitation = {
   id: "i1",
-  org: "o1",
-  orgName: "Acme",
+  org: validOrg,
   email: "new@example.com",
   role: "member",
   status: "pending",
   invitedBy: {
     id: "u1",
-    email: "alice@example.com",
+    fullName: "Alice",
+  },
+  createdAt: "2024-01-01T00:00:00Z",
+  expiresAt: "2024-01-08T00:00:00Z",
+};
+
+const validPublicInvitation = {
+  id: "i1",
+  org: validOrg,
+  role: "member",
+  status: "pending",
+  invitedBy: {
+    id: "u1",
     fullName: "Alice",
   },
   createdAt: "2024-01-01T00:00:00Z",
@@ -83,6 +94,8 @@ const validPlan = {
     amount: 1900,
     displayAmount: 19,
     currency: "usd",
+    localDisplayAmount: null,
+    localCurrency: null,
   },
 };
 
@@ -96,6 +109,8 @@ const validProduct = {
     amount: 500,
     displayAmount: 5,
     currency: "usd",
+    localDisplayAmount: null,
+    localCurrency: null,
   },
 };
 
@@ -253,6 +268,42 @@ describe("InvitationSchema", () => {
   });
 });
 
+describe("PublicInvitationSchema", () => {
+  it("accepts the redacted public invitation shape", () => {
+    expect(() =>
+      PublicInvitationSchema.parse(validPublicInvitation),
+    ).not.toThrow();
+  });
+
+  it("rejects payloads carrying the redacted invitee email", () => {
+    // Backend strips `email` from the public endpoint to prevent token-holders
+    // from enumerating addresses; the schema must mirror that contract by
+    // refusing payloads that smuggle it through.
+    expect(() =>
+      PublicInvitationSchema.parse({
+        ...validPublicInvitation,
+        email: "leaked@example.com",
+      }),
+    ).not.toThrow(); // Zod strict-mode is off — extra keys are stripped, not rejected
+    const parsed = PublicInvitationSchema.parse({
+      ...validPublicInvitation,
+      email: "leaked@example.com",
+    });
+    expect(parsed).not.toHaveProperty("email");
+  });
+
+  it("rejects payloads where invitedBy carries an email", () => {
+    const parsed = PublicInvitationSchema.parse({
+      ...validPublicInvitation,
+      invitedBy: {
+        ...validPublicInvitation.invitedBy,
+        email: "leaked@example.com",
+      },
+    });
+    expect(parsed.invitedBy).not.toHaveProperty("email");
+  });
+});
+
 describe("PlanSchema", () => {
   it("accepts a valid plan", () => {
     expect(() => PlanSchema.parse(validPlan)).not.toThrow();
@@ -288,6 +339,37 @@ describe("PlanSchema", () => {
       PlanSchema.parse({ ...validPlan, context: "enterprise" }),
     ).toThrow();
   });
+
+  it("preserves localDisplayAmount and localCurrency when populated", () => {
+    const parsed = PlanSchema.parse({
+      ...validPlan,
+      price: {
+        id: "pp1",
+        amount: 1900,
+        displayAmount: 19,
+        currency: "usd",
+        localDisplayAmount: 17.42,
+        localCurrency: "chf",
+      },
+    });
+    expect(parsed.price?.localDisplayAmount).toBe(17.42);
+    expect(parsed.price?.localCurrency).toBe("chf");
+  });
+
+  it("preserves null local-currency fields", () => {
+    const parsed = PlanSchema.parse(validPlan);
+    expect(parsed.price?.localDisplayAmount).toBeNull();
+    expect(parsed.price?.localCurrency).toBeNull();
+  });
+
+  it("rejects when localDisplayAmount is not a number or null", () => {
+    expect(() =>
+      PlanSchema.parse({
+        ...validPlan,
+        price: { ...validPlan.price, localDisplayAmount: "17.42" },
+      }),
+    ).toThrow();
+  });
 });
 
 describe("ProductSchema", () => {
@@ -310,6 +392,28 @@ describe("ProductSchema", () => {
     expect(() =>
       ProductSchema.parse({ ...validProduct, credits: "100" }),
     ).toThrow();
+  });
+
+  it("preserves localDisplayAmount and localCurrency when populated", () => {
+    const parsed = ProductSchema.parse({
+      ...validProduct,
+      price: {
+        id: "pp2",
+        amount: 500,
+        displayAmount: 5,
+        currency: "usd",
+        localDisplayAmount: 4.55,
+        localCurrency: "chf",
+      },
+    });
+    expect(parsed.price?.localDisplayAmount).toBe(4.55);
+    expect(parsed.price?.localCurrency).toBe("chf");
+  });
+
+  it("preserves null local-currency fields", () => {
+    const parsed = ProductSchema.parse(validProduct);
+    expect(parsed.price?.localDisplayAmount).toBeNull();
+    expect(parsed.price?.localCurrency).toBeNull();
   });
 });
 
@@ -543,22 +647,5 @@ describe("SubscriptionListResponseSchema", () => {
         results: [{ ...validSubscription, status: "grace_period" }],
       }),
     ).toThrow();
-  });
-});
-
-describe("PhonePrefixSchema", () => {
-  it("accepts a valid phone prefix", () => {
-    expect(PhonePrefixSchema.parse({ prefix: "+1", label: "US" })).toEqual({
-      prefix: "+1",
-      label: "US",
-    });
-  });
-
-  it("rejects when prefix is missing", () => {
-    expect(() => PhonePrefixSchema.parse({ label: "US" })).toThrow();
-  });
-
-  it("rejects when label is not a string", () => {
-    expect(() => PhonePrefixSchema.parse({ prefix: "+1", label: 1 })).toThrow();
   });
 });

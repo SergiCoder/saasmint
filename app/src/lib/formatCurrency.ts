@@ -1,24 +1,25 @@
+import { createFormatterCache } from "./formatterCache";
+
 /**
  * Shared Intl.NumberFormat cache keyed by "locale|CURRENCY".
  * Constructing a NumberFormat is expensive; caching avoids repeated allocation
  * when formatting many prices in a single render (plan cards, product grids).
+ *
+ * The cap protects long-running server processes from unbounded growth if the
+ * locale/currency surface ever expands or a malformed input pair sneaks past
+ * upstream validation. Size is well above the realistic working set
+ * (≈20 locales × ≈20 currencies = 400) so steady-state behaviour is the
+ * same as before; the eviction only kicks in pathologically.
  */
-const formatterCache = new Map<string, Intl.NumberFormat>();
-
-function getFormatter(locale: string, currency: string): Intl.NumberFormat {
-  const key = `${locale}|${currency}`;
-  let fmt = formatterCache.get(key);
-  if (!fmt) {
-    fmt = new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency: currency.toUpperCase(),
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-    formatterCache.set(key, fmt);
-  }
-  return fmt;
-}
+const getFormatter = createFormatterCache<Intl.NumberFormat>(1000, (key) => {
+  const [locale, currency] = key.split("|");
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: (currency ?? "USD").toUpperCase(),
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+});
 
 /**
  * Format a display amount as a locale-aware currency string.
@@ -33,5 +34,5 @@ export function formatCurrency(
   currency: string,
   locale: string,
 ): string {
-  return getFormatter(locale, currency).format(displayAmount);
+  return getFormatter(`${locale}|${currency}`).format(displayAmount);
 }

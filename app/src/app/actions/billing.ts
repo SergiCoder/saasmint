@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { BillingError } from "@/domain/errors/BillingError";
 import {
@@ -9,17 +8,18 @@ import {
   type Subscription,
 } from "@/domain/models/Subscription";
 import type { SubscriptionContext } from "@/application/ports/ISubscriptionGateway";
-import {
-  authGateway,
-  productGateway,
-  subscriptionGateway,
-} from "@/infrastructure/registry";
+import { productGateway, subscriptionGateway } from "@/infrastructure/registry";
+import { AuthError } from "@/domain/errors/AuthError";
 import { canManageBilling } from "@/app/[locale]/(app)/subscription/_data/canManageBilling";
+import { getUserOrgs } from "@/app/[locale]/_data/getUserOrgs";
+import { getCurrentUserIdFromCookie } from "@/lib/jwt";
+import { revalidateLocalizedPath } from "@/lib/revalidate";
 import {
   APP_ORIGIN,
   assertTrustedRedirect,
 } from "@/app/[locale]/(app)/subscription/_data/trustedRedirect";
 import {
+  ACTION_CODE_INVALID_INPUT,
   ok,
   fail,
   toActionError,
@@ -46,10 +46,25 @@ import {
 async function assertCanManageBilling(
   context?: SubscriptionContext,
 ): Promise<Subscription> {
-  const [user, subscriptions] = await Promise.all([
-    authGateway.getCurrentUser(),
-    subscriptionGateway.listSubscriptions(),
+  // The user ID comes straight from the JWT cookie — the proxy has
+  // already verified the token's expiry and the backend re-validates on
+  // every API call. Fetching the full /account/ payload here would add a
+  // round-trip to every billing mutation just to read `id`.
+  //
+  // Fan out the cookie read, the subscription list, and (for team-eligible
+  // callers) the org list together. `React.cache` does not deduplicate across
+  // server actions, so any sequential `await` here costs an extra Django
+  // round-trip on every billing mutation.
+  const userIdPromise = getCurrentUserIdFromCookie();
+  const subscriptionsPromise = subscriptionGateway.listSubscriptions();
+  const orgsPromise = context === "personal" ? null : getUserOrgs();
+  const [userId, subscriptions] = await Promise.all([
+    userIdPromise,
+    subscriptionsPromise,
   ]);
+  if (!userId) {
+    throw new AuthError("No active session", "NO_SESSION");
+  }
   let subscription: Subscription | null;
   if (context === "personal") {
     subscription = findPersonalSubscription(subscriptions);
@@ -68,7 +83,11 @@ async function assertCanManageBilling(
   if (!subscription) {
     throw new BillingError("No active subscription", "no_subscription");
   }
-  if (!(await canManageBilling(user, subscription))) {
+  const preloadedOrgs = orgsPromise ? await orgsPromise : undefined;
+  const allowed = preloadedOrgs
+    ? await canManageBilling(userId, subscription, { preloadedOrgs })
+    : await canManageBilling(userId, subscription);
+  if (!allowed) {
     throw new BillingError(
       "You do not have permission to manage billing",
       "not_billing_member",
@@ -82,11 +101,11 @@ export async function startProductCheckout(
   formData: FormData,
 ): Promise<ActionResult> {
   const productPriceId = getString(formData, "productPriceId");
-  if (!productPriceId) return fail("invalid_input");
+  if (!productPriceId) return fail(ACTION_CODE_INVALID_INPUT);
 
   // Optional — only the rule-5b case (org owner with both subs) sends one;
   // everyone else lets the backend default route by account type.
-  const context = parseContext(formData);
+  const context = normalizeContext(getString(formData, "context"));
 
   let url: string;
   try {
@@ -111,7 +130,7 @@ export async function startCheckout(
   formData: FormData,
 ): Promise<ActionResult> {
   const planPriceId = getString(formData, "planPriceId");
-  if (!planPriceId) return fail("invalid_input");
+  if (!planPriceId) return fail(ACTION_CODE_INVALID_INPUT);
 
   // Form field name `seatLimit` mirrors the new backend wire field
   // (`seat_limit`, renamed from `quantity` in v0.8.0). Backend enforces
@@ -141,13 +160,17 @@ export async function startCheckout(
   redirect(url);
 }
 
-export async function openBillingPortal(formData?: FormData) {
+export async function openBillingPortal(
+  formData?: FormData,
+): Promise<ActionResult> {
   // Form-submitted context picks the Stripe customer the portal attaches to.
   // Concurrent billers (rule 5) MUST send it — otherwise the backend default
   // ("team" for org members, "personal" otherwise) would route a "manage
   // personal" click into the team portal. Single-context callers omit it.
-  const context = formData ? parseContext(formData) : undefined;
-  let url: string | null = null;
+  const context = formData
+    ? normalizeContext(getString(formData, "context"))
+    : undefined;
+  let url: string;
   try {
     await assertCanManageBilling(context);
     const session = await subscriptionGateway.createBillingPortalSession({
@@ -158,56 +181,65 @@ export async function openBillingPortal(formData?: FormData) {
     url = session.url;
   } catch (err) {
     console.error("Failed to open billing portal", err);
+    return toActionError(err);
   }
 
-  if (!url) return;
   redirect(url);
 }
 
 /**
  * Server actions are reachable as RPC endpoints — the TypeScript signature
  * does not survive the wire boundary. Normalize any caller-supplied value
- * down to the literal union (or `undefined`) before it touches authorization
- * checks or URL construction.
+ * (raw arg or FormData entry) down to the literal union or `undefined`
+ * before it touches authorization checks or URL construction.
  */
 function normalizeContext(value: unknown): SubscriptionContext | undefined {
   return value === "personal" || value === "team" ? value : undefined;
 }
 
-function parseContext(formData: FormData): SubscriptionContext | undefined {
-  return normalizeContext(getString(formData, "context"));
+/**
+ * Shared shape for the three billing mutations that don't need to read the
+ * gateway's return value: assert authorization → run the gateway call →
+ * revalidate the locale-prefixed subscription paths. `errorLabel` is the
+ * `console.error` prefix so failed calls are still distinguishable in logs.
+ */
+async function runBillingMutation(
+  context: SubscriptionContext | undefined,
+  mutate: (ctx: SubscriptionContext | undefined) => Promise<void>,
+  errorLabel: string,
+): Promise<ActionResult> {
+  const safeContext = normalizeContext(context);
+  try {
+    await assertCanManageBilling(safeContext);
+    await mutate(safeContext);
+  } catch (err) {
+    console.error(errorLabel, err);
+    return toActionError(err);
+  }
+  revalidateLocalizedPath("/subscription", "layout");
+  return ok();
 }
 
 /** Schedule the subscription to end at the current period's close. */
 export async function cancelRenewal(
   context?: SubscriptionContext,
 ): Promise<ActionResult> {
-  const safeContext = normalizeContext(context);
-  try {
-    await assertCanManageBilling(safeContext);
-    await subscriptionGateway.cancelSubscription(safeContext);
-  } catch (err) {
-    console.error("Failed to cancel subscription", err);
-    return toActionError(err);
-  }
-  revalidatePath("/subscription", "layout");
-  return ok();
+  return runBillingMutation(
+    context,
+    (ctx) => subscriptionGateway.cancelSubscription(ctx),
+    "Failed to cancel subscription",
+  );
 }
 
 /** Undo a pending cancellation so the subscription renews normally. */
 export async function resumeSubscription(
   context?: SubscriptionContext,
 ): Promise<ActionResult> {
-  const safeContext = normalizeContext(context);
-  try {
-    await assertCanManageBilling(safeContext);
-    await subscriptionGateway.resumeSubscription(safeContext);
-  } catch (err) {
-    console.error("Failed to resume subscription", err);
-    return toActionError(err);
-  }
-  revalidatePath("/subscription", "layout");
-  return ok();
+  return runBillingMutation(
+    context,
+    (ctx) => subscriptionGateway.resumeSubscription(ctx),
+    "Failed to resume subscription",
+  );
 }
 
 /**
@@ -221,7 +253,7 @@ export async function changePlan(
   planPriceId: string,
   context?: SubscriptionContext,
 ): Promise<ActionResult<{ deferred: boolean }>> {
-  if (!planPriceId) return fail("invalid_input");
+  if (!planPriceId) return fail(ACTION_CODE_INVALID_INPUT);
   const safeContext = normalizeContext(context);
   try {
     await assertCanManageBilling(safeContext);
@@ -229,7 +261,7 @@ export async function changePlan(
       planPriceId,
       safeContext,
     );
-    revalidatePath("/subscription", "layout");
+    revalidateLocalizedPath("/subscription", "layout");
     return ok({ deferred: updated.scheduledChangeAt !== null });
   } catch (err) {
     console.error("Failed to change plan", err);
@@ -244,16 +276,11 @@ export async function changePlan(
 export async function releaseScheduledChange(
   context?: SubscriptionContext,
 ): Promise<ActionResult> {
-  const safeContext = normalizeContext(context);
-  try {
-    await assertCanManageBilling(safeContext);
-    await subscriptionGateway.releaseScheduledChange(safeContext);
-  } catch (err) {
-    console.error("Failed to release scheduled plan change", err);
-    return toActionError(err);
-  }
-  revalidatePath("/subscription", "layout");
-  return ok();
+  return runBillingMutation(
+    context,
+    (ctx) => subscriptionGateway.releaseScheduledChange(ctx),
+    "Failed to release scheduled plan change",
+  );
 }
 
 export async function updateSeats(
@@ -267,7 +294,7 @@ export async function updateSeats(
   if (seatLimit === undefined || seatLimit < 1) {
     return fail("invalid_seat_count");
   }
-  const context = parseContext(formData);
+  const context = normalizeContext(getString(formData, "context"));
 
   try {
     await assertCanManageBilling(context);
@@ -276,7 +303,7 @@ export async function updateSeats(
     console.error("Failed to update seats", err);
     return toActionError(err);
   }
-  revalidatePath("/org", "layout");
-  revalidatePath("/subscription", "layout");
+  revalidateLocalizedPath("/org", "layout");
+  revalidateLocalizedPath("/subscription", "layout");
   return ok();
 }

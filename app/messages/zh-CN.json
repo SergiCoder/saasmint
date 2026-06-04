@@ -96,7 +96,9 @@
       "errorBackendRejected": "身份验证失败。请重新登录。",
       "errorOAuth": "社交登录失败。请重试。",
       "errorOAuthEmailUnverifiedCollision": "您的社交账户使用的电子邮件地址在此已有密码账户。请先使用密码登录，之后可以关联社交账户。",
-      "forgotPassword": "忘记密码？"
+      "forgotPassword": "忘记密码？",
+      "resendVerification": "重新发送验证邮件",
+      "verificationEmailSent": "验证邮件已发送，请查看您的收件箱。"
     },
     "forgotPassword": {
       "pageTitle": "忘记密码",
@@ -122,6 +124,27 @@
       "completing": "正在完成登录…",
       "noscript": "完成登录需要 JavaScript。",
       "backToLogin": "返回登录"
+    },
+    "linkEmailSent": {
+      "pageTitle": "请查收邮件",
+      "title": "请查看您的收件箱",
+      "body": "我们已向您现有账户的邮箱发送了确认链接。打开链接以完成账户关联。链接将在 15 分钟后失效。"
+    },
+    "confirmLink": {
+      "pageTitle": "确认关联",
+      "title": "确认关联您的账户",
+      "body": "点击下方按钮，完成与社交账户的关联。",
+      "button": "确认关联",
+      "verifying": "正在关联您的账户…",
+      "backToLogin": "返回登录",
+      "error": {
+        "used": "此链接已被使用。",
+        "expired": "此链接已过期 —— 请重新通过该服务商登录。",
+        "invalid": "此链接无效。",
+        "inactive": "您的账户已不再处于活跃状态。",
+        "collision": "该服务商账户已与其他账户关联。",
+        "generic": "无法关联您的账户。请重试。"
+      }
     },
     "register": {
       "title": "创建您的账户",
@@ -205,6 +228,8 @@
     "endsOn": "结束日期",
     "billedMonthly": "按月计费",
     "billedYearly": "按年计费",
+    "billedInLocalMonthly": "≈ {amount}（以 {currency} 计费）",
+    "billedInLocalYearly": "≈ {amount}（{monthly}/月，按年以 {currency} 计费）",
     "seat": "席位",
     "seats": "席位",
     "products": "积分包",
@@ -252,9 +277,11 @@
     "profile": "个人资料",
     "fullName": "全名",
     "email": "邮箱",
+    "emailNotVerified": "您的邮箱地址尚未验证。",
+    "resendVerification": "重新发送验证邮件",
+    "verificationEmailSent": "验证邮件已发送，请查看您的收件箱。",
     "preferredLocale": "语言",
     "preferredCurrency": "货币",
-    "currencyLockedNote": "您的结算货币在首次订阅时设定，之后无法更改。",
     "phonePrefix": "国家代码",
     "phone": "电话号码",
     "phoneNumberRequired": "请输入电话号码",
@@ -373,6 +400,7 @@
     "password_too_short": "密码长度至少为 10 个字符",
     "profile_load_failed": "加载个人资料失败",
     "session_expired": "会话已过期,请重新登录。",
+    "captcha_failed": "安全验证失败。请重试。",
     "unknown_error": "出了点问题,请重试。",
     "unsupported_image": "不支持的图片类型",
     "message_required": "请输入消息内容。",

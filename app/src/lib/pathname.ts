@@ -1,12 +1,34 @@
 import { headers } from "next/headers";
-import { stripLocalePrefix } from "@/lib/i18n/routing";
+import {
+  isLocale,
+  routing,
+  stripLocalePrefix,
+  type Locale,
+} from "@/lib/i18n/routing";
 
 export const PATHNAME_HEADER = "x-pathname";
 
 /**
+ * Per-request CSP nonce forwarded by the proxy. Server components that
+ * inject inline scripts must read this and stamp it on the `<script nonce>`
+ * attribute — the production CSP only trusts nonce-tagged inline scripts.
+ */
+export const CSP_NONCE_HEADER = "x-csp-nonce";
+
+/**
+ * Returns the current request's CSP nonce, or `null` when the proxy
+ * didn't inject one (e.g. routes outside the matcher). Server components
+ * that emit inline `<script>` tags should pair them with this nonce.
+ */
+export async function getCspNonce(): Promise<string | null> {
+  const hdrs = await headers();
+  return hdrs.get(CSP_NONCE_HEADER);
+}
+
+/**
  * Returns the current request pathname (including the locale prefix, e.g.
  * "/en/dashboard"). Available in server components because the proxy
- * middleware forwards the pathname as a request header.
+ * forwards the pathname as a request header.
  */
 export async function getPathname(): Promise<string> {
   const hdrs = await headers();
@@ -20,4 +42,18 @@ export async function getPathname(): Promise<string> {
  */
 export async function getPathnameWithoutLocale(): Promise<string> {
   return stripLocalePrefix(await getPathname());
+}
+
+/**
+ * Resolves the active locale for the current request. Reads the locale from
+ * the pathname forwarded by the proxy; falls back to the default
+ * locale when the pathname has no recognised prefix. Use in server actions
+ * that need to build locale-prefixed redirects — `redirect("/dashboard")`
+ * loses the locale and breaks the next-intl + Next.js client router on
+ * cross-redirect chains.
+ */
+export async function getLocale(): Promise<Locale> {
+  const pathname = await getPathname();
+  const segment = pathname.split("/")[1] ?? "";
+  return isLocale(segment) ? segment : routing.defaultLocale;
 }

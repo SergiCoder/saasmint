@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/presentation/components/atoms/Button";
+import { SECONDARY_LINK_CLASS } from "@/lib/styles";
 import "./globals.css";
 
 interface GlobalErrorProps {
@@ -50,10 +51,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
               <Button variant="primary" onClick={reset}>
                 Try again
               </Button>
-              <Link
-                href="/"
-                className="focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-              >
+              <Link href="/" className={SECONDARY_LINK_CLASS}>
                 Back to home
               </Link>
             </div>

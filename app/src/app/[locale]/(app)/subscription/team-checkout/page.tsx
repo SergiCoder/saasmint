@@ -1,15 +1,25 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { planGateway } from "@/infrastructure/registry";
 import { findPersonalSubscription } from "@/domain/models/Subscription";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
-import { getCurrentUser } from "../../_data/getCurrentUser";
-import { getSubscriptions } from "../../_data/getSubscriptions";
+import { formatLongDate } from "@/lib/formatLongDate";
+import { getCurrentUser } from "../../../_data/getCurrentUser";
+import { getPlans } from "../../../_data/getPlans";
+import { getSubscriptions } from "../../../_data/getSubscriptions";
 import { TeamCheckoutForm } from "./_components/TeamCheckoutForm";
 
 interface TeamCheckoutPageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ plan?: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: TeamCheckoutPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "billing" });
+  return { title: t("teamCheckout") };
 }
 
 export default async function TeamCheckoutPage({
@@ -30,7 +40,7 @@ export default async function TeamCheckoutPage({
   ]);
 
   if (!planPriceId) {
-    redirect("/subscription");
+    redirect(`/${locale}/subscription`);
   }
 
   const currency = user.preferredCurrency;
@@ -38,12 +48,12 @@ export default async function TeamCheckoutPage({
   // so layout + this page render off a single subscription roundtrip.
   const [subscriptions, plans] = await Promise.all([
     getSubscriptions(currency),
-    planGateway.listPlans(currency),
+    getPlans(currency),
   ]);
   const plan = plans.find((p) => p.price?.id === planPriceId);
 
   if (!plan || !plan.price || plan.context !== "team") {
-    redirect("/subscription");
+    redirect(`/${locale}/subscription`);
   }
 
   // Show the auto-cancel notice + opt-out checkbox only when the user has a
@@ -59,12 +69,9 @@ export default async function TeamCheckoutPage({
   const personalSubEndDate = showPersonalSubNotice
     ? new Date(personalSubscription.currentPeriodEnd)
     : null;
-  const personalSubEndDateDisplay =
-    personalSubEndDate && !Number.isNaN(personalSubEndDate.getTime())
-      ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(
-          personalSubEndDate,
-        )
-      : undefined;
+  const personalSubEndDateDisplay = personalSubEndDate
+    ? formatLongDate(personalSubEndDate, locale) || undefined
+    : undefined;
 
   return (
     <div className="mx-auto max-w-md space-y-6 pb-12">

@@ -96,7 +96,9 @@
       "errorBackendRejected": "Uwierzytelnianie nie powiodło się. Spróbuj ponownie.",
       "errorOAuth": "Logowanie społecznościowe nie powiodło się. Spróbuj ponownie.",
       "errorOAuthEmailUnverifiedCollision": "Twoje konto społecznościowe jest zarejestrowane na adres e-mail, który ma już tutaj konto z hasłem. Zaloguj się najpierw przy użyciu hasła; możesz powiązać dostawcę społecznościowego później.",
-      "forgotPassword": "Nie pamiętasz hasła?"
+      "forgotPassword": "Nie pamiętasz hasła?",
+      "resendVerification": "Wyślij ponownie e-mail weryfikacyjny",
+      "verificationEmailSent": "E-mail weryfikacyjny został wysłany. Sprawdź swoją skrzynkę odbiorczą."
     },
     "forgotPassword": {
       "pageTitle": "Zapomniałem hasła",
@@ -122,6 +124,27 @@
       "completing": "Kończenie logowania…",
       "noscript": "Do dokończenia logowania wymagany jest JavaScript.",
       "backToLogin": "Wróć do logowania"
+    },
+    "linkEmailSent": {
+      "pageTitle": "Sprawdź e-mail",
+      "title": "Sprawdź swoją skrzynkę odbiorczą",
+      "body": "Wysłaliśmy link potwierdzający na adres e-mail Twojego istniejącego konta. Otwórz go, aby dokończyć łączenie konta. Link wygasa po 15 minutach."
+    },
+    "confirmLink": {
+      "pageTitle": "Potwierdź połączenie",
+      "title": "Potwierdź połączenie konta",
+      "body": "Kliknij poniżej, aby dokończyć łączenie konta społecznościowego.",
+      "button": "Potwierdź połączenie",
+      "verifying": "Łączenie konta…",
+      "backToLogin": "Wróć do logowania",
+      "error": {
+        "used": "Ten link został już użyty.",
+        "expired": "Ten link wygasł — spróbuj zalogować się ponownie u dostawcy.",
+        "invalid": "Ten link jest nieprawidłowy.",
+        "inactive": "Twoje konto nie jest już aktywne.",
+        "collision": "To konto dostawcy jest już połączone gdzie indziej.",
+        "generic": "Nie udało się połączyć konta. Spróbuj ponownie."
+      }
     },
     "register": {
       "title": "Utwórz konto",
@@ -205,6 +228,8 @@
     "endsOn": "Kończy się",
     "billedMonthly": "Rozliczane miesięcznie",
     "billedYearly": "Rozliczane rocznie",
+    "billedInLocalMonthly": "≈ {amount} — rozliczane w {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/miesiąc, rozliczane rocznie w {currency}",
     "seat": "miejsce",
     "seats": "miejsca",
     "products": "Pakiety kredytów",
@@ -252,9 +277,11 @@
     "profile": "Profil",
     "fullName": "Imię i nazwisko",
     "email": "E-mail",
+    "emailNotVerified": "Twój adres e-mail nie został jeszcze zweryfikowany.",
+    "resendVerification": "Wyślij ponownie e-mail weryfikacyjny",
+    "verificationEmailSent": "E-mail weryfikacyjny został wysłany. Sprawdź swoją skrzynkę odbiorczą.",
     "preferredLocale": "Język",
     "preferredCurrency": "Waluta",
-    "currencyLockedNote": "Waluta rozliczeniowa jest ustalana przy pierwszej subskrypcji i nie można jej później zmienić.",
     "phonePrefix": "Numer kierunkowy",
     "phone": "Telefon",
     "phoneNumberRequired": "Podaj numer telefonu",
@@ -373,6 +400,7 @@
     "password_too_short": "Hasło musi mieć co najmniej 10 znaków",
     "profile_load_failed": "Nie udało się wczytać profilu",
     "session_expired": "Sesja wygasła. Zaloguj się ponownie.",
+    "captcha_failed": "Weryfikacja zabezpieczeń nie powiodła się. Spróbuj ponownie.",
     "unknown_error": "Coś poszło nie tak. Spróbuj ponownie.",
     "unsupported_image": "Nieobsługiwany typ obrazu",
     "message_required": "Dołącz wiadomość.",

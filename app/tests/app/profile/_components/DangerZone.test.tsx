@@ -35,7 +35,7 @@ describe("DangerZone", () => {
 
   it("blocks deletion with the owner-only message when the user owns an org", async () => {
     const user = userEvent.setup();
-    render(<DangerZone userEmail="me@example.com" deleteRestriction="owner" />);
+    render(<DangerZone userEmail="me@example.com" deleteRestricted />);
 
     await user.click(screen.getByRole("button", { name: "deleteAccount" }));
 
@@ -44,11 +44,9 @@ describe("DangerZone", () => {
     expect(screen.queryByText("deleteConfirm")).not.toBeInTheDocument();
   });
 
-  it("shows the delete dialog (not the blocked message) for a non-owner with deleteRestriction=undefined", async () => {
+  it("shows the delete dialog (not the blocked message) for a non-owner with deleteRestricted=false", async () => {
     const user = userEvent.setup();
-    render(
-      <DangerZone userEmail="me@example.com" deleteRestriction={undefined} />,
-    );
+    render(<DangerZone userEmail="me@example.com" deleteRestricted={false} />);
 
     await user.click(screen.getByRole("button", { name: "deleteAccount" }));
 

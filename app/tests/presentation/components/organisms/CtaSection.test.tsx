@@ -107,16 +107,17 @@ describe("CtaSection", () => {
     expect(screen.queryByRole("button", { name: "Sign Up" })).toBeNull();
   });
 
-  it("renders an error AlertBanner with the action message when the action fails", () => {
+  it("renders an error AlertBanner when the action fails", () => {
     mockState.value = {
       ok: false,
       code: "HTTP_429",
-      message: "Too many requests, slow down.",
     };
     render(<CtaSection {...defaultProps} />);
 
     const alert = screen.getByRole("alert");
-    expect(alert).toHaveTextContent("Too many requests, slow down.");
+    // i18n stub falls back to "unknown_error" because actionErrors namespace
+    // is empty in the global mock.
+    expect(alert).toHaveTextContent("unknown_error");
     // Pre-submit form is still rendered so the user can retry.
     expect(screen.getByRole("button", { name: "Sign Up" })).toBeInTheDocument();
   });

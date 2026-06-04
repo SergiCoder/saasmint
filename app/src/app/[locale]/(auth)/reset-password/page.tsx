@@ -4,6 +4,7 @@ import { Link } from "@/lib/i18n/navigation";
 import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { resetPasswordWithToken } from "@/app/actions/auth";
+import { APP_NAME } from "@/lib/appVersion";
 import { ResetPasswordForm } from "./_components/ResetPasswordForm";
 
 interface Props {
@@ -30,7 +31,7 @@ export default async function ResetPasswordPage({
   ]);
 
   return (
-    <AuthLayout appName="SaaSmint" title={t("title")}>
+    <AuthLayout appName={APP_NAME} title={t("title")}>
       {token ? (
         <ResetPasswordForm action={resetPasswordWithToken} token={token} />
       ) : (

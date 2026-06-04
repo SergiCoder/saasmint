@@ -22,12 +22,12 @@ vi.mock("next/navigation", () => ({
 }));
 
 const mockGetCurrentUser = vi.fn<() => Promise<User>>();
-vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
+vi.mock("@/app/[locale]/_data/getCurrentUser", () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
 
 const mockGetSubscriptions = vi.fn<() => Promise<Subscription[]>>();
-vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
+vi.mock("@/app/[locale]/_data/getSubscriptions", () => ({
   getSubscriptions: () => mockGetSubscriptions(),
 }));
 
@@ -99,6 +99,8 @@ function makeTeamPlan(overrides: Partial<Plan> = {}): Plan {
       amount: 48000,
       displayAmount: 480,
       currency: "usd",
+      localDisplayAmount: null,
+      localCurrency: null,
     },
     ...overrides,
   };
@@ -122,6 +124,8 @@ function makePersonalSubscription(
         amount: 1900,
         displayAmount: 19,
         currency: "usd",
+        localDisplayAmount: null,
+        localCurrency: null,
       },
     },
     seatLimit: 1,
@@ -158,7 +162,7 @@ describe("TeamCheckoutPage", () => {
 
   it("redirects to /subscription when the plan query param is missing", async () => {
     await expect(renderPage({})).rejects.toThrow(/NEXT_REDIRECT/);
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
     // Don't hit the API for plans until we know the plan id is present.
     expect(mockListPlans).not.toHaveBeenCalled();
   });
@@ -169,7 +173,7 @@ describe("TeamCheckoutPage", () => {
     await expect(renderPage({ plan: "price_does_not_exist" })).rejects.toThrow(
       /NEXT_REDIRECT/,
     );
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
   });
 
   it("redirects to /subscription when the matched plan has personal context", async () => {
@@ -180,6 +184,8 @@ describe("TeamCheckoutPage", () => {
         amount: 1900,
         displayAmount: 19,
         currency: "usd",
+        localDisplayAmount: null,
+        localCurrency: null,
       },
     });
     mockListPlans.mockResolvedValue([personal]);
@@ -187,7 +193,7 @@ describe("TeamCheckoutPage", () => {
     await expect(
       renderPage({ plan: "price_personal_pro_month" }),
     ).rejects.toThrow(/NEXT_REDIRECT/);
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
   });
 
   it("passes the user's preferred currency through to planGateway.listPlans", async () => {

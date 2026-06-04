@@ -96,7 +96,9 @@
       "errorBackendRejected": "Autentikasi gagal. Silakan coba masuk kembali.",
       "errorOAuth": "Login sosial gagal. Silakan coba lagi.",
       "errorOAuthEmailUnverifiedCollision": "Akun sosial Anda terdaftar dengan alamat email yang sudah memiliki akun dengan kata sandi di sini. Harap masuk dengan kata sandi Anda terlebih dahulu; Anda dapat menautkan penyedia sosial setelahnya.",
-      "forgotPassword": "Lupa kata sandi?"
+      "forgotPassword": "Lupa kata sandi?",
+      "resendVerification": "Kirim ulang email verifikasi",
+      "verificationEmailSent": "Email verifikasi telah dikirim. Periksa kotak masuk Anda."
     },
     "forgotPassword": {
       "pageTitle": "Lupa kata sandi",
@@ -122,6 +124,27 @@
       "completing": "Menyelesaikan login…",
       "noscript": "JavaScript diperlukan untuk menyelesaikan login.",
       "backToLogin": "Kembali ke login"
+    },
+    "linkEmailSent": {
+      "pageTitle": "Periksa email Anda",
+      "title": "Periksa kotak masuk Anda",
+      "body": "Kami telah mengirim tautan konfirmasi ke email pada akun Anda yang sudah ada. Buka tautan tersebut untuk menyelesaikan penautan akun. Tautan akan kedaluwarsa dalam 15 menit."
+    },
+    "confirmLink": {
+      "pageTitle": "Konfirmasi penautan",
+      "title": "Konfirmasi penautan akun Anda",
+      "body": "Klik di bawah untuk menyelesaikan penautan akun sosial Anda.",
+      "button": "Konfirmasi penautan",
+      "verifying": "Menautkan akun Anda…",
+      "backToLogin": "Kembali ke login",
+      "error": {
+        "used": "Tautan ini sudah pernah digunakan.",
+        "expired": "Tautan ini telah kedaluwarsa — coba masuk kembali melalui penyedia.",
+        "invalid": "Tautan ini tidak valid.",
+        "inactive": "Akun Anda tidak lagi aktif.",
+        "collision": "Akun penyedia tersebut sudah ditautkan di tempat lain.",
+        "generic": "Kami tidak dapat menautkan akun Anda. Silakan coba lagi."
+      }
     },
     "register": {
       "title": "Buat akun Anda",
@@ -205,6 +228,8 @@
     "endsOn": "Berakhir pada",
     "billedMonthly": "Ditagih bulanan",
     "billedYearly": "Ditagih tahunan",
+    "billedInLocalMonthly": "≈ {amount} — ditagih dalam {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/bulan, ditagih tahunan dalam {currency}",
     "seat": "kursi",
     "seats": "kursi",
     "products": "Paket kredit",
@@ -252,9 +277,11 @@
     "profile": "Profil",
     "fullName": "Nama lengkap",
     "email": "Email",
+    "emailNotVerified": "Alamat email Anda belum diverifikasi.",
+    "resendVerification": "Kirim ulang email verifikasi",
+    "verificationEmailSent": "Email verifikasi telah dikirim. Periksa kotak masuk Anda.",
     "preferredLocale": "Bahasa",
     "preferredCurrency": "Mata uang",
-    "currencyLockedNote": "Mata uang penagihan Anda ditetapkan saat pertama kali berlangganan dan tidak dapat diubah setelahnya.",
     "phonePrefix": "Kode negara",
     "phone": "Telepon",
     "phoneNumberRequired": "Masukkan nomor telepon",
@@ -373,6 +400,7 @@
     "password_too_short": "Kata sandi harus minimal 10 karakter",
     "profile_load_failed": "Gagal memuat profil",
     "session_expired": "Sesi kedaluwarsa. Silakan masuk lagi.",
+    "captcha_failed": "Verifikasi keamanan gagal. Silakan coba lagi.",
     "unknown_error": "Terjadi kesalahan. Silakan coba lagi.",
     "unsupported_image": "Tipe gambar tidak didukung",
     "message_required": "Mohon sertakan pesan.",

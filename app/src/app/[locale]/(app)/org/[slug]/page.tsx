@@ -1,12 +1,16 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { invitationGateway } from "@/infrastructure/registry";
+import type { OrgMember } from "@/domain/models/OrgMember";
 import { findTeamSubscription } from "@/domain/models/Subscription";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
-import { getCurrentUser } from "../../_data/getCurrentUser";
-import { getOrgMembers } from "../../_data/getOrgMembers";
-import { getSubscriptions } from "../../_data/getSubscriptions";
-import { getUserOrgs } from "../../_data/getUserOrgs";
+import { formatLongDate } from "@/lib/formatLongDate";
+import { CARD_CLASS } from "@/lib/styles";
+import { getCurrentUser } from "../../../_data/getCurrentUser";
+import { getOrgInvitations } from "../../../_data/getOrgInvitations";
+import { getOrgMembers } from "../../../_data/getOrgMembers";
+import { getSubscriptions } from "../../../_data/getSubscriptions";
+import { getUserOrgs } from "../../../_data/getUserOrgs";
 import { OrgMemberList } from "@/presentation/components/organisms/OrgMemberList";
 import { InviteByEmailForm } from "./_components/InviteByEmailForm";
 import { MemberActions } from "./_components/MemberActions";
@@ -15,8 +19,32 @@ import { TransferOwnershipForm } from "./_components/TransferOwnershipForm";
 import { DeleteOrgZone } from "./_components/DeleteOrgZone";
 import { SeatManager } from "./_components/SeatManager";
 
+const ROLE_LABEL_KEY = {
+  owner: "roleOwner",
+  admin: "roleAdmin",
+  member: "roleMember",
+} as const satisfies Record<
+  OrgMember["role"],
+  "roleOwner" | "roleAdmin" | "roleMember"
+>;
+
 interface OrgDetailPageProps {
   params: Promise<{ locale: string; slug: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: OrgDetailPageProps): Promise<Metadata> {
+  const { locale, slug } = await params;
+  // `getUserOrgs` is React.cache'd against the same key the page uses, so
+  // resolving the org name here adds no extra round-trip when the page
+  // renders successfully.
+  const [t, orgs] = await Promise.all([
+    getTranslations({ locale, namespace: "org" }),
+    getUserOrgs(),
+  ]);
+  const org = orgs.find((o) => o.slug === slug);
+  return { title: org?.name ?? t("members") };
 }
 
 export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
@@ -42,7 +70,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
 
   const [members, invitations] = await Promise.all([
     getOrgMembers(org.id),
-    invitationGateway.listInvitations(org.id).catch(() => []),
+    getOrgInvitations(org.id),
   ]);
 
   const teamSubscription = findTeamSubscription(subscriptions);
@@ -60,10 +88,8 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
   const scheduledChangeDate =
     scheduledChangeAtIso !== null ? new Date(scheduledChangeAtIso) : null;
   const scheduledChangeDisplay =
-    scheduledChangeDate !== null && !Number.isNaN(scheduledChangeDate.getTime())
-      ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(
-          scheduledChangeDate,
-        )
+    scheduledChangeDate !== null
+      ? formatLongDate(scheduledChangeDate, locale) || null
       : null;
 
   const me = members.find((m) => m.user.id === user.id);
@@ -102,12 +128,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
       email: m.user.email,
       avatarUrl: m.user.avatarUrl,
       role: m.role,
-      roleLabel: t(
-        `role${m.role.charAt(0).toUpperCase() + m.role.slice(1)}` as
-          | "roleMember"
-          | "roleAdmin"
-          | "roleOwner",
-      ),
+      roleLabel: t(ROLE_LABEL_KEY[m.role]),
       actions,
     };
   });
@@ -177,7 +198,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
       )}
 
       {canManage && (
-        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <section className={CARD_CLASS}>
           <h2 className="mb-4 text-lg font-semibold text-gray-900">
             {t("inviteByEmail")}
           </h2>
@@ -186,7 +207,7 @@ export default async function OrgDetailPage({ params }: OrgDetailPageProps) {
       )}
 
       {isOwner && transferCandidates.length > 0 && (
-        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <section className={CARD_CLASS}>
           <h2 className="mb-4 text-lg font-semibold text-gray-900">
             {t("transferOwnership")}
           </h2>

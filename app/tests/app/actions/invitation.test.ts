@@ -18,6 +18,12 @@ vi.mock("@/infrastructure/registry", () => ({
   },
 }));
 
+// Default: tests run as if the request came from /en/* — actions read the
+// locale via getLocale() to build locale-prefixed redirects.
+vi.mock("@/lib/pathname", () => ({
+  getLocale: vi.fn().mockResolvedValue("en"),
+}));
+
 let acceptInvitation: typeof import("@/app/actions/invitation").acceptInvitation;
 let declineInvitation: typeof import("@/app/actions/invitation").declineInvitation;
 
@@ -47,7 +53,7 @@ describe("invitation server actions", () => {
         fullName: "Bob Smith",
         password: "secret1234",
       });
-      expect(mockRedirect).toHaveBeenCalledWith("/login?invited=true");
+      expect(mockRedirect).toHaveBeenCalledWith("/en/login?invited=true");
     });
 
     it("returns invalid_input when required fields are missing", async () => {
@@ -120,7 +126,7 @@ describe("invitation server actions", () => {
         "NEXT_REDIRECT",
       );
       expect(mockDecline).toHaveBeenCalledWith("abc123");
-      expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
+      expect(mockRedirect).toHaveBeenCalledWith("/en/dashboard");
     });
 
     it("returns early when token is missing", async () => {

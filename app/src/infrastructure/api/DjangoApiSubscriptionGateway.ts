@@ -5,48 +5,43 @@ import type {
   SubscriptionContext,
 } from "@/application/ports/ISubscriptionGateway";
 import type { Subscription } from "@/domain/models/Subscription";
+import { isRecord } from "@/lib/typeGuards";
 import { apiFetch, apiFetchVoid } from "./apiClient";
 import { applyPriceDefaults, keysToCamel, keysToSnake } from "./caseTransform";
 import { contextQuery } from "./contextQuery";
-import {
-  CheckoutSessionResponseSchema,
-  SubscriptionListResponseSchema,
-  SubscriptionSchema,
-} from "./schemas";
+import { parsePaginated } from "./parsers";
+import { CheckoutSessionResponseSchema, SubscriptionSchema } from "./schemas";
+
+/**
+ * Apply price defaults to a subscription's nested `plan` and `scheduledPlan`
+ * shapes. `keysToCamelWithPrice` was designed for flat plan/product objects;
+ * subscriptions wrap their plan one level deeper, so this helper consolidates
+ * the manual walk used by `listSubscriptions` and `changePlan`.
+ */
+function applySubscriptionPriceDefaults(
+  sub: Record<string, unknown>,
+  currency?: string,
+): void {
+  if (isRecord(sub.plan)) applyPriceDefaults(sub.plan, currency);
+  if (isRecord(sub.scheduledPlan)) {
+    applyPriceDefaults(sub.scheduledPlan, currency);
+  }
+}
 
 export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
   async listSubscriptions(currency?: string): Promise<Subscription[]> {
     const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
-    const raw = await apiFetch<Record<string, unknown>>(
-      `/billing/subscriptions/me/${query}`,
-    );
-    const camel = keysToCamel(raw) as Record<string, unknown>;
-    const results = camel.results;
-    if (Array.isArray(results)) {
-      for (const row of results) {
-        if (row && typeof row === "object") {
-          const record = row as Record<string, unknown>;
-          const plan = record.plan;
-          if (plan && typeof plan === "object") {
-            applyPriceDefaults(plan as Record<string, unknown>, currency);
-          }
-          const scheduledPlan = record.scheduledPlan;
-          if (scheduledPlan && typeof scheduledPlan === "object") {
-            applyPriceDefaults(
-              scheduledPlan as Record<string, unknown>,
-              currency,
-            );
-          }
-        }
-      }
-    }
-    return SubscriptionListResponseSchema.parse(camel).results;
+    const raw = await apiFetch(`/billing/subscriptions/me/${query}`);
+    return parsePaginated(keysToCamel(raw), (row) => {
+      applySubscriptionPriceDefaults(row, currency);
+      return SubscriptionSchema.parse(row);
+    });
   }
 
   async createCheckoutSession(
     input: CheckoutSessionInput,
   ): Promise<{ url: string }> {
-    const raw = await apiFetch<unknown>("/billing/checkout-sessions/", {
+    const raw = await apiFetch("/billing/checkout-sessions/", {
       method: "POST",
       body: JSON.stringify(keysToSnake(input)),
     });
@@ -57,7 +52,7 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
     input: BillingPortalInput,
   ): Promise<{ url: string }> {
     const { context, ...body } = input;
-    const raw = await apiFetch<unknown>(
+    const raw = await apiFetch(
       `/billing/portal-sessions/${contextQuery(context)}`,
       {
         method: "POST",
@@ -71,22 +66,15 @@ export class DjangoApiSubscriptionGateway implements ISubscriptionGateway {
     planPriceId: string,
     context?: SubscriptionContext,
   ): Promise<Subscription> {
-    const raw = await apiFetch<Record<string, unknown>>(
+    const raw = await apiFetch(
       `/billing/subscriptions/me/${contextQuery(context)}`,
       {
         method: "PATCH",
         body: JSON.stringify({ plan_price_id: planPriceId }),
       },
     );
-    const camel = keysToCamel(raw) as Record<string, unknown>;
-    const plan = camel.plan;
-    if (plan && typeof plan === "object") {
-      applyPriceDefaults(plan as Record<string, unknown>);
-    }
-    const scheduledPlan = camel.scheduledPlan;
-    if (scheduledPlan && typeof scheduledPlan === "object") {
-      applyPriceDefaults(scheduledPlan as Record<string, unknown>);
-    }
+    const camel = keysToCamel(raw);
+    if (isRecord(camel)) applySubscriptionPriceDefaults(camel);
     return SubscriptionSchema.parse(camel);
   }
 

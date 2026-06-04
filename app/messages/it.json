@@ -96,7 +96,9 @@
       "errorBackendRejected": "Autenticazione fallita. Riprova ad accedere.",
       "errorOAuth": "Accesso social non riuscito. Riprova.",
       "errorOAuthEmailUnverifiedCollision": "Il tuo account social è registrato con un indirizzo email che ha già un account con password qui. Accedi prima con la tua password; potrai collegare il provider social in seguito.",
-      "forgotPassword": "Password dimenticata?"
+      "forgotPassword": "Password dimenticata?",
+      "resendVerification": "Invia di nuovo l’email di verifica",
+      "verificationEmailSent": "Email di verifica inviata. Controlla la tua casella di posta."
     },
     "forgotPassword": {
       "pageTitle": "Password dimenticata",
@@ -122,6 +124,27 @@
       "completing": "Completamento dell'accesso…",
       "noscript": "JavaScript è necessario per completare l'accesso.",
       "backToLogin": "Torna all'accesso"
+    },
+    "linkEmailSent": {
+      "pageTitle": "Controlla la tua email",
+      "title": "Controlla la tua casella di posta",
+      "body": "Abbiamo inviato un link di conferma all'email del tuo account esistente. Aprilo per completare il collegamento del tuo account. Il link scade tra 15 minuti."
+    },
+    "confirmLink": {
+      "pageTitle": "Conferma collegamento",
+      "title": "Conferma il collegamento del tuo account",
+      "body": "Clicca qui sotto per completare il collegamento del tuo account social.",
+      "button": "Conferma collegamento",
+      "verifying": "Collegamento del tuo account in corso…",
+      "backToLogin": "Torna all'accesso",
+      "error": {
+        "used": "Questo link è già stato utilizzato.",
+        "expired": "Questo link è scaduto — prova a effettuare nuovamente l'accesso con il provider.",
+        "invalid": "Questo link non è valido.",
+        "inactive": "Il tuo account non è più attivo.",
+        "collision": "Quell'account del provider è già collegato altrove.",
+        "generic": "Non siamo riusciti a collegare il tuo account. Riprova."
+      }
     },
     "register": {
       "title": "Crea il tuo account",
@@ -205,6 +228,8 @@
     "endsOn": "Termina il",
     "billedMonthly": "Fatturazione mensile",
     "billedYearly": "Fatturazione annuale",
+    "billedInLocalMonthly": "≈ {amount} — fatturato in {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/mese, fatturato annualmente in {currency}",
     "seat": "posto",
     "seats": "posti",
     "products": "Pacchetti crediti",
@@ -252,9 +277,11 @@
     "profile": "Profilo",
     "fullName": "Nome completo",
     "email": "Email",
+    "emailNotVerified": "Il tuo indirizzo email non è ancora verificato.",
+    "resendVerification": "Invia di nuovo l’email di verifica",
+    "verificationEmailSent": "Email di verifica inviata. Controlla la tua casella di posta.",
     "preferredLocale": "Lingua",
     "preferredCurrency": "Valuta",
-    "currencyLockedNote": "La valuta di fatturazione viene impostata al primo abbonamento e non può essere modificata in seguito.",
     "phonePrefix": "Prefisso paese",
     "phone": "Telefono",
     "phoneNumberRequired": "Inserisci un numero di telefono",
@@ -373,6 +400,7 @@
     "password_too_short": "La password deve contenere almeno 10 caratteri",
     "profile_load_failed": "Impossibile caricare il profilo",
     "session_expired": "Sessione scaduta. Effettua di nuovo l'accesso.",
+    "captcha_failed": "Verifica di sicurezza non riuscita. Riprova.",
     "unknown_error": "Qualcosa è andato storto. Riprova.",
     "unsupported_image": "Tipo di immagine non supportato",
     "message_required": "Includi un messaggio.",

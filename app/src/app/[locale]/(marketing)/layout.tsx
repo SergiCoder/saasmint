@@ -1,15 +1,15 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
+import { LinkButton } from "@/presentation/components/atoms/LinkButton";
 import { MarketingLayout } from "@/presentation/components/templates/MarketingLayout";
-import { APP_VERSION, getReleaseUrl } from "@/lib/appVersion";
-import { findTeamSubscription } from "@/domain/models/Subscription";
-import { getSubscriptions } from "../(app)/_data/getSubscriptions";
-import { getUserOrgs } from "../(app)/_data/getUserOrgs";
+import type { Org } from "@/domain/models/Org";
+import { getAccessToken } from "@/infrastructure/auth/cookies";
+import { APP_NAME } from "@/lib/appVersion";
+import { hasOrgAccess } from "../_lib/hasOrgAccess";
+import { getSubscriptions } from "../_data/getSubscriptions";
+import { getUserOrgs } from "../_data/getUserOrgs";
 import { getOptionalUser } from "./_data/getOptionalUser";
 import { SignOutButton } from "../_components/SignOutButton";
-
-const primaryLinkClass =
-  "bg-primary-600 hover:bg-primary-700 focus-visible:ring-primary-500 inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none";
 
 interface MarketingLayoutRouteProps {
   children: React.ReactNode;
@@ -23,22 +23,32 @@ export default async function MarketingLayoutRoute({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, tCommon, tFooter, user] = await Promise.all([
-    getTranslations("nav"),
-    getTranslations("common"),
-    getTranslations("footer"),
-    getOptionalUser(),
-  ]);
+  // Speculatively kick off `getUserOrgs()` for any caller carrying a session
+  // cookie — it doesn't depend on `user.preferredCurrency` so it can overlap
+  // with `getOptionalUser()`. Anonymous visitors skip the request entirely.
+  const hasSessionCookie = (await getAccessToken()) !== undefined;
+  const userOrgsPromise: Promise<Org[]> = hasSessionCookie
+    ? getUserOrgs()
+    : Promise.resolve([]);
 
-  const [subscriptions, userOrgs] = user
-    ? await Promise.all([
-        getSubscriptions(user.preferredCurrency),
-        getUserOrgs(),
-      ])
-    : [[], []];
+  // Chain `getSubscriptions` off the user fetch (it needs `preferredCurrency`)
+  // so the subscriptions round-trip overlaps with the translation loads
+  // instead of running serially in a second `Promise.all`.
+  const userPromise = getOptionalUser();
+  const subscriptionsPromise = userPromise.then((u) =>
+    u ? getSubscriptions(u.preferredCurrency) : [],
+  );
+  const [t, tCommon, tFooter, user, subscriptions, userOrgs] =
+    await Promise.all([
+      getTranslations("nav"),
+      getTranslations("common"),
+      getTranslations("footer"),
+      userPromise,
+      subscriptionsPromise,
+      userOrgsPromise,
+    ]);
 
-  const hasOrg =
-    findTeamSubscription(subscriptions) !== null || userOrgs.length > 0;
+  const hasOrg = hasOrgAccess(subscriptions, userOrgs);
 
   const navLinks = [
     { href: "/", label: t("home") },
@@ -75,9 +85,9 @@ export default async function MarketingLayoutRoute({
       >
         {t("signIn")}
       </Link>
-      <Link href="/pricing" className={primaryLinkClass}>
+      <LinkButton href="/pricing" size="sm">
         {t("getStarted")}
-      </Link>
+      </LinkButton>
     </>
   );
 
@@ -92,7 +102,7 @@ export default async function MarketingLayoutRoute({
 
   return (
     <MarketingLayout
-      appName="SaaSmint"
+      appName={APP_NAME}
       navLinks={navLinks}
       navUser={navUser}
       navActions={navActions}
@@ -103,10 +113,6 @@ export default async function MarketingLayoutRoute({
       toggleNavLabel={tCommon("toggleNav")}
       footerSections={footerSections}
       copyright={tFooter("copyright")}
-      footerVersion={{
-        label: `v${APP_VERSION}`,
-        href: getReleaseUrl(APP_VERSION),
-      }}
     >
       {children}
     </MarketingLayout>

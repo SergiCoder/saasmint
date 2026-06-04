@@ -2,27 +2,26 @@ import type {
   CreateInvitationInput,
   IInvitationGateway,
 } from "@/application/ports/IInvitationGateway";
-import type { Invitation } from "@/domain/models/Invitation";
+import type { Invitation, PublicInvitation } from "@/domain/models/Invitation";
 import {
   apiFetch,
   apiFetchVoid,
   publicApiFetch,
   publicApiFetchVoid,
 } from "./apiClient";
-import { keysToCamel } from "./caseTransform";
-import { InvitationSchema } from "./schemas";
-
-function parseInvitation(raw: Record<string, unknown>): Invitation {
-  return InvitationSchema.parse(keysToCamel(raw));
-}
+import {
+  parseInvitation,
+  parsePaginated,
+  parsePublicInvitation,
+} from "./parsers";
 
 export class DjangoApiInvitationGateway implements IInvitationGateway {
   async createInvitation(
     orgId: string,
     input: CreateInvitationInput,
   ): Promise<Invitation> {
-    const raw = await apiFetch<Record<string, unknown>>(
-      `/orgs/${orgId}/invitations/`,
+    const raw = await apiFetch(
+      `/orgs/${encodeURIComponent(orgId)}/invitations/`,
       {
         method: "POST",
         body: JSON.stringify(input),
@@ -32,23 +31,24 @@ export class DjangoApiInvitationGateway implements IInvitationGateway {
   }
 
   async listInvitations(orgId: string): Promise<Invitation[]> {
-    const data = await apiFetch<{ results: Record<string, unknown>[] }>(
-      `/orgs/${orgId}/invitations/`,
+    const data = await apiFetch(
+      `/orgs/${encodeURIComponent(orgId)}/invitations/`,
     );
-    return data.results.map(parseInvitation);
+    return parsePaginated(data, parseInvitation);
   }
 
   async cancelInvitation(orgId: string, invitationId: string): Promise<void> {
-    await apiFetchVoid(`/orgs/${orgId}/invitations/${invitationId}/`, {
-      method: "DELETE",
-    });
+    await apiFetchVoid(
+      `/orgs/${encodeURIComponent(orgId)}/invitations/${encodeURIComponent(invitationId)}/`,
+      { method: "DELETE" },
+    );
   }
 
-  async getByToken(token: string): Promise<Invitation> {
-    const raw = await publicApiFetch<Record<string, unknown>>(
-      `/invitations/${token}/`,
+  async getByToken(token: string): Promise<PublicInvitation> {
+    const raw = await publicApiFetch(
+      `/invitations/${encodeURIComponent(token)}/`,
     );
-    return parseInvitation(raw);
+    return parsePublicInvitation(raw);
   }
 
   async acceptInvitation(
@@ -58,18 +58,24 @@ export class DjangoApiInvitationGateway implements IInvitationGateway {
     // Backend creates the user as unverified and queues a verification
     // email — it deliberately does not issue session tokens here. The user
     // must click the verification link before they can sign in.
-    await publicApiFetchVoid(`/invitations/${token}/accept/`, {
-      method: "POST",
-      body: JSON.stringify({
-        full_name: input.fullName,
-        password: input.password,
-      }),
-    });
+    await publicApiFetchVoid(
+      `/invitations/${encodeURIComponent(token)}/accept/`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          full_name: input.fullName,
+          password: input.password,
+        }),
+      },
+    );
   }
 
   async declineInvitation(token: string): Promise<void> {
-    await publicApiFetchVoid(`/invitations/${token}/decline/`, {
-      method: "POST",
-    });
+    await publicApiFetchVoid(
+      `/invitations/${encodeURIComponent(token)}/decline/`,
+      {
+        method: "POST",
+      },
+    );
   }
 }

@@ -3,11 +3,12 @@ import { AppLayout } from "@/presentation/components/templates/AppLayout";
 import { redirect } from "@/lib/i18n/navigation";
 import { getPathnameWithoutLocale } from "@/lib/pathname";
 import { isLocale } from "@/lib/i18n/routing";
-import { findTeamSubscription } from "@/domain/models/Subscription";
+import { APP_NAME } from "@/lib/appVersion";
+import { hasOrgAccess } from "../_lib/hasOrgAccess";
 import { SignOutButton } from "../_components/SignOutButton";
-import { getCurrentUser } from "./_data/getCurrentUser";
-import { getSubscriptions } from "./_data/getSubscriptions";
-import { getUserOrgs } from "./_data/getUserOrgs";
+import { getCurrentUser } from "../_data/getCurrentUser";
+import { getSubscriptions } from "../_data/getSubscriptions";
+import { getUserOrgs } from "../_data/getUserOrgs";
 
 interface AppLayoutRouteProps {
   children: React.ReactNode;
@@ -35,19 +36,23 @@ export default async function AppLayoutRoute({
     getUserOrgs(),
   ]);
 
+  const preferredLocale =
+    user.preferredLocale && isLocale(user.preferredLocale)
+      ? user.preferredLocale
+      : null;
+
   // If the user has a preferred locale that differs from the current URL,
   // redirect server-side before we render. Saves a client-side flash.
-  if (
-    user.preferredLocale &&
-    user.preferredLocale !== locale &&
-    isLocale(user.preferredLocale)
-  ) {
+  // next-intl's middleware syncs the NEXT_LOCALE cookie on the redirect
+  // target, so we don't need a separate cookie write here — and we cannot
+  // do one anyway: cookies().set() throws outside Server Action / Route
+  // Handler contexts (a layout render is neither).
+  if (preferredLocale && preferredLocale !== locale) {
     const pathname = await getPathnameWithoutLocale();
-    redirect({ href: pathname, locale: user.preferredLocale });
+    redirect({ href: pathname, locale: preferredLocale });
   }
 
-  const hasOrg =
-    findTeamSubscription(subscriptions) !== null || userOrgs.length > 0;
+  const hasOrg = hasOrgAccess(subscriptions, userOrgs);
 
   const navLinks = [
     { href: "/dashboard", label: t("dashboard") },
@@ -64,7 +69,7 @@ export default async function AppLayoutRoute({
 
   return (
     <AppLayout
-      appName="SaaSmint"
+      appName={APP_NAME}
       navLinks={navLinks}
       user={{
         fullName: user.fullName ?? user.email,

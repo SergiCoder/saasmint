@@ -96,7 +96,9 @@
       "errorBackendRejected": "Falha na autenticação. Tente iniciar sessão novamente.",
       "errorOAuth": "Início de sessão social falhou. Por favor, tente novamente.",
       "errorOAuthEmailUnverifiedCollision": "A sua conta social está registada com um endereço de e-mail que já tem uma conta com palavra-passe aqui. Inicie sessão com a sua palavra-passe primeiro; pode associar o fornecedor social depois.",
-      "forgotPassword": "Esqueceu a palavra-passe?"
+      "forgotPassword": "Esqueceu a palavra-passe?",
+      "resendVerification": "Reenviar e-mail de verificação",
+      "verificationEmailSent": "E-mail de verificação enviado. Verifique a sua caixa de entrada."
     },
     "forgotPassword": {
       "pageTitle": "Esqueci a palavra-passe",
@@ -122,6 +124,27 @@
       "completing": "A concluir o início de sessão…",
       "noscript": "É necessário JavaScript para concluir o início de sessão.",
       "backToLogin": "Voltar ao início de sessão"
+    },
+    "linkEmailSent": {
+      "pageTitle": "Verifique o seu e-mail",
+      "title": "Verifique a sua caixa de entrada",
+      "body": "Enviámos uma ligação de confirmação para o e-mail da sua conta existente. Abra-a para concluir a associação da conta. A ligação expira em 15 minutos."
+    },
+    "confirmLink": {
+      "pageTitle": "Confirmar associação",
+      "title": "Confirme a associação da sua conta",
+      "body": "Clique abaixo para concluir a associação da sua conta social.",
+      "button": "Confirmar associação",
+      "verifying": "A associar a sua conta…",
+      "backToLogin": "Voltar ao início de sessão",
+      "error": {
+        "used": "Esta ligação já foi utilizada.",
+        "expired": "Esta ligação expirou — tente iniciar sessão novamente com o fornecedor.",
+        "invalid": "Esta ligação não é válida.",
+        "inactive": "A sua conta já não está ativa.",
+        "collision": "Essa conta do fornecedor já está associada noutro local.",
+        "generic": "Não conseguimos associar a sua conta. Por favor, tente novamente."
+      }
     },
     "register": {
       "title": "Crie a sua conta",
@@ -205,6 +228,8 @@
     "endsOn": "Termina a",
     "billedMonthly": "Faturação mensal",
     "billedYearly": "Faturação anual",
+    "billedInLocalMonthly": "≈ {amount} — cobrado em {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/mês, cobrado anualmente em {currency}",
     "seat": "lugar",
     "seats": "lugares",
     "products": "Pacotes de créditos",
@@ -252,9 +277,11 @@
     "profile": "Perfil",
     "fullName": "Nome completo",
     "email": "E-mail",
+    "emailNotVerified": "O seu endereço de e-mail ainda não foi verificado.",
+    "resendVerification": "Reenviar e-mail de verificação",
+    "verificationEmailSent": "E-mail de verificação enviado. Verifique a sua caixa de entrada.",
     "preferredLocale": "Idioma",
     "preferredCurrency": "Moeda",
-    "currencyLockedNote": "A moeda de faturação é definida na primeira subscrição e não pode ser alterada posteriormente.",
     "phonePrefix": "Código do país",
     "phone": "Telefone",
     "phoneNumberRequired": "Introduza um número de telefone",
@@ -373,6 +400,7 @@
     "password_too_short": "A palavra-passe tem de ter pelo menos 10 caracteres",
     "profile_load_failed": "Não foi possível carregar o perfil",
     "session_expired": "Sessão expirada. Inicie sessão novamente.",
+    "captcha_failed": "A verificação de segurança falhou. Tente novamente.",
     "unknown_error": "Algo correu mal. Tente novamente.",
     "unsupported_image": "Tipo de imagem não suportado",
     "message_required": "Por favor, inclua uma mensagem.",

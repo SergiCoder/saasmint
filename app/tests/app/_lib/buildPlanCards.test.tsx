@@ -1,10 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { buildPlanCardGroups } from "@/app/[locale]/_lib/buildPlanCards";
+import {
+  buildPlanCardGroups,
+  buildProductPriceSubLabels,
+} from "@/app/[locale]/_lib/buildPlanCards";
 import type { Plan } from "@/domain/models/Plan";
+import type { Product } from "@/domain/models/Product";
 
 const labels = {
   upgrade: "Upgrade",
   seat: "seat",
+  billedYearly: "billed yearly",
 };
 
 function makePlan(overrides: Partial<Plan> & { id: string }): Plan {
@@ -20,6 +25,8 @@ function makePlan(overrides: Partial<Plan> & { id: string }): Plan {
       amount: 1900,
       displayAmount: 19,
       currency: "usd",
+      localDisplayAmount: null,
+      localCurrency: null,
     },
   };
 }
@@ -31,7 +38,14 @@ describe("buildPlanCardGroups", () => {
         id: "pb-m",
         tier: 2,
         interval: "month",
-        price: { id: "pm", amount: 1900, displayAmount: 19, currency: "usd" },
+        price: {
+          id: "pm",
+          amount: 1900,
+          displayAmount: 19,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
       }),
       makePlan({
         id: "pb-y",
@@ -42,6 +56,8 @@ describe("buildPlanCardGroups", () => {
           amount: 19000,
           displayAmount: 190,
           currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
         },
       }),
     ];
@@ -76,7 +92,14 @@ describe("buildPlanCardGroups", () => {
         id: "m",
         tier: 3,
         interval: "month",
-        price: { id: "pm", amount: 1000, displayAmount: 10, currency: "usd" },
+        price: {
+          id: "pm",
+          amount: 1000,
+          displayAmount: 10,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
       }),
       makePlan({
         id: "y",
@@ -87,6 +110,8 @@ describe("buildPlanCardGroups", () => {
           amount: 10000,
           displayAmount: 100,
           currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
         },
       }),
     ];
@@ -119,7 +144,14 @@ describe("buildPlanCardGroups", () => {
       makePlan({
         id: "m",
         interval: "month",
-        price: { id: "pm", amount: 1000, displayAmount: 10, currency: "usd" },
+        price: {
+          id: "pm",
+          amount: 1000,
+          displayAmount: 10,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
       }),
       makePlan({
         id: "y",
@@ -129,6 +161,8 @@ describe("buildPlanCardGroups", () => {
           amount: 12000,
           displayAmount: 120,
           currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
         },
       }),
     ];
@@ -182,6 +216,53 @@ describe("buildPlanCardGroups", () => {
       renderCta: () => null,
     });
     expect(groups.map((g) => g.tier)).toEqual([1, 2, 3]);
+  });
+
+  it("formats priceless plans using fallbackCurrency when provided", () => {
+    const plans: Plan[] = [
+      {
+        id: "free",
+        name: "Free",
+        description: "",
+        context: "personal",
+        tier: 1,
+        interval: "month",
+        price: null,
+      },
+    ];
+    const groups = buildPlanCardGroups({
+      plans,
+      locale: "en-US",
+      fallbackCurrency: "eur",
+      labels,
+      planNames: { "personal.1": "Free" },
+      planDescriptions: { "personal.1": "Free desc" },
+      renderCta: () => null,
+    });
+    expect(groups[0]!.monthly?.price).toBe("€0.00");
+  });
+
+  it("falls back to USD for priceless plans when fallbackCurrency is omitted", () => {
+    const plans: Plan[] = [
+      {
+        id: "free",
+        name: "Free",
+        description: "",
+        context: "personal",
+        tier: 1,
+        interval: "month",
+        price: null,
+      },
+    ];
+    const groups = buildPlanCardGroups({
+      plans,
+      locale: "en-US",
+      labels,
+      planNames: { "personal.1": "Free" },
+      planDescriptions: { "personal.1": "Free desc" },
+      renderCta: () => null,
+    });
+    expect(groups[0]!.monthly?.price).toBe("$0.00");
   });
 
   it("separates personal and team groups", () => {
@@ -277,13 +358,27 @@ describe("buildPlanCardGroups", () => {
         id: "basic-m",
         tier: 2,
         interval: "month",
-        price: { id: "bm", amount: 1000, displayAmount: 10, currency: "usd" },
+        price: {
+          id: "bm",
+          amount: 1000,
+          displayAmount: 10,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
       }),
       makePlan({
         id: "pro-m",
         tier: 3,
         interval: "month",
-        price: { id: "pm", amount: 5000, displayAmount: 50, currency: "usd" },
+        price: {
+          id: "pm",
+          amount: 5000,
+          displayAmount: 50,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
       }),
     ];
     const ctaCalls: Array<{
@@ -330,6 +425,69 @@ describe("buildPlanCardGroups", () => {
     expect(pro?.label).toBe("Upgrade");
   });
 
+  it("does not flag a same-tier different-interval candidate as an upgrade", () => {
+    // User on Pro Yearly looking at Pro Monthly: monthly-equivalent of the
+    // monthly variant is HIGHER than the discounted yearly equivalent, but
+    // it's the same tier — labelling it "Upgrade" would be wrong (and was
+    // a real bug pre-fix). Cadence switches go through "Change plan".
+    const plans: Plan[] = [
+      makePlan({
+        id: "pro-m",
+        tier: 3,
+        interval: "month",
+        price: {
+          id: "pm",
+          amount: 4599,
+          displayAmount: 45.99,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
+      }),
+      makePlan({
+        id: "pro-y",
+        tier: 3,
+        interval: "year",
+        price: {
+          id: "py",
+          amount: 45990,
+          displayAmount: 459.9,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
+      }),
+    ];
+    const proYearlyPlan = plans.find((p) => p.id === "pro-y")!;
+    const ctaCalls: Array<{ id: string; isUpgrade: boolean }> = [];
+    buildPlanCardGroups({
+      plans,
+      currentPlans: [proYearlyPlan],
+      locale: "en-US",
+      labels,
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
+      renderCta: ({ plan, isUpgrade }) => {
+        ctaCalls.push({ id: plan.id, isUpgrade });
+        return null;
+      },
+    });
+    const proMonthly = ctaCalls.find((c) => c.id === "pro-m");
+    expect(proMonthly?.isUpgrade).toBe(false);
+  });
+
   it("treats a candidate from a context the user has no sub in as a net-new upgrade", () => {
     // Concurrent personal+team is allowed (rule 5), so a personal-only user
     // looking at a team plan is *adding* a sub, not switching — comparison
@@ -341,14 +499,28 @@ describe("buildPlanCardGroups", () => {
         context: "personal",
         tier: 3,
         interval: "month",
-        price: { id: "pp", amount: 5000, displayAmount: 50, currency: "usd" },
+        price: {
+          id: "pp",
+          amount: 5000,
+          displayAmount: 50,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
       }),
       makePlan({
         id: "team-basic",
         context: "team",
         tier: 2,
         interval: "month",
-        price: { id: "tb", amount: 1000, displayAmount: 10, currency: "usd" },
+        price: {
+          id: "tb",
+          amount: 1000,
+          displayAmount: 10,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
       }),
     ];
     const personalProPlan = plans.find((p) => p.id === "personal-pro")!;
@@ -391,14 +563,28 @@ describe("buildPlanCardGroups", () => {
         context: "team",
         tier: 2,
         interval: "month",
-        price: { id: "tb", amount: 1000, displayAmount: 10, currency: "usd" },
+        price: {
+          id: "tb",
+          amount: 1000,
+          displayAmount: 10,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
       }),
       makePlan({
         id: "personal-pro",
         context: "personal",
         tier: 3,
         interval: "month",
-        price: { id: "pp", amount: 5000, displayAmount: 50, currency: "usd" },
+        price: {
+          id: "pp",
+          amount: 5000,
+          displayAmount: 50,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
       }),
     ];
     const teamBasicPlan = plans.find((p) => p.id === "team-basic")!;
@@ -438,14 +624,28 @@ describe("buildPlanCardGroups", () => {
         context: "personal",
         tier: 3,
         interval: "month",
-        price: { id: "pp", amount: 5000, displayAmount: 50, currency: "usd" },
+        price: {
+          id: "pp",
+          amount: 5000,
+          displayAmount: 50,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
       }),
       makePlan({
         id: "team-pro",
         context: "team",
         tier: 3,
         interval: "month",
-        price: { id: "tp", amount: 8000, displayAmount: 80, currency: "usd" },
+        price: {
+          id: "tp",
+          amount: 8000,
+          displayAmount: 80,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
       }),
     ];
     const ctaCalls: Array<{ id: string; isCurrent: boolean }> = [];
@@ -475,5 +675,200 @@ describe("buildPlanCardGroups", () => {
     });
     expect(ctaCalls.find((c) => c.id === "personal-pro")?.isCurrent).toBe(true);
     expect(ctaCalls.find((c) => c.id === "team-pro")?.isCurrent).toBe(true);
+  });
+
+  describe("local-currency price sub-label", () => {
+    const baseTranslations = {
+      planNames: {
+        "personal.2": "Basic",
+        "personal.3": "Pro",
+        "personal.1": "Free",
+        "team.2": "Basic",
+        "team.3": "Pro",
+      },
+      planDescriptions: {
+        "personal.2": "Basic desc",
+        "personal.3": "Pro desc",
+        "personal.1": "Free desc",
+        "team.2": "Team Basic desc",
+        "team.3": "Team Pro desc",
+      },
+    };
+
+    it("invokes formatPriceSubLabelLocal for monthly when local currency differs", () => {
+      const monthlyPlan = makePlan({
+        id: "pb-m",
+        tier: 2,
+        interval: "month",
+        price: {
+          id: "pm",
+          amount: 1900,
+          displayAmount: 19,
+          currency: "usd",
+          localDisplayAmount: 17.42,
+          localCurrency: "chf",
+        },
+      });
+      const calls: unknown[] = [];
+      const groups = buildPlanCardGroups({
+        plans: [monthlyPlan],
+        locale: "en-US",
+        labels,
+        ...baseTranslations,
+        renderCta: () => null,
+        formatPriceSubLabelLocal: (ctx) => {
+          calls.push(ctx);
+          return `≈ ${ctx.localAmount} — billed in ${ctx.billedCurrency}`;
+        },
+      });
+      expect(calls).toHaveLength(1);
+      expect(groups[0]!.monthly?.priceSubLabel).toBe(
+        "≈ CHF\u00a017.42 — billed in USD",
+      );
+    });
+
+    it("invokes formatPriceSubLabelLocal for yearly with monthly equivalent", () => {
+      const yearlyPlan = makePlan({
+        id: "pb-y",
+        tier: 2,
+        interval: "year",
+        price: {
+          id: "py",
+          amount: 19000,
+          displayAmount: 192,
+          currency: "usd",
+          localDisplayAmount: 176.16,
+          localCurrency: "chf",
+        },
+      });
+      const groups = buildPlanCardGroups({
+        plans: [yearlyPlan],
+        locale: "en-US",
+        labels,
+        ...baseTranslations,
+        renderCta: () => null,
+        formatPriceSubLabelLocal: ({
+          localAmount,
+          monthlyEquivalent,
+          billedCurrency,
+        }) =>
+          `≈ ${localAmount} — ${monthlyEquivalent}/month, billed yearly in ${billedCurrency}`,
+      });
+      expect(groups[0]!.yearly?.priceSubLabel).toBe(
+        "≈ CHF\u00a0176.16 — $16.00/month, billed yearly in USD",
+      );
+    });
+
+    it("falls back to the existing yearly sub-label when local currency is null", () => {
+      const yearlyPlan = makePlan({
+        id: "pb-y",
+        tier: 2,
+        interval: "year",
+        price: {
+          id: "py",
+          amount: 19000,
+          displayAmount: 192,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
+      });
+      const groups = buildPlanCardGroups({
+        plans: [yearlyPlan],
+        locale: "en-US",
+        labels,
+        ...baseTranslations,
+        renderCta: () => null,
+        formatPriceSubLabelLocal: () => "should-not-be-called",
+      });
+      expect(groups[0]!.yearly?.priceSubLabel).toBe(
+        "$16.00/month — billed yearly",
+      );
+    });
+
+    it("skips the local sub-label when local currency matches billed currency", () => {
+      const monthlyPlan = makePlan({
+        id: "pb-m",
+        tier: 2,
+        interval: "month",
+        price: {
+          id: "pm",
+          amount: 1900,
+          displayAmount: 19,
+          currency: "USD",
+          localDisplayAmount: 19,
+          localCurrency: "usd",
+        },
+      });
+      const groups = buildPlanCardGroups({
+        plans: [monthlyPlan],
+        locale: "en-US",
+        labels,
+        ...baseTranslations,
+        renderCta: () => null,
+        formatPriceSubLabelLocal: () => "should-not-be-called",
+      });
+      expect(groups[0]!.monthly?.priceSubLabel).toBeUndefined();
+    });
+  });
+});
+
+describe("buildProductPriceSubLabels", () => {
+  function makeProduct(overrides: Partial<Product> & { id: string }): Product {
+    return {
+      id: overrides.id,
+      name: overrides.name ?? "Pack",
+      type: "one_time",
+      credits: overrides.credits ?? 100,
+      price: overrides.price ?? null,
+    };
+  }
+
+  it("emits a sub-label only when local currency differs", () => {
+    const products: Product[] = [
+      makeProduct({
+        id: "p_local",
+        price: {
+          id: "pp1",
+          amount: 1000,
+          displayAmount: 10,
+          currency: "usd",
+          localDisplayAmount: 9.16,
+          localCurrency: "chf",
+        },
+      }),
+      makeProduct({
+        id: "p_match",
+        price: {
+          id: "pp2",
+          amount: 1000,
+          displayAmount: 10,
+          currency: "usd",
+          localDisplayAmount: 10,
+          localCurrency: "USD",
+        },
+      }),
+      makeProduct({
+        id: "p_null",
+        price: {
+          id: "pp3",
+          amount: 1000,
+          displayAmount: 10,
+          currency: "usd",
+          localDisplayAmount: null,
+          localCurrency: null,
+        },
+      }),
+      makeProduct({ id: "p_priceless", price: null }),
+    ];
+    const map = buildProductPriceSubLabels(
+      products,
+      "en-US",
+      ({ localAmount, billedCurrency }) =>
+        `≈ ${localAmount} — billed in ${billedCurrency}`,
+    );
+    expect(map).toEqual({
+      p_local: "≈ CHF\u00a09.16 — billed in USD",
+    });
   });
 });

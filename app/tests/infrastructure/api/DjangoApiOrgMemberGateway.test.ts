@@ -16,9 +16,17 @@ vi.mock("@/infrastructure/api/caseTransform", async () => {
 const { DjangoApiOrgMemberGateway } =
   await import("@/infrastructure/api/DjangoApiOrgMemberGateway");
 
+const rawOrg = {
+  id: "org-1",
+  name: "Acme",
+  slug: "acme",
+  logo_url: null,
+  created_at: "2024-01-01T00:00:00Z",
+};
+
 const rawMember = {
   id: "m1",
-  org: "org-1",
+  org: rawOrg,
   user: {
     id: "u1",
     email: "alice@example.com",
@@ -98,19 +106,20 @@ describe("DjangoApiOrgMemberGateway", () => {
   });
 
   describe("updateMemberRole", () => {
-    it("sends PATCH /orgs/:orgId/members/:userId/ with role", async () => {
-      mockApiFetch.mockResolvedValue({ ...rawMember, role: "owner" });
+    it("sends PATCH /orgs/:orgId/members/:userId/ with role and discards the response", async () => {
+      mockApiFetchVoid.mockResolvedValue(undefined);
 
       await gateway.updateMemberRole("o1", "u1", "owner");
 
-      expect(mockApiFetch).toHaveBeenCalledWith("/orgs/o1/members/u1/", {
+      expect(mockApiFetchVoid).toHaveBeenCalledWith("/orgs/o1/members/u1/", {
         method: "PATCH",
         body: JSON.stringify({ role: "owner" }),
       });
+      expect(mockApiFetch).not.toHaveBeenCalled();
     });
 
-    it("propagates errors from apiFetch", async () => {
-      mockApiFetch.mockRejectedValue(new Error("API 403: Forbidden"));
+    it("propagates errors from apiFetchVoid", async () => {
+      mockApiFetchVoid.mockRejectedValue(new Error("API 403: Forbidden"));
 
       await expect(
         gateway.updateMemberRole("o1", "u1", "admin"),

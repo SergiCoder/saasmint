@@ -96,7 +96,9 @@
       "errorBackendRejected": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin.",
       "errorOAuth": "Sosyal giriş başarısız oldu. Lütfen tekrar deneyin.",
       "errorOAuthEmailUnverifiedCollision": "Sosyal hesabınız burada zaten şifreli bir hesabı olan bir e-posta adresiyle kayıtlı. Önce şifrenizle giriş yapın; sosyal sağlayıcıyı daha sonra bağlayabilirsiniz.",
-      "forgotPassword": "Şifrenizi mi unuttunuz?"
+      "forgotPassword": "Şifrenizi mi unuttunuz?",
+      "resendVerification": "Doğrulama e-postasını yeniden gönder",
+      "verificationEmailSent": "Doğrulama e-postası gönderildi. Gelen kutunuzu kontrol edin."
     },
     "forgotPassword": {
       "pageTitle": "Şifremi unuttum",
@@ -122,6 +124,27 @@
       "completing": "Oturum açma tamamlanıyor…",
       "noscript": "Oturum açmayı tamamlamak için JavaScript gerekli.",
       "backToLogin": "Oturum açmaya dön"
+    },
+    "linkEmailSent": {
+      "pageTitle": "E-postanızı kontrol edin",
+      "title": "Gelen kutunuzu kontrol edin",
+      "body": "Mevcut hesabınızın e-posta adresine bir onay bağlantısı gönderdik. Hesabınızı bağlamayı tamamlamak için bağlantıyı açın. Bağlantı 15 dakika içinde geçerliliğini yitirir."
+    },
+    "confirmLink": {
+      "pageTitle": "Bağlamayı onayla",
+      "title": "Hesabınızı bağlamayı onaylayın",
+      "body": "Sosyal hesabınızı bağlamayı tamamlamak için aşağıya tıklayın.",
+      "button": "Bağlamayı onayla",
+      "verifying": "Hesabınız bağlanıyor…",
+      "backToLogin": "Oturum açmaya dön",
+      "error": {
+        "used": "Bu bağlantı zaten kullanılmış.",
+        "expired": "Bu bağlantının süresi doldu — sağlayıcıyla tekrar oturum açmayı deneyin.",
+        "invalid": "Bu bağlantı geçersiz.",
+        "inactive": "Hesabınız artık aktif değil.",
+        "collision": "Bu sağlayıcı hesabı zaten başka bir yere bağlı.",
+        "generic": "Hesabınızı bağlayamadık. Lütfen tekrar deneyin."
+      }
     },
     "register": {
       "title": "Hesabınızı oluşturun",
@@ -205,6 +228,8 @@
     "endsOn": "Bitiş tarihi",
     "billedMonthly": "Aylık faturalandırma",
     "billedYearly": "Yıllık faturalandırma",
+    "billedInLocalMonthly": "≈ {amount} — {currency} olarak tahsil edilir",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/ay, yıllık olarak {currency} ile tahsil edilir",
     "seat": "koltuk",
     "seats": "koltuk",
     "products": "Kredi paketleri",
@@ -252,9 +277,11 @@
     "profile": "Profil",
     "fullName": "Ad soyad",
     "email": "E-posta",
+    "emailNotVerified": "E-posta adresiniz henüz doğrulanmadı.",
+    "resendVerification": "Doğrulama e-postasını yeniden gönder",
+    "verificationEmailSent": "Doğrulama e-postası gönderildi. Gelen kutunuzu kontrol edin.",
     "preferredLocale": "Dil",
     "preferredCurrency": "Para birimi",
-    "currencyLockedNote": "Faturalandırma para biriminiz ilk aboneliğinizde belirlenir ve sonradan değiştirilemez.",
     "phonePrefix": "Ülke kodu",
     "phone": "Telefon",
     "phoneNumberRequired": "Lütfen bir telefon numarası girin",
@@ -373,6 +400,7 @@
     "password_too_short": "Parola en az 10 karakter olmalıdır",
     "profile_load_failed": "Profil yüklenemedi",
     "session_expired": "Oturumun süresi doldu. Lütfen tekrar giriş yapın.",
+    "captcha_failed": "Güvenlik doğrulaması başarısız oldu. Lütfen tekrar deneyin.",
     "unknown_error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
     "unsupported_image": "Desteklenmeyen görsel türü",
     "message_required": "Lütfen bir mesaj ekleyin.",

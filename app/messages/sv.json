@@ -96,7 +96,9 @@
       "errorBackendRejected": "Autentisering misslyckades. Försök logga in igen.",
       "errorOAuth": "Social inloggning misslyckades. Försök igen.",
       "errorOAuthEmailUnverifiedCollision": "Ditt sociala konto är registrerat med en e-postadress som redan har ett lösenordskonto här. Logga in med ditt lösenord först; du kan koppla den sociala leverantören efteråt.",
-      "forgotPassword": "Glömt lösenord?"
+      "forgotPassword": "Glömt lösenord?",
+      "resendVerification": "Skicka verifieringsmejlet igen",
+      "verificationEmailSent": "Verifieringsmejl skickat. Kontrollera din inkorg."
     },
     "forgotPassword": {
       "pageTitle": "Glömt lösenord",
@@ -122,6 +124,27 @@
       "completing": "Slutför inloggning…",
       "noscript": "JavaScript krävs för att slutföra inloggningen.",
       "backToLogin": "Tillbaka till inloggning"
+    },
+    "linkEmailSent": {
+      "pageTitle": "Kontrollera din e-post",
+      "title": "Kontrollera din inkorg",
+      "body": "Vi har skickat en bekräftelselänk till e-postadressen för ditt befintliga konto. Öppna den för att slutföra länkningen av kontot. Länken upphör att gälla om 15 minuter."
+    },
+    "confirmLink": {
+      "pageTitle": "Bekräfta länkning",
+      "title": "Bekräfta länkning av ditt konto",
+      "body": "Klicka nedan för att slutföra länkningen av ditt sociala konto.",
+      "button": "Bekräfta länkning",
+      "verifying": "Länkar ditt konto…",
+      "backToLogin": "Tillbaka till inloggning",
+      "error": {
+        "used": "Den här länken har redan använts.",
+        "expired": "Den här länken har upphört att gälla — försök att logga in via leverantören igen.",
+        "invalid": "Den här länken är ogiltig.",
+        "inactive": "Ditt konto är inte längre aktivt.",
+        "collision": "Det leverantörskontot är redan länkat någon annanstans.",
+        "generic": "Vi kunde inte länka ditt konto. Försök igen."
+      }
     },
     "register": {
       "title": "Skapa ditt konto",
@@ -205,6 +228,8 @@
     "endsOn": "Slutar den",
     "billedMonthly": "Faktureras månadsvis",
     "billedYearly": "Faktureras årligen",
+    "billedInLocalMonthly": "≈ {amount} — debiteras i {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/månad, debiteras årligen i {currency}",
     "seat": "plats",
     "seats": "platser",
     "products": "Kreditpaket",
@@ -252,9 +277,11 @@
     "profile": "Profil",
     "fullName": "Fullständigt namn",
     "email": "E-post",
+    "emailNotVerified": "Din e-postadress är inte verifierad ännu.",
+    "resendVerification": "Skicka verifieringsmejlet igen",
+    "verificationEmailSent": "Verifieringsmejl skickat. Kontrollera din inkorg.",
     "preferredLocale": "Språk",
     "preferredCurrency": "Valuta",
-    "currencyLockedNote": "Din faktureringsvaluta anges när du tecknar prenumeration första gången och kan inte ändras efteråt.",
     "phonePrefix": "Landskod",
     "phone": "Telefon",
     "phoneNumberRequired": "Ange ett telefonnummer",
@@ -373,6 +400,7 @@
     "password_too_short": "Lösenordet måste vara minst 10 tecken",
     "profile_load_failed": "Det gick inte att ladda profilen",
     "session_expired": "Sessionen har gått ut. Logga in igen.",
+    "captcha_failed": "Säkerhetsverifieringen misslyckades. Försök igen.",
     "unknown_error": "Något gick fel. Försök igen.",
     "unsupported_image": "Bildtypen stöds inte",
     "message_required": "Inkludera ett meddelande.",

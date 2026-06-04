@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
 import { FormField } from "@/presentation/components/molecules/FormField";
@@ -9,10 +9,12 @@ import { PasswordRequirements } from "@/presentation/components/molecules/Passwo
 import { Button } from "@/presentation/components/atoms/Button";
 import type { ActionResult } from "@/lib/actions/ActionResult";
 import { useActionErrorMessage } from "@/lib/actions/useActionErrorMessage";
+import { useRecaptcha } from "@/lib/recaptcha/useRecaptcha";
 import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
+import { ResendVerificationLink } from "./ResendVerificationLink";
 
 interface AuthFormProps {
-  action: (prev: unknown, fd: FormData) => Promise<ActionResult | undefined>;
+  action: (prev: unknown, fd: FormData) => Promise<ActionResult>;
   translationNamespace: string;
   passwordAutoComplete: string;
   showNameField?: boolean;
@@ -20,6 +22,12 @@ interface AuthFormProps {
   footerLink: { href: string; textKey: string; linkKey: string };
   serverAlerts?: React.ReactNode;
   hiddenFields?: Record<string, string>;
+  /**
+   * reCAPTCHA v3 action name. When set, a fresh token is attached as
+   * `captcha_token` before the action runs (e.g. "register" on signup). Login
+   * omits this so it stays frictionless.
+   */
+  captchaAction?: string;
 }
 
 export function AuthForm({
@@ -31,17 +39,33 @@ export function AuthForm({
   footerLink,
   serverAlerts,
   hiddenFields,
+  captchaAction,
 }: AuthFormProps) {
   const t = useTranslations(translationNamespace);
   const translateError = useActionErrorMessage();
-  const [state, formAction, pending] = useActionState(action, null);
+  const executeRecaptcha = useRecaptcha();
+  const actionWithCaptcha = useCallback(
+    async (prev: unknown, formData: FormData): Promise<ActionResult> => {
+      if (captchaAction) {
+        const token = await executeRecaptcha(captchaAction);
+        if (token) formData.set("captcha_token", token);
+      }
+      return action(prev, formData);
+    },
+    [action, captchaAction, executeRecaptcha],
+  );
+  const [state, formAction, pending] = useActionState(actionWithCaptcha, null);
+  const [email, setEmail] = useState("");
   const errorMessage = state && !state.ok ? translateError(state) : null;
+  const showResendLink =
+    state && !state.ok && state.code === "email_not_verified";
 
   return (
     <>
       {errorMessage ? (
         <AlertBanner variant="error" className="mb-4">
           {errorMessage}
+          {showResendLink && <ResendVerificationLink email={email} />}
         </AlertBanner>
       ) : (
         serverAlerts
@@ -67,6 +91,8 @@ export function AuthForm({
           type="email"
           required
           autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <FormField
           label={t("password")}

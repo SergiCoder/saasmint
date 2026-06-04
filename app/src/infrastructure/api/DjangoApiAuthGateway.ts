@@ -1,7 +1,7 @@
 import type { IAuthGateway } from "@/application/ports/IAuthGateway";
 import type { User } from "@/domain/models/User";
-import { apiFetch, apiFetchVoid } from "./apiClient";
-import { parseUser } from "./parsers";
+import { apiFetchVoid } from "./apiClient";
+import { fetchCurrentUser } from "./parsers";
 import {
   clearAuthCookies,
   getRefreshToken,
@@ -9,19 +9,25 @@ import {
 
 export class DjangoApiAuthGateway implements IAuthGateway {
   async getCurrentUser(): Promise<User> {
-    const raw = await apiFetch<Record<string, unknown>>("/account/");
-    return parseUser(raw);
+    return fetchCurrentUser();
   }
 
   async signOut(): Promise<void> {
+    // Clear local cookies even if the backend revoke fails (network error,
+    // 5xx, missing token). Otherwise a transient outage would leave a stale
+    // session live in the browser and let the next page load attempt to use
+    // an access token whose refresh has already been invalidated upstream.
     const refreshToken = await getRefreshToken();
-    if (refreshToken) {
-      await apiFetchVoid("/auth/logout/", {
-        method: "POST",
-        body: JSON.stringify({ refresh_token: refreshToken }),
-      });
+    try {
+      if (refreshToken) {
+        await apiFetchVoid("/auth/logout/", {
+          method: "POST",
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        });
+      }
+    } finally {
+      await clearAuthCookies();
     }
-    await clearAuthCookies();
   }
 
   async deleteAccount(): Promise<void> {

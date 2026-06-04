@@ -19,8 +19,14 @@ vi.mock("next/navigation", () => ({
   redirect: (dest: string) => mockRedirect(dest),
 }));
 
-const { getCurrentUser } =
-  await import("@/app/[locale]/(app)/_data/getCurrentUser");
+// Loader reads the active locale from the middleware-forwarded `x-pathname` header;
+// stub a fixed locale so redirects assert against the locale-prefixed path
+// (the locale-prefixed-redirect rule documented in CLAUDE.md).
+vi.mock("@/lib/pathname", () => ({
+  getLocale: vi.fn(() => Promise.resolve("en")),
+}));
+
+const { getCurrentUser } = await import("@/app/[locale]/_data/getCurrentUser");
 
 const fakeUser = {
   id: "u1",
@@ -40,13 +46,26 @@ describe("getCurrentUser", () => {
     expect(mockRedirect).not.toHaveBeenCalled();
   });
 
-  it("redirects to /login?error=<auth-code> when gateway throws AuthError", async () => {
+  it("redirects to /login?error=<auth-code> when gateway throws AuthError with a known code", async () => {
+    mockGetCurrentUser.mockRejectedValue(
+      new AuthError("expired", "token_expired"),
+    );
+
+    await expect(getCurrentUser()).rejects.toThrow("NEXT_REDIRECT");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/login?error=token_expired");
+  });
+
+  it("coerces unknown AuthError codes to UNAUTHENTICATED so unfiltered backend codes can't reach the URL", async () => {
+    // `TOKEN_EXPIRED` (uppercase) is not in the login-error allowlist; the
+    // loader collapses it to UNAUTHENTICATED before redirecting.
     mockGetCurrentUser.mockRejectedValue(
       new AuthError("expired", "TOKEN_EXPIRED"),
     );
 
     await expect(getCurrentUser()).rejects.toThrow("NEXT_REDIRECT");
-    expect(mockRedirect).toHaveBeenCalledWith("/login?error=TOKEN_EXPIRED");
+    expect(mockRedirect).toHaveBeenCalledWith(
+      "/en/login?error=UNAUTHENTICATED",
+    );
   });
 
   it("coerces non-auth errors to /login?error=UNAUTHENTICATED so a probe failure never surfaces a 500", async () => {
@@ -55,20 +74,26 @@ describe("getCurrentUser", () => {
     );
 
     await expect(getCurrentUser()).rejects.toThrow("NEXT_REDIRECT");
-    expect(mockRedirect).toHaveBeenCalledWith("/login?error=UNAUTHENTICATED");
+    expect(mockRedirect).toHaveBeenCalledWith(
+      "/en/login?error=UNAUTHENTICATED",
+    );
   });
 
   it("treats an ApiError the same as a generic failure (UNAUTHENTICATED)", async () => {
     mockGetCurrentUser.mockRejectedValue(new ApiError(500, { detail: "boom" }));
 
     await expect(getCurrentUser()).rejects.toThrow("NEXT_REDIRECT");
-    expect(mockRedirect).toHaveBeenCalledWith("/login?error=UNAUTHENTICATED");
+    expect(mockRedirect).toHaveBeenCalledWith(
+      "/en/login?error=UNAUTHENTICATED",
+    );
   });
 
   it("treats a bare thrown value (non-Error) as UNAUTHENTICATED", async () => {
     mockGetCurrentUser.mockRejectedValue("weird string");
 
     await expect(getCurrentUser()).rejects.toThrow("NEXT_REDIRECT");
-    expect(mockRedirect).toHaveBeenCalledWith("/login?error=UNAUTHENTICATED");
+    expect(mockRedirect).toHaveBeenCalledWith(
+      "/en/login?error=UNAUTHENTICATED",
+    );
   });
 });

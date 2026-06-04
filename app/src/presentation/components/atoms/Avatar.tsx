@@ -13,23 +13,38 @@ export interface AvatarProps {
   alt: string;
   size?: keyof typeof sizes;
   className?: string;
+  /**
+   * Set on above-fold avatars (e.g. the navbar user avatar) so Next.js
+   * preloads the image and it counts as an LCP candidate. Defaults to
+   * `false` — most avatars are below the fold.
+   */
+  priority?: boolean;
 }
 
-export function Avatar({ src, alt, size = "md", className = "" }: AvatarProps) {
+export function Avatar({
+  src,
+  alt,
+  size = "md",
+  className = "",
+  priority = false,
+}: AvatarProps) {
   const initials = alt
     .split(" ")
-    .map((w) => w[0])
+    .map((w) => w[0] ?? "")
     .join("")
     .slice(0, 2)
     .toUpperCase();
 
   if (src) {
+    const px = pixelSizes[size];
     return (
       <Image
         src={src}
         alt={alt}
-        width={pixelSizes[size]}
-        height={pixelSizes[size]}
+        width={px}
+        height={px}
+        priority={priority}
+        sizes={`${px}px`}
         className={`inline-block rounded-full object-cover ${sizes[size]} ${className}`}
       />
     );

@@ -75,29 +75,22 @@ describe("CancelRenewalButton", () => {
     });
   });
 
-  it("displays the server-provided message when the envelope carries one", async () => {
-    mockCancelRenewal.mockResolvedValueOnce({
-      ok: false,
-      code: "HTTP_500",
-      message: "boom",
-    });
+  it("renders the translated error code when the action fails", async () => {
+    mockCancelRenewal.mockResolvedValueOnce({ ok: false, code: "HTTP_500" });
     const user = userEvent.setup();
     render(<CancelRenewalButton {...defaultProps} />);
 
     await user.click(screen.getByRole("button", { name: "Cancel renewal" }));
     await user.click(screen.getByRole("button", { name: "Yes, cancel" }));
 
+    // i18n stub falls back to "unknown_error" because actionErrors is empty.
     await waitFor(() => {
-      expect(screen.getByText("boom")).toBeInTheDocument();
+      expect(screen.getByText("unknown_error")).toBeInTheDocument();
     });
   });
 
   it("keeps the dialog open when the action returns an error", async () => {
-    mockCancelRenewal.mockResolvedValueOnce({
-      ok: false,
-      code: "HTTP_500",
-      message: "nope",
-    });
+    mockCancelRenewal.mockResolvedValueOnce({ ok: false, code: "HTTP_500" });
     const user = userEvent.setup();
     render(<CancelRenewalButton {...defaultProps} />);
 
@@ -105,7 +98,7 @@ describe("CancelRenewalButton", () => {
     await user.click(screen.getByRole("button", { name: "Yes, cancel" }));
 
     await waitFor(() => {
-      expect(screen.getByText("nope")).toBeInTheDocument();
+      expect(screen.getByText("unknown_error")).toBeInTheDocument();
     });
     expect(screen.getByText("Are you sure?")).toBeInTheDocument();
   });

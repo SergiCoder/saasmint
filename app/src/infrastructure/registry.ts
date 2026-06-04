@@ -7,7 +7,6 @@ import { DjangoApiOrgMemberGateway } from "./api/DjangoApiOrgMemberGateway";
 import { DjangoApiPlanGateway } from "./api/DjangoApiPlanGateway";
 import { DjangoApiProductGateway } from "./api/DjangoApiProductGateway";
 import { DjangoApiSubscriptionGateway } from "./api/DjangoApiSubscriptionGateway";
-import { DjangoApiReferenceGateway } from "./api/DjangoApiReferenceGateway";
 import { DjangoApiUserGateway } from "./api/DjangoApiUserGateway";
 
 export const authGateway = new DjangoApiAuthGateway();
@@ -18,6 +17,5 @@ export const subscriptionGateway = new DjangoApiSubscriptionGateway();
 export const orgGateway = new DjangoApiOrgGateway();
 export const orgMemberGateway = new DjangoApiOrgMemberGateway();
 export const invitationGateway = new DjangoApiInvitationGateway();
-export const referenceGateway = new DjangoApiReferenceGateway();
 export const inquiryGateway = new DjangoApiInquiryGateway();
 export const creditsGateway = new DjangoApiCreditsGateway();

@@ -28,7 +28,14 @@ function makePlan(
     price:
       overrides.price !== undefined
         ? overrides.price
-        : { id: "price_1", amount: 1900, displayAmount: 19, currency: "usd" },
+        : {
+            id: "price_1",
+            amount: 1900,
+            displayAmount: 19,
+            currency: "usd",
+            localDisplayAmount: null,
+            localCurrency: null,
+          },
   };
 }
 
@@ -73,9 +80,9 @@ const defaultOpts = {
   personalCanManage: true,
   teamCanManage: true,
   locale: "en",
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   tBilling: tBilling as any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   tPlans: tPlans as any,
 };
 
@@ -138,6 +145,8 @@ describe("renderPlanUpgradeCta — personal change-plan via in-app confirm", () 
         amount: 4900,
         displayAmount: 49,
         currency: "usd",
+        localDisplayAmount: null,
+        localCurrency: null,
       },
     });
     const personalSub = makeSubscription("personal");
@@ -255,6 +264,8 @@ describe("renderPlanUpgradeCta — team change-plan via in-app confirm", () => {
         amount: 9900,
         displayAmount: 99,
         currency: "usd",
+        localDisplayAmount: null,
+        localCurrency: null,
       },
     });
     const teamSub = makeSubscription("team");

@@ -96,7 +96,9 @@
       "errorBackendRejected": "Authenticatie mislukt. Probeer opnieuw in te loggen.",
       "errorOAuth": "Sociale login mislukt. Probeer het opnieuw.",
       "errorOAuthEmailUnverifiedCollision": "Uw sociale account is geregistreerd met een e-mailadres dat hier al een wachtwoordaccount heeft. Log eerst in met uw wachtwoord; u kunt de sociale provider daarna koppelen.",
-      "forgotPassword": "Wachtwoord vergeten?"
+      "forgotPassword": "Wachtwoord vergeten?",
+      "resendVerification": "Verificatie-e-mail opnieuw verzenden",
+      "verificationEmailSent": "Verificatie-e-mail verzonden. Controleer je inbox."
     },
     "forgotPassword": {
       "pageTitle": "Wachtwoord vergeten",
@@ -122,6 +124,27 @@
       "completing": "Aanmelden voltooien…",
       "noscript": "JavaScript is vereist om het aanmelden te voltooien.",
       "backToLogin": "Terug naar aanmelden"
+    },
+    "linkEmailSent": {
+      "pageTitle": "Controleer uw e-mail",
+      "title": "Controleer uw inbox",
+      "body": "We hebben een bevestigingslink gestuurd naar het e-mailadres van uw bestaande account. Open de link om het koppelen van uw account te voltooien. De link verloopt over 15 minuten."
+    },
+    "confirmLink": {
+      "pageTitle": "Koppeling bevestigen",
+      "title": "Bevestig de koppeling van uw account",
+      "body": "Klik hieronder om het koppelen van uw social account te voltooien.",
+      "button": "Koppeling bevestigen",
+      "verifying": "Uw account wordt gekoppeld…",
+      "backToLogin": "Terug naar aanmelden",
+      "error": {
+        "used": "Deze link is al gebruikt.",
+        "expired": "Deze link is verlopen — probeer opnieuw in te loggen via de provider.",
+        "invalid": "Deze link is ongeldig.",
+        "inactive": "Uw account is niet langer actief.",
+        "collision": "Dat provideraccount is al elders gekoppeld.",
+        "generic": "We konden uw account niet koppelen. Probeer het opnieuw."
+      }
     },
     "register": {
       "title": "Maak uw account aan",
@@ -205,6 +228,8 @@
     "endsOn": "Eindigt op",
     "billedMonthly": "Maandelijks gefactureerd",
     "billedYearly": "Jaarlijks gefactureerd",
+    "billedInLocalMonthly": "≈ {amount} — gefactureerd in {currency}",
+    "billedInLocalYearly": "≈ {amount} — {monthly}/maand, jaarlijks gefactureerd in {currency}",
     "seat": "stoel",
     "seats": "stoelen",
     "products": "Creditpakketten",
@@ -252,9 +277,11 @@
     "profile": "Profiel",
     "fullName": "Volledige naam",
     "email": "E-mail",
+    "emailNotVerified": "Je e-mailadres is nog niet geverifieerd.",
+    "resendVerification": "Verificatie-e-mail opnieuw verzenden",
+    "verificationEmailSent": "Verificatie-e-mail verzonden. Controleer je inbox.",
     "preferredLocale": "Taal",
     "preferredCurrency": "Valuta",
-    "currencyLockedNote": "Uw factureringsvaluta wordt ingesteld bij uw eerste abonnement en kan daarna niet meer worden gewijzigd.",
     "phonePrefix": "Landcode",
     "phone": "Telefoon",
     "phoneNumberRequired": "Voer een telefoonnummer in",
@@ -373,6 +400,7 @@
     "password_too_short": "Het wachtwoord moet minimaal 10 tekens lang zijn",
     "profile_load_failed": "Profiel kon niet worden geladen",
     "session_expired": "Sessie verlopen. Log opnieuw in.",
+    "captcha_failed": "Beveiligingsverificatie mislukt. Probeer het opnieuw.",
     "unknown_error": "Er is iets misgegaan. Probeer het opnieuw.",
     "unsupported_image": "Niet-ondersteund afbeeldingstype",
     "message_required": "Voeg een bericht toe.",

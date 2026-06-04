@@ -1,19 +1,50 @@
-import { getTranslations } from "next-intl/server";
 import type { Subscription } from "@/domain/models/Subscription";
 import { Link } from "@/lib/i18n/navigation";
 import { translatePlanName } from "@/lib/i18n/planTranslation";
+import { formatLongDate } from "@/lib/formatLongDate";
 import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
 import { SubscriptionCard } from "@/presentation/components/organisms/SubscriptionCard";
+import {
+  releaseScheduledChange,
+  resumeSubscription,
+} from "@/app/actions/billing";
 import { BillingPortalButton } from "./BillingPortalButton";
+import { BillingActionButton } from "./BillingActionButton";
 import { CancelRenewalButton } from "./CancelRenewalButton";
-import { ReleaseScheduledChangeButton } from "./ReleaseScheduledChangeButton";
-import { ResumeSubscriptionButton } from "./ResumeSubscriptionButton";
 
-function formatLongDate(date: Date, locale: string): string {
-  return !Number.isNaN(date.getTime())
-    ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(date)
-    : "";
-}
+/**
+ * Narrow union of `billing.*` keys this card reads. A typed next-intl
+ * translator (which accepts the full namespace key union) is assignable
+ * here via parameter contravariance — without sacrificing the typo
+ * detection a `(key: string) => string` alias would erase.
+ */
+type TBilling = (
+  key:
+    | "endsOn"
+    | "cancelsOn"
+    | "renewsOn"
+    | "portal"
+    | "billedYearly"
+    | "billedMonthly"
+    | "seatsOfMax"
+    | "cancelRenewal"
+    | "cancelRenewalTitle"
+    | "cancelRenewalTeamTitle"
+    | "cancelRenewalBody"
+    | "cancelRenewalTeamBody"
+    | "cancelRenewalTeam"
+    | "cancelRenewalKeep"
+    | "currentTeamPlan"
+    | "currentPersonalPlan"
+    | "scheduledCancelHeadline"
+    | "scheduledCancelBody"
+    | "resumeSubscription"
+    | "scheduledDowngradeHeadline"
+    | "scheduledDowngradeBody"
+    | "keepCurrentPlan"
+    | "managedBy",
+  values?: Record<string, string | number>,
+) => string;
 
 interface CurrentSubscriptionCardProps {
   subscription: Subscription;
@@ -21,6 +52,17 @@ interface CurrentSubscriptionCardProps {
   planName: string;
   canManage: boolean;
   teamOwnerName: string | null;
+  /**
+   * `getTranslations("billing")` from the parent page. Threaded as a prop
+   * (instead of re-resolved per card via `getTranslations`) so each card
+   * render skips an extra `Promise.all` wait — the parent has already
+   * awaited the same translator.
+   */
+  tBilling: TBilling;
+  /** `getTranslations("plans")` from the parent page. Only used via
+   * `translatePlanName`, which accepts the codebase-standard
+   * `(key: never) => string` shape. */
+  tPlans: (key: never) => string;
   /**
    * Slug of the team subscription's org. When set on a team card, the seats
    * row deep-links to `/org/{slug}` so the billing member can jump straight
@@ -50,21 +92,18 @@ interface CurrentSubscriptionCardProps {
  * full-width banners that own their respective primary action ("Resume" /
  * "Keep current plan") plus the cancel-renewal action when relevant.
  */
-export async function CurrentSubscriptionCard({
+export function CurrentSubscriptionCard({
   subscription,
   locale,
   planName,
   canManage,
   teamOwnerName,
+  tBilling: t,
+  tPlans,
   teamOrgSlug,
   isConcurrent = false,
   upgradeCtas = [],
 }: CurrentSubscriptionCardProps) {
-  const [t, tPlans] = await Promise.all([
-    getTranslations("billing"),
-    getTranslations("plans"),
-  ]);
-
   const plan = subscription.plan;
   const isTeam = plan.context === "team";
   const isFullyCanceled = subscription.status === "canceled";
@@ -140,25 +179,20 @@ export async function CurrentSubscriptionCard({
 
   const cancelRenewalAction =
     canManage && !isScheduledToCancel && !isFullyCanceled ? (
-      isTeam ? (
-        <CancelRenewalButton
-          label={t("cancelRenewal")}
-          confirmTitle={t("cancelRenewalTeamTitle")}
-          confirmBody={t("cancelRenewalTeamBody", { date: periodEndDisplay })}
-          confirmAction={t("cancelRenewalTeam")}
-          confirmDismiss={t("cancelRenewalKeep")}
-          context={buttonContext}
-        />
-      ) : (
-        <CancelRenewalButton
-          label={t("cancelRenewal")}
-          confirmTitle={t("cancelRenewalTitle")}
-          confirmBody={t("cancelRenewalBody", { date: periodEndDisplay })}
-          confirmAction={t("cancelRenewal")}
-          confirmDismiss={t("cancelRenewalKeep")}
-          context={buttonContext}
-        />
-      )
+      <CancelRenewalButton
+        label={t("cancelRenewal")}
+        confirmTitle={
+          isTeam ? t("cancelRenewalTeamTitle") : t("cancelRenewalTitle")
+        }
+        confirmBody={
+          isTeam
+            ? t("cancelRenewalTeamBody", { date: periodEndDisplay })
+            : t("cancelRenewalBody", { date: periodEndDisplay })
+        }
+        confirmAction={isTeam ? t("cancelRenewalTeam") : t("cancelRenewal")}
+        confirmDismiss={t("cancelRenewalKeep")}
+        context={buttonContext}
+      />
     ) : null;
 
   const eyebrowLabel = isTeam ? t("currentTeamPlan") : t("currentPersonalPlan");
@@ -223,9 +257,12 @@ export async function CurrentSubscriptionCard({
             </p>
             <p className="text-xs">{t("scheduledCancelBody")}</p>
           </div>
-          <ResumeSubscriptionButton context={buttonContext}>
+          <BillingActionButton
+            action={resumeSubscription}
+            context={buttonContext}
+          >
             {t("resumeSubscription")}
-          </ResumeSubscriptionButton>
+          </BillingActionButton>
         </div>
       </AlertBanner>
     );
@@ -246,9 +283,12 @@ export async function CurrentSubscriptionCard({
           </div>
           <div className="flex flex-shrink-0 items-center gap-3">
             {cancelRenewalAction}
-            <ReleaseScheduledChangeButton context={buttonContext}>
+            <BillingActionButton
+              action={releaseScheduledChange}
+              context={buttonContext}
+            >
               {t("keepCurrentPlan", { plan: planName })}
-            </ReleaseScheduledChangeButton>
+            </BillingActionButton>
           </div>
         </div>
       </AlertBanner>

@@ -29,8 +29,6 @@ const { DjangoApiOrgMemberGateway } =
   await import("@/infrastructure/api/DjangoApiOrgMemberGateway");
 const { DjangoApiInvitationGateway } =
   await import("@/infrastructure/api/DjangoApiInvitationGateway");
-const { DjangoApiReferenceGateway } =
-  await import("@/infrastructure/api/DjangoApiReferenceGateway");
 
 // Each row proves both "correct class instance" and "singleton identity"
 // (second import returns the same object reference) — if the registry ever
@@ -48,7 +46,6 @@ const GATEWAYS = [
   ["orgGateway", registry.orgGateway, DjangoApiOrgGateway],
   ["orgMemberGateway", registry.orgMemberGateway, DjangoApiOrgMemberGateway],
   ["invitationGateway", registry.invitationGateway, DjangoApiInvitationGateway],
-  ["referenceGateway", registry.referenceGateway, DjangoApiReferenceGateway],
 ] as const;
 
 describe("registry", () => {

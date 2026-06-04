@@ -1,9 +1,8 @@
 import { z } from "zod";
 import type { CreditBalance } from "@/domain/models/CreditBalance";
-import type { Invitation } from "@/domain/models/Invitation";
+import type { Invitation, PublicInvitation } from "@/domain/models/Invitation";
 import type { Org } from "@/domain/models/Org";
 import type { OrgMember } from "@/domain/models/OrgMember";
-import type { PhonePrefix } from "@/domain/models/PhonePrefix";
 import {
   PLAN_TIER_BASIC,
   PLAN_TIER_FREE,
@@ -22,6 +21,8 @@ const priceSchema = z.object({
   amount: z.number(),
   displayAmount: z.number(),
   currency: z.string(),
+  localDisplayAmount: z.number().nullable(),
+  localCurrency: nullableString,
 });
 
 export const UserSchema = z.object({
@@ -54,7 +55,7 @@ export const OrgSchema = z.object({
 
 export const OrgMemberSchema = z.object({
   id: z.string(),
-  org: z.string(),
+  org: OrgSchema,
   user: z.object({
     id: z.string(),
     email: z.string(),
@@ -66,23 +67,43 @@ export const OrgMemberSchema = z.object({
   joinedAt: z.string(),
 }) satisfies z.ZodType<OrgMember>;
 
+const invitedBySchema = z.object({
+  id: z.string(),
+  fullName: z.string(),
+});
+
+const invitationStatusEnum = z.enum([
+  "pending",
+  "accepted",
+  "expired",
+  "cancelled",
+  "declined",
+]);
+
+const invitationRoleEnum = z.enum(["admin", "member"]);
+
 export const InvitationSchema = z.object({
   id: z.string(),
-  org: z.string(),
-  orgName: z.string(),
+  org: OrgSchema,
   email: z.string(),
-  role: z.enum(["admin", "member"]),
-  status: z.enum(["pending", "accepted", "expired", "cancelled", "declined"]),
-  invitedBy: z.object({
-    id: z.string(),
-    email: z.string(),
-    fullName: z.string(),
-  }),
+  role: invitationRoleEnum,
+  status: invitationStatusEnum,
+  invitedBy: invitedBySchema,
   createdAt: z.string(),
   expiresAt: z.string(),
 }) satisfies z.ZodType<Invitation>;
 
-const TIER_STRING_TO_NUMBER: Record<string, PlanTier> = {
+export const PublicInvitationSchema = z.object({
+  id: z.string(),
+  org: OrgSchema,
+  role: invitationRoleEnum,
+  status: invitationStatusEnum,
+  invitedBy: invitedBySchema,
+  createdAt: z.string(),
+  expiresAt: z.string(),
+}) satisfies z.ZodType<PublicInvitation>;
+
+const TIER_STRING_TO_NUMBER: Readonly<Partial<Record<string, PlanTier>>> = {
   free: PLAN_TIER_FREE,
   basic: PLAN_TIER_BASIC,
   pro: PLAN_TIER_PRO,
@@ -147,11 +168,6 @@ export const SubscriptionListResponseSchema = z.object({
   results: z.array(SubscriptionSchema),
 });
 
-export const PhonePrefixSchema = z.object({
-  prefix: z.string(),
-  label: z.string(),
-}) satisfies z.ZodType<PhonePrefix>;
-
 export const CreditBalanceSchema = z.object({
   balance: z.number().int().nonnegative(),
   scope: z.enum(["user", "org"]),
@@ -174,4 +190,41 @@ export const CreditBalanceListResponseSchema = z.object({
  */
 export const CheckoutSessionResponseSchema = z.object({
   url: z.string().url(),
+});
+
+/**
+ * Token envelope returned by `/auth/login/`, `/auth/register/`,
+ * `/auth/reset-password/`, `/auth/change-password/`, and `/auth/verify-email/`.
+ * Validates the snake_case payload at the boundary so a malformed response
+ * can never propagate `undefined` through `setAuthCookies(...)` and write the
+ * literal string `"undefined"` into the access/refresh cookies.
+ */
+export const TokenResponseSchema = z.object({
+  access_token: z.string().min(1),
+  refresh_token: z.string().min(1),
+  token_type: z.string().optional(),
+});
+
+export type TokenResponse = z.infer<typeof TokenResponseSchema>;
+
+/**
+ * Token envelope returned by `/auth/oauth/exchange/` and
+ * `/auth/oauth/confirm-link/`. Adds the optional `expires_in` field used by
+ * `setAuthCookies` to size the access-token cookie.
+ */
+export const OAuthExchangeResponseSchema = TokenResponseSchema.extend({
+  expires_in: z.number().int().positive().optional(),
+});
+
+export type OAuthExchangeResponse = z.infer<typeof OAuthExchangeResponseSchema>;
+
+/**
+ * Generic DRF paginated envelope `{ results: [...] }`. Use to wrap any list
+ * endpoint where each row is parsed by an item schema. Items are validated
+ * as `unknown` here and parsed by the caller's per-row parser, so a single
+ * factory covers every paginated gateway without coupling to a specific row
+ * shape.
+ */
+export const PaginatedResultsSchema = z.object({
+  results: z.array(z.unknown()),
 });

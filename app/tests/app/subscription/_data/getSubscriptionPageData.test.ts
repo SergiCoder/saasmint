@@ -19,15 +19,15 @@ vi.mock("@/infrastructure/registry", () => ({
   },
 }));
 
-vi.mock("@/app/[locale]/(app)/_data/getSubscriptions", () => ({
+vi.mock("@/app/[locale]/_data/getSubscriptions", () => ({
   getSubscriptions: (...args: unknown[]) => mockGetSubscriptions(...args),
 }));
 
-vi.mock("@/app/[locale]/(app)/_data/getUserOrgs", () => ({
+vi.mock("@/app/[locale]/_data/getUserOrgs", () => ({
   getUserOrgs: (...args: unknown[]) => mockGetUserOrgs(...args),
 }));
 
-vi.mock("@/app/[locale]/(app)/_data/getOrgMembers", () => ({
+vi.mock("@/app/[locale]/_data/getOrgMembers", () => ({
   getOrgMembers: (...args: unknown[]) => mockGetOrgMembers(...args),
 }));
 
@@ -198,14 +198,14 @@ describe("getSubscriptionPageData", () => {
     mockListProducts.mockResolvedValue([]);
     mockGetUserOrgs.mockResolvedValue([]);
     mockCanManageBilling.mockImplementation(
-      async (_user, sub) => sub.id === "sub_p",
+      async (_userId, sub) => sub.id === "sub_p",
     );
 
     const user = makeUser();
     const data = await getSubscriptionPageData(user);
 
-    expect(mockCanManageBilling).toHaveBeenCalledWith(user, personalSub);
-    expect(mockCanManageBilling).toHaveBeenCalledWith(user, teamSub);
+    expect(mockCanManageBilling).toHaveBeenCalledWith(user.id, personalSub);
+    expect(mockCanManageBilling).toHaveBeenCalledWith(user.id, teamSub);
     expect(data.canManageById).toEqual({ sub_p: true, sub_t: false });
     // Stable order: personal first, then team.
     expect(data.subscriptions.map((s) => s.id)).toEqual(["sub_p", "sub_t"]);

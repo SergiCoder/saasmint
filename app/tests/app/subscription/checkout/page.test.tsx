@@ -21,7 +21,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 const mockGetCurrentUser = vi.fn<() => Promise<User>>();
-vi.mock("@/app/[locale]/(app)/_data/getCurrentUser", () => ({
+vi.mock("@/app/[locale]/_data/getCurrentUser", () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
 
@@ -92,6 +92,8 @@ function makePersonalPlan(overrides: Partial<Plan> = {}): Plan {
       amount: 1900,
       displayAmount: 19,
       currency: "usd",
+      localDisplayAmount: null,
+      localCurrency: null,
     },
     ...overrides,
   };
@@ -116,16 +118,19 @@ describe("CheckoutPage", () => {
 
   it("redirects to /subscription when the plan query param is missing", async () => {
     await expect(renderPage({})).rejects.toThrow(/NEXT_REDIRECT/);
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
-    // Don't hit the API for plans until we know the plan id is present.
-    expect(mockListPlans).not.toHaveBeenCalled();
+    expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
+    // `getPlans` is hoisted into the page's initial `Promise.all` so it
+    // overlaps the user fetch and the translation loads. The catalog call
+    // is therefore expected on this code path even though the redirect
+    // discards the result — the wasted RTT only fires when the plan param
+    // is missing (a degenerate case), not on the happy path.
   });
 
   it("redirects to /subscription when no plan matches the given planPriceId", async () => {
     await expect(renderPage({ plan: "price_does_not_exist" })).rejects.toThrow(
       /NEXT_REDIRECT/,
     );
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
   });
 
   it("redirects to /subscription when the matched plan has team context", async () => {
@@ -137,6 +142,8 @@ describe("CheckoutPage", () => {
         amount: 4900,
         displayAmount: 49,
         currency: "usd",
+        localDisplayAmount: null,
+        localCurrency: null,
       },
     });
     mockListPlans.mockResolvedValue([team]);
@@ -144,7 +151,7 @@ describe("CheckoutPage", () => {
     await expect(renderPage({ plan: "price_team_pro_month" })).rejects.toThrow(
       /NEXT_REDIRECT/,
     );
-    expect(mockRedirect).toHaveBeenCalledWith("/subscription");
+    expect(mockRedirect).toHaveBeenCalledWith("/en/subscription");
   });
 
   it("does NOT create a Stripe session on GET — no subscription gateway is imported", async () => {
