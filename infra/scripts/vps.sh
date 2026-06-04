@@ -4,7 +4,7 @@
 set -euo pipefail
 
 COMPOSE_FILE="$(dirname "$0")/../docker-compose.vps.yml"
-ENV_FILE="/opt/saasmint/.env.dev"
+ENV_FILE="/opt/saasmint/.env.staging"
 
 cmd="${1:-help}"
 shift || true

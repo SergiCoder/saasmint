@@ -9,7 +9,7 @@ services:
         NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
         NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
     env_file:
-      - /opt/saasmint/.env.dev
+      - /opt/saasmint/.env.staging
     ports:
       - "127.0.0.1:3000:3000"
     restart: unless-stopped
