@@ -3,12 +3,19 @@ name: CI
 on:
   pull_request:
     branches: [main, dev]
+    paths: ["core/**", ".github/workflows/ci-core.yml"]
   push:
     branches: [main]
+    paths: ["core/**", ".github/workflows/ci-core.yml"]
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-core-${{ github.ref }}
   cancel-in-progress: true
+
+# Backend project is rooted at core/ (inner framework-agnostic lib at core/core/).
+defaults:
+  run:
+    working-directory: core
 
 jobs:
   # ─── Lint (Ruff) ──────────────────────────────────────────────────────────────
@@ -23,7 +30,7 @@ jobs:
           enable-cache: true
 
       - name: Lint core
-        working-directory: core
+        working-directory: core/core
         run: uv sync --extra dev && uv run ruff check .
 
       - name: Lint django
@@ -44,7 +51,7 @@ jobs:
         run: uv sync --extra dev --no-install-project && uv run mypy .
 
       - name: Typecheck core
-        working-directory: core
+        working-directory: core/core
         run: uv sync --extra dev && uv run mypy .
 
   # ─── Test (core) ───────────────────────────────────────────────────────────────
@@ -59,7 +66,7 @@ jobs:
           enable-cache: true
 
       - name: Run tests
-        working-directory: core
+        working-directory: core/core
         run: uv sync --extra dev && uv run pytest -v
 
   # ─── Test (django) ─────────────────────────────────────────────────────────────
@@ -127,7 +134,7 @@ jobs:
             python3 -c "
           import json, subprocess, sys
           direct = set(subprocess.check_output(
-              [sys.executable, '$GITHUB_WORKSPACE/scripts/parse_direct_deps.py', 'pyproject.toml'],
+              [sys.executable, '$GITHUB_WORKSPACE/core/scripts/parse_direct_deps.py', 'pyproject.toml'],
               text=True,
           ).splitlines())
           data = json.load(open('/tmp/audit-raw-${pkg}.json'))
@@ -163,7 +170,7 @@ jobs:
               continue
             fi
 
-            direct_deps=$(python3 "$GITHUB_WORKSPACE/scripts/parse_direct_deps.py" pyproject.toml)
+            direct_deps=$(python3 "$GITHUB_WORKSPACE/core/scripts/parse_direct_deps.py" pyproject.toml)
 
             extract() {
               awk '/^\[\[package\]\]/{p=1;name=""} p && /^name = /{name=$3} p && /^version = / && name{print name "=" $3; p=0}' "$1" | tr -d '"' | sort
