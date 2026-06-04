@@ -7,12 +7,20 @@ Version numbers track the SaaSmint Core backend release they align with, so
 some minor versions are skipped (e.g. 0.5.0 → 0.7.0 → 0.11.0). Each entry links
 the pull request that introduced it.
 
-## [Unreleased]
+## [0.12.0] - 2026-06-04
 
-Merged into `dev`, not yet released to `main` (targets 0.11.1).
+Paired with `saasmint-core` v0.12.0. Minor bump: new features plus breaking
+backend API contract changes the frontend now consumes (the `owner-transfers`
+rename and the `204`/`201` status-code changes). Supersedes the abandoned
+`0.11.1` line, whose RC tags never satisfied lockstep.
 
 ### Added
 
+- reCAPTCHA v3 token acquisition on the signup, forgot-password, and
+  resend-verification flows (`captcha_token`), dormant when
+  `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` is unset
+  ([#66](https://github.com/SergiCoder/saasmint-app/pull/66),
+  [#67](https://github.com/SergiCoder/saasmint-app/pull/67)).
 - OAuth cross-provider account-linking confirmation flow, with a manual-click
   confirmation page that avoids burning the single-use token on email
   pre-fetch ([#57](https://github.com/SergiCoder/saasmint-app/pull/57)).
@@ -28,6 +36,13 @@ Merged into `dev`, not yet released to `main` (targets 0.11.1).
   ([#59](https://github.com/SergiCoder/saasmint-app/pull/59)).
 - Addressed high- and medium-severity findings from the codebase audit
   ([#60](https://github.com/SergiCoder/saasmint-app/pull/60)).
+- Migrated the Next.js request interceptor from `middleware` to the `proxy`
+  convention (Next.js 16)
+  ([#66](https://github.com/SergiCoder/saasmint-app/pull/66),
+  [#67](https://github.com/SergiCoder/saasmint-app/pull/67)).
+- Bumped in-range dependencies (held ESLint at 9.x), updated Tailwind to
+  4.3.0, and bumped the pinned Stripe API version
+  ([#65](https://github.com/SergiCoder/saasmint-app/pull/65)).
 
 ### Fixed
 
