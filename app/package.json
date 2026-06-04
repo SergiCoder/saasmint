@@ -9,7 +9,7 @@
   },
   "packageManager": "pnpm@10.32.1",
   "scripts": {
-    "dev": "NODE_EXTRA_CA_CERTS=../saasmint-core/infra/certs/rootCA.pem NODE_OPTIONS='--no-warnings' next dev --turbo --experimental-https --experimental-https-key ../saasmint-core/infra/certs/localhost-key.pem --experimental-https-cert ../saasmint-core/infra/certs/localhost.pem --experimental-https-ca ../saasmint-core/infra/certs/rootCA.pem",
+    "dev": "NODE_EXTRA_CA_CERTS=../infra/certs/rootCA.pem NODE_OPTIONS='--no-warnings' dotenv -e ../.env.local -- next dev --turbo --experimental-https --experimental-https-key ../infra/certs/localhost-key.pem --experimental-https-cert ../infra/certs/localhost.pem --experimental-https-ca ../infra/certs/rootCA.pem",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -46,6 +46,7 @@
     "@vitejs/plugin-react": "^6.0.2",
     "@vitest/coverage-v8": "^4.1.8",
     "autoprefixer": "^10.5.0",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.7",
     "jsdom": "^29.1.1",
