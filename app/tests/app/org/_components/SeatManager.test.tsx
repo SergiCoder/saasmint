@@ -1,0 +1,112 @@
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+
+const mockUpdateSeats = vi.fn();
+vi.mock("@/app/actions/billing", () => ({
+  updateSeats: (...args: unknown[]) => mockUpdateSeats(...args),
+}));
+
+import { SeatManager } from "@/app/[locale]/(app)/org/[slug]/_components/SeatManager";
+
+beforeEach(() => {
+  mockUpdateSeats.mockReset();
+});
+
+describe("SeatManager", () => {
+  it("renders the current seat count", () => {
+    render(<SeatManager currentSeats={5} usedSeats={3} />);
+    expect(screen.getByText("5")).toBeInTheDocument();
+  });
+
+  it("disables the decrease button when seats equal used seats", () => {
+    render(<SeatManager currentSeats={3} usedSeats={3} />);
+    // The remove seat button uses the translation key as label
+    expect(screen.getByLabelText("removeSeat")).toBeDisabled();
+  });
+
+  it("enables the decrease button when seats exceed used seats", () => {
+    render(<SeatManager currentSeats={5} usedSeats={3} />);
+    expect(screen.getByLabelText("removeSeat")).not.toBeDisabled();
+  });
+
+  it("disables the update button when seat count has not changed", () => {
+    render(<SeatManager currentSeats={5} usedSeats={3} />);
+    expect(screen.getByRole("button", { name: "updateSeats" })).toBeDisabled();
+  });
+
+  it("enables the update button after incrementing", async () => {
+    const user = userEvent.setup();
+    render(<SeatManager currentSeats={5} usedSeats={3} />);
+
+    await user.click(screen.getByLabelText("addSeat"));
+
+    expect(screen.getByText("6")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "updateSeats" }),
+    ).not.toBeDisabled();
+  });
+
+  it("enables the update button after decrementing", async () => {
+    const user = userEvent.setup();
+    render(<SeatManager currentSeats={5} usedSeats={3} />);
+
+    await user.click(screen.getByLabelText("removeSeat"));
+
+    expect(screen.getByText("4")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "updateSeats" }),
+    ).not.toBeDisabled();
+  });
+
+  it("submits directly when increasing seats", async () => {
+    mockUpdateSeats.mockResolvedValueOnce({ ok: true });
+    const user = userEvent.setup();
+    render(<SeatManager currentSeats={5} usedSeats={3} />);
+
+    await user.click(screen.getByLabelText("addSeat"));
+    await user.click(screen.getByRole("button", { name: "updateSeats" }));
+
+    await waitFor(() => {
+      expect(mockUpdateSeats).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("pins context=team in the submitted FormData so concurrent billers don't hit the personal sub", async () => {
+    mockUpdateSeats.mockResolvedValueOnce({ ok: true });
+    const user = userEvent.setup();
+    render(<SeatManager currentSeats={5} usedSeats={3} />);
+
+    await user.click(screen.getByLabelText("addSeat"));
+    await user.click(screen.getByRole("button", { name: "updateSeats" }));
+
+    await waitFor(() => {
+      expect(mockUpdateSeats).toHaveBeenCalledTimes(1);
+    });
+
+    // useActionState invokes the action with (prevState, formData).
+    const formData = mockUpdateSeats.mock.calls[0]![1] as FormData;
+    expect(formData.get("context")).toBe("team");
+    expect(formData.get("seatLimit")).toBe("6");
+  });
+
+  it("opens confirm dialog when decreasing seats", async () => {
+    const user = userEvent.setup();
+    render(<SeatManager currentSeats={5} usedSeats={3} />);
+
+    await user.click(screen.getByLabelText("removeSeat"));
+    await user.click(screen.getByRole("button", { name: "updateSeats" }));
+
+    // Confirm dialog should appear with translation keys
+    expect(screen.getByText("removeSeatConfirmTitle")).toBeInTheDocument();
+    expect(screen.getByText("removeSeatConfirmBody")).toBeInTheDocument();
+  });
+
+  it("never disables the increase button on a static cap — backend enforces 1–10000", () => {
+    // No client-side hard-coded MAX_SEATS constant. The `+` button stays
+    // enabled regardless of current seat count; the backend rejects with
+    // a stable error code if the user submits past the real cap.
+    render(<SeatManager currentSeats={9999} usedSeats={50} />);
+    expect(screen.getByLabelText("addSeat")).not.toBeDisabled();
+  });
+});

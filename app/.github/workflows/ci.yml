@@ -1,0 +1,157 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, dev]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─── Lint ─────────────────────────────────────────────────────────────────
+  lint:
+    name: Lint (ESLint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+
+  # ─── Typecheck ────────────────────────────────────────────────────────────
+  typecheck:
+    name: Typecheck (tsc)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+
+  # ─── Test ─────────────────────────────────────────────────────────────────
+  test:
+    name: Test (Vitest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+
+  # ─── Build ────────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_placeholder
+      NEXT_PUBLIC_API_URL: https://localhost:8443
+      NEXT_PUBLIC_APP_URL: https://localhost:3000
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+  # ─── Audit & dependency freshness ───────────────────────────────────────
+  audit:
+    name: Audit & deps
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Vulnerability audit
+        run: pnpm audit --json > /tmp/audit-raw.json || true
+
+      - name: Outdated dependencies
+        run: pnpm outdated --format json 2>/dev/null > /tmp/outdated-raw.json || true
+
+      - name: Build and post comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          node -e "
+          const fs = require('fs');
+
+          // ── Vulnerability audit section ──
+          // pnpm audit --json uses the npm v1 format: { advisories: { id: { module_name, severity, ... } } }
+          let auditSection = '';
+          try {
+            const data = JSON.parse(fs.readFileSync('/tmp/audit-raw.json', 'utf8'));
+            const rows = Object.values(data.advisories || {})
+              .filter(v => v.severity !== 'info')
+              .map(v => {
+                const fix = v.patched_versions && v.patched_versions !== '<0.0.0' ? v.patched_versions : 'None';
+                return \`| \${v.module_name} | \${v.severity} | \${v.vulnerable_versions} | \${fix} |\`;
+              });
+            if (rows.length) {
+              auditSection = '## ⚠️ Vulnerability Audit\n\n'
+                + '| Package | Severity | Vulnerable range | Fix |\n|---|---|---|---|\n'
+                + rows.join('\n') + '\n\n';
+            }
+          } catch {}
+          if (!auditSection) {
+            auditSection = '## ✅ Vulnerability Audit\n\nNo known vulnerabilities found.\n\n';
+          }
+
+          // ── Outdated dependencies section ──
+          // Packages intentionally held below latest due to ecosystem compatibility:
+          //   eslint - pinned at ^9; @typescript-eslint 8.x (used by eslint-config-next)
+          //            does not yet support eslint 10 (scopeManager API break)
+          const outdatedIgnore = ['eslint'];
+          let depsSection = '';
+          try {
+            const data = JSON.parse(fs.readFileSync('/tmp/outdated-raw.json', 'utf8'));
+            const rows = Object.entries(data)
+              .filter(([name, v]) => !outdatedIgnore.includes(name) && v.latest && v.current !== v.latest)
+              .map(([name, v]) => \`| \${name} | \${v.current} | \${v.latest} | \${v.dependencyType} |\`);
+            if (rows.length) {
+              depsSection = '## Outdated Dependencies\n\n'
+                + '| Package | Current | Latest | Type |\n|---|---|---|---|\n'
+                + rows.join('\n') + '\n\n'
+                + '> Run \`pnpm update\` to update.\n';
+            }
+          } catch {}
+          if (!depsSection) {
+            depsSection = '## ✅ Dependencies\n\nAll dependencies are up to date.\n';
+          }
+
+          fs.writeFileSync('/tmp/pr-comment.txt', auditSection + depsSection);
+          "
+
+          # Delete previous bot comment if present
+          gh api "repos/${GH_REPO}/issues/${PR_NUMBER}/comments" \
+            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("Vulnerability Audit") or contains("Outdated Dependencies") or contains("Dependencies") or contains("Dependency Report"))) | .id' \
+            | xargs -I{} gh api -X DELETE "repos/${GH_REPO}/issues/comments/{}" 2>/dev/null || true
+
+          gh pr comment "$PR_NUMBER" --body-file /tmp/pr-comment.txt
