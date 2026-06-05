@@ -33,7 +33,7 @@
 
 - [x] 5.1 `infra/docker-compose.vps.yml`: `env_file` `.env.dev` → `.env.staging` (both services) and update `:?... must be set in .env.dev` messages
 - [x] 5.2 `infra/scripts/vps.sh`: `ENV_FILE` → `/opt/saasmint/.env.staging`
-- [ ] 5.3 Rename workflow `deploy-dev.yml` → `deploy-staging.yml` and re-point its `source /opt/saasmint/.env.dev`
+- [x] 5.3 Rename workflow `deploy-dev.yml` → `deploy-staging.yml` and re-point its `source /opt/saasmint/.env.dev`
 - [ ] 5.4 **Manual ops step on the VPS:** `mv /opt/saasmint/.env.dev /opt/saasmint/.env.staging` — do this BEFORE the first post-merge deploy
 - [x] 5.5 Grep the repo for any remaining `.env.dev` / `deploy-dev` references; expect zero
 
