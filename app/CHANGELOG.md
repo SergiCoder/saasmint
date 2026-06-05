@@ -7,6 +7,39 @@ Version numbers track the SaaSmint Core backend release they align with, so
 some minor versions are skipped (e.g. 0.5.0 → 0.7.0 → 0.11.0). Each entry links
 the pull request that introduced it.
 
+## [0.13.0] - 2026-06-05
+
+Monorepo release — Django (`saasmint-core`) and Next.js (`saasmint-app`) merged
+into a single repository. No application logic changes.
+
+### Added
+
+- Root VS Code multi-root workspace (`saasmint.code-workspace`) with shared
+  launch configs, tasks, and per-package settings for one-shot local debugging.
+- Root `.vscode/launch.json` + `tasks.json` for `code .` (non-workspace) workflow.
+- Root `.env.example` covering every var from both old templates, with boundary
+  vars documented once.
+
+### Changed
+
+- Deployed environment renamed `dev` → `staging` across deploy workflow,
+  `docker-compose.vps.yml`, and VPS scripts.
+- Shared infra (Caddyfile, certs, entrypoints) relocated from `core/infra/` to
+  root `infra/`.
+
+### Fixed
+
+- Removed hardcoded `saasmint` / `postgres` fallback credentials from
+  `docker-compose.yml` and `.env.example`.
+- CI postgres service switched to `POSTGRES_HOST_AUTH_METHOD: trust` to avoid
+  empty-password startup failure.
+
+### Maintenance
+
+- Path-filtered root CI workflows (`core/**` / `app/**`).
+- Deploy workflow moved to root `.github/workflows/deploy-staging.yml`.
+- `dotenv-cli` added to `app/devDependencies`; lockfile updated.
+
 ## [0.12.0] - 2026-06-04
 
 Paired with `saasmint-core` v0.12.0. Minor bump: new features plus breaking
