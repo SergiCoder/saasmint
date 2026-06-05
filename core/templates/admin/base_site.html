@@ -1,0 +1,88 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<div id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></div>
+{% if user.is_anonymous %}
+  {% include "admin/color_theme_toggle.html" %}
+{% endif %}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} env-{{ ENVIRONMENT }}{% endblock %}
+
+{% block extrastyle %}
+<style>
+  /* ── Environment banner (top strip across every admin page) ── */
+  body { padding-top: 22px; }
+  body::before {
+    content: "{{ ENVIRONMENT|upper }} ENVIRONMENT";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    color: #fff;
+    background: #555;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    z-index: 9999;
+  }
+  body.env-local::before { background: #2f7a3a; }
+  body.env-dev::before   { background: #b8860b; }
+  body.env-prod::before  { background: #b00020; }
+
+  /* ── Center admin layout to 960px like the dashboard ── */
+
+  /* Only center the dashboard index page — list/detail pages keep full width */
+  body.dashboard #container > *:not(#header) {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Header: full-width dark background via pseudo-element */
+  #header {
+    position: relative;
+    background: none;
+  }
+  #header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    background: var(--header-bg);
+    z-index: -1;
+  }
+</style>
+{% endblock %}
+
+{% block userlinks %}
+  {% if site_url %}
+    <a href="{{ site_url }}">View site</a> /
+  {% endif %}
+  {# swagger-ui / redoc / schema URL names are only registered when DEBUG or SCHEMA_PUBLIC #}
+  {# is true (see config/urls.py). The `schema_links_enabled` flag mirrors that exact gate #}
+  {# via config.context_processors.app_context, so links and routes can never disagree. #}
+  {% if schema_links_enabled %}
+  <a href="{% url 'swagger-ui' %}">Swagger</a> /
+  <a href="{% url 'redoc' %}">ReDoc</a> /
+  <a href="{% url 'schema' %}">Schema</a> /
+  {% endif %}
+  {% if user.has_usable_password %}
+    <a href="{% url 'admin:password_change' %}">Change password</a> /
+  {% endif %}
+  <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+    {% csrf_token %}
+    <button type="submit">Log out</button>
+  </form>
+  {% include "admin/color_theme_toggle.html" %}
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

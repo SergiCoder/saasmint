@@ -1,0 +1,70 @@
+import type { Product } from "@/domain/models/Product";
+import { formatCurrency } from "@/lib/formatCurrency";
+import { CARD_CLASS } from "@/lib/styles";
+
+export interface ProductsGridProps {
+  title: string;
+  products: Product[];
+  productNames?: Record<number, string>;
+  creditsLabel: string;
+  locale: string;
+  /**
+   * Pre-rendered local-currency disclosure keyed by product id. Only present
+   * when the user's preferred currency differs from the billed one — see
+   * `buildProductPriceSubLabels`.
+   */
+  priceSubLabels?: Record<string, string>;
+  renderCta: (product: Product) => React.ReactNode;
+  className?: string;
+}
+
+export function ProductsGrid({
+  title,
+  products,
+  productNames,
+  creditsLabel,
+  locale,
+  priceSubLabels,
+  renderCta,
+  className = "",
+}: ProductsGridProps) {
+  if (products.length === 0) return null;
+
+  return (
+    <div className={`space-y-4 ${className}`}>
+      <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {products.map((product) => {
+          const priceSubLabel = priceSubLabels?.[product.id];
+          return (
+            <div key={product.id} className={CARD_CLASS}>
+              <h3 className="font-semibold text-gray-900">
+                {productNames?.[product.credits] ?? product.name}
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                {product.credits} {creditsLabel}
+              </p>
+              {product.price && (
+                <>
+                  <p className="mt-2 text-2xl font-bold text-gray-900">
+                    {formatCurrency(
+                      product.price.displayAmount,
+                      product.price.currency,
+                      locale,
+                    )}
+                  </p>
+                  {priceSubLabel && (
+                    <p className="mt-1 text-sm text-gray-500">
+                      {priceSubLabel}
+                    </p>
+                  )}
+                  <div className="mt-4">{renderCta(product)}</div>
+                </>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

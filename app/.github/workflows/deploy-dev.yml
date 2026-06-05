@@ -1,0 +1,53 @@
+name: Deploy to dev VPS
+
+on:
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate ref_name
+        # The `v*` trigger glob is intentionally broad so any release tag
+        # auto-deploys, but GitHub tag names can contain characters that
+        # would be unsafe to splice into the shell script below. Reject
+        # anything that isn't a well-formed version tag before we ever
+        # hand it to the SSH session.
+        env:
+          REF: ${{ github.ref_name }}
+        run: |
+          if [[ ! "$REF" =~ ^v[A-Za-z0-9._-]+$ ]]; then
+            echo "Refusing to deploy: unexpected ref_name '$REF'"
+            exit 1
+          fi
+      - name: Deploy via SSH
+        # Pinned to a specific release tag instead of the floating @v1 major
+        # tag to mitigate supply-chain risk (a re-tag of v1 would otherwise
+        # silently run a new version of the action on the next deploy). Move
+        # to a full commit SHA once verified in the repo's release page.
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          port: ${{ secrets.VPS_PORT }}
+          username: deploy
+          key: ${{ secrets.VPS_SSH_KEY }}
+          envs: DEPLOY_REF
+          script: |
+            set -euo pipefail
+            cd /opt/saasmint/saasmint-app
+            git fetch --tags
+            git checkout "$DEPLOY_REF"
+            set -a && source /opt/saasmint/.env.dev && set +a
+            docker compose -f docker-compose.vps.yml build
+            docker compose -f docker-compose.vps.yml up -d
+            sleep 5
+            curl -sf http://127.0.0.1:3000/ || { echo "Health check failed"; docker compose -f docker-compose.vps.yml logs app --tail=50; exit 1; }
+            echo "Deploy successful: $DEPLOY_REF"
+        env:
+          DEPLOY_REF: ${{ github.ref_name }}

@@ -1,0 +1,111 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "saasmint-core"
+version = "0.13.0"
+description = "Django backend for SaasMint"
+requires-python = ">=3.12"
+dependencies = [
+    "saasmint-core-lib",
+    "django>=6.0.3",
+    "djangorestframework>=3.15",
+    "django-cors-headers>=4.7",
+    "psycopg[binary]>=3.3.3",
+    "celery[redis]>=5.6.3",
+    # redis 7.x is ahead of kombu 5.6.2's declared cap (<6.5), but the relevant
+    # kombu PR #2398 (merged 2026-02-04, milestone 5.7.0) already widened the
+    # allowed range to <7.1. Until kombu 5.7.0 ships, we force the upgrade via
+    # [tool.uv] override-dependencies below; drop the override once kombu 5.7+
+    # is on PyPI and this becomes a plain transitive pull.
+    "redis>=7,<8",
+    "pydantic-settings>=2.13.1",
+    "django-hijack>=3.7.6",     # user impersonation in admin
+    "whitenoise>=6.12.0",
+    "pyjwt[crypto]>=2.13.0",     # 2.13.0 fixes PYSEC-2026-{175,177,178,179}
+    "uvicorn[standard]>=0.42.0",
+    "pydantic[email]>=2.12.5",
+    "drf-spectacular>=0.28",
+    "resend>=2.0",
+    "httpx>=0.28",
+    "Pillow>=11.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-django>=4.8",
+    "mypy>=1.14",
+    "django-stubs>=6.0",
+    "djangorestframework-stubs>=3.15",
+    "ruff>=0.14",
+    "pip-audit>=2.7",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["config", "apps", "middleware"]
+
+[tool.uv.sources]
+saasmint-core-lib = { path = "core", editable = true }
+
+[tool.uv]
+# Force redis 7.x past kombu 5.6.2's <6.5 cap. Kombu PR #2398 (merged
+# 2026-02-04, milestone 5.7.0) widens the cap to <7.1; drop this override
+# once kombu 5.7+ is on PyPI.
+override-dependencies = [
+    "redis>=7,<8",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+testpaths = ["core/tests", "apps/users/tests", "apps/billing/tests", "apps/orgs/tests", "apps/dashboard/tests", "apps/admin_panel/tests", "apps/marketing/tests", "config/tests", "scripts/tests"]
+filterwarnings = [
+    "ignore:No directory at.*staticfiles:UserWarning",
+    "ignore:Error when trying to teardown test databases:pytest.PytestWarning",
+]
+addopts = "--cov-config=pyproject.toml -p no:cacheprovider"
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+strict = true
+exclude = [".venv", "node_modules", "__pycache__", "tests", "migrations", "apps/users/management", "apps/admin_panel", "apps/dashboard"]
+
+[[tool.mypy.overrides]]
+module = ["celery", "celery.*"]
+ignore_missing_imports = true
+follow_untyped_imports = false
+
+[tool.django-stubs]
+django_settings_module = "config.settings.test"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "ANN", "S", "B", "A", "C4", "RUF", "DJ"]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "ANN"]
+"apps/*/tests/**" = ["S101", "ANN", "S105"]
+"scripts/tests/**" = ["S101", "ANN"]
+"config/tests/**" = ["S101", "ANN"]
+"*/migrations/**" = ["ANN", "RUF", "E501"]
+
+[tool.coverage.run]
+omit = [
+    "config/settings/dev.py",
+    "config/settings/prod.py",
+    "config/asgi.py",
+    "config/wsgi.py",
+]
+
+[dependency-groups]
+dev = [
+    "pytest-anyio>=0.0.0",
+    "pytest-cov>=7.0.0",
+    "pytest-django>=4.12.0",
+]

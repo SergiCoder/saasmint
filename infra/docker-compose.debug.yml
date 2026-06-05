@@ -1,0 +1,8 @@
+services:
+  django:
+    entrypoint: ["/app/infra/entrypoint.debug.sh"]
+    ports:
+      - "8001:8001"
+      - "5678:5678"
+    environment:
+      DEBUGPY_WAIT_FOR_CLIENT: "0"
