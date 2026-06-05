@@ -1,0 +1,71 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Everything Local",
+      "dependsOn": ["backend: make dev", "frontend: pnpm dev"],
+      "dependsOrder": "parallel",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "backend: make dev",
+      "type": "shell",
+      "command": "make dev",
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "presentation": { "group": "saasmint-dev", "panel": "dedicated", "reveal": "always" },
+      "problemMatcher": {
+        "owner": "docker",
+        "pattern": [{ "regexp": ".", "file": 1, "location": 2, "message": 3 }],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*(Building|Creating|Recreating|Starting).*",
+          "endsPattern": ".*(Application startup complete|Uvicorn running on).*"
+        }
+      }
+    },
+    {
+      "label": "frontend: pnpm dev",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["dev"],
+      "options": { "cwd": "${workspaceFolder}/app" },
+      "isBackground": true,
+      "presentation": { "group": "saasmint-dev", "panel": "dedicated", "reveal": "always" },
+      "problemMatcher": {
+        "owner": "next",
+        "pattern": [{ "regexp": ".", "file": 1, "location": 2, "message": 3 }],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*(Starting|compiling).*",
+          "endsPattern": ".*Ready in.*"
+        }
+      }
+    },
+    {
+      "label": "backend: make dev (debugpy)",
+      "type": "shell",
+      "command": "make stop; docker compose -p saasmint-debug -f docker-compose.yml -f infra/docker-compose.debug.yml up --build",
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "presentation": { "group": "saasmint-dev", "panel": "dedicated", "reveal": "always" },
+      "problemMatcher": {
+        "owner": "docker",
+        "pattern": [{ "regexp": ".", "file": 1, "location": 2, "message": 3 }],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*(Building|Creating|Recreating|Starting).*",
+          "endsPattern": ".*(Waiting for client to attach|listening|Uvicorn running on|Application startup complete).*"
+        }
+      }
+    },
+    {
+      "label": "backend: stop",
+      "type": "shell",
+      "command": "make stop",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    }
+  ]
+}
