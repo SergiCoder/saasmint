@@ -1,0 +1,103 @@
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { AuthLayout } from "@/presentation/components/templates/AuthLayout";
+import { AlertBanner } from "@/presentation/components/molecules/AlertBanner";
+import { OAuthButtons } from "@/presentation/components/molecules/OAuthButtons";
+import { signIn } from "@/app/actions/auth";
+import { APP_NAME } from "@/lib/appVersion";
+import { AuthForm } from "../_components/AuthForm";
+import { ResendVerificationLink } from "../_components/ResendVerificationLink";
+import { buildPlanParams } from "../_lib/planParams";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "auth.login" });
+  return { title: t("pageTitle") };
+}
+
+const ERROR_KEYS: Record<string, string> = {
+  NO_SESSION: "errorNoSession",
+  email_not_verified: "errorEmailNotVerified",
+  token_expired: "errorTokenExpired",
+  account_deactivated: "errorAccountDeactivated",
+  BACKEND_REJECTED: "errorBackendRejected",
+  account_deleted: "accountDeleted",
+  oauth_error: "errorOAuth",
+  oauth_email_unverified_collision: "errorOAuthEmailUnverifiedCollision",
+};
+
+interface Props {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{
+    error?: string;
+    registered?: string;
+    invited?: string;
+    deleted?: string;
+    plan?: string;
+    context?: string;
+  }>;
+}
+
+export default async function LoginPage({ params, searchParams }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const [t, { error, registered, invited, deleted, plan, context }] =
+    await Promise.all([getTranslations("auth.login"), searchParams]);
+  const isTeam = context === "team";
+
+  const errorKey = error ? ERROR_KEYS[error] : undefined;
+  const planParams = buildPlanParams(plan, isTeam);
+  const signupHref = planParams.href("/signup");
+  const hiddenFields = planParams.hiddenFields;
+
+  return (
+    <AuthLayout appName={APP_NAME} title={t("title")}>
+      <OAuthButtons plan={plan} context={isTeam ? "team" : undefined} />
+      <AuthForm
+        action={signIn}
+        translationNamespace="auth.login"
+        passwordAutoComplete="current-password"
+        forgotPasswordHref="/forgot-password"
+        hiddenFields={hiddenFields}
+        footerLink={{
+          href: signupHref,
+          textKey: "noAccount",
+          linkKey: "register",
+        }}
+        serverAlerts={
+          <>
+            {errorKey && (
+              <AlertBanner
+                variant={error === "account_deleted" ? "success" : "error"}
+                className="mb-4"
+              >
+                {t(errorKey)}
+                {error === "email_not_verified" && <ResendVerificationLink />}
+              </AlertBanner>
+            )}
+            {invited && (
+              <AlertBanner variant="success" className="mb-4">
+                {t("invited")}
+              </AlertBanner>
+            )}
+            {registered && !invited && (
+              <AlertBanner variant="success" className="mb-4">
+                {t("registered")}
+              </AlertBanner>
+            )}
+            {deleted && (
+              <AlertBanner variant="success" className="mb-4">
+                {t("accountDeleted")}
+              </AlertBanner>
+            )}
+          </>
+        }
+      />
+    </AuthLayout>
+  );
+}

@@ -1,0 +1,179 @@
+{
+  "folders": [
+    { "name": "core", "path": "core" },
+    { "name": "app", "path": "app" },
+    { "name": "root", "path": "." }
+  ],
+  "settings": {
+    "files.exclude": { "core": true, "app": true },
+    "python.defaultInterpreterPath": "${workspaceFolder:core}/.venv/bin/python",
+    "python.terminal.activateEnvironment": false,
+    "search.exclude": {
+      "**/.next": true,
+      "**/.venv": true,
+      "**/node_modules": true,
+      "**/staticfiles": true
+    },
+    "files.associations": { "*.env.local": "dotenv", ".env.base": "dotenv" }
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "ms-python.debugpy",
+      "charliermarsh.ruff",
+      "ms-python.mypy-type-checker",
+      "batisteo.vscode-django",
+      "ms-azuretools.vscode-docker",
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "vitest.explorer",
+      "bradlc.vscode-tailwindcss",
+      "mikestead.dotenv"
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Run Everything Local",
+        "dependsOn": ["backend: make dev", "frontend: pnpm dev"],
+        "dependsOrder": "parallel",
+        "group": { "kind": "build", "isDefault": true },
+        "problemMatcher": []
+      },
+      {
+        "label": "backend: make dev",
+        "type": "shell",
+        "command": "make dev",
+        "options": { "cwd": "${workspaceFolder:root}" },
+        "isBackground": true,
+        "presentation": { "group": "saasmint-dev", "panel": "dedicated", "reveal": "always" },
+        "problemMatcher": {
+          "owner": "docker",
+          "pattern": [{ "regexp": ".", "file": 1, "location": 2, "message": 3 }],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": ".*(Building|Creating|Recreating|Starting).*",
+            "endsPattern": ".*(Application startup complete|Uvicorn running on).*"
+          }
+        }
+      },
+      {
+        "label": "frontend: pnpm dev",
+        "type": "shell",
+        "command": "pnpm",
+        "args": ["dev"],
+        "options": { "cwd": "${workspaceFolder:app}" },
+        "isBackground": true,
+        "presentation": { "group": "saasmint-dev", "panel": "dedicated", "reveal": "always" },
+        "problemMatcher": {
+          "owner": "next",
+          "pattern": [{ "regexp": ".", "file": 1, "location": 2, "message": 3 }],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": ".*(Starting|compiling).*",
+            "endsPattern": ".*Ready in.*"
+          }
+        }
+      },
+      {
+        "label": "backend: make dev (debugpy)",
+        "type": "shell",
+        "command": "make stop; docker compose -p saasmint-debug -f docker-compose.yml -f infra/docker-compose.debug.yml up --build",
+        "options": { "cwd": "${workspaceFolder:root}" },
+        "isBackground": true,
+        "presentation": { "group": "saasmint-dev", "panel": "dedicated", "reveal": "always" },
+        "problemMatcher": {
+          "owner": "docker",
+          "pattern": [{ "regexp": ".", "file": 1, "location": 2, "message": 3 }],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": ".*(Building|Creating|Recreating|Starting).*",
+            "endsPattern": ".*(Waiting for client to attach|listening|Uvicorn running on|Application startup complete).*"
+          }
+        }
+      },
+      {
+        "label": "backend: stop",
+        "type": "shell",
+        "command": "make stop",
+        "options": { "cwd": "${workspaceFolder:root}" },
+        "problemMatcher": []
+      }
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Frontend: next dev (--inspect)",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceFolder:app}",
+        "runtimeExecutable": "pnpm",
+        "runtimeArgs": [
+          "exec", "dotenv", "-e", "../.env.local", "--",
+          "next", "dev", "--turbo", "--experimental-https",
+          "--experimental-https-key", "../infra/certs/localhost-key.pem",
+          "--experimental-https-cert", "../infra/certs/localhost.pem",
+          "--experimental-https-ca", "../infra/certs/rootCA.pem"
+        ],
+        "env": {
+          "NODE_EXTRA_CA_CERTS": "../infra/certs/rootCA.pem",
+          "NODE_OPTIONS": "--no-warnings"
+        },
+        "autoAttachChildProcesses": true,
+        "console": "integratedTerminal",
+        "serverReadyAction": {
+          "pattern": "(https?://localhost:3000\\S*)",
+          "uriFormat": "%s",
+          "action": "debugWithChrome"
+        },
+        "skipFiles": ["<node_internals>/**", "${workspaceFolder:app}/.next/**"]
+      },
+      {
+        "name": "Frontend: attach to running next dev",
+        "type": "node",
+        "request": "attach",
+        "port": 9229,
+        "restart": true,
+        "cwd": "${workspaceFolder:app}",
+        "skipFiles": ["<node_internals>/**", "${workspaceFolder:app}/.next/**"]
+      },
+      {
+        "name": "Backend: attach debugpy (start stack)",
+        "type": "debugpy",
+        "request": "attach",
+        "connect": { "host": "127.0.0.1", "port": 5678 },
+        "pathMappings": [
+          { "localRoot": "${workspaceFolder:core}", "remoteRoot": "/app" }
+        ],
+        "django": true,
+        "justMyCode": false,
+        "preLaunchTask": "backend: make dev (debugpy)"
+      },
+      {
+        "name": "Backend: attach debugpy (already running)",
+        "type": "debugpy",
+        "request": "attach",
+        "connect": { "host": "127.0.0.1", "port": 5678 },
+        "pathMappings": [
+          { "localRoot": "${workspaceFolder:core}", "remoteRoot": "/app" }
+        ],
+        "django": true,
+        "justMyCode": false
+      }
+    ],
+    "compounds": [
+      {
+        "name": "Run Everything Local (debug both)",
+        "configurations": [
+          "Backend: attach debugpy (start stack)",
+          "Frontend: next dev (--inspect)"
+        ],
+        "stopAll": true
+      }
+    ]
+  }
+}

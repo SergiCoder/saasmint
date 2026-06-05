@@ -1,0 +1,9 @@
+from typing import Protocol
+
+from saasmint_core.domain.stripe_event import StripeEvent
+
+
+class StripeEventRepository(Protocol):
+    async def save(self, event: StripeEvent) -> StripeEvent: ...
+    async def mark_processed(self, stripe_id: str) -> None: ...
+    async def mark_failed(self, stripe_id: str, error: str) -> None: ...
