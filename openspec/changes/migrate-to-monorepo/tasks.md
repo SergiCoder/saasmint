@@ -52,7 +52,7 @@
 ## 8. Cut over and finalize
 
 - [x] 8.1 Tag the monorepo `v0.13.1` (not `v1.0.0` — see design D3; patch over the never-cut `0.13.0`, all three packages at `0.13.1`; the tag must point at a commit that includes PR #5's deploy fixes and the PR #6 version bump) — tagged at `89d85c3`, pushed, deploy run `27059803181` succeeded
-- [ ] 8.2 Set `saasmint-core` and `saasmint-app` to read-only/archived on the remote
+- [x] 8.2 Set `saasmint-core` and `saasmint-app` to read-only/archived on the remote (both `archived=true` on GitHub)
 - [x] 8.3 Update root `README.md` + `CLAUDE.md` to point at the new layout and reference the archived repos for pre-merge history
 
 ## 9. VS Code workspace for local dev
@@ -82,4 +82,4 @@
 - [x] 10.6 Remove orphaned `app/.github/workflows/deploy-dev.yml` (GitHub only reads root `.github/`)
 - [x] 10.7 Merge PR #5 into `dev`, then PR #6 (`dev` → `main`) so the release tag includes the deploy fixes + version bump
 - [x] 10.8 **Cutover, done in order:** pre-staged `/opt/saasmint` to `main@89d85c3`; full `docker compose build` dry-run (app/django/celery all built); stopped `saasmint-app-app-1` (frees `:3000`, container kept for rollback); pushed `v0.13.1` → deploy recreated `django`/`celery`/`app` under project `infra`, left `postgres`/`redis` running (DB volume `infra_postgres_data` untouched — 64 migrations intact)
-- [ ] 10.9 Verified `api.saasmint.net` (200) + `app.saasmint.net` (307, serving content) healthy. **Retirement still pending** (feeds 8.2): remove stopped `saasmint-app-app-1`, the `saasmint-app` project network, old `saasmint-app-app` image, and `rm -rf` the old `/opt/saasmint/saasmint-core` + `saasmint-app` clones — held until rollback window closes; NEVER `down -v`
+- [x] 10.9 Verified `api.saasmint.net` (200) + `app.saasmint.net` (307, serving content) healthy, then retired the old stack (feeds 8.2): removed stopped `saasmint-app-app-1`, the `saasmint-app_default` network, the `saasmint-app-app` image, and `rm -rf` the old `/opt/saasmint/saasmint-core` + `saasmint-app` clones. Re-verified healthy afterward. DB volume `infra_postgres_data` never touched; no `down -v`. (Cosmetic leftover: project `infra`'s `config_files` label still lists the deleted old path until postgres/redis are next recreated — deploy always passes explicit `-f`, so no impact.)
