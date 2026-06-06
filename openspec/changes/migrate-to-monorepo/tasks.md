@@ -51,7 +51,7 @@
 
 ## 8. Cut over and finalize
 
-- [ ] 8.1 Tag the monorepo `v0.13.0` (not `v1.0.0` — see design D3; the tag must point at a commit that includes PR #5's deploy fixes)
+- [ ] 8.1 Tag the monorepo `v0.13.1` (not `v1.0.0` — see design D3; patch over the never-cut `0.13.0`, all three packages at `0.13.1`; the tag must point at a commit that includes PR #5's deploy fixes and the PR #6 version bump)
 - [ ] 8.2 Set `saasmint-core` and `saasmint-app` to read-only/archived on the remote
 - [x] 8.3 Update root `README.md` + `CLAUDE.md` to point at the new layout and reference the archived repos for pre-merge history
 
@@ -81,5 +81,5 @@
 - [x] 10.5 `bootstrap-vps.sh`: clone the monorepo flat as the `deploy` user, seed `.env.staging` from `.env.example`, fix the `v*` tag instruction (was `dev-v0.1.0`)
 - [x] 10.6 Remove orphaned `app/.github/workflows/deploy-dev.yml` (GitHub only reads root `.github/`)
 - [ ] 10.7 Merge PR #5 into `dev` → `main` so the release tag includes the deploy fixes
-- [ ] 10.8 **Cutover, in order:** `docker compose -p saasmint-app down` on the VPS (frees `:3000`) → push `v0.13.0` → backend recreates as project `infra` reusing `infra_postgres_data` (DB intact) and `app` builds & serves `:3000` (this is the concrete form of 7.3)
+- [ ] 10.8 **Cutover, in order:** `docker compose -p saasmint-app down` on the VPS (frees `:3000`) → push `v0.13.1` → backend recreates as project `infra` reusing `infra_postgres_data` (DB intact) and `app` builds & serves `:3000` (this is the concrete form of 7.3)
 - [ ] 10.9 Verify `api.saasmint.net` + `app.saasmint.net` healthy, then `docker compose down` (no `-v`) + `rm -rf` the old `/opt/saasmint/saasmint-core` and `saasmint-app` clones (feeds 8.2)

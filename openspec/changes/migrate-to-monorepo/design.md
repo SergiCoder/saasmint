@@ -41,7 +41,7 @@ Rewrite each predecessor's history so its tree was "always" under `core/` / `app
 Both repos own `v0.4.0`/`v0.7.0`/`v0.11.0`/`v0.12.0` — they would collide on merge.
 
 - **Why:** The archived repos retain all old tags as the historical record, so nothing is lost; carrying namespaced `core/v*` / `app/v*` ghosts would clutter `git tag` forever. The product already ships lockstep, so one version line matches reality.
-- **Refined during apply:** the consolidation ships as **`v0.13.0`**, *not* `v1.0.0`. The merge changed no application behavior, and `CHANGELOG.md` codifies the policy "version numbers track the SaaSmint Core backend release." A symbolic `1.0` would contradict that policy, so the continuous `0.x` line carries forward and `v0.13.0` becomes the first monorepo tag.
+- **Refined during apply:** the consolidation ships on the continuous `0.x` line, *not* `v1.0.0`. The merge changed no application behavior, and `CHANGELOG.md` codifies the policy "version numbers track the SaaSmint Core backend release"; a symbolic `1.0` would contradict it. Version files were set to `0.13.0` for the merge itself (changelogged), but that tag was never cut — the staging-deploy hardening (PR #5/#6) landed on top, so per SemVer the first monorepo tag is the patch **`v0.13.1`** (all three packages — `saasmint-core`, `saasmint-core-lib`, `saasmint-app` — brought to `0.13.1` to satisfy the documented lockstep; the inner lib had lagged at `0.12.0`).
 
 ### D4 — Shared infra at root `infra/`; rewire the one hard-coded cross-boundary path
 
@@ -106,7 +106,7 @@ Concrete file contents for all of the above (workspace file, per-folder settings
 - **The VPS env-file rename is a manual ops step, not a repo edit** → easy to forget and would break the next deploy. Mitigation: call it out as an explicit task and sequence it *before* the first post-merge deploy.
 - **History merge ≠ "it boots"** → the merge only guarantees blame; every cross-boundary path (cert path, Docker contexts, CI) must be rewired separately. Mitigation: tasks split "merge history" from "make it run", with a full local + staging smoke test as the gate.
 - **`next dev` fights Next's native `app/.env.local` loading** → mitigated by the `dotenv` wrapper (D5); documented in `app/CLAUDE.md`.
-- **Rollback:** the predecessor repos remain intact and read-only; until `v0.13.0` is cut and staging is re-pointed, reverting is "keep deploying the old repos."
+- **Rollback:** the predecessor repos remain intact and read-only; until `v0.13.1` is cut and staging is re-pointed, reverting is "keep deploying the old repos."
 
 ## Migration Plan
 
@@ -116,7 +116,7 @@ Concrete file contents for all of the above (workspace file, per-folder settings
 4. Apply the `dev`→`staging` rename ripple (D6), including the manual server-side `mv`.
 5. Unify CI + install prism review (D7).
 6. Smoke test: local stack up, `next dev` over HTTPS, then a staging deploy from the new repo.
-7. Cut `v0.13.0`; set predecessor repos read-only.
+7. Cut `v0.13.1`; set predecessor repos read-only.
 
 ## Open Questions
 
