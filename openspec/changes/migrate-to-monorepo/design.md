@@ -36,11 +36,12 @@ Rewrite each predecessor's history so its tree was "always" under `core/` / `app
 
 - **Why:** Matches every existing `CLAUDE.md` header and the names get baked permanently into the rewritten history; renaming later costs a rename hop in every blame. `apps/api` + `apps/web` buys nothing without a third package.
 
-### D3 — Drop predecessor tags; fresh single-version line at `v1.0.0`
+### D3 — Drop predecessor tags; continue the single lockstep version line
 
 Both repos own `v0.4.0`/`v0.7.0`/`v0.11.0`/`v0.12.0` — they would collide on merge.
 
-- **Why:** The archived repos retain all old tags as the historical record, so nothing is lost; carrying namespaced `core/v*` / `app/v*` ghosts would clutter `git tag` forever. The product already ships lockstep, so one version line matches reality; `v1.0.0` marks the consolidation.
+- **Why:** The archived repos retain all old tags as the historical record, so nothing is lost; carrying namespaced `core/v*` / `app/v*` ghosts would clutter `git tag` forever. The product already ships lockstep, so one version line matches reality.
+- **Refined during apply:** the consolidation ships as **`v0.13.0`**, *not* `v1.0.0`. The merge changed no application behavior, and `CHANGELOG.md` codifies the policy "version numbers track the SaaSmint Core backend release." A symbolic `1.0` would contradict that policy, so the continuous `0.x` line carries forward and `v0.13.0` becomes the first monorepo tag.
 
 ### D4 — Shared infra at root `infra/`; rewire the one hard-coded cross-boundary path
 
@@ -91,13 +92,21 @@ Each task is `isBackground` with a **background problemMatcher** (`beginsPattern
 
 Concrete file contents for all of the above (workspace file, per-folder settings, debug compose override, debug entrypoint) live in [`vscode-config-reference.md`](./vscode-config-reference.md).
 
+### D9 — Staging deploy under the monorepo: flat checkout + restored `app` service
+
+**Discovered during apply** (PR #5), when wiring the live staging VPS — host nginx fronting `api.saasmint.net`→`:8001` and `app.saasmint.net`→`:3000` — to the monorepo:
+
+- **Flat checkout.** The monorepo is cloned **flat at `/opt/saasmint`** (the repo root *is* the deploy dir), not a nested `/opt/saasmint/saasmint`. `deploy-staging.yml` (`cd /opt/saasmint`) and `bootstrap-vps.sh` are aligned to this. The repo is cloned **as the `deploy` user** so `git checkout` during deploys never trips Git's "dubious ownership" guard on a root-owned tree.
+- **`app` service restored to the VPS compose.** The merge left `infra/docker-compose.vps.yml` backend-only, so the monorepo could not serve `app.saasmint.net`. The Next.js `app` service is added back (build context `../app`, `NEXT_PUBLIC_*` build args, `:3000`), mirroring the proven predecessor config. This **restores** the existing two-domain topology under one repo — not a topology change (consistent with the Non-Goals). The deploy health check now gates on both `:8001` and `:3000`.
+- **Cutover ordering.** The monorepo backend reuses compose project name `infra` (and volume `infra_postgres_data`) → DB continuity across the cutover. The old `saasmint-app` project must be stopped first to free `:3000` before the monorepo `app` service can bind it.
+
 ## Risks / Trade-offs
 
 - **Tag collision on merge** → handled by D3 (drop predecessor tags before fetching).
 - **The VPS env-file rename is a manual ops step, not a repo edit** → easy to forget and would break the next deploy. Mitigation: call it out as an explicit task and sequence it *before* the first post-merge deploy.
 - **History merge ≠ "it boots"** → the merge only guarantees blame; every cross-boundary path (cert path, Docker contexts, CI) must be rewired separately. Mitigation: tasks split "merge history" from "make it run", with a full local + staging smoke test as the gate.
 - **`next dev` fights Next's native `app/.env.local` loading** → mitigated by the `dotenv` wrapper (D5); documented in `app/CLAUDE.md`.
-- **Rollback:** the predecessor repos remain intact and read-only; until `v1.0.0` is cut and staging is re-pointed, reverting is "keep deploying the old repos."
+- **Rollback:** the predecessor repos remain intact and read-only; until `v0.13.0` is cut and staging is re-pointed, reverting is "keep deploying the old repos."
 
 ## Migration Plan
 
@@ -107,7 +116,7 @@ Concrete file contents for all of the above (workspace file, per-folder settings
 4. Apply the `dev`→`staging` rename ripple (D6), including the manual server-side `mv`.
 5. Unify CI + install prism review (D7).
 6. Smoke test: local stack up, `next dev` over HTTPS, then a staging deploy from the new repo.
-7. Cut `v1.0.0`; set predecessor repos read-only.
+7. Cut `v0.13.0`; set predecessor repos read-only.
 
 ## Open Questions
 
