@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-time VPS bootstrap for SaasMint dev environment.
+# One-time VPS bootstrap for the SaasMint staging environment.
 # Run as root: bash bootstrap-vps.sh
 set -euo pipefail
 
@@ -58,62 +58,28 @@ else
     echo "  Deploy SSH key already authorized, skipping."
 fi
 
-echo "==> [4/7] Creating $SAASMINT_DIR and cloning repos..."
+echo "==> [4/7] Creating $SAASMINT_DIR and cloning the monorepo..."
 mkdir -p "$SAASMINT_DIR"
 chown "$DEPLOY_USER:$DEPLOY_USER" "$SAASMINT_DIR"
 
-for repo in saasmint-core saasmint-app; do
-    if [ ! -d "$SAASMINT_DIR/$repo" ]; then
-        sudo -u "$DEPLOY_USER" git clone "https://github.com/$GITHUB_ORG/$repo.git" "$SAASMINT_DIR/$repo"
-    else
-        echo "  $repo already cloned, skipping."
-    fi
-done
+# Clone the monorepo flat into $SAASMINT_DIR — deploy-staging.yml runs
+# `cd /opt/saasmint`, so the repo root must BE $SAASMINT_DIR, not a nested
+# subdir. Clone as the deploy user so the working tree is deploy-owned and
+# `git checkout` during deploys never trips Git's "dubious ownership" guard.
+if [ ! -d "$SAASMINT_DIR/.git" ]; then
+    sudo -u "$DEPLOY_USER" git clone "https://github.com/$GITHUB_ORG/saasmint.git" "$SAASMINT_DIR"
+else
+    echo "  Monorepo already cloned, skipping."
+fi
 
-echo "==> [5/7] Creating .env.staging template..."
+echo "==> [5/7] Creating .env.staging from the repo template..."
 if [ ! -f "$SAASMINT_DIR/.env.staging" ]; then
-    cat > "$SAASMINT_DIR/.env.staging" <<'ENVEOF'
-# SaasMint dev VPS — fill in your secrets
-ENVIRONMENT=dev
-DJANGO_SETTINGS_MODULE=config.settings.dev
-DJANGO_SECRET_KEY=CHANGE_ME_generate_with_python_c_import_secrets_secrets_token_urlsafe_64
-JWT_SIGNING_KEY=CHANGE_ME_separate_rotation_from_django_secret_key_token_urlsafe_64
-SCHEMA_PUBLIC=false
-DJANGO_PORT=8001
-DJANGO_STATIC_ROOT=/app/staticfiles
-ALLOWED_HOSTS=["api.saasmint.net"]
-CSRF_TRUSTED_ORIGINS=["https://api.saasmint.net","https://app.saasmint.net"]
-CORS_ALLOWED_ORIGINS=["https://app.saasmint.net"]
-CORS_ALLOW_ALL_ORIGINS=false
-ENABLE_SESSION_AUTH=true
-
-POSTGRES_DB=saasmint
-POSTGRES_USER=saasmint
-POSTGRES_PASSWORD=CHANGE_ME
-DATABASE_URL=postgresql://saasmint:CHANGE_ME@postgres:5432/saasmint
-REDIS_URL=redis://redis:6379/0
-
-STRIPE_SECRET_KEY=sk_test_CHANGE_ME
-STRIPE_WEBHOOK_SECRET=whsec_CHANGE_ME
-
-RESEND_API_KEY=re_CHANGE_ME
-EMAIL_FROM_ADDRESS=noreply@saasmint.net
-FRONTEND_URL=https://app.saasmint.net
-
-# OAuth providers (optional — leave blank to disable a provider)
-OAUTH_GOOGLE_CLIENT_ID=
-OAUTH_GOOGLE_CLIENT_SECRET=
-OAUTH_GITHUB_CLIENT_ID=
-OAUTH_GITHUB_CLIENT_SECRET=
-OAUTH_MICROSOFT_CLIENT_ID=
-OAUTH_MICROSOFT_CLIENT_SECRET=
-
-# SaasMint App (frontend)
-NEXT_PUBLIC_API_URL=https://api.saasmint.net
-NEXT_PUBLIC_APP_URL=https://app.saasmint.net
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_CHANGE_ME
-ENVEOF
+    # Seed from the repo's single source of truth so the staging file never
+    # drifts from the canonical var set. Edit it for staging afterwards
+    # (ENVIRONMENT, real domains, secrets) before the first deploy.
+    cp "$SAASMINT_DIR/.env.example" "$SAASMINT_DIR/.env.staging"
     chown "$DEPLOY_USER:$DEPLOY_USER" "$SAASMINT_DIR/.env.staging"
+    chmod 600 "$SAASMINT_DIR/.env.staging"
     echo "  Created $SAASMINT_DIR/.env.staging — fill in real values before first deploy."
 else
     echo "  .env.staging already exists, skipping."
@@ -148,9 +114,8 @@ echo "  2. Run: certbot --nginx -d api.saasmint.net -d app.saasmint.net"
 echo "  3. Verify SSH as deploy user works, then disable password auth:"
 echo "     Edit /etc/ssh/sshd_config -> PasswordAuthentication no"
 echo "     systemctl restart sshd"
-echo "  4. Add GitHub secrets to both repos:"
+echo "  4. Add GitHub secrets to the saasmint repo:"
 echo "     VPS_HOST=<your-vps-ip>"
 echo "     VPS_PORT=<your-ssh-port>"
 echo "     VPS_SSH_KEY=(private key printed above)"
-echo "     STRIPE_PUBLISHABLE_KEY=(in saasmint-app only)"
-echo "  5. Push a dev-v0.1.0 tag to trigger the first deploy"
+echo "  5. Push a v* tag (e.g. v0.13.0) to trigger the first deploy"
