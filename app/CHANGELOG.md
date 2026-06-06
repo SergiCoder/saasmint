@@ -7,6 +7,33 @@ Version numbers track the SaaSmint Core backend release they align with, so
 some minor versions are skipped (e.g. 0.5.0 → 0.7.0 → 0.11.0). Each entry links
 the pull request that introduced it.
 
+## [0.13.1] - 2026-06-06
+
+Staging-deploy hardening for the merged monorepo. No application logic changes.
+
+### Fixed
+
+- Staging deploy wired to the flattened `/opt/saasmint` layout: the deploy
+  workflow now `cd`s to the repo root (was a nonexistent nested path), and the
+  VPS compose gained the Next.js `app` service so one tagged deploy serves both
+  `api.` and `app.saasmint.net`. (#5)
+- Deploy health check now gates on both API (`:8001`) and app (`:3000`)
+  readiness, widened to a 90s window with app-log tailing on failure. (#5)
+
+### Maintenance
+
+- `bootstrap-vps.sh` clones the monorepo flat as the `deploy` user (avoids Git
+  "dubious ownership" on checkout) and seeds `.env.staging` from `.env.example`.
+- Removed the orphaned `app/.github/workflows/deploy-dev.yml` (GitHub only reads
+  the root `.github/`; it referenced the pre-rename `.env.dev` and old path).
+- Brought `saasmint-core-lib` to `0.13.1` to restore the documented
+  three-package lockstep (it had lagged at `0.12.0`). (#6)
+
+### Documentation
+
+- Recorded the version-line and staging-deploy decisions in the
+  `migrate-to-monorepo` OpenSpec change. (#5)
+
 ## [0.13.0] - 2026-06-05
 
 Monorepo release — Django (`saasmint-core`) and Next.js (`saasmint-app`) merged

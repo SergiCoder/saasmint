@@ -34,7 +34,7 @@
 - [x] 5.1 `infra/docker-compose.vps.yml`: `env_file` `.env.dev` → `.env.staging` (both services) and update `:?... must be set in .env.dev` messages
 - [x] 5.2 `infra/scripts/vps.sh`: `ENV_FILE` → `/opt/saasmint/.env.staging`
 - [x] 5.3 Rename workflow `deploy-dev.yml` → `deploy-staging.yml` and re-point its `source /opt/saasmint/.env.dev`
-- [ ] 5.4 **Manual ops step on the VPS:** `mv /opt/saasmint/.env.dev /opt/saasmint/.env.staging` — do this BEFORE the first post-merge deploy
+- [x] 5.4 **Manual ops step on the VPS:** `/opt/saasmint/.env.staging` now exists (created fresh from the template; `deploy`-readable, 33/33 keys matching `.env.example`). Legacy `.env.dev` left in place until cutover.
 - [x] 5.5 Grep the repo for any remaining `.env.dev` / `deploy-dev` references; expect zero
 
 ## 6. Unify CI and install prism review
@@ -51,7 +51,7 @@
 
 ## 8. Cut over and finalize
 
-- [ ] 8.1 Tag the monorepo `v1.0.0`
+- [ ] 8.1 Tag the monorepo `v0.13.1` (not `v1.0.0` — see design D3; patch over the never-cut `0.13.0`, all three packages at `0.13.1`; the tag must point at a commit that includes PR #5's deploy fixes and the PR #6 version bump)
 - [ ] 8.2 Set `saasmint-core` and `saasmint-app` to read-only/archived on the remote
 - [x] 8.3 Update root `README.md` + `CLAUDE.md` to point at the new layout and reference the archived repos for pre-merge history
 
@@ -71,3 +71,15 @@
 - [x] 9.12 Delete the superseded per-repo files `core/.vscode/launch.json` and `app/.vscode/launch.json` (the workspace file owns shared launch/tasks now).
 - [ ] 9.13 (Opt-in) Add a `full-docker` compose `profile` for a containerized `app` dev service (the app already has a multi-stage Dockerfile) so full parity is available on demand without being the default; if used, point server-side base URLs at `caddy:8443` / a service-name env to avoid the localhost-in-container SSR trap.
 - [ ] 9.14 VERIFY: `Ctrl+Shift+B` runs `Run Everything Local` and both tasks reach "ready" (Caddy `https://localhost:8443`, Next `https://localhost:3000`); breakpoints bind in `core/apps/**`, `core/config/**`, and `core/core/saasmint_core/**` via the debugpy attach (no port collision with a separately-running `make dev`); the frontend `--inspect` launch binds server-side breakpoints and `debugWithChrome` covers client-side; `Run Everything Local (debug both)` brings up both with `stopAll`; Pylance shows no unresolved `from saasmint_core...` imports; pytest Test Explorer discovers `core/tests` + `apps/**/tests`.
+
+## 10. Staging deploy wiring (discovered during apply — PR #5, design D9)
+
+- [x] 10.1 Set GitHub deploy secrets on `SergiCoder/saasmint`: `VPS_HOST`, `VPS_PORT`, `VPS_SSH_KEY` (key verified to authenticate as `deploy` and present in `authorized_keys`)
+- [x] 10.2 Clone the monorepo **flat** at `/opt/saasmint` (not nested) and `chown -R deploy:deploy` so deploy-time `git checkout` doesn't hit Git's "dubious ownership" guard
+- [x] 10.3 `deploy-staging.yml`: `cd /opt/saasmint` (was `/opt/saasmint/saasmint`); gate success on both api (`:8001`) and app (`:3000`) health
+- [x] 10.4 `infra/docker-compose.vps.yml`: add the Next.js `app` service (`../app` context, `NEXT_PUBLIC_*` build args, `:3000`) — restores `app.saasmint.net` under the monorepo
+- [x] 10.5 `bootstrap-vps.sh`: clone the monorepo flat as the `deploy` user, seed `.env.staging` from `.env.example`, fix the `v*` tag instruction (was `dev-v0.1.0`)
+- [x] 10.6 Remove orphaned `app/.github/workflows/deploy-dev.yml` (GitHub only reads root `.github/`)
+- [ ] 10.7 Merge PR #5 into `dev` → `main` so the release tag includes the deploy fixes
+- [ ] 10.8 **Cutover, in order:** `docker compose -p saasmint-app down` on the VPS (frees `:3000`) → push `v0.13.1` → backend recreates as project `infra` reusing `infra_postgres_data` (DB intact) and `app` builds & serves `:3000` (this is the concrete form of 7.3)
+- [ ] 10.9 Verify `api.saasmint.net` + `app.saasmint.net` healthy, then `docker compose down` (no `-v`) + `rm -rf` the old `/opt/saasmint/saasmint-core` and `saasmint-app` clones (feeds 8.2)
