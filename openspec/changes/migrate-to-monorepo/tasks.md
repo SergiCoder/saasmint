@@ -51,7 +51,7 @@
 
 ## 8. Cut over and finalize
 
-- [ ] 8.1 Tag the monorepo `v0.13.1` (not `v1.0.0` — see design D3; patch over the never-cut `0.13.0`, all three packages at `0.13.1`; the tag must point at a commit that includes PR #5's deploy fixes and the PR #6 version bump)
+- [x] 8.1 Tag the monorepo `v0.13.1` (not `v1.0.0` — see design D3; patch over the never-cut `0.13.0`, all three packages at `0.13.1`; the tag must point at a commit that includes PR #5's deploy fixes and the PR #6 version bump) — tagged at `89d85c3`, pushed, deploy run `27059803181` succeeded
 - [ ] 8.2 Set `saasmint-core` and `saasmint-app` to read-only/archived on the remote
 - [x] 8.3 Update root `README.md` + `CLAUDE.md` to point at the new layout and reference the archived repos for pre-merge history
 
@@ -80,6 +80,6 @@
 - [x] 10.4 `infra/docker-compose.vps.yml`: add the Next.js `app` service (`../app` context, `NEXT_PUBLIC_*` build args, `:3000`) — restores `app.saasmint.net` under the monorepo
 - [x] 10.5 `bootstrap-vps.sh`: clone the monorepo flat as the `deploy` user, seed `.env.staging` from `.env.example`, fix the `v*` tag instruction (was `dev-v0.1.0`)
 - [x] 10.6 Remove orphaned `app/.github/workflows/deploy-dev.yml` (GitHub only reads root `.github/`)
-- [ ] 10.7 Merge PR #5 into `dev` → `main` so the release tag includes the deploy fixes
-- [ ] 10.8 **Cutover, in order:** `docker compose -p saasmint-app down` on the VPS (frees `:3000`) → push `v0.13.1` → backend recreates as project `infra` reusing `infra_postgres_data` (DB intact) and `app` builds & serves `:3000` (this is the concrete form of 7.3)
-- [ ] 10.9 Verify `api.saasmint.net` + `app.saasmint.net` healthy, then `docker compose down` (no `-v`) + `rm -rf` the old `/opt/saasmint/saasmint-core` and `saasmint-app` clones (feeds 8.2)
+- [x] 10.7 Merge PR #5 into `dev`, then PR #6 (`dev` → `main`) so the release tag includes the deploy fixes + version bump
+- [x] 10.8 **Cutover, done in order:** pre-staged `/opt/saasmint` to `main@89d85c3`; full `docker compose build` dry-run (app/django/celery all built); stopped `saasmint-app-app-1` (frees `:3000`, container kept for rollback); pushed `v0.13.1` → deploy recreated `django`/`celery`/`app` under project `infra`, left `postgres`/`redis` running (DB volume `infra_postgres_data` untouched — 64 migrations intact)
+- [ ] 10.9 Verified `api.saasmint.net` (200) + `app.saasmint.net` (307, serving content) healthy. **Retirement still pending** (feeds 8.2): remove stopped `saasmint-app-app-1`, the `saasmint-app` project network, old `saasmint-app-app` image, and `rm -rf` the old `/opt/saasmint/saasmint-core` + `saasmint-app` clones — held until rollback window closes; NEVER `down -v`
