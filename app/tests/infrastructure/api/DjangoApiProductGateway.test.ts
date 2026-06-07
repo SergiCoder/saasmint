@@ -67,6 +67,28 @@ describe("DjangoApiProductGateway", () => {
       );
     });
 
+    it("appends ?country= query string when country is provided", async () => {
+      mockApiFetchOptional.mockResolvedValue({ results: [] });
+
+      await gateway.listProducts(undefined, "GB");
+
+      expect(mockApiFetchOptional).toHaveBeenCalledWith(
+        "/billing/products/?country=GB",
+        { next: { revalidate: 3600 } },
+      );
+    });
+
+    it("appends both ?country= and ?currency= when both are provided", async () => {
+      mockApiFetchOptional.mockResolvedValue({ results: [] });
+
+      await gateway.listProducts("gbp", "GB");
+
+      expect(mockApiFetchOptional).toHaveBeenCalledWith(
+        "/billing/products/?currency=gbp&country=GB",
+        { next: { revalidate: 3600 } },
+      );
+    });
+
     it("propagates errors from apiFetchOptional", async () => {
       mockApiFetchOptional.mockRejectedValue(
         new Error("API 500: Server Error"),

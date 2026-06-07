@@ -59,4 +59,20 @@ describe("getPlans", () => {
 
     expect(result).toEqual([]);
   });
+
+  it("forwards the country param to the gateway", async () => {
+    mockListPlans.mockResolvedValue([]);
+
+    await getPlans("eur", "ES");
+
+    expect(mockListPlans).toHaveBeenCalledWith("eur", "ES");
+  });
+
+  it("forwards only country when currency is omitted", async () => {
+    mockListPlans.mockResolvedValue([]);
+
+    await getPlans(undefined, "GB");
+
+    expect(mockListPlans).toHaveBeenCalledWith(undefined, "GB");
+  });
 });

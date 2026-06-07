@@ -306,8 +306,18 @@ describe("keysToCamelWithPrice", () => {
         tax_inclusive: true,
       },
     };
-    const result = keysToCamelWithPrice(input);
-    expect((result.price as Record<string, unknown>).taxInclusive).toBe(true);
+    expect(keysToCamelWithPrice(input)).toEqual({
+      id: "p1",
+      price: {
+        id: "pp1",
+        amount: 1999,
+        displayAmount: 19.99,
+        currency: "eur",
+        taxInclusive: true,
+        localDisplayAmount: null,
+        localCurrency: null,
+      },
+    });
   });
 
   it("preserves existing localDisplayAmount and localCurrency when set", () => {
@@ -324,10 +334,18 @@ describe("keysToCamelWithPrice", () => {
         local_currency: "chf",
       },
     };
-    const result = keysToCamelWithPrice(input);
-    const price = result.price as Record<string, unknown>;
-    expect(price.localDisplayAmount).toBe(17.42);
-    expect(price.localCurrency).toBe("chf");
+    expect(keysToCamelWithPrice(input)).toEqual({
+      id: "p1",
+      price: {
+        id: "pp1",
+        amount: 1900,
+        displayAmount: 19.0,
+        currency: "usd",
+        localDisplayAmount: 17.42,
+        localCurrency: "chf",
+        taxInclusive: false,
+      },
+    });
   });
 });
 
