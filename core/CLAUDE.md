@@ -66,7 +66,7 @@ Fix errors before pushing. Do not skip.
 ## Commands
 
 ```bash
-make dev         # docker compose up (Django + Celery + Postgres + Redis)
+make dev         # docker compose --env-file .env.local up (Django + Celery + Postgres + Redis)
 make test        # pytest -v
 make migrate     # run migrations (stack running)
 make schema      # regenerate schema.yml (manage.py spectacular --file schema.yml; stack must be running)
