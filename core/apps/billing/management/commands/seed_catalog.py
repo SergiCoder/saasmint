@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import TypedDict
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from apps.billing.models import (
+    CountryPrice,
     Plan,
     PlanContext,
     PlanInterval,
@@ -17,6 +19,7 @@ from apps.billing.models import (
     ProductPrice,
     ProductType,
 )
+from apps.billing.vat import COUNTRY_CURRENCY, derive_base, standard_vat_rate
 
 
 class _PlanSpec(TypedDict):
@@ -111,6 +114,7 @@ class Command(BaseCommand):
     def handle(self, *args: object, **options: object) -> None:
         self._seed_plans()
         self._seed_products()
+        self._seed_country_prices()
         self.stdout.write(self.style.SUCCESS("Catalog seeded."))
 
     def _seed_plans(self) -> None:
@@ -175,3 +179,69 @@ class Command(BaseCommand):
                 existing.amount = amount
                 existing.save(update_fields=["amount"])
                 self.stdout.write(f"  ✓ ProductPrice: {name} updated to {amount}c")
+
+    def _seed_country_prices(self) -> None:
+        """Seed a per-country inclusive sticker for every (price, launch country).
+
+        The seeded sticker reuses the USD ``amount`` as the local round number
+        (the "always 19.99" intent) — a *suggestion* to be curated later, not a
+        currency-converted figure. ``sync_localized_prices`` refines the sticker
+        from the FX feed for rows that stay un-curated (``is_curated=False``);
+        an admin edit pins ``is_curated=True`` and seeding never touches it
+        again. Idempotent: existing rows keep their (possibly curated) sticker;
+        only the derived ``base_minor`` is re-aligned to the current VAT rate.
+        """
+        plan_prices = list(PlanPrice.objects.all())
+        product_prices = list(ProductPrice.objects.all())
+        for country, currency in COUNTRY_CURRENCY.items():
+            rate = standard_vat_rate(country)
+            for plan_price in plan_prices:
+                self._upsert_country_price(
+                    country=country,
+                    currency=currency,
+                    rate=rate,
+                    sticker=plan_price.amount,
+                    plan_price=plan_price,
+                )
+            for product_price in product_prices:
+                self._upsert_country_price(
+                    country=country,
+                    currency=currency,
+                    rate=rate,
+                    sticker=product_price.amount,
+                    product_price=product_price,
+                )
+
+    def _upsert_country_price(
+        self,
+        *,
+        country: str,
+        currency: str,
+        rate: Decimal,
+        sticker: int,
+        plan_price: PlanPrice | None = None,
+        product_price: ProductPrice | None = None,
+    ) -> None:
+        owner: dict[str, PlanPrice | ProductPrice | None] = (
+            {"plan_price": plan_price}
+            if plan_price is not None
+            else {"product_price": product_price}
+        )
+        existing = CountryPrice.objects.filter(country=country, **owner).first()
+        if existing is None:
+            CountryPrice.objects.create(
+                country=country,
+                currency=currency,
+                sticker_minor=sticker,
+                base_minor=derive_base(sticker, rate),
+                is_curated=False,
+                **owner,
+            )
+            return
+        # Never overwrite a (possibly curated) sticker; only keep the derived
+        # base aligned with the current VAT rate so a rate-table change
+        # propagates to the Stripe unit_amount on the next sync.
+        new_base = derive_base(existing.sticker_minor, rate)
+        if existing.base_minor != new_base:
+            existing.base_minor = new_base
+            existing.save(update_fields=["base_minor"])

@@ -9,9 +9,12 @@ uv run python manage.py seed_catalog
 
 # sync_localized_prices runs before sync_stripe_catalog because the latter
 # reads LocalizedPrice.amount_minor when minting Stripe Prices for non-USD
-# billing currencies. If the FX feed is unreachable, sync_stripe_catalog has
-# its own bootstrap path (calls sync_localized_prices inline once) and skips
-# any currencies that still have no localized row.
+# billing currencies. It also refreshes the FX-*suggested* per-country sticker
+# on un-curated CountryPrice rows (human-curated stickers are left alone), so
+# sync_stripe_catalog mints per-country prices from the latest stickers. If the
+# FX feed is unreachable, sync_stripe_catalog has its own bootstrap path (calls
+# sync_localized_prices inline once) and skips any currency still missing a row;
+# per-country prices fall back to the seeded sticker.
 echo "==> Syncing localized prices from FX feed..."
 uv run python manage.py sync_localized_prices || echo "  (non-fatal: localized price sync failed, Beat will retry daily)"
 

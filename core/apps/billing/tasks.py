@@ -67,7 +67,8 @@ def sync_localized_prices() -> int:
         round_friendly,
     )
 
-    from apps.billing.models import LocalizedPrice, PlanPrice, ProductPrice
+    from apps.billing.models import CountryPrice, LocalizedPrice, PlanPrice, ProductPrice
+    from apps.billing.vat import derive_base, standard_vat_rate
 
     try:
         resp = httpx.get(_FX_API_URL, timeout=httpx.Timeout(10.0))
@@ -91,6 +92,23 @@ def sync_localized_prices() -> int:
         logger.exception("FX API returned malformed rate values")
         return 0
     now = datetime.now(UTC)
+
+    def _suggested_sticker(amount: int, currency: str) -> int | None:
+        """FX-suggested per-country inclusive sticker (minor units), or None.
+
+        Mirrors :func:`_compute_new_amounts` for a single currency: friendly-
+        rounds the FX-converted USD amount. USD needs no conversion (the sticker
+        is the source amount). Returns None when the FX feed has no rate for the
+        currency so the caller leaves the existing sticker untouched.
+        """
+        if currency == "usd":
+            return amount
+        rate = api_rates.get(currency)
+        if rate is None:
+            logger.warning("No FX rate for currency %s", currency)
+            return None
+        display = round_friendly(format_amount(amount, "usd") * rate, currency)
+        return _to_minor_units(display, currency)
 
     def _compute_new_amounts(amount: int) -> dict[str, int]:
         """Return ``{currency: new_amount_minor}`` for all non-USD currencies."""
@@ -225,6 +243,32 @@ def sync_localized_prices() -> int:
             LocalizedPrice.objects.bulk_update(all_update_changed, ["amount_minor", "synced_at"])
         if all_update_heartbeat:
             LocalizedPrice.objects.bulk_update(all_update_heartbeat, ["synced_at"])
+
+        # Refresh the FX-*suggested* per-country sticker on un-curated rows only
+        # (design D7): a human-curated sticker (is_curated=True) is never moved
+        # by the daily FX sweep. The derived exclusive base is kept in step with
+        # the suggested sticker and the country's standard VAT rate.
+        country_to_update: list[CountryPrice] = []
+        for cp in CountryPrice.objects.filter(is_curated=False).select_related(
+            "plan_price", "product_price"
+        ):
+            owner_amount = (
+                cp.plan_price.amount if cp.plan_price_id else cp.product_price.amount  # type: ignore[union-attr]  # XOR guarantees the selected FK is non-None
+            )
+            suggested = _suggested_sticker(owner_amount, cp.currency)
+            if suggested is None:
+                continue
+            new_base = derive_base(suggested, standard_vat_rate(cp.country))
+            if cp.sticker_minor != suggested or cp.base_minor != new_base:
+                cp.sticker_minor = suggested
+                cp.base_minor = new_base
+                cp.updated_at = now
+                country_to_update.append(cp)
+                changed += 1
+        if country_to_update:
+            CountryPrice.objects.bulk_update(
+                country_to_update, ["sticker_minor", "base_minor", "updated_at"]
+            )
 
     logger.info("Localized prices synced: %d rows changed", changed)
     return changed

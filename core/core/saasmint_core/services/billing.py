@@ -116,6 +116,13 @@ async def create_checkout_session(
     collected during Checkout back onto the Customer — otherwise the session
     is rejected with "Automatic tax calculation in Checkout requires a valid
     address on the Customer".
+
+    ``tax_id_collection`` is load-bearing for per-country pricing: it lets a
+    business supply a VAT/tax ID so Stripe can apply the cross-border EU/UK
+    reverse charge (the customer then pays the exclusive base, zero VAT). Without
+    it Stripe treats every buyer as a consumer and wrongly charges VAT to EU
+    B2B. A *domestic* business (e.g. a Spanish NIF for a Spain sale) is still
+    taxed — Stripe decides that from the entered address, not from this flag.
     """
     subscription_data: dict[str, object] = {}
     if trial_period_days is not None:
@@ -132,6 +139,7 @@ async def create_checkout_session(
         "allow_promotion_codes": True,
         "adaptive_pricing": {"enabled": billing_currency == "usd"},
         "automatic_tax": {"enabled": True},
+        "tax_id_collection": {"enabled": True},
         "customer_update": {"address": "auto"},
     }
 
@@ -163,7 +171,7 @@ async def create_product_checkout_session(
     ``subscription_data``/trial applicable. ``metadata`` is carried through to
     ``checkout.session.completed`` so the webhook can grant credits to the
     right owner (user or org). See :func:`create_checkout_session` for the
-    rationale on ``adaptive_pricing`` / ``automatic_tax``.
+    rationale on ``adaptive_pricing`` / ``automatic_tax`` / ``tax_id_collection``.
     """
     params: dict[str, object] = {
         "customer": stripe_customer_id,
@@ -176,6 +184,7 @@ async def create_product_checkout_session(
         "allow_promotion_codes": True,
         "adaptive_pricing": {"enabled": billing_currency == "usd"},
         "automatic_tax": {"enabled": True},
+        "tax_id_collection": {"enabled": True},
         "customer_update": {"address": "auto"},
     }
     if metadata is not None:
