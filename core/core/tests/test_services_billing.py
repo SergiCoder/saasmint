@@ -218,6 +218,11 @@ async def test_create_checkout_session_without_promo() -> None:
     assert call_kwargs["allow_promotion_codes"] is True
     assert "discounts" not in call_kwargs
     assert "subscription_data" not in call_kwargs
+    # Per-country pricing: automatic_tax on + tax_id_collection on so EU/UK B2B
+    # with a valid VAT ID gets the reverse charge (pays the exclusive base).
+    assert call_kwargs["automatic_tax"] == {"enabled": True}
+    assert call_kwargs["tax_id_collection"] == {"enabled": True}
+    assert call_kwargs["customer_update"] == {"address": "auto"}
 
 
 @pytest.mark.anyio
@@ -336,6 +341,8 @@ async def test_create_product_checkout_session_uses_payment_mode() -> None:
     assert call_kwargs["line_items"] == [{"price": "price_boost_50", "quantity": 1}]
     assert call_kwargs["allow_promotion_codes"] is True
     assert call_kwargs["adaptive_pricing"] == {"enabled": True}
+    assert call_kwargs["automatic_tax"] == {"enabled": True}
+    assert call_kwargs["tax_id_collection"] == {"enabled": True}
     assert "subscription_data" not in call_kwargs
     assert "metadata" not in call_kwargs
 

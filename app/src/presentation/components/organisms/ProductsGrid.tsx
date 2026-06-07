@@ -14,6 +14,8 @@ export interface ProductsGridProps {
    * `buildProductPriceSubLabels`.
    */
   priceSubLabels?: Record<string, string>;
+  /** Localised "incl. VAT" hint, shown beside tax-inclusive per-country prices. */
+  taxLabel?: string;
   renderCta: (product: Product) => React.ReactNode;
   className?: string;
 }
@@ -25,6 +27,7 @@ export function ProductsGrid({
   creditsLabel,
   locale,
   priceSubLabels,
+  taxLabel,
   renderCta,
   className = "",
 }: ProductsGridProps) {
@@ -51,6 +54,11 @@ export function ProductsGrid({
                       product.price.displayAmount,
                       product.price.currency,
                       locale,
+                    )}
+                    {taxLabel && product.price.taxInclusive && (
+                      <span className="ml-2 text-xs font-normal text-gray-400">
+                        {taxLabel}
+                      </span>
                     )}
                   </p>
                   {priceSubLabel && (

@@ -33,12 +33,13 @@ The migration SHALL preserve the commit history of both predecessor repositories
 
 ### Requirement: Single version line
 
-The monorepo SHALL maintain one version line for the combined product; the predecessor repositories' overlapping per-repo tags SHALL NOT be carried into the new repository.
+The monorepo SHALL maintain one version line for the combined product, continuing the backend-tracked `0.x` line rather than resetting to a symbolic `v1.0.0`; the predecessor repositories' overlapping per-repo tags SHALL NOT be carried into the new repository.
 
-#### Scenario: Fresh version line at consolidation
+#### Scenario: Continuous version line at consolidation
 
 - **WHEN** the consolidation is released
-- **THEN** the repository is tagged `v1.0.0`
+- **THEN** the repository is tagged on the continuous `0.x` line tracking the SaaSmint Core backend release (the first monorepo tag is `v0.13.1`), not a symbolic `v1.0.0`
+- **AND** all three packages (`saasmint-core`, `saasmint-core-lib`, `saasmint-app`) carry the same version at tag time (lockstep)
 - **AND** the overlapping predecessor tags (`v0.4.0`, `v0.7.0`, `v0.11.0`, `v0.12.0`) are absent from this repository's tag list
 
 ### Requirement: Local development tooling

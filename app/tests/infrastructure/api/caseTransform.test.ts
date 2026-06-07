@@ -196,6 +196,7 @@ describe("keysToCamelWithPrice", () => {
         currency: "eur",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       },
     });
   });
@@ -214,6 +215,7 @@ describe("keysToCamelWithPrice", () => {
         currency: "usd",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       },
     });
   });
@@ -232,6 +234,7 @@ describe("keysToCamelWithPrice", () => {
         currency: "eur",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       },
     });
   });
@@ -250,6 +253,7 @@ describe("keysToCamelWithPrice", () => {
         currency: "eur",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       },
     });
   });
@@ -283,6 +287,63 @@ describe("keysToCamelWithPrice", () => {
         currency: "eur",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
+      },
+    });
+  });
+
+  it("preserves taxInclusive=true when already present on the raw price", () => {
+    // The backend sets tax_inclusive=true on per-country stickers; after
+    // keysToCamel converts it to taxInclusive, applyPriceDefaults must NOT
+    // overwrite it with the false default.
+    const input = {
+      id: "p1",
+      price: {
+        id: "pp1",
+        amount: 1999,
+        display_amount: 19.99,
+        currency: "eur",
+        tax_inclusive: true,
+      },
+    };
+    expect(keysToCamelWithPrice(input)).toEqual({
+      id: "p1",
+      price: {
+        id: "pp1",
+        amount: 1999,
+        displayAmount: 19.99,
+        currency: "eur",
+        taxInclusive: true,
+        localDisplayAmount: null,
+        localCurrency: null,
+      },
+    });
+  });
+
+  it("preserves existing localDisplayAmount and localCurrency when set", () => {
+    // The backend may return local_* fields for dual-currency display; they must
+    // survive the defaults pass unchanged.
+    const input = {
+      id: "p1",
+      price: {
+        id: "pp1",
+        amount: 1900,
+        display_amount: 19.0,
+        currency: "usd",
+        local_display_amount: 17.42,
+        local_currency: "chf",
+      },
+    };
+    expect(keysToCamelWithPrice(input)).toEqual({
+      id: "p1",
+      price: {
+        id: "pp1",
+        amount: 1900,
+        displayAmount: 19.0,
+        currency: "usd",
+        localDisplayAmount: 17.42,
+        localCurrency: "chf",
+        taxInclusive: false,
       },
     });
   });

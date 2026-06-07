@@ -144,12 +144,21 @@ export interface PlanCardLabels {
   upgrade: string;
   /** Singular noun for one seat (e.g. "seat"). Used in team interval labels. */
   seat: string;
+  /** Localised interval suffix for monthly prices (e.g. "month" / "mes"). */
+  month: string;
+  /** Localised interval suffix for yearly prices (e.g. "year" / "año"). */
+  year: string;
   /**
    * Localised "billed yearly" suffix. Used as a fallback for the yearly
    * sub-label when no `formatPriceSubLabelLocal` is provided (i.e. when the
    * user's preferred currency matches the billed currency).
    */
   billedYearly: string;
+  /**
+   * Localised "incl. VAT" hint, shown beneath a price when it is a per-country
+   * tax-inclusive sticker (`price.taxInclusive`).
+   */
+  inclTax: string;
 }
 
 export interface PlanVariantView {
@@ -162,6 +171,12 @@ export interface PlanVariantView {
    * Only set when it adds information beyond the headline price.
    */
   priceSubLabel?: string;
+  /**
+   * Localised "incl. VAT" hint, set only when the variant's price is a
+   * per-country tax-inclusive sticker. Undefined for the USD/per-currency
+   * (tax-exclusive) fallback.
+   */
+  taxLabel?: string;
   /** Pre-rendered CTA for this variant. `null` when no CTA should be shown. */
   cta: React.ReactNode | null;
 }
@@ -315,9 +330,10 @@ function buildPlanVariant(
     : monthlyEq > 0;
   const ctaLabel = labels.upgrade;
 
+  const intervalSuffix = plan.interval === "year" ? labels.year : labels.month;
   const intervalLabel = isTeam
-    ? `${labels.seat}/${plan.interval}`
-    : plan.interval;
+    ? `${labels.seat}/${intervalSuffix}`
+    : intervalSuffix;
 
   const priceSubLabel = computePriceSubLabel({
     plan,
@@ -333,6 +349,7 @@ function buildPlanVariant(
     price: formatCurrency(displayAmount, currency, locale),
     intervalLabel,
     priceSubLabel,
+    taxLabel: (plan.price?.taxInclusive ?? false) ? labels.inclTax : undefined,
     cta:
       renderCta({
         plan,
@@ -386,8 +403,8 @@ function computePriceSubLabel(args: {
     const monthlyEqDisplay = displayAmount / 12;
     const formatted = formatCurrency(monthlyEqDisplay, currency, locale);
     return isTeam
-      ? `${formatted}/${labels.seat}/month — ${labels.billedYearly}`
-      : `${formatted}/month — ${labels.billedYearly}`;
+      ? `${formatted}/${labels.seat}/${labels.month} — ${labels.billedYearly}`
+      : `${formatted}/${labels.month} — ${labels.billedYearly}`;
   }
   return undefined;
 }

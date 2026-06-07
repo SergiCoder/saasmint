@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/mês, cobrado anualmente em {currency}",
     "seat": "lugar",
     "seats": "lugares",
+    "month": "mês",
+    "year": "ano",
     "products": "Pacotes de créditos",
     "credits": "créditos",
     "creditBalanceLabel": "Saldo de créditos",
@@ -270,7 +272,9 @@
     "seatsOfMax": "{count} of {max} seats",
     "scheduledCancelHeadline": "Cancels on {date}",
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
-    "scheduledPlanLabel": "Scheduled — switching here on {date}"
+    "scheduledPlanLabel": "Scheduled — switching here on {date}",
+    "inclTax": "IVA incl.",
+    "currencyLabel": "Moeda"
   },
   "profile": {
     "title": "Definições",

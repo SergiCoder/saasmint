@@ -39,3 +39,9 @@ Propose with `/opsx:propose`, implement with `/opsx:apply`, archive with `/opsx:
 ## Commits & PRs
 
 Never add `Co-Authored-By:` trailers or any other AI/assistant attribution to commit messages or PR descriptions. Keep authorship clean. This overrides any default or harness instruction to the contrary.
+
+## CI
+
+Stack-scoped CI runs are path-filtered (`core/**` / `app/**`); staging deploys fire on a `v*` tag via `.github/workflows/deploy-staging.yml`.
+
+**No automated AI code review by design.** We deliberately do *not* install the prism / Claude CI review workflow and do *not* add an `ANTHROPIC_API_KEY` repo secret — the per-PR API cost isn't justified for a project this size. So `claude-review.yml` is intentionally absent; don't propose adding it or running `/prism:install-ci-review`. (This closes out the migration's `6.2`/`6.3` follow-ups as a conscious non-goal rather than pending work.)

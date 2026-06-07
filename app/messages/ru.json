@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/мес, годовая оплата в {currency}",
     "seat": "место",
     "seats": "мест",
+    "month": "месяц",
+    "year": "год",
     "products": "Пакеты кредитов",
     "credits": "кредиты",
     "creditBalanceLabel": "Баланс кредитов",
@@ -270,7 +272,9 @@
     "seatsOfMax": "{count} of {max} seats",
     "scheduledCancelHeadline": "Cancels on {date}",
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
-    "scheduledPlanLabel": "Scheduled — switching here on {date}"
+    "scheduledPlanLabel": "Scheduled — switching here on {date}",
+    "inclTax": "вкл. НДС",
+    "currencyLabel": "Валюта"
   },
   "profile": {
     "title": "Настройки",

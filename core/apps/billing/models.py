@@ -332,6 +332,111 @@ class LocalizedPrice(models.Model):
         return f"{owner} → {self.currency.upper()} {self.amount_minor}"
 
 
+class CountryPrice(models.Model):
+    """Per-country (tax-region) price for a (PlanPrice|ProductPrice, country) pair.
+
+    Unlike :class:`LocalizedPrice` — keyed by *currency* and derived from an FX
+    feed — this row is keyed by *country* and its source of truth is a human-set,
+    tax-**inclusive** consumer sticker (``sticker_minor``) denominated in
+    ``currency``. France and Germany are both EUR but get independent rows, which
+    is the point: the pricing dimension is the tax region, not the currency.
+
+    ``base_minor`` is the tax-**exclusive** Stripe ``unit_amount`` derived from
+    the sticker as ``round(sticker / (1 + standard_vat_rate(country)))`` (see
+    :func:`apps.billing.vat.derive_base`). The Stripe Price stays
+    ``tax_behavior=exclusive`` so ``automatic_tax`` adds destination VAT back on
+    top and a standard-rated consumer pays the sticker again. ``stripe_price_id``
+    is stamped by ``sync_stripe_catalog`` once the per-country Price is minted.
+
+    Exactly one of ``plan_price``/``product_price`` is set (XOR), mirroring
+    :class:`LocalizedPrice`. Countries without a row fall back to the USD anchor
+    on ``PlanPrice``/``ProductPrice``.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    plan_price = models.ForeignKey(
+        PlanPrice,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="country_prices",
+    )
+    product_price = models.ForeignKey(
+        ProductPrice,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="country_prices",
+    )
+    country = models.CharField(max_length=2, help_text="ISO 3166-1 alpha-2 (uppercase).")
+    currency = models.CharField(max_length=3)
+    sticker_minor = models.IntegerField(
+        help_text="Tax-inclusive consumer sticker (source of truth) in currency minor units."
+    )
+    base_minor = models.IntegerField(
+        help_text="Derived tax-exclusive Stripe unit_amount in currency minor units."
+    )
+    # True once a human has curated the sticker (market positioning, round
+    # numbers). ``sync_localized_prices`` only refreshes the FX-suggested
+    # sticker on rows where this is False, so deliberate localization survives
+    # the daily FX sweep (design D7). The admin flips this to True on any edit.
+    is_curated = models.BooleanField(
+        default=False,
+        help_text="Human-curated sticker — excluded from the FX suggestion refresh.",
+    )
+    # Stripe Price ID for the per-country (exclusive) Price; NULL until
+    # ``sync_stripe_catalog`` mints it. NULL (not "") because the partial-unique
+    # constraint below filters on ``stripe_price_id__isnull=False``.
+    stripe_price_id = models.CharField(max_length=255, null=True, blank=True)  # noqa: DJ001  # see comment above
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "country_prices"
+        ordering = ("country",)
+        constraints = [  # noqa: RUF012  # mutable default in Meta inner class; ClassVar not applicable here
+            models.CheckConstraint(
+                condition=(
+                    models.Q(plan_price__isnull=False, product_price__isnull=True)
+                    | models.Q(plan_price__isnull=True, product_price__isnull=False)
+                ),
+                name="countryprice_has_owner",
+            ),
+            models.UniqueConstraint(
+                fields=("plan_price", "country"),
+                condition=models.Q(plan_price__isnull=False),
+                name="uniq_country_plan_price_country",
+            ),
+            models.UniqueConstraint(
+                fields=("product_price", "country"),
+                condition=models.Q(product_price__isnull=False),
+                name="uniq_country_product_price_country",
+            ),
+            # Stripe Price IDs are globally unique. Partial-unique because rows
+            # leave the column NULL until sync_stripe_catalog mints the Price.
+            models.UniqueConstraint(
+                fields=("stripe_price_id",),
+                condition=models.Q(stripe_price_id__isnull=False),
+                name="uniq_country_stripe_price_id",
+            ),
+        ]
+
+    def __str__(self) -> str:
+        owner = self.plan_price if self.plan_price_id else self.product_price
+        return f"{owner} → {self.country} {self.currency.upper()} {self.sticker_minor}"
+
+    def recompute_base(self) -> int:
+        """Refresh ``base_minor`` from the current sticker and the country's rate.
+
+        Returns the new base. Callers persist it (seed / sync) — this only
+        recomputes the in-memory value so the derivation lives in one place.
+        """
+        from apps.billing.vat import derive_base, standard_vat_rate
+
+        self.base_minor = derive_base(self.sticker_minor, standard_vat_rate(self.country))
+        return self.base_minor
+
+
 class StripeEvent(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     stripe_id = models.CharField(max_length=255, unique=True)

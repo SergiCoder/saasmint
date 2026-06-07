@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount}（{monthly}/月，按年以 {currency} 計費）",
     "seat": "席位",
     "seats": "席位",
+    "month": "月",
+    "year": "年",
     "products": "點數包",
     "credits": "點數",
     "creditBalanceLabel": "點數餘額",
@@ -270,7 +272,9 @@
     "seatsOfMax": "{count} of {max} seats",
     "scheduledCancelHeadline": "Cancels on {date}",
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
-    "scheduledPlanLabel": "Scheduled — switching here on {date}"
+    "scheduledPlanLabel": "Scheduled — switching here on {date}",
+    "inclTax": "含稅",
+    "currencyLabel": "貨幣"
   },
   "profile": {
     "title": "設定",

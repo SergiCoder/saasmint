@@ -107,7 +107,10 @@ export default async function BillingPage({
     labels: {
       upgrade: t("upgrade"),
       seat: t("seat"),
+      month: t("month"),
+      year: t("year"),
       billedYearly: t("billedYearly"),
+      inclTax: t("inclTax"),
     },
     planNames,
     planDescriptions,
@@ -305,6 +308,7 @@ export default async function BillingPage({
           locale,
           makeProductSubLabelFormatter(t),
         )}
+        taxLabel={t("inclTax")}
         creditsLabel={t("credits")}
         buyLabel={t("buy")}
         locale={locale}

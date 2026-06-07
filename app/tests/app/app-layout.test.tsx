@@ -165,6 +165,7 @@ function makeTeamSubscription(): Subscription {
         currency: "usd",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       },
     },
     seatLimit: 3,

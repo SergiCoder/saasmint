@@ -13,3 +13,16 @@ export function contextQuery(context: SubscriptionContext | undefined): string {
   if (context !== "personal" && context !== "team") return "";
   return `?context=${context}`;
 }
+
+/**
+ * Builds the optional `?currency=&country=` query string for catalog endpoints
+ * (`/billing/plans/`, `/billing/products/`). Returns an empty string when both
+ * params are absent so the caller can append it unconditionally.
+ */
+export function catalogQuery(currency?: string, country?: string): string {
+  const params = new URLSearchParams();
+  if (currency) params.set("currency", currency);
+  if (country) params.set("country", country);
+  const qs = params.toString();
+  return qs ? `?${qs}` : "";
+}

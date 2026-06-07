@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/månad, debiteras årligen i {currency}",
     "seat": "plats",
     "seats": "platser",
+    "month": "månad",
+    "year": "år",
     "products": "Kreditpaket",
     "credits": "krediter",
     "creditBalanceLabel": "Kreditsaldo",
@@ -270,7 +272,9 @@
     "seatsOfMax": "{count} of {max} seats",
     "scheduledCancelHeadline": "Cancels on {date}",
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
-    "scheduledPlanLabel": "Scheduled — switching here on {date}"
+    "scheduledPlanLabel": "Scheduled — switching here on {date}",
+    "inclTax": "inkl. moms",
+    "currencyLabel": "Valuta"
   },
   "profile": {
     "title": "Inställningar",

@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/ay, yıllık olarak {currency} ile tahsil edilir",
     "seat": "koltuk",
     "seats": "koltuk",
+    "month": "ay",
+    "year": "yıl",
     "products": "Kredi paketleri",
     "credits": "kredi",
     "creditBalanceLabel": "Kredi bakiyesi",
@@ -270,7 +272,9 @@
     "seatsOfMax": "{count} of {max} seats",
     "scheduledCancelHeadline": "Cancels on {date}",
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
-    "scheduledPlanLabel": "Scheduled — switching here on {date}"
+    "scheduledPlanLabel": "Scheduled — switching here on {date}",
+    "inclTax": "KDV dahil",
+    "currencyLabel": "Para birimi"
   },
   "profile": {
     "title": "Ayarlar",

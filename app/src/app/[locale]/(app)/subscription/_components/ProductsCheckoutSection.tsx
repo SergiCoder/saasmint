@@ -13,6 +13,8 @@ interface ProductsCheckoutSectionProps {
   products: Product[];
   productNames?: Record<number, string>;
   priceSubLabels?: Record<string, string>;
+  /** Localised "incl. VAT" hint forwarded to ProductsGrid for tax-inclusive prices. */
+  taxLabel?: string;
   creditsLabel: string;
   buyLabel: string;
   locale: string;
@@ -34,6 +36,7 @@ export function ProductsCheckoutSection({
   products,
   productNames,
   priceSubLabels,
+  taxLabel,
   creditsLabel,
   buyLabel,
   locale,
@@ -93,6 +96,7 @@ export function ProductsCheckoutSection({
         products={products}
         productNames={productNames}
         priceSubLabels={priceSubLabels}
+        taxLabel={taxLabel}
         creditsLabel={creditsLabel}
         locale={locale}
         renderCta={(product) =>

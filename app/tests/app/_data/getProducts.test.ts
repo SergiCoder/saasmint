@@ -27,7 +27,7 @@ describe("getProducts", () => {
 
     const result = await getProducts("usd");
 
-    expect(mockListProducts).toHaveBeenCalledWith("usd");
+    expect(mockListProducts).toHaveBeenCalledWith("usd", undefined);
     expect(result).toBe(products);
   });
 
@@ -36,7 +36,7 @@ describe("getProducts", () => {
 
     await getProducts();
 
-    expect(mockListProducts).toHaveBeenCalledWith(undefined);
+    expect(mockListProducts).toHaveBeenCalledWith(undefined, undefined);
   });
 
   it("returns an empty array and logs the error when the gateway throws", async () => {
@@ -58,5 +58,21 @@ describe("getProducts", () => {
     const result = await getProducts("eur");
 
     expect(result).toEqual([]);
+  });
+
+  it("forwards the country param to the gateway", async () => {
+    mockListProducts.mockResolvedValue([]);
+
+    await getProducts("eur", "ES");
+
+    expect(mockListProducts).toHaveBeenCalledWith("eur", "ES");
+  });
+
+  it("forwards only country when currency is omitted", async () => {
+    mockListProducts.mockResolvedValue([]);
+
+    await getProducts(undefined, "GB");
+
+    expect(mockListProducts).toHaveBeenCalledWith(undefined, "GB");
   });
 });

@@ -94,6 +94,7 @@ function makePersonalPlan(overrides: Partial<Plan> = {}): Plan {
       currency: "usd",
       localDisplayAmount: null,
       localCurrency: null,
+      taxInclusive: false,
     },
     ...overrides,
   };
@@ -144,6 +145,7 @@ describe("CheckoutPage", () => {
         currency: "usd",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       },
     });
     mockListPlans.mockResolvedValue([team]);

@@ -26,12 +26,18 @@ export interface PricingCatalog {
  * loads on the same `Promise.all`. Returns plain data — derivations like
  * `canManageBilling` and org-owner role live with the page that needs them.
  */
-export function getPricingCatalog(user: User | null): Promise<PricingCatalog> {
-  const currency = user?.preferredCurrency;
+export function getPricingCatalog(
+  user: User | null,
+  country?: string,
+  currencyOverride?: string,
+): Promise<PricingCatalog> {
+  // An explicit selector currency wins over the user's stored preference; the
+  // subscription rows keep using the user's own billing currency.
+  const currency = currencyOverride ?? user?.preferredCurrency;
   return Promise.all([
-    getPlans(currency),
-    user ? getSubscriptions(currency) : Promise.resolve([]),
-    user ? getProducts(currency) : Promise.resolve([]),
+    getPlans(currency, country),
+    user ? getSubscriptions(user.preferredCurrency) : Promise.resolve([]),
+    user ? getProducts(currency, country) : Promise.resolve([]),
     user ? getUserOrgs() : Promise.resolve([]),
   ]).then(([plans, subscriptions, products, userOrgs]) => ({
     plans,

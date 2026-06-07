@@ -14,6 +14,7 @@ const defaultProps = {
   currency: "usd",
   localDisplayAmount: null,
   localCurrency: null,
+  taxInclusive: false,
   locale: "en-US",
   interval: "month",
   labels: {
