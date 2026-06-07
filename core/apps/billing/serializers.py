@@ -40,6 +40,27 @@ def _localized_display(price: PlanPrice | ProductPrice, currency: str) -> tuple[
     return format_amount(price.amount, "usd"), "usd"
 
 
+def _country_display(
+    price: PlanPrice | ProductPrice, country: str | None
+) -> tuple[float, str] | None:
+    """Return ``(sticker_display, currency)`` for the resolved *country*, or None.
+
+    Reads the prefetched ``country_prices`` reverse relation (the calling view
+    attaches a ``Prefetch`` filtered to the resolved country). The amount is the
+    **tax-inclusive** consumer sticker — what the customer pays at checkout —
+    denominated in the per-country currency. Returns None when no country is
+    resolved or no row exists, so the caller falls back to the per-currency /
+    USD display. Short-circuits before touching the relation when *country* is
+    None so non-catalog callers (subscriptions) never fire an N+1.
+    """
+    if not country:
+        return None
+    for cp in price.country_prices.all():
+        if cp.country == country:
+            return format_amount(cp.sticker_minor, cp.currency), cp.currency
+    return None
+
+
 def _local_display(
     price: PlanPrice | ProductPrice, preferred_currency: str | None
 ) -> tuple[float | None, str | None]:
@@ -141,6 +162,10 @@ class _PriceSerializer(serializers.ModelSerializer[Any]):
     currency = serializers.CharField(read_only=True)
     local_display_amount = serializers.FloatField(read_only=True, allow_null=True)
     local_currency = serializers.CharField(read_only=True, allow_null=True)
+    # True when ``display_amount`` is a per-country tax-INCLUSIVE sticker (the
+    # FE renders an "incl. VAT" label). False for the USD/per-currency fallback,
+    # which is tax-exclusive (destination VAT is added at checkout).
+    tax_inclusive = serializers.BooleanField(read_only=True)
 
     class Meta:
         fields = (
@@ -150,12 +175,23 @@ class _PriceSerializer(serializers.ModelSerializer[Any]):
             "currency",
             "local_display_amount",
             "local_currency",
+            "tax_inclusive",
         )
         read_only_fields = fields
 
     def to_representation(self, instance: PlanPrice | ProductPrice) -> dict[str, Any]:
         result = super().to_representation(instance)
-        display_amount, currency = _localized_display(instance, self.context.get("currency", "usd"))
+        # Prefer the resolved country's tax-inclusive sticker; fall back to the
+        # per-currency / USD (tax-exclusive) display when no per-country row.
+        country_display = _country_display(instance, self.context.get("country"))
+        if country_display is not None:
+            display_amount, currency = country_display
+            tax_inclusive = True
+        else:
+            display_amount, currency = _localized_display(
+                instance, self.context.get("currency", "usd")
+            )
+            tax_inclusive = False
         local_amount, local_currency = _local_display(
             instance, self.context.get("preferred_currency")
         )
@@ -163,6 +199,7 @@ class _PriceSerializer(serializers.ModelSerializer[Any]):
         result["currency"] = currency
         result["local_display_amount"] = local_amount
         result["local_currency"] = local_currency
+        result["tax_inclusive"] = tax_inclusive
         return result
 
 

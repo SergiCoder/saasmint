@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from typing import Any, ClassVar, TypedDict, cast
 from uuid import UUID
 
@@ -46,6 +47,7 @@ from saasmint_core.services.subscriptions import (
 from apps.base_views import BillingScopedView, paginated_response_schema
 from apps.billing.models import (
     ACTIVE_SUBSCRIPTION_STATUSES,
+    CountryPrice,
     CreditBalance,
     LocalizedPrice,
     PlanContext,
@@ -112,6 +114,17 @@ _CURRENCY_PARAM = OpenApiParameter(
     type=str,
 )
 
+_COUNTRY_PARAM = OpenApiParameter(
+    name="country",
+    description=(
+        "ISO 3166-1 alpha-2 country code (e.g. 'ES'). Manual override that wins"
+        " over locale/IP resolution; selects the per-country tax-inclusive price"
+        " (falls back to the USD anchor when no per-country price exists)."
+    ),
+    required=False,
+    type=str,
+)
+
 _SUBSCRIPTION_CONTEXT_PARAM = OpenApiParameter(
     name="context",
     description=(
@@ -170,6 +183,115 @@ def _resolve_billing_currency(
     return billing, dual_pref
 
 
+# Language subtag → default pricing country when a locale carries no explicit
+# region (e.g. ``fr`` → FR). ``en`` is intentionally absent: it is region-
+# ambiguous (US/GB/…), so it falls through to the IP signal / USD anchor.
+_LANG_DEFAULT_COUNTRY: dict[str, str] = {
+    "es": "ES",
+    "fr": "FR",
+    "de": "DE",
+    "it": "IT",
+    "nl": "NL",
+    "pt": "PT",
+    "pl": "PL",
+    "sv": "SE",
+    "da": "DK",
+    "zh": "CN",
+}
+
+
+def _country_from_locale(locale: str | None) -> str | None:
+    """Derive an ISO-3166-1 alpha-2 country from a locale/Accept-Language value.
+
+    Prefers an explicit region subtag (``es-ES`` → ES, ``en-GB`` → GB) and
+    otherwise maps the language to a default country (:data:`_LANG_DEFAULT_COUNTRY`).
+    Returns None when nothing usable can be derived.
+    """
+    if not locale:
+        return None
+    primary = locale.split(",")[0].strip()
+    parts = re.split(r"[-_]", primary)
+    if len(parts) >= 2 and len(parts[1]) == 2 and parts[1].isalpha():
+        return parts[1].upper()
+    return _LANG_DEFAULT_COUNTRY.get(parts[0].lower())
+
+
+def _resolve_pricing_country(request: Request, user: User | None) -> str | None:
+    """Resolve the caller's pricing country (ISO-3166-1 alpha-2), or None.
+
+    Precedence (design D4): explicit ``?country=`` manual override **wins**,
+    then the request locale (user preference, else Accept-Language), then a
+    best-effort edge IP signal (Cloudflare's ``CF-IPCountry`` when present).
+    Returns None when nothing resolves — callers then use the USD anchor. The
+    resolved country only *selects* which sticker/Price to show and use; the
+    address entered at Checkout remains authoritative for the tax actually
+    charged.
+    """
+    override = request.query_params.get("country")
+    if override:
+        candidate = override.strip().upper()
+        if len(candidate) == 2 and candidate.isalpha():
+            return candidate
+        raise ValidationError({"country": [f"Invalid country code: {override!r}."]})
+
+    # Account billing country is not stored locally yet; skip to locale.
+    user_locale = user.preferred_locale if user and user.preferred_locale else None
+    locale = user_locale or request.headers.get("Accept-Language")
+    from_locale = _country_from_locale(locale)
+    if from_locale:
+        return from_locale
+
+    edge_country = request.headers.get("CF-IPCountry")
+    if edge_country and len(edge_country) == 2 and edge_country.isalpha():
+        candidate = edge_country.upper()
+        if candidate != "XX":  # Cloudflare's "unknown" sentinel
+            return candidate
+    return None
+
+
+def _get_country_stripe_price(
+    price: PlanPrice | ProductPrice, country: str | None
+) -> CountryPrice | None:
+    """Return the minted per-country Price row for *price* in *country*, or None.
+
+    Only rows that already carry a ``stripe_price_id`` qualify — an un-minted
+    row (registration not live yet, or sync hasn't run) is treated as absent so
+    the caller falls back to the USD anchor rather than a price that can't be
+    charged.
+    """
+    if not country:
+        return None
+    filter_kwargs: dict[str, object] = {"country": country, "stripe_price_id__isnull": False}
+    if isinstance(price, PlanPrice):
+        filter_kwargs["plan_price"] = price
+    else:
+        filter_kwargs["product_price"] = price
+    return (
+        CountryPrice.objects.filter(**filter_kwargs)
+        .only("stripe_price_id", "currency", "sticker_minor", "country")
+        .first()
+    )
+
+
+def _resolve_checkout_price(
+    price: PlanPrice | ProductPrice, request: Request, user: User | None
+) -> tuple[str, str]:
+    """Resolve ``(stripe_price_id, billing_currency)`` for a checkout.
+
+    Prefers the resolved country's per-country (tax-inclusive-sticker) Price; on
+    no resolved country or no minted row, falls back to the existing per-currency
+    resolution (and ultimately the USD anchor). ``billing_currency`` is returned
+    so the caller can keep driving ``adaptive_pricing`` (USD-only) correctly.
+    """
+    country = _resolve_pricing_country(request, user)
+    country_price = _get_country_stripe_price(price, country)
+    if country_price is not None and country_price.stripe_price_id:
+        return country_price.stripe_price_id, country_price.currency
+
+    billing_currency, _ = _resolve_billing_currency(request.query_params.get("currency"), user)
+    return _resolve_stripe_price_id(price, billing_currency), billing_currency
+
+
 def _currency_context(request: Request) -> _CurrencyContext:
     """Build serializer context dict with the resolved billing + preferred currencies.
 
@@ -185,6 +307,24 @@ def _currency_context(request: Request) -> _CurrencyContext:
     user: User | None = request.user if request.user.is_authenticated else None
     billing, dual_pref = _resolve_billing_currency(request.query_params.get("currency"), user)
     return _CurrencyContext(currency=billing, preferred_currency=dual_pref)
+
+
+def _catalog_context(request: Request) -> dict[str, Any]:
+    """Serializer context for catalog list endpoints: currency + resolved country.
+
+    Extends :func:`_currency_context` with the resolved pricing ``country`` so
+    the price serializer can prefer the per-country tax-inclusive sticker. Only
+    the catalog endpoints prefetch ``country_prices`` and set this key —
+    subscription endpoints use the plain currency context (``country`` absent),
+    keeping the serializer on the per-currency path with no N+1.
+    """
+    user: User | None = request.user if request.user.is_authenticated else None
+    ctx = _currency_context(request)
+    return {
+        "currency": ctx["currency"],
+        "preferred_currency": ctx["preferred_currency"],
+        "country": _resolve_pricing_country(request, user),
+    }
 
 
 def _localized_prices_queryset(
@@ -212,6 +352,24 @@ def _localized_prices_prefetch(
         "price__localized_prices",
         queryset=_localized_prices_queryset(currency, preferred_currency),
     )
+
+
+def _country_prices_prefetch(country: str | None) -> Prefetch[str]:
+    """Prefetch the per-country price row for the resolved *country*.
+
+    Filtered to the single resolved country so the serializer's
+    ``country_prices.all()`` walk costs no extra query. An empty queryset when
+    no country resolved keeps the relation cheap and the serializer on the
+    USD/per-currency fallback path.
+    """
+    qs = (
+        CountryPrice.objects.none()
+        if not country
+        else CountryPrice.objects.filter(country=country).only(
+            "country", "currency", "sticker_minor", "plan_price_id", "product_price_id"
+        )
+    )
+    return Prefetch("price__country_prices", queryset=qs)
 
 
 def _resolved_localized_prefetch(currency: str) -> Prefetch[str]:
@@ -498,12 +656,15 @@ class PlanListView(APIView):
     permission_classes: ClassVar[list[type[AllowAny]]] = [AllowAny]  # type: ignore[misc]  # DRF declares as instance var; ClassVar needed for RUF012
 
     @extend_schema(
-        parameters=[_CURRENCY_PARAM],
+        parameters=[_CURRENCY_PARAM, _COUNTRY_PARAM],
         responses=paginated_response_schema("PlanListResponse", PlanSerializer(many=True)),
         description=(
             "List all active plans with prices. Emits the DRF paginated envelope"
             " (``count``/``next``/``previous``/``results``) — the catalog is bounded,"
-            " so ``next`` and ``previous`` are always ``null``."
+            " so ``next`` and ``previous`` are always ``null``. When a country"
+            " resolves (``?country=``, locale, or edge IP) each price's"
+            " ``display_amount`` is that country's tax-inclusive sticker"
+            " (``tax_inclusive=true``); otherwise it falls back to the USD anchor."
         ),
         tags=["billing"],
         auth=[],
@@ -513,15 +674,16 @@ class PlanListView(APIView):
         # Users without an owned org can upgrade to a team plan via team-context
         # checkout (see CheckoutSessionView), so hiding team plans from them
         # would make the upgrade undiscoverable.
-        ctx = _currency_context(request)
+        ctx = _catalog_context(request)
         qs = (
             PlanModel.objects.filter(is_active=True)
             .select_related("price")
             .prefetch_related(
-                _localized_prices_prefetch(ctx["currency"], ctx.get("preferred_currency"))
+                _localized_prices_prefetch(ctx["currency"], ctx.get("preferred_currency")),
+                _country_prices_prefetch(ctx.get("country")),
             )
         )
-        data = PlanSerializer(qs, many=True, context=cast("dict[str, Any]", ctx)).data
+        data = PlanSerializer(qs, many=True, context=ctx).data
         return Response(_catalog_envelope(list(data)))
 
 
@@ -529,25 +691,29 @@ class ProductListView(APIView):
     """GET /api/v1/billing/products — list active one-time products with prices."""
 
     @extend_schema(
-        parameters=[_CURRENCY_PARAM],
+        parameters=[_CURRENCY_PARAM, _COUNTRY_PARAM],
         responses=paginated_response_schema("ProductListResponse", ProductSerializer(many=True)),
         description=(
             "List all active one-time products with prices. Emits the DRF paginated envelope"
             " (``count``/``next``/``previous``/``results``) — the catalog is bounded,"
-            " so ``next`` and ``previous`` are always ``null``."
+            " so ``next`` and ``previous`` are always ``null``. When a country resolves"
+            " (``?country=``, locale, or edge IP) each price's ``display_amount`` is that"
+            " country's tax-inclusive sticker (``tax_inclusive=true``); otherwise it"
+            " falls back to the USD anchor."
         ),
         tags=["billing"],
     )
     def get(self, request: Request) -> Response:
-        ctx = _currency_context(request)
+        ctx = _catalog_context(request)
         products = (
             ProductModel.objects.filter(is_active=True)
             .select_related("price")
             .prefetch_related(
-                _localized_prices_prefetch(ctx["currency"], ctx.get("preferred_currency"))
+                _localized_prices_prefetch(ctx["currency"], ctx.get("preferred_currency")),
+                _country_prices_prefetch(ctx.get("country")),
             )
         )
-        data = ProductSerializer(products, many=True, context=cast("dict[str, Any]", ctx)).data
+        data = ProductSerializer(products, many=True, context=ctx).data
         return Response(_catalog_envelope(list(data)))
 
 
@@ -616,7 +782,7 @@ class CheckoutSessionView(BillingScopedView):
 
     @extend_schema(
         request=CheckoutRequestSerializer,
-        parameters=[_CURRENCY_PARAM],
+        parameters=[_CURRENCY_PARAM, _COUNTRY_PARAM],
         responses={
             201: inline_serializer("CheckoutResponse", {"url": drf_serializers.URLField()}),
             400: OpenApiResponse(
@@ -649,12 +815,13 @@ class CheckoutSessionView(BillingScopedView):
         data = ser.validated_data
 
         # Resolve currency first so _get_active_plan_price can prefetch the
-        # matching LocalizedPrice in the same query — _resolve_stripe_price_id
-        # then reads from the prefetched cache.
+        # matching LocalizedPrice for the USD/currency fallback path. The
+        # country-aware resolver then prefers a per-country Price when the
+        # resolved country has one minted, returning the effective currency.
         billing_currency, _ = _resolve_billing_currency(request.query_params.get("currency"), user)
         plan_price = _get_active_plan_price(data["plan_price_id"], currency=billing_currency)
         quantity = _validate_quantity_for_plan(plan_price, data["seat_limit"])
-        stripe_price_id = _resolve_stripe_price_id(plan_price, billing_currency)
+        stripe_price_id, billing_currency = _resolve_checkout_price(plan_price, request, user)
 
         is_team = plan_price.plan.context == PlanContext.TEAM
 
@@ -840,6 +1007,7 @@ class ProductCheckoutSessionView(BillingScopedView):
         request=ProductCheckoutRequestSerializer,
         parameters=[
             _CURRENCY_PARAM,
+            _COUNTRY_PARAM,
             OpenApiParameter(
                 name="context",
                 description=(
@@ -889,13 +1057,14 @@ class ProductCheckoutSessionView(BillingScopedView):
         context = _validate_subscription_context(request.query_params.get("context"))
         org_id = _resolve_product_purchase_context(user, context)
 
-        # Currency resolved first so the LocalizedPrice prefetch lands in
-        # the same query as _get_active_product_price.
+        # Currency resolved first so the LocalizedPrice prefetch lands in the
+        # same query as _get_active_product_price (USD/currency fallback path).
+        # The country-aware resolver prefers a per-country Price when available.
         billing_currency, _ = _resolve_billing_currency(request.query_params.get("currency"), user)
         product_price = _get_active_product_price(
             data["product_price_id"], currency=billing_currency
         )
-        stripe_price_id = _resolve_stripe_price_id(product_price, billing_currency)
+        stripe_price_id, billing_currency = _resolve_checkout_price(product_price, request, user)
 
         metadata: dict[str, str] = {"product_id": str(product_price.product_id)}
         if org_id is not None:
