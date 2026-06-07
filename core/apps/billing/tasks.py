@@ -249,8 +249,21 @@ def sync_localized_prices() -> int:
         # by the daily FX sweep. The derived exclusive base is kept in step with
         # the suggested sticker and the country's standard VAT rate.
         country_to_update: list[CountryPrice] = []
-        for cp in CountryPrice.objects.filter(is_curated=False).select_related(
-            "plan_price", "product_price"
+        for cp in (
+            CountryPrice.objects.filter(is_curated=False)
+            .only(
+                "id",
+                "country",
+                "currency",
+                "sticker_minor",
+                "base_minor",
+                "updated_at",
+                "plan_price_id",
+                "plan_price__amount",
+                "product_price_id",
+                "product_price__amount",
+            )
+            .select_related("plan_price", "product_price")
         ):
             owner_amount = (
                 cp.plan_price.amount if cp.plan_price_id else cp.product_price.amount  # type: ignore[union-attr]  # XOR guarantees the selected FK is non-None

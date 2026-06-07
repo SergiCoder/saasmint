@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 from typing import TypedDict
+from uuid import UUID
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -203,11 +204,12 @@ class Command(BaseCommand):
         # Bucket existing rows by (owner_id, country) so the per-pair decision
         # below is a dict lookup, not a query. plan_price_id / product_price_id
         # are disjoint (XOR), so a single coalesced owner key never collides.
-        existing_by_key: dict[tuple[object, str], CountryPrice] = {}
+        existing_by_key: dict[tuple[UUID, str], CountryPrice] = {}
         for cp in CountryPrice.objects.all().only(
             "id", "country", "sticker_minor", "base_minor", "plan_price_id", "product_price_id"
         ):
             owner_id = cp.plan_price_id if cp.plan_price_id is not None else cp.product_price_id
+            assert owner_id is not None  # noqa: S101  # XOR constraint guarantees one FK is set
             existing_by_key[(owner_id, cp.country)] = cp
 
         to_create: list[CountryPrice] = []
@@ -243,9 +245,9 @@ class Command(BaseCommand):
         currency: str,
         rate: Decimal,
         sticker: int,
-        owner_id: object,
+        owner_id: UUID,
         owner_kwarg: dict[str, PlanPrice | ProductPrice],
-        existing_by_key: dict[tuple[object, str], CountryPrice],
+        existing_by_key: dict[tuple[UUID, str], CountryPrice],
         to_create: list[CountryPrice],
         to_update: list[CountryPrice],
     ) -> None:
