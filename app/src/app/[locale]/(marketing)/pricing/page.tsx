@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
 import { GetStartedButton } from "./_components/GetStartedButton";
-import { CountrySelector } from "./_components/CountrySelector";
-import { PRICING_COUNTRIES } from "@/domain/data/pricingCountries";
+import { CurrencySelector } from "./_components/CurrencySelector";
+import {
+  PRICING_CURRENCIES,
+  normalizePricingCurrency,
+  pricingCountryForCurrency,
+} from "@/domain/data/pricingCurrencies";
 import { ProductsCheckoutSection } from "@/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection";
 import { renderPlanUpgradeCta } from "@/app/[locale]/(app)/subscription/_lib/renderPlanUpgradeCta";
 import { getOrgMembers } from "@/app/[locale]/_data/getOrgMembers";
@@ -51,14 +55,7 @@ const SYNTHETIC_FREE_PLANS: Plan[] = (["month", "year"] as const).map<Plan>(
 
 interface Props {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ interval?: string; country?: string }>;
-}
-
-/** Normalise a `?country=` value to an uppercase ISO-3166-1 alpha-2, or "". */
-function normalizeCountry(raw: string | undefined): string {
-  if (!raw) return "";
-  const candidate = raw.trim().toUpperCase();
-  return /^[A-Z]{2}$/.test(candidate) ? candidate : "";
+  searchParams: Promise<{ interval?: string; currency?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -76,14 +73,17 @@ export default async function PricingPage({ params, searchParams }: Props) {
   // the translation loads on the same Promise.all. Anonymous visitors (the
   // majority on /pricing) skip the authenticated calls and fall back to
   // empty lists.
-  // Read the pricing-country override up front so it can parameterise the
-  // catalog fetch (the backend returns that country's tax-inclusive sticker).
+  // Read the pricing-currency override up front so it can parameterise the
+  // catalog fetch. The selector deals in currencies; the backend resolver still
+  // takes a country, so map the chosen currency to a representative country
+  // (any member of the bloc yields the same per-currency sticker).
   const query = await searchParams;
-  const selectedCountry = normalizeCountry(query.country);
+  const selectedCurrency = normalizePricingCurrency(query.currency);
+  const selectedCountry = pricingCountryForCurrency(selectedCurrency);
 
   const userPromise = getOptionalUser();
   const catalogPromise = userPromise.then((u) =>
-    getPricingCatalog(u, selectedCountry || undefined),
+    getPricingCatalog(u, selectedCountry),
   );
   const [t, tPlans, tProducts, user, catalog] = await Promise.all([
     getTranslations("billing"),
@@ -247,12 +247,11 @@ export default async function PricingPage({ params, searchParams }: Props) {
           {t("pricingTitle")}
         </h1>
         <div className="mt-4 flex justify-center">
-          <CountrySelector
-            label={t("countryLabel")}
-            autoLabel={t("countryAuto")}
-            selected={selectedCountry}
-            countries={PRICING_COUNTRIES}
-            locale={locale}
+          <CurrencySelector
+            label={t("currencyLabel")}
+            autoLabel={t("currencyAuto")}
+            selected={selectedCurrency}
+            currencies={PRICING_CURRENCIES}
           />
         </div>
       </div>

@@ -274,8 +274,8 @@
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
     "scheduledPlanLabel": "Scheduled — switching here on {date}",
     "inclTax": "TVA incluse",
-    "countryLabel": "Pays",
-    "countryAuto": "Détection auto"
+    "currencyLabel": "Devise",
+    "currencyAuto": "Détection auto"
   },
   "profile": {
     "title": "Paramètres",

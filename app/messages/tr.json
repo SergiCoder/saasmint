@@ -274,8 +274,8 @@
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
     "scheduledPlanLabel": "Scheduled — switching here on {date}",
     "inclTax": "KDV dahil",
-    "countryLabel": "Ülke",
-    "countryAuto": "Otomatik"
+    "currencyLabel": "Para birimi",
+    "currencyAuto": "Otomatik"
   },
   "profile": {
     "title": "Ayarlar",

@@ -274,8 +274,8 @@
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
     "scheduledPlanLabel": "Scheduled — switching here on {date}",
     "inclTax": "含增值税",
-    "countryLabel": "国家/地区",
-    "countryAuto": "自动检测"
+    "currencyLabel": "货币",
+    "currencyAuto": "自动检测"
   },
   "profile": {
     "title": "设置",
