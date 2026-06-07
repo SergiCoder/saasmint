@@ -3,53 +3,58 @@
 SHELL := bash
 unexport VIRTUAL_ENV  # prevent uv from using a stale venv from the parent shell
 
+# Compose interpolates ${VAR} from the shell env or a default `.env` file only —
+# never from `.env.local`. This project standardizes on `.env.local`, so pass it
+# explicitly or POSTGRES_* (and the pg_isready healthcheck) resolve to empty.
+COMPOSE := docker compose --env-file .env.local
+
 # ─── Development ──────────────────────────────────────────────────────────────
 
 .PHONY: dev
 dev: ## Run Django + Celery + infra + Stripe webhook forwarder
-	docker compose up --build
+	$(COMPOSE) up --build
 
 .PHONY: stop
 stop: ## Stop all running services
-	docker compose down
+	$(COMPOSE) down
 
 .PHONY: logs
 logs: ## Tail Django logs
-	docker compose logs -f django
+	$(COMPOSE) logs -f django
 
 # ─── Database ─────────────────────────────────────────────────────────────────
 
 .PHONY: migrate
 migrate: ## Run pending DB migrations (stack must be running)
-	docker compose exec django uv run python manage.py migrate
+	$(COMPOSE) exec django uv run python manage.py migrate
 
 .PHONY: static
 static: ## Collect static files (stack must be running)
-	docker compose exec django uv run python manage.py collectstatic --no-input --clear
+	$(COMPOSE) exec django uv run python manage.py collectstatic --no-input --clear
 
 .PHONY: migration
 migration: ## Create a new migration (make migration MSG="add coupon table")
-	docker compose run --rm django uv run python manage.py makemigrations $(MSG)
+	$(COMPOSE) run --rm django uv run python manage.py makemigrations $(MSG)
 
 .PHONY: seed
 seed: ## Seed dev data — plans, test users, Stripe products
-	docker compose run --rm django uv run python manage.py seed_dev_data
+	$(COMPOSE) run --rm django uv run python manage.py seed_dev_data
 
 # ─── Stripe ───────────────────────────────────────────────────────────────────
 
 .PHONY: stripe-logs
 stripe-logs: ## Tail the Stripe webhook forwarder logs
-	docker compose logs -f stripe-cli
+	$(COMPOSE) logs -f stripe-cli
 
 .PHONY: sync-stripe
 sync-stripe: ## Push local Plans/Products to Stripe (creates real prices)
-	docker compose exec django uv run python manage.py sync_stripe_catalog
+	$(COMPOSE) exec django uv run python manage.py sync_stripe_catalog
 
 # ─── OpenAPI ──────────────────────────────────────────────────────────────────
 
 .PHONY: schema
 schema: ## Regenerate schema.yml from drf-spectacular (stack must be running)
-	docker compose exec django uv run python manage.py spectacular --file schema.yml
+	$(COMPOSE) exec django uv run python manage.py spectacular --file schema.yml
 
 # ─── Testing ──────────────────────────────────────────────────────────────────
 
