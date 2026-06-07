@@ -18,11 +18,15 @@ function parsePlan(raw: Record<string, unknown>, currency?: string): Plan {
 const PLAN_CACHE_TTL_SECONDS = 60 * 60;
 
 export class DjangoApiPlanGateway implements IPlanGateway {
-  async listPlans(currency?: string): Promise<Plan[]> {
-    const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
-    const data = await apiFetchOptional(`/billing/plans/${query}`, {
-      next: { revalidate: PLAN_CACHE_TTL_SECONDS },
-    });
+  async listPlans(currency?: string, country?: string): Promise<Plan[]> {
+    const params = new URLSearchParams();
+    if (currency) params.set("currency", currency);
+    if (country) params.set("country", country);
+    const qs = params.toString();
+    const data = await apiFetchOptional(
+      `/billing/plans/${qs ? `?${qs}` : ""}`,
+      { next: { revalidate: PLAN_CACHE_TTL_SECONDS } },
+    );
     return parsePaginated(data, (r) => parsePlan(r, currency));
   }
 }

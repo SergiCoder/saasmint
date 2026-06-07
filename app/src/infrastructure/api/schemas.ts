@@ -23,6 +23,7 @@ const priceSchema = z.object({
   currency: z.string(),
   localDisplayAmount: z.number().nullable(),
   localCurrency: nullableString,
+  taxInclusive: z.boolean(),
 });
 
 export const UserSchema = z.object({

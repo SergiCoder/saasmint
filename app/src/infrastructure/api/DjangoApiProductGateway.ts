@@ -14,11 +14,15 @@ import { CheckoutSessionResponseSchema, ProductSchema } from "./schemas";
 const PRODUCT_CACHE_TTL_SECONDS = 60 * 60;
 
 export class DjangoApiProductGateway implements IProductGateway {
-  async listProducts(currency?: string): Promise<Product[]> {
-    const query = currency ? `?currency=${encodeURIComponent(currency)}` : "";
-    const data = await apiFetchOptional(`/billing/products/${query}`, {
-      next: { revalidate: PRODUCT_CACHE_TTL_SECONDS },
-    });
+  async listProducts(currency?: string, country?: string): Promise<Product[]> {
+    const params = new URLSearchParams();
+    if (currency) params.set("currency", currency);
+    if (country) params.set("country", country);
+    const qs = params.toString();
+    const data = await apiFetchOptional(
+      `/billing/products/${qs ? `?${qs}` : ""}`,
+      { next: { revalidate: PRODUCT_CACHE_TTL_SECONDS } },
+    );
     return parsePaginated(data, (r) =>
       ProductSchema.parse(keysToCamelWithPrice(r, currency)),
     );

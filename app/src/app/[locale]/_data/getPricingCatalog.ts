@@ -26,12 +26,15 @@ export interface PricingCatalog {
  * loads on the same `Promise.all`. Returns plain data — derivations like
  * `canManageBilling` and org-owner role live with the page that needs them.
  */
-export function getPricingCatalog(user: User | null): Promise<PricingCatalog> {
+export function getPricingCatalog(
+  user: User | null,
+  country?: string,
+): Promise<PricingCatalog> {
   const currency = user?.preferredCurrency;
   return Promise.all([
-    getPlans(currency),
+    getPlans(currency, country),
     user ? getSubscriptions(currency) : Promise.resolve([]),
-    user ? getProducts(currency) : Promise.resolve([]),
+    user ? getProducts(currency, country) : Promise.resolve([]),
     user ? getUserOrgs() : Promise.resolve([]),
   ]).then(([plans, subscriptions, products, userOrgs]) => ({
     plans,

@@ -93,6 +93,10 @@ export function applyPriceDefaults(
   if (price.localCurrency === undefined) {
     price.localCurrency = null;
   }
+  if (price.taxInclusive === undefined) {
+    // Absent → USD/per-currency fallback, which is tax-exclusive.
+    price.taxInclusive = false;
+  }
 }
 
 /**
