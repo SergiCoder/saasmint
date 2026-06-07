@@ -270,7 +270,10 @@
     "seatsOfMax": "{count} of {max} seats",
     "scheduledCancelHeadline": "Cancels on {date}",
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
-    "scheduledPlanLabel": "Scheduled — switching here on {date}"
+    "scheduledPlanLabel": "Scheduled — switching here on {date}",
+    "inclTax": "VAT 포함",
+    "countryLabel": "국가",
+    "countryAuto": "자동 감지"
   },
   "profile": {
     "title": "설정",

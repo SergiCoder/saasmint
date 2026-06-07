@@ -150,6 +150,11 @@ export interface PlanCardLabels {
    * user's preferred currency matches the billed currency).
    */
   billedYearly: string;
+  /**
+   * Localised "incl. VAT" hint, shown beneath a price when it is a per-country
+   * tax-inclusive sticker (`price.taxInclusive`).
+   */
+  inclTax: string;
 }
 
 export interface PlanVariantView {
@@ -162,6 +167,12 @@ export interface PlanVariantView {
    * Only set when it adds information beyond the headline price.
    */
   priceSubLabel?: string;
+  /**
+   * Localised "incl. VAT" hint, set only when the variant's price is a
+   * per-country tax-inclusive sticker. Undefined for the USD/per-currency
+   * (tax-exclusive) fallback.
+   */
+  taxLabel?: string;
   /** Pre-rendered CTA for this variant. `null` when no CTA should be shown. */
   cta: React.ReactNode | null;
 }
@@ -333,6 +344,7 @@ function buildPlanVariant(
     price: formatCurrency(displayAmount, currency, locale),
     intervalLabel,
     priceSubLabel,
+    taxLabel: (plan.price?.taxInclusive ?? false) ? labels.inclTax : undefined,
     cta:
       renderCta({
         plan,

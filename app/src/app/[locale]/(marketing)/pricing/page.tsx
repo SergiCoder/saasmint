@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
 import { GetStartedButton } from "./_components/GetStartedButton";
+import { CountrySelector } from "./_components/CountrySelector";
+import { PRICING_COUNTRIES } from "@/domain/data/pricingCountries";
 import { ProductsCheckoutSection } from "@/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection";
 import { renderPlanUpgradeCta } from "@/app/[locale]/(app)/subscription/_lib/renderPlanUpgradeCta";
 import { getOrgMembers } from "@/app/[locale]/_data/getOrgMembers";
@@ -49,7 +51,14 @@ const SYNTHETIC_FREE_PLANS: Plan[] = (["month", "year"] as const).map<Plan>(
 
 interface Props {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ interval?: string }>;
+  searchParams: Promise<{ interval?: string; country?: string }>;
+}
+
+/** Normalise a `?country=` value to an uppercase ISO-3166-1 alpha-2, or "". */
+function normalizeCountry(raw: string | undefined): string {
+  if (!raw) return "";
+  const candidate = raw.trim().toUpperCase();
+  return /^[A-Z]{2}$/.test(candidate) ? candidate : "";
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -67,14 +76,20 @@ export default async function PricingPage({ params, searchParams }: Props) {
   // the translation loads on the same Promise.all. Anonymous visitors (the
   // majority on /pricing) skip the authenticated calls and fall back to
   // empty lists.
+  // Read the pricing-country override up front so it can parameterise the
+  // catalog fetch (the backend returns that country's tax-inclusive sticker).
+  const query = await searchParams;
+  const selectedCountry = normalizeCountry(query.country);
+
   const userPromise = getOptionalUser();
-  const catalogPromise = userPromise.then(getPricingCatalog);
-  const [t, tPlans, tProducts, user, query, catalog] = await Promise.all([
+  const catalogPromise = userPromise.then((u) =>
+    getPricingCatalog(u, selectedCountry || undefined),
+  );
+  const [t, tPlans, tProducts, user, catalog] = await Promise.all([
     getTranslations("billing"),
     getTranslations("plans"),
     getTranslations("products"),
     userPromise,
-    searchParams,
     catalogPromise,
   ]);
   const { plans, subscriptions, products, userOrgs } = catalog;
@@ -139,6 +154,7 @@ export default async function PricingPage({ params, searchParams }: Props) {
       upgrade: t("upgrade"),
       seat: t("seat"),
       billedYearly: t("billedYearly"),
+      inclTax: t("inclTax"),
     },
     planNames,
     planDescriptions,
@@ -228,6 +244,15 @@ export default async function PricingPage({ params, searchParams }: Props) {
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           {t("pricingTitle")}
         </h1>
+        <div className="mt-4 flex justify-center">
+          <CountrySelector
+            label={t("countryLabel")}
+            autoLabel={t("countryAuto")}
+            selected={selectedCountry}
+            countries={PRICING_COUNTRIES}
+            locale={locale}
+          />
+        </div>
       </div>
 
       <div className="mt-12 space-y-16">
@@ -273,6 +298,7 @@ export default async function PricingPage({ params, searchParams }: Props) {
             locale,
             makeProductSubLabelFormatter(t),
           )}
+          taxLabel={t("inclTax")}
           creditsLabel={t("credits")}
           buyLabel={t("buy")}
           locale={locale}
