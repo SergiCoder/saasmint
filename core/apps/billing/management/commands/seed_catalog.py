@@ -190,58 +190,86 @@ class Command(BaseCommand):
         an admin edit pins ``is_curated=True`` and seeding never touches it
         again. Idempotent: existing rows keep their (possibly curated) sticker;
         only the derived ``base_minor`` is re-aligned to the current VAT rate.
+
+        Bulk-keyed: every existing row is fetched once into a ``(owner_id,
+        country)`` dict, then new rows are ``bulk_create``-d and re-aligned
+        bases ``bulk_update``-d in one round-trip each — instead of a
+        SELECT-then-write per (price, country) pair, which grows
+        multiplicatively as launch markets / plans expand (design D8).
         """
         plan_prices = list(PlanPrice.objects.all())
         product_prices = list(ProductPrice.objects.all())
+
+        # Bucket existing rows by (owner_id, country) so the per-pair decision
+        # below is a dict lookup, not a query. plan_price_id / product_price_id
+        # are disjoint (XOR), so a single coalesced owner key never collides.
+        existing_by_key: dict[tuple[object, str], CountryPrice] = {}
+        for cp in CountryPrice.objects.all().only(
+            "id", "country", "sticker_minor", "base_minor", "plan_price_id", "product_price_id"
+        ):
+            owner_id = cp.plan_price_id if cp.plan_price_id is not None else cp.product_price_id
+            existing_by_key[(owner_id, cp.country)] = cp
+
+        to_create: list[CountryPrice] = []
+        to_update: list[CountryPrice] = []
         for country, currency in COUNTRY_CURRENCY.items():
             rate = standard_vat_rate(country)
-            for plan_price in plan_prices:
-                self._upsert_country_price(
+            owners: list[tuple[PlanPrice | ProductPrice, dict[str, PlanPrice | ProductPrice]]] = [
+                (pp, {"plan_price": pp}) for pp in plan_prices
+            ]
+            owners += [(pp, {"product_price": pp}) for pp in product_prices]
+            for price_row, owner_kwarg in owners:
+                self._collect_country_row(
                     country=country,
                     currency=currency,
                     rate=rate,
-                    sticker=plan_price.amount,
-                    plan_price=plan_price,
-                )
-            for product_price in product_prices:
-                self._upsert_country_price(
-                    country=country,
-                    currency=currency,
-                    rate=rate,
-                    sticker=product_price.amount,
-                    product_price=product_price,
+                    sticker=price_row.amount,
+                    owner_id=price_row.id,
+                    owner_kwarg=owner_kwarg,
+                    existing_by_key=existing_by_key,
+                    to_create=to_create,
+                    to_update=to_update,
                 )
 
-    def _upsert_country_price(
+        if to_create:
+            CountryPrice.objects.bulk_create(to_create)
+        if to_update:
+            CountryPrice.objects.bulk_update(to_update, ["base_minor"])
+
+    def _collect_country_row(
         self,
         *,
         country: str,
         currency: str,
         rate: Decimal,
         sticker: int,
-        plan_price: PlanPrice | None = None,
-        product_price: ProductPrice | None = None,
+        owner_id: object,
+        owner_kwarg: dict[str, PlanPrice | ProductPrice],
+        existing_by_key: dict[tuple[object, str], CountryPrice],
+        to_create: list[CountryPrice],
+        to_update: list[CountryPrice],
     ) -> None:
-        owner: dict[str, PlanPrice | ProductPrice | None] = (
-            {"plan_price": plan_price}
-            if plan_price is not None
-            else {"product_price": product_price}
-        )
-        existing = CountryPrice.objects.filter(country=country, **owner).first()
+        """Append one (price, country) pair to the create/update batch, or skip.
+
+        New pair → a fresh row on ``to_create``. Existing pair → never touch the
+        (possibly curated) sticker; only queue a ``base_minor`` re-alignment when
+        the current VAT rate moved it, so a rate-table change still propagates to
+        the Stripe ``unit_amount`` on the next sync.
+        """
+        existing = existing_by_key.get((owner_id, country))
         if existing is None:
-            CountryPrice.objects.create(
-                country=country,
-                currency=currency,
-                sticker_minor=sticker,
-                base_minor=derive_base(sticker, rate),
-                is_curated=False,
-                **owner,
+            to_create.append(
+                CountryPrice(
+                    country=country,
+                    currency=currency,
+                    sticker_minor=sticker,
+                    base_minor=derive_base(sticker, rate),
+                    is_curated=False,
+                    **owner_kwarg,
+                )
             )
             return
-        # Never overwrite a (possibly curated) sticker; only keep the derived
-        # base aligned with the current VAT rate so a rate-table change
-        # propagates to the Stripe unit_amount on the next sync.
-        new_base = derive_base(existing.sticker_minor, rate)
-        if existing.base_minor != new_base:
-            existing.base_minor = new_base
-            existing.save(update_fields=["base_minor"])
+        old_base = existing.base_minor
+        new_base = existing.recompute_base()
+        if old_base != new_base:
+            to_update.append(existing)
