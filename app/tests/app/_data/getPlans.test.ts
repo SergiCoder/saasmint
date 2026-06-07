@@ -27,7 +27,7 @@ describe("getPlans", () => {
 
     const result = await getPlans("usd");
 
-    expect(mockListPlans).toHaveBeenCalledWith("usd");
+    expect(mockListPlans).toHaveBeenCalledWith("usd", undefined);
     expect(result).toBe(plans);
   });
 
@@ -36,7 +36,7 @@ describe("getPlans", () => {
 
     await getPlans();
 
-    expect(mockListPlans).toHaveBeenCalledWith(undefined);
+    expect(mockListPlans).toHaveBeenCalledWith(undefined, undefined);
   });
 
   it("returns an empty array and logs the error when the gateway throws", async () => {

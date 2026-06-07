@@ -10,6 +10,7 @@ const labels = {
   upgrade: "Upgrade",
   seat: "seat",
   billedYearly: "billed yearly",
+  inclTax: "incl. VAT",
 };
 
 function makePlan(overrides: Partial<Plan> & { id: string }): Plan {
@@ -27,6 +28,7 @@ function makePlan(overrides: Partial<Plan> & { id: string }): Plan {
       currency: "usd",
       localDisplayAmount: null,
       localCurrency: null,
+      taxInclusive: false,
     },
   };
 }
@@ -45,6 +47,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -58,6 +61,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -99,6 +103,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -112,6 +117,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -151,6 +157,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -163,6 +170,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -365,6 +373,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -378,6 +387,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -442,6 +452,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -455,6 +466,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -506,6 +518,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -520,6 +533,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -570,6 +584,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -584,6 +599,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -631,6 +647,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -645,6 +662,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -707,6 +725,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: 17.42,
           localCurrency: "chf",
+          taxInclusive: false,
         },
       });
       const calls: unknown[] = [];
@@ -739,6 +758,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: 176.16,
           localCurrency: "chf",
+          taxInclusive: false,
         },
       });
       const groups = buildPlanCardGroups({
@@ -771,6 +791,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       });
       const groups = buildPlanCardGroups({
@@ -798,6 +819,7 @@ describe("buildPlanCardGroups", () => {
           currency: "USD",
           localDisplayAmount: 19,
           localCurrency: "usd",
+          taxInclusive: false,
         },
       });
       const groups = buildPlanCardGroups({
@@ -835,6 +857,7 @@ describe("buildProductPriceSubLabels", () => {
           currency: "usd",
           localDisplayAmount: 9.16,
           localCurrency: "chf",
+          taxInclusive: false,
         },
       }),
       makeProduct({
@@ -846,6 +869,7 @@ describe("buildProductPriceSubLabels", () => {
           currency: "usd",
           localDisplayAmount: 10,
           localCurrency: "USD",
+          taxInclusive: false,
         },
       }),
       makeProduct({
@@ -857,6 +881,7 @@ describe("buildProductPriceSubLabels", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makeProduct({ id: "p_priceless", price: null }),

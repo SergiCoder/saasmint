@@ -82,8 +82,8 @@ describe("getSubscriptionPageData", () => {
     await getSubscriptionPageData(user);
 
     expect(mockGetSubscriptions).toHaveBeenCalledWith("eur");
-    expect(mockListPlans).toHaveBeenCalledWith("eur");
-    expect(mockListProducts).toHaveBeenCalledWith("eur");
+    expect(mockListPlans).toHaveBeenCalledWith("eur", undefined);
+    expect(mockListProducts).toHaveBeenCalledWith("eur", undefined);
     expect(mockGetUserOrgs).toHaveBeenCalledWith();
   });
 

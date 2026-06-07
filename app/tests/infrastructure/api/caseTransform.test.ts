@@ -196,6 +196,7 @@ describe("keysToCamelWithPrice", () => {
         currency: "eur",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       },
     });
   });
@@ -214,6 +215,7 @@ describe("keysToCamelWithPrice", () => {
         currency: "usd",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       },
     });
   });
@@ -232,6 +234,7 @@ describe("keysToCamelWithPrice", () => {
         currency: "eur",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       },
     });
   });
@@ -250,6 +253,7 @@ describe("keysToCamelWithPrice", () => {
         currency: "eur",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       },
     });
   });
@@ -283,6 +287,7 @@ describe("keysToCamelWithPrice", () => {
         currency: "eur",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       },
     });
   });

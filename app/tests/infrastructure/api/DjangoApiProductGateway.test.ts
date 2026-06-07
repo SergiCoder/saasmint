@@ -25,6 +25,7 @@ const products: Product[] = [
       currency: "usd",
       localDisplayAmount: null,
       localCurrency: null,
+      taxInclusive: false,
     },
   },
 ];

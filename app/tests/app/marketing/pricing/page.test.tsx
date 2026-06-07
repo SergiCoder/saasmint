@@ -245,6 +245,7 @@ function makePaidPlan(overrides: Partial<Plan> & { id: string }): Plan {
       currency: "usd",
       localDisplayAmount: null,
       localCurrency: null,
+      taxInclusive: false,
     },
   };
 }
@@ -275,6 +276,7 @@ describe("Marketing PricingPage — synthetic free plan", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ]);
@@ -507,6 +509,7 @@ describe("Marketing PricingPage — upgrade CTA routing", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       },
       seatLimit: 1,
@@ -540,6 +543,7 @@ describe("Marketing PricingPage — upgrade CTA routing", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePaidPlan({ id: "t_basic", tier: 2, context: "team" }),
@@ -554,6 +558,7 @@ describe("Marketing PricingPage — upgrade CTA routing", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ]);
@@ -699,6 +704,7 @@ describe("Marketing PricingPage — product priceSubLabels forwarding", () => {
           // localCurrency differs from billed currency → sub-label emitted
           localDisplayAmount: 18.45,
           localCurrency: "chf",
+          taxInclusive: false,
         },
       },
     ]);
@@ -726,7 +732,8 @@ describe("Marketing PricingPage — product priceSubLabels forwarding", () => {
           displayAmount: 9.99,
           currency: "usd",
           localDisplayAmount: 9.99,
-          localCurrency: "usd", // same as billed → no sub-label
+          localCurrency: "usd", // same as billed → no sub-label,
+          taxInclusive: false,
         },
       },
     ]);

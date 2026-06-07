@@ -102,6 +102,7 @@ describe("DjangoApiPlanGateway", () => {
         currency: "usd",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       });
     });
 
@@ -128,6 +129,7 @@ describe("DjangoApiPlanGateway", () => {
         currency: "eur",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       });
     });
 

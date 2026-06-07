@@ -36,6 +36,7 @@ const EXPECTED_USE_CLIENT_FILES: readonly string[] = [
   "src/app/[locale]/(auth)/verify-email/_components/VerifyEmailClient.tsx",
   "src/app/[locale]/(marketing)/contact/_components/ContactForm.tsx",
   "src/app/[locale]/(marketing)/error.tsx",
+  "src/app/[locale]/(marketing)/pricing/_components/CountrySelector.tsx",
   "src/app/[locale]/(public)/error.tsx",
   "src/app/[locale]/(public)/invitations/[token]/_components/AcceptInvitationForm.tsx",
   "src/app/[locale]/auth/callback/_components/AuthCallbackClient.tsx",

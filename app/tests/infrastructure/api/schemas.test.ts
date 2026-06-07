@@ -96,6 +96,7 @@ const validPlan = {
     currency: "usd",
     localDisplayAmount: null,
     localCurrency: null,
+    taxInclusive: false,
   },
 };
 
@@ -111,6 +112,7 @@ const validProduct = {
     currency: "usd",
     localDisplayAmount: null,
     localCurrency: null,
+    taxInclusive: false,
   },
 };
 
@@ -350,6 +352,7 @@ describe("PlanSchema", () => {
         currency: "usd",
         localDisplayAmount: 17.42,
         localCurrency: "chf",
+        taxInclusive: false,
       },
     });
     expect(parsed.price?.localDisplayAmount).toBe(17.42);
@@ -404,6 +407,7 @@ describe("ProductSchema", () => {
         currency: "usd",
         localDisplayAmount: 4.55,
         localCurrency: "chf",
+        taxInclusive: false,
       },
     });
     expect(parsed.price?.localDisplayAmount).toBe(4.55);
