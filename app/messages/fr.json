@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/mois, facturé annuellement en {currency}",
     "seat": "place",
     "seats": "places",
+    "month": "mois",
+    "year": "an",
     "products": "Packs de crédits",
     "credits": "crédits",
     "creditBalanceLabel": "Solde de crédits",

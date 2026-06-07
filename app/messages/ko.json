@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/월, {currency}로 연간 청구",
     "seat": "좌석",
     "seats": "좌석",
+    "month": "월",
+    "year": "년",
     "products": "크레딧 팩",
     "credits": "크레딧",
     "creditBalanceLabel": "크레딧 잔액",

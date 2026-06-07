@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/Monat, jährliche Abrechnung in {currency}",
     "seat": "Platz",
     "seats": "Plätze",
+    "month": "Monat",
+    "year": "Jahr",
     "products": "Guthaben-Pakete",
     "credits": "Credits",
     "creditBalanceLabel": "Guthabenstand",

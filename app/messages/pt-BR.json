@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/mês, cobrado anualmente em {currency}",
     "seat": "assento",
     "seats": "assentos",
+    "month": "mês",
+    "year": "ano",
     "products": "Pacotes de créditos",
     "credits": "créditos",
     "creditBalanceLabel": "Saldo de créditos",

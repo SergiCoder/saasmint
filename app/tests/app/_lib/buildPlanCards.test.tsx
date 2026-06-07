@@ -9,6 +9,8 @@ import type { Product } from "@/domain/models/Product";
 const labels = {
   upgrade: "Upgrade",
   seat: "seat",
+  month: "month",
+  year: "year",
   billedYearly: "billed yearly",
   inclTax: "incl. VAT",
 };

@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount}（{monthly}/月，按年以 {currency} 计费）",
     "seat": "席位",
     "seats": "席位",
+    "month": "月",
+    "year": "年",
     "products": "积分包",
     "credits": "积分",
     "creditBalanceLabel": "积分余额",

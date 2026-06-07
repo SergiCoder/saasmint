@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/miesiąc, rozliczane rocznie w {currency}",
     "seat": "miejsce",
     "seats": "miejsca",
+    "month": "miesiąc",
+    "year": "rok",
     "products": "Pakiety kredytów",
     "credits": "kredyty",
     "creditBalanceLabel": "Saldo kredytów",

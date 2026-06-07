@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/bulan, ditagih tahunan dalam {currency}",
     "seat": "kursi",
     "seats": "kursi",
+    "month": "bulan",
+    "year": "tahun",
     "products": "Paket kredit",
     "credits": "kredit",
     "creditBalanceLabel": "Saldo kredit",

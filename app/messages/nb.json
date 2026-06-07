@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/måned, faktureres årlig i {currency}",
     "seat": "plass",
     "seats": "plasser",
+    "month": "måned",
+    "year": "år",
     "products": "Kredittpakker",
     "credits": "kreditter",
     "creditBalanceLabel": "Kredittsaldo",

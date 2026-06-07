@@ -144,6 +144,10 @@ export interface PlanCardLabels {
   upgrade: string;
   /** Singular noun for one seat (e.g. "seat"). Used in team interval labels. */
   seat: string;
+  /** Localised interval suffix for monthly prices (e.g. "month" / "mes"). */
+  month: string;
+  /** Localised interval suffix for yearly prices (e.g. "year" / "año"). */
+  year: string;
   /**
    * Localised "billed yearly" suffix. Used as a fallback for the yearly
    * sub-label when no `formatPriceSubLabelLocal` is provided (i.e. when the
@@ -326,9 +330,10 @@ function buildPlanVariant(
     : monthlyEq > 0;
   const ctaLabel = labels.upgrade;
 
+  const intervalSuffix = plan.interval === "year" ? labels.year : labels.month;
   const intervalLabel = isTeam
-    ? `${labels.seat}/${plan.interval}`
-    : plan.interval;
+    ? `${labels.seat}/${intervalSuffix}`
+    : intervalSuffix;
 
   const priceSubLabel = computePriceSubLabel({
     plan,
@@ -398,8 +403,8 @@ function computePriceSubLabel(args: {
     const monthlyEqDisplay = displayAmount / 12;
     const formatted = formatCurrency(monthlyEqDisplay, currency, locale);
     return isTeam
-      ? `${formatted}/${labels.seat}/month — ${labels.billedYearly}`
-      : `${formatted}/month — ${labels.billedYearly}`;
+      ? `${formatted}/${labels.seat}/${labels.month} — ${labels.billedYearly}`
+      : `${formatted}/${labels.month} — ${labels.billedYearly}`;
   }
   return undefined;
 }

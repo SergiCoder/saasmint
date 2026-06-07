@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/ay, yıllık olarak {currency} ile tahsil edilir",
     "seat": "koltuk",
     "seats": "koltuk",
+    "month": "ay",
+    "year": "yıl",
     "products": "Kredi paketleri",
     "credits": "kredi",
     "creditBalanceLabel": "Kredi bakiyesi",

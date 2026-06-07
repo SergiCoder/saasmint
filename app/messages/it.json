@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/mese, fatturato annualmente in {currency}",
     "seat": "posto",
     "seats": "posti",
+    "month": "mese",
+    "year": "anno",
     "products": "Pacchetti crediti",
     "credits": "crediti",
     "creditBalanceLabel": "Saldo crediti",

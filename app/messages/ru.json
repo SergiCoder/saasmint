@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/мес, годовая оплата в {currency}",
     "seat": "место",
     "seats": "мест",
+    "month": "месяц",
+    "year": "год",
     "products": "Пакеты кредитов",
     "credits": "кредиты",
     "creditBalanceLabel": "Баланс кредитов",

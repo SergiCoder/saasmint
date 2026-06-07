@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/شهر، تُحصَّل سنويًا بعملة {currency}",
     "seat": "مقعد",
     "seats": "مقاعد",
+    "month": "شهر",
+    "year": "سنة",
     "products": "حزم الرصيد",
     "credits": "أرصدة",
     "creditBalanceLabel": "رصيد الأرصدة",

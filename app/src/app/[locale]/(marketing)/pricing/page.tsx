@@ -153,6 +153,8 @@ export default async function PricingPage({ params, searchParams }: Props) {
     labels: {
       upgrade: t("upgrade"),
       seat: t("seat"),
+      month: t("month"),
+      year: t("year"),
       billedYearly: t("billedYearly"),
       inclTax: t("inclTax"),
     },
