@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
 import { GetStartedButton } from "./_components/GetStartedButton";
@@ -259,11 +260,13 @@ export default async function PricingPage({ params, searchParams }: Props) {
           {t("pricingTitle")}
         </h1>
         <div className="mt-4 flex justify-center">
-          <CurrencySelector
-            label={t("currencyLabel")}
-            selected={effectiveCurrency}
-            currencies={PRICING_CURRENCIES}
-          />
+          <Suspense fallback={null}>
+            <CurrencySelector
+              label={t("currencyLabel")}
+              selected={effectiveCurrency}
+              currencies={PRICING_CURRENCIES}
+            />
+          </Suspense>
         </div>
       </div>
 
