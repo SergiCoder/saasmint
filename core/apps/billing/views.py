@@ -361,11 +361,18 @@ def _country_prices_prefetch(country: str | None) -> Prefetch[str]:
     ``country_prices.all()`` walk costs no extra query. An empty queryset when
     no country resolved keeps the relation cheap and the serializer on the
     USD/per-currency fallback path.
+
+    Also filtered to ``stripe_price_id__isnull=False`` so an un-minted row
+    (registration not live yet, or ``sync_stripe_catalog`` hasn't run) is
+    treated as absent — matching the checkout-side resolver
+    (:func:`_get_country_stripe_price`). Without this, the catalog would show
+    the per-country tax-inclusive sticker while checkout charged the USD anchor,
+    a display/charge mismatch.
     """
     qs = (
         CountryPrice.objects.none()
         if not country
-        else CountryPrice.objects.filter(country=country).only(
+        else CountryPrice.objects.filter(country=country, stripe_price_id__isnull=False).only(
             "country", "currency", "sticker_minor", "plan_price_id", "product_price_id"
         )
     )

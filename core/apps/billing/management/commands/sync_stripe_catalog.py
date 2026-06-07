@@ -27,6 +27,7 @@ from typing import Any, Literal
 import stripe
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db.models import Q
 
 from apps.billing.models import (
     CountryPrice,
@@ -37,12 +38,17 @@ from apps.billing.models import (
     Product,
     ProductPrice,
 )
-from apps.billing.vat import derive_base, standard_vat_rate
 
 # Tax behavior set explicitly on every Price so it is version-controlled and
 # independent of the Stripe dashboard account default. Existing prices are
 # ``unspecified`` — the allowed one-time transition to ``exclusive`` (design D2).
 _TAX_BEHAVIOR: Literal["exclusive"] = "exclusive"
+
+# Filter CountryPrice to rows whose owning Plan/Product is active, mirroring
+# the ``is_active=True`` gate applied to plans and products in _sync_plans /
+# _sync_products. Inactive plans keep their CountryPrice rows (CASCADE goes
+# through PlanPrice, not Plan.is_active), so an explicit filter is required.
+_ACTIVE_OWNER_Q = Q(plan_price__plan__is_active=True) | Q(product_price__product__is_active=True)
 
 
 def _slug(value: str) -> str:
@@ -113,7 +119,11 @@ class Command(BaseCommand):
             for currency in currencies:
                 keys.append(_product_lookup_key(product, currency))
         # Per-country keys, derived from each owner's USD base key.
-        for cp in CountryPrice.objects.select_related("plan_price__plan", "product_price__product"):
+        # Filter to active-owner rows only — mirrors the is_active=True gate on
+        # plans and products above so deactivated plans don't generate stale keys.
+        for cp in CountryPrice.objects.filter(_ACTIVE_OWNER_Q).select_related(
+            "plan_price__plan", "product_price__product"
+        ):
             keys.append(_country_lookup_key(self._owner_base_lookup_key(cp), cp.country))
         return keys
 
@@ -212,9 +222,11 @@ class Command(BaseCommand):
         seed/localize steps lagged. The recomputed base is persisted back onto
         the row. Idempotent via the per-country lookup key.
         """
-        rows = CountryPrice.objects.select_related(
-            "plan_price__plan", "product_price__product"
-        ).order_by("country")
+        rows = (
+            CountryPrice.objects.filter(_ACTIVE_OWNER_Q)
+            .select_related("plan_price__plan", "product_price__product")
+            .order_by("country")
+        )
         for cp in rows:
             is_plan = cp.plan_price_id is not None
             if is_plan:
@@ -238,9 +250,9 @@ class Command(BaseCommand):
                 }
                 recurring = None
 
-            base = derive_base(cp.sticker_minor, standard_vat_rate(cp.country))
-            if cp.base_minor != base:
-                cp.base_minor = base
+            old_base = cp.base_minor
+            base = cp.recompute_base()
+            if old_base != base:
                 cp.save(update_fields=["base_minor"])
 
             lookup_key = _country_lookup_key(self._owner_base_lookup_key(cp), cp.country)
