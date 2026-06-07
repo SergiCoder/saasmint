@@ -16,6 +16,7 @@ import stripe
 from django.core.management import call_command
 
 from apps.billing.management.commands.sync_stripe_catalog import (
+    _country_lookup_key,
     _plan_lookup_key,
     _product_lookup_key,
     _slug,
@@ -130,6 +131,34 @@ class TestLookupKeys:
             name="100 Credits", type="one_time", credits=100, is_active=True
         )
         assert _product_lookup_key(product, "cny") == "product_100_credits_cny"
+
+    def test_country_lookup_key_suffixes_with_c_and_lowercase_country(self):
+        plan = Plan.objects.create(
+            name="Personal Pro Monthly",
+            context="personal",
+            tier=PlanTier.PRO,
+            interval="month",
+            is_active=True,
+        )
+        base = _plan_lookup_key(plan, "usd")  # "plan_personal_pro_month"
+        assert _country_lookup_key(base, "ES") == "plan_personal_pro_month_c_es"
+        assert _country_lookup_key(base, "GB") == "plan_personal_pro_month_c_gb"
+
+    def test_country_lookup_key_never_collides_with_currency_suffix(self):
+        # A key like "plan_personal_pro_month_eur" (currency) must differ from
+        # "plan_personal_pro_month_c_eur" (country), so a future EUR country
+        # price doesn't shadow the EUR billing-currency Price.
+        plan = Plan.objects.create(
+            name="Personal Pro Monthly",
+            context="personal",
+            tier=PlanTier.PRO,
+            interval="month",
+            is_active=True,
+        )
+        base = _plan_lookup_key(plan, "usd")
+        currency_key = _plan_lookup_key(plan, "eur")
+        country_key = _country_lookup_key(base, "EU")  # hypothetical EU code
+        assert currency_key != country_key
 
 
 # ── early-exit when stripe key is missing ─────────────────────────────────────

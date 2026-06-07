@@ -291,6 +291,44 @@ describe("keysToCamelWithPrice", () => {
       },
     });
   });
+
+  it("preserves taxInclusive=true when already present on the raw price", () => {
+    // The backend sets tax_inclusive=true on per-country stickers; after
+    // keysToCamel converts it to taxInclusive, applyPriceDefaults must NOT
+    // overwrite it with the false default.
+    const input = {
+      id: "p1",
+      price: {
+        id: "pp1",
+        amount: 1999,
+        display_amount: 19.99,
+        currency: "eur",
+        tax_inclusive: true,
+      },
+    };
+    const result = keysToCamelWithPrice(input);
+    expect((result.price as Record<string, unknown>).taxInclusive).toBe(true);
+  });
+
+  it("preserves existing localDisplayAmount and localCurrency when set", () => {
+    // The backend may return local_* fields for dual-currency display; they must
+    // survive the defaults pass unchanged.
+    const input = {
+      id: "p1",
+      price: {
+        id: "pp1",
+        amount: 1900,
+        display_amount: 19.0,
+        currency: "usd",
+        local_display_amount: 17.42,
+        local_currency: "chf",
+      },
+    };
+    const result = keysToCamelWithPrice(input);
+    const price = result.price as Record<string, unknown>;
+    expect(price.localDisplayAmount).toBe(17.42);
+    expect(price.localCurrency).toBe("chf");
+  });
 });
 
 describe("flattenPhone", () => {

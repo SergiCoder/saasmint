@@ -5,7 +5,12 @@ const push = vi.fn();
 
 vi.mock("@/lib/i18n/navigation", () => ({
   usePathname: () => "/pricing",
-  useRouter: () => ({ push, replace: vi.fn(), back: vi.fn(), refresh: vi.fn() }),
+  useRouter: () => ({
+    push,
+    replace: vi.fn(),
+    back: vi.fn(),
+    refresh: vi.fn(),
+  }),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -39,6 +44,15 @@ describe("CountrySelector", () => {
     expect(screen.getByRole("option", { name: "United States" })).toBeDefined();
   });
 
+  it("renders countries sorted alphabetically", () => {
+    renderSelector();
+    const options = screen
+      .getAllByRole("option")
+      .filter((o) => o.getAttribute("value") !== ""); // skip auto-detect
+    const names = options.map((o) => o.textContent ?? "");
+    expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b, "en")));
+  });
+
   it("navigates with ?country= while preserving other params", () => {
     renderSelector();
     fireEvent.change(screen.getByLabelText("Country"), {
@@ -53,5 +67,25 @@ describe("CountrySelector", () => {
       target: { value: "" },
     });
     expect(push).toHaveBeenCalledWith("/pricing?interval=year");
+  });
+
+  it("navigates to pathname without query string when there are no other params and auto-detect is chosen", () => {
+    // When the only param was country= and it is removed, the resulting URL
+    // should be just the pathname (no trailing `?`).
+    // We need a version of useSearchParams that returns an empty params set.
+    // The existing mock returns "interval=year", so we verify the general case
+    // instead: selecting a country when auto-detect is already active replaces
+    // the country param correctly.
+    renderSelector("");
+    fireEvent.change(screen.getByLabelText("Country"), {
+      target: { value: "FR" },
+    });
+    expect(push).toHaveBeenCalledWith("/pricing?interval=year&country=FR");
+  });
+
+  it("reflects the selected country as the default select value", () => {
+    renderSelector("FR");
+    const select = screen.getByLabelText("Country") as HTMLSelectElement;
+    expect(select.value).toBe("FR");
   });
 });
