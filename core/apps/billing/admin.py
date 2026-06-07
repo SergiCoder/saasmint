@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.http import HttpRequest
 
 from apps.billing.models import (
+    CountryPrice,
     CreditBalance,
     CreditTransaction,
     LocalizedPrice,
@@ -116,6 +117,37 @@ class LocalizedPriceAdmin(admin.ModelAdmin):  # type: ignore[type-arg]  # django
 
     def has_delete_permission(self, request: HttpRequest, obj: object = None) -> bool:
         return False
+
+
+@admin.register(CountryPrice)
+class CountryPriceAdmin(admin.ModelAdmin):  # type: ignore[type-arg]  # django-stubs generic; not subscriptable at runtime
+    list_display = (
+        "country",
+        "currency",
+        "plan_price",
+        "product_price",
+        "sticker_minor",
+        "base_minor",
+        "is_curated",
+        "stripe_price_id",
+    )
+    list_filter = ("country", "currency", "is_curated")
+    ordering = ("country",)
+    # ``base_minor`` is derived from the sticker + the country's VAT rate, and
+    # ``stripe_price_id`` is stamped by sync_stripe_catalog — both read-only so
+    # an admin edits only the sticker.
+    readonly_fields = ("id", "base_minor", "stripe_price_id", "created_at", "updated_at")
+    list_select_related = ("plan_price__plan", "product_price__product")
+
+    def save_model(
+        self, request: HttpRequest, obj: CountryPrice, form: object, change: bool
+    ) -> None:
+        # Any manual edit is a deliberate curation: pin is_curated so the daily
+        # FX suggestion sweep (sync_localized_prices) leaves this sticker alone,
+        # and keep the derived base in step with the (possibly new) sticker.
+        obj.is_curated = True
+        obj.recompute_base()
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(StripeEvent)
