@@ -22,16 +22,15 @@ vi.mock("next/navigation", () => ({
 import { CurrencySelector } from "@/app/[locale]/(marketing)/pricing/_components/CurrencySelector";
 
 const CURRENCIES: readonly PricingCurrency[] = [
-  { code: "eur", country: "ES", symbol: "€" },
-  { code: "usd", country: "US", symbol: "$" },
-  { code: "gbp", country: "GB", symbol: "£" },
+  { code: "eur", symbol: "€", country: "ES" },
+  { code: "usd", symbol: "$", country: "US" },
+  { code: "chf", symbol: "Fr" },
 ];
 
-function renderSelector(selected = "") {
+function renderSelector(selected = "usd") {
   return render(
     <CurrencySelector
       label="Currency"
-      autoLabel="Auto-detect"
       selected={selected}
       currencies={CURRENCIES}
     />,
@@ -41,21 +40,25 @@ function renderSelector(selected = "") {
 describe("CurrencySelector", () => {
   beforeEach(() => push.mockClear());
 
-  it("renders the auto-detect option plus a CODE symbol per currency", () => {
+  it("renders a CODE symbol option per currency and no auto-detect row", () => {
     renderSelector();
-    expect(screen.getByRole("option", { name: "Auto-detect" })).toBeDefined();
     expect(screen.getByRole("option", { name: "EUR €" })).toBeDefined();
     expect(screen.getByRole("option", { name: "USD $" })).toBeDefined();
-    expect(screen.getByRole("option", { name: "GBP £" })).toBeDefined();
+    expect(screen.getByRole("option", { name: "CHF Fr" })).toBeDefined();
+    // No empty-value "auto-detect" entry anymore.
+    expect(
+      screen
+        .getAllByRole("option")
+        .every((o) => (o as HTMLOptionElement).value),
+    ).toBe(true);
   });
 
   it("renders currencies in the given order (not re-sorted)", () => {
     renderSelector();
     const values = screen
       .getAllByRole("option")
-      .map((o) => (o as HTMLOptionElement).value)
-      .filter((v) => v !== ""); // skip auto-detect
-    expect(values).toEqual(["eur", "usd", "gbp"]);
+      .map((o) => (o as HTMLOptionElement).value);
+    expect(values).toEqual(["eur", "usd", "chf"]);
   });
 
   it("navigates with ?currency= while preserving other params", () => {
@@ -66,17 +69,9 @@ describe("CurrencySelector", () => {
     expect(push).toHaveBeenCalledWith("/pricing?interval=year&currency=eur");
   });
 
-  it("drops ?currency= when auto-detect is selected", () => {
-    renderSelector("eur");
-    fireEvent.change(screen.getByLabelText("Currency"), {
-      target: { value: "" },
-    });
-    expect(push).toHaveBeenCalledWith("/pricing?interval=year");
-  });
-
-  it("reflects the selected currency as the default select value", () => {
-    renderSelector("gbp");
+  it("reflects the pre-selected currency as the default select value", () => {
+    renderSelector("chf");
     const select = screen.getByLabelText("Currency") as HTMLSelectElement;
-    expect(select.value).toBe("gbp");
+    expect(select.value).toBe("chf");
   });
 });
