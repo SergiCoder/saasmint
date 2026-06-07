@@ -274,8 +274,7 @@
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
     "scheduledPlanLabel": "Scheduled — switching here on {date}",
     "inclTax": "IVA incl.",
-    "currencyLabel": "Moeda",
-    "currencyAuto": "Automático"
+    "currencyLabel": "Moeda"
   },
   "profile": {
     "title": "Definições",

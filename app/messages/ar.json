@@ -274,8 +274,7 @@
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
     "scheduledPlanLabel": "Scheduled — switching here on {date}",
     "inclTax": "شامل ضريبة القيمة المضافة",
-    "currencyLabel": "العملة",
-    "currencyAuto": "كشف تلقائي"
+    "currencyLabel": "العملة"
   },
   "profile": {
     "title": "الإعدادات",

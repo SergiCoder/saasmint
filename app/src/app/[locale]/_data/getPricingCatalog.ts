@@ -29,11 +29,14 @@ export interface PricingCatalog {
 export function getPricingCatalog(
   user: User | null,
   country?: string,
+  currencyOverride?: string,
 ): Promise<PricingCatalog> {
-  const currency = user?.preferredCurrency;
+  // An explicit selector currency wins over the user's stored preference; the
+  // subscription rows keep using the user's own billing currency.
+  const currency = currencyOverride ?? user?.preferredCurrency;
   return Promise.all([
     getPlans(currency, country),
-    user ? getSubscriptions(currency) : Promise.resolve([]),
+    user ? getSubscriptions(user.preferredCurrency) : Promise.resolve([]),
     user ? getProducts(currency, country) : Promise.resolve([]),
     user ? getUserOrgs() : Promise.resolve([]),
   ]).then(([plans, subscriptions, products, userOrgs]) => ({

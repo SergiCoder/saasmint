@@ -274,8 +274,7 @@
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
     "scheduledPlanLabel": "Scheduled — switching here on {date}",
     "inclTax": "inkl. moms",
-    "currencyLabel": "Valuta",
-    "currencyAuto": "Automatiskt"
+    "currencyLabel": "Valuta"
   },
   "profile": {
     "title": "Inställningar",

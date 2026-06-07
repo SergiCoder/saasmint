@@ -6,7 +6,7 @@ import { CurrencySelector } from "./_components/CurrencySelector";
 import {
   PRICING_CURRENCIES,
   normalizePricingCurrency,
-  pricingCountryForCurrency,
+  catalogParamsForCurrency,
 } from "@/domain/data/pricingCurrencies";
 import { ProductsCheckoutSection } from "@/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection";
 import { renderPlanUpgradeCta } from "@/app/[locale]/(app)/subscription/_lib/renderPlanUpgradeCta";
@@ -74,16 +74,18 @@ export default async function PricingPage({ params, searchParams }: Props) {
   // majority on /pricing) skip the authenticated calls and fall back to
   // empty lists.
   // Read the pricing-currency override up front so it can parameterise the
-  // catalog fetch. The selector deals in currencies; the backend resolver still
-  // takes a country, so map the chosen currency to a representative country
-  // (any member of the bloc yields the same per-currency sticker).
+  // catalog fetch. A launch-market currency resolves to a per-country (tax-
+  // inclusive) sticker via ?country=; a display-only currency to the FX price
+  // via ?currency=; an empty/unknown value to neither, so the backend
+  // auto-detects the market from locale/IP.
   const query = await searchParams;
   const selectedCurrency = normalizePricingCurrency(query.currency);
-  const selectedCountry = pricingCountryForCurrency(selectedCurrency);
+  const { country: fetchCountry, currency: fetchCurrency } =
+    catalogParamsForCurrency(selectedCurrency);
 
   const userPromise = getOptionalUser();
   const catalogPromise = userPromise.then((u) =>
-    getPricingCatalog(u, selectedCountry),
+    getPricingCatalog(u, fetchCountry, fetchCurrency),
   );
   const [t, tPlans, tProducts, user, catalog] = await Promise.all([
     getTranslations("billing"),
@@ -93,6 +95,16 @@ export default async function PricingPage({ params, searchParams }: Props) {
     catalogPromise,
   ]);
   const { plans, subscriptions, products, userOrgs } = catalog;
+
+  // With no explicit ?currency=, the backend resolved the market from
+  // locale/IP — reflect that in the selector by reading the currency it
+  // returned, so visitors see their detected currency pre-selected (there is
+  // no explicit "auto-detect" row). Falls back to USD on an empty catalog.
+  const detectedCurrency =
+    plans.find((p) => p.price)?.price?.currency ??
+    products.find((p) => p.price)?.price?.currency;
+  const effectiveCurrency =
+    selectedCurrency || normalizePricingCurrency(detectedCurrency) || "usd";
 
   const selectedInterval = parseIntervalParam(query.interval);
 
@@ -249,8 +261,7 @@ export default async function PricingPage({ params, searchParams }: Props) {
         <div className="mt-4 flex justify-center">
           <CurrencySelector
             label={t("currencyLabel")}
-            autoLabel={t("currencyAuto")}
-            selected={selectedCurrency}
+            selected={effectiveCurrency}
             currencies={PRICING_CURRENCIES}
           />
         </div>

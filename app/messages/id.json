@@ -274,8 +274,7 @@
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
     "scheduledPlanLabel": "Scheduled — switching here on {date}",
     "inclTax": "termasuk PPN",
-    "currencyLabel": "Mata uang",
-    "currencyAuto": "Deteksi otomatis"
+    "currencyLabel": "Mata uang"
   },
   "profile": {
     "title": "Pengaturan",
