@@ -46,7 +46,7 @@
     {
       "label": "backend: make dev (debugpy)",
       "type": "shell",
-      "command": "make stop; docker compose -p saasmint-debug -f docker-compose.yml -f infra/docker-compose.debug.yml up --build",
+      "command": "make stop; docker compose --env-file .env.local -p saasmint-debug -f docker-compose.yml -f infra/docker-compose.debug.yml up --build",
       "options": { "cwd": "${workspaceFolder}" },
       "isBackground": true,
       "presentation": { "group": "saasmint-dev", "panel": "dedicated", "reveal": "always" },
