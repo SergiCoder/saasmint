@@ -1,6 +1,6 @@
 # SaaSmint
 
-A production-ready **Django + Next.js** SaaS starter in one monorepo — Stripe billing, JWT auth (email/password + OAuth), multi-tenant organizations, and multi-currency pricing. Fork it, plug in your Stripe keys, and start building.
+SaaSmint is a personal SaaS boilerplate — a production-ready **Django + Next.js** starter in one monorepo, with Stripe billing, JWT auth (email/password + OAuth), multi-tenant organizations, and multi-currency pricing. Fork it, plug in your Stripe keys, and start building.
 
 ## Packages
 
