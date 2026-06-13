@@ -507,5 +507,11 @@
     "50": "50 Credits",
     "200": "200 Credits",
     "500": "500 Credits"
+  },
+  "cookieNotice": {
+    "message": "Wir verwenden nur unbedingt erforderliche Cookies, damit diese Website funktioniert.",
+    "learnMore": "Mehr erfahren",
+    "dismiss": "Verstanden",
+    "regionLabel": "Cookie-Hinweis"
   }
 }

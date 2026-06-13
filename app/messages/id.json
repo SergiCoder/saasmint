@@ -507,5 +507,11 @@
     "50": "50 kredit",
     "200": "200 kredit",
     "500": "500 kredit"
+  },
+  "cookieNotice": {
+    "message": "Kami hanya menggunakan cookie yang benar-benar diperlukan agar situs ini berfungsi.",
+    "learnMore": "Pelajari lebih lanjut",
+    "dismiss": "Mengerti",
+    "regionLabel": "Pemberitahuan cookie"
   }
 }

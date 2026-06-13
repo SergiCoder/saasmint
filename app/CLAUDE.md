@@ -147,7 +147,7 @@ pnpm install
 pnpm dev         # https://localhost:3000 (Turbopack, --experimental-https)
 ```
 
-Dev server reads root CA + localhost certs from `../saasmint-core/infra/certs/` — clone both repos side-by-side.
+Dev server reads root CA + localhost certs from the monorepo's shared `../infra/certs/` (root `infra/certs/`). Generate them once with `make https-setup` from the repo root.
 
 ## Testing
 

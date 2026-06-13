@@ -510,5 +510,11 @@
     "title": "Page not found",
     "description": "We couldn't find the page you were looking for.",
     "home": "Back to home"
+  },
+  "cookieNotice": {
+    "message": "We use only strictly-necessary cookies to make this site work.",
+    "learnMore": "Learn more",
+    "dismiss": "Got it",
+    "regionLabel": "Cookie notice"
   }
 }

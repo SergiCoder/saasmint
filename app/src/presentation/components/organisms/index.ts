@@ -49,3 +49,4 @@ export { LogoCloud, type LogoCloudProps } from "./LogoCloud";
 export { StatsSection, type StatsSectionProps } from "./StatsSection";
 export { ErrorView, type ErrorViewProps } from "./ErrorView";
 export { ProductsGrid, type ProductsGridProps } from "./ProductsGrid";
+export { CookieNotice, type CookieNoticeProps } from "./CookieNotice";
