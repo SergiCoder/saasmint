@@ -503,5 +503,11 @@
     "50": "50 kreditter",
     "200": "200 kreditter",
     "500": "500 kreditter"
+  },
+  "cookieNotice": {
+    "message": "Vi bruker bare strengt nødvendige informasjonskapsler for at nettstedet skal fungere.",
+    "learnMore": "Les mer",
+    "dismiss": "Greit",
+    "regionLabel": "Varsel om informasjonskapsler"
   }
 }

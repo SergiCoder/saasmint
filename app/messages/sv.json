@@ -503,5 +503,11 @@
     "50": "50 krediter",
     "200": "200 krediter",
     "500": "500 krediter"
+  },
+  "cookieNotice": {
+    "message": "Vi använder endast strikt nödvändiga cookies för att webbplatsen ska fungera.",
+    "learnMore": "Läs mer",
+    "dismiss": "Jag förstår",
+    "regionLabel": "Cookie-meddelande"
   }
 }

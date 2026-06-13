@@ -503,5 +503,11 @@
     "50": "50 kredytów",
     "200": "200 kredytów",
     "500": "500 kredytów"
+  },
+  "cookieNotice": {
+    "message": "Używamy wyłącznie niezbędnych plików cookie, aby ta strona działała.",
+    "learnMore": "Dowiedz się więcej",
+    "dismiss": "Rozumiem",
+    "regionLabel": "Informacja o plikach cookie"
   }
 }

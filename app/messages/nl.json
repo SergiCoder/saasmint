@@ -503,5 +503,11 @@
     "50": "50 credits",
     "200": "200 credits",
     "500": "500 credits"
+  },
+  "cookieNotice": {
+    "message": "We gebruiken alleen strikt noodzakelijke cookies om deze site te laten werken.",
+    "learnMore": "Meer informatie",
+    "dismiss": "Begrepen",
+    "regionLabel": "Cookiemelding"
   }
 }
