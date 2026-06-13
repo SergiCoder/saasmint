@@ -503,5 +503,11 @@
     "50": "50 créditos",
     "200": "200 créditos",
     "500": "500 créditos"
+  },
+  "cookieNotice": {
+    "message": "Usamos apenas cookies estritamente necessários para o funcionamento deste site.",
+    "learnMore": "Saiba mais",
+    "dismiss": "Entendi",
+    "regionLabel": "Aviso de cookies"
   }
 }

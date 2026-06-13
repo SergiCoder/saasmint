@@ -503,5 +503,11 @@
     "50": "50 积分",
     "200": "200 积分",
     "500": "500 积分"
+  },
+  "cookieNotice": {
+    "message": "我们仅使用确保本网站正常运行所必需的 Cookie。",
+    "learnMore": "了解更多",
+    "dismiss": "知道了",
+    "regionLabel": "Cookie 通知"
   }
 }

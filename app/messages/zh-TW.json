@@ -503,5 +503,11 @@
     "50": "50 點數",
     "200": "200 點數",
     "500": "500 點數"
+  },
+  "cookieNotice": {
+    "message": "我們僅使用確保本網站正常運作所必需的 Cookie。",
+    "learnMore": "了解更多",
+    "dismiss": "知道了",
+    "regionLabel": "Cookie 通知"
   }
 }

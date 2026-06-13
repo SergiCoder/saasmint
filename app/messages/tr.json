@@ -503,5 +503,11 @@
     "50": "50 kredi",
     "200": "200 kredi",
     "500": "500 kredi"
+  },
+  "cookieNotice": {
+    "message": "Bu sitenin çalışması için yalnızca kesinlikle gerekli çerezleri kullanıyoruz.",
+    "learnMore": "Daha fazla bilgi",
+    "dismiss": "Anladım",
+    "regionLabel": "Çerez bildirimi"
   }
 }

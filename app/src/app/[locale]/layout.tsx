@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { isLocale, routing } from "@/lib/i18n/routing";
 import { env } from "@/lib/env";
 import { APP_NAME } from "@/lib/appVersion";
+import { CookieNotice } from "@/presentation/components/organisms";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
@@ -35,10 +36,18 @@ export default async function LocaleLayout({
 
   setRequestLocale(locale);
   const messages = await getMessages();
+  const t = await getTranslations("cookieNotice");
 
   return (
     <NextIntlClientProvider messages={messages}>
       {children}
+      <CookieNotice
+        message={t("message")}
+        learnMoreLabel={t("learnMore")}
+        learnMoreHref="/cookies"
+        dismissLabel={t("dismiss")}
+        regionLabel={t("regionLabel")}
+      />
     </NextIntlClientProvider>
   );
 }
