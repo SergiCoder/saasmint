@@ -13,6 +13,47 @@ versions present in only one stack predate the merge and reflect the separate
 pre-merge release cadences (the frontend skipped some minor versions to track the
 backend). Pre-merge PR numbers reference the original repositories.
 
+## [0.14.0] - 2026-06-13
+
+Minor release: adds the informational cookie notice (frontend), a local Docker
+Compose env-file fix, and a documentation consolidation. No backend application
+logic changes.
+
+### Added
+
+- **Frontend** — Informational, configuration-gated cookie notice mounted in the
+  root locale layout. Build-time `NEXT_PUBLIC_COOKIE_BANNER` gates it (hidden
+  unless `"true"`); it states only strictly-necessary cookies are used, links to
+  the policy page, gates no scripts, offers no consent choices, and persists
+  dismissal in `localStorage` (not a cookie). Full i18n coverage across all locales.
+
+### Fixed
+
+- Local `docker compose` now loads `.env.local` for `${VAR}` interpolation. The
+  Postgres env vars were resolving to empty strings, so the healthcheck ran
+  `pg_isready -U` (no user) and `django`/`celery` aborted with "dependency failed
+  to start". The Makefile routes every compose call through `--env-file
+  $(ENV_FILE)` (defaults to `.env.local`, overridable e.g.
+  `make dev ENV_FILE=.env.staging`); the VS Code debugpy task got the same flag.
+
+### Documentation
+
+- Consolidated the per-package READMEs and changelogs into a single root
+  `README.md` (full monorepo guide) and root `CHANGELOG.md` (unified,
+  lockstep-versioned history with Backend/Frontend labels), and framed SaaSmint as
+  a personal SaaS boilerplate in the README intro.
+- Corrected the CI note in root `CLAUDE.md` (`claude-review.yml` ships dormant,
+  not absent) and fixed the stale sibling-repo cert path in `app/CLAUDE.md`.
+- Added the `add-cookie-notice` OpenSpec change artifacts (proposal, design, spec,
+  tasks).
+
+### Maintenance
+
+- `saasmint-core`, `saasmint-core-lib`, and `saasmint-app` bumped to `0.14.0`;
+  `uv.lock` files re-resolved (also clearing a stale `0.12.0` editable-version drift).
+- Added `CookieNotice` tests and updated the locale-layout and
+  `useClientBoundaries` guards.
+
 ## [0.13.1] - 2026-06-06
 
 Staging-deploy hardening for the merged monorepo. No application logic changes.
