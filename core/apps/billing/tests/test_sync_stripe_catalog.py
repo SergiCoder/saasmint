@@ -16,6 +16,7 @@ import stripe
 from django.core.management import call_command
 
 from apps.billing.management.commands.sync_stripe_catalog import (
+    _country_lookup_key,
     _plan_lookup_key,
     _product_lookup_key,
     _slug,
@@ -44,14 +45,21 @@ def _existing_price(
     product_description: str | None = None,
     product_metadata: dict[str, str] | None = None,
     lookup_key: str | None = None,
+    tax_behavior: str | None = None,
 ) -> MagicMock:
-    """Build a fake stripe.Price object exposing the attributes the command reads."""
+    """Build a fake stripe.Price object exposing the attributes the command reads.
+
+    ``tax_behavior`` defaults to ``None`` (the ``unspecified`` shape of the
+    pre-migration catalog) so existing-price tests exercise the in-place
+    ``unspecified → exclusive`` transition unless they opt into ``"exclusive"``.
+    """
     price = MagicMock(spec=stripe.Price)
     price.id = price_id
     price.unit_amount = unit_amount
     price.currency = currency
     price.recurring = SimpleNamespace(interval=interval) if interval is not None else None
     price.lookup_key = lookup_key
+    price.tax_behavior = tax_behavior
 
     product = MagicMock(spec=stripe.Product)
     product.id = product_id
@@ -123,6 +131,34 @@ class TestLookupKeys:
             name="100 Credits", type="one_time", credits=100, is_active=True
         )
         assert _product_lookup_key(product, "cny") == "product_100_credits_cny"
+
+    def test_country_lookup_key_suffixes_with_c_and_lowercase_country(self):
+        plan = Plan.objects.create(
+            name="Personal Pro Monthly",
+            context="personal",
+            tier=PlanTier.PRO,
+            interval="month",
+            is_active=True,
+        )
+        base = _plan_lookup_key(plan, "usd")  # "plan_personal_pro_month"
+        assert _country_lookup_key(base, "ES") == "plan_personal_pro_month_c_es"
+        assert _country_lookup_key(base, "GB") == "plan_personal_pro_month_c_gb"
+
+    def test_country_lookup_key_never_collides_with_currency_suffix(self):
+        # A key like "plan_personal_pro_month_eur" (currency) must differ from
+        # "plan_personal_pro_month_c_eur" (country), so a future EUR country
+        # price doesn't shadow the EUR billing-currency Price.
+        plan = Plan.objects.create(
+            name="Personal Pro Monthly",
+            context="personal",
+            tier=PlanTier.PRO,
+            interval="month",
+            is_active=True,
+        )
+        base = _plan_lookup_key(plan, "usd")
+        currency_key = _plan_lookup_key(plan, "eur")
+        country_key = _country_lookup_key(base, "EU")  # hypothetical EU code
+        assert currency_key != country_key
 
 
 # ── early-exit when stripe key is missing ─────────────────────────────────────
@@ -198,6 +234,8 @@ class TestSyncPlans:
         assert price_kwargs["recurring"] == {"interval": "month"}
         assert price_kwargs["lookup_key"] == _plan_lookup_key(plan, "usd")
         assert price_kwargs["transfer_lookup_key"] is True
+        # New prices are minted exclusive so VAT/GST is added on top at checkout.
+        assert price_kwargs["tax_behavior"] == "exclusive"
 
         mock_pmodify.assert_not_called()
         mock_price_modify.assert_not_called()
@@ -215,6 +253,7 @@ class TestSyncPlans:
             product_description="Basic monthly",
             product_metadata={"local_plan_id": str(plan.id), "kind": "plan"},
             lookup_key=_plan_lookup_key(plan, "usd"),
+            tax_behavior="exclusive",  # already migrated → fully in sync
         )
         # Mark the local row as already pointing at the existing Stripe price
         price.stripe_price_id = "price_already_synced"
@@ -231,6 +270,7 @@ class TestSyncPlans:
             out = _run()
 
         mock_create.assert_not_called()
+        # tax_behavior already exclusive → no in-place modify either
         mock_modify.assert_not_called()
         mock_pcreate.assert_not_called()
         # Product metadata already matches → no modify either
@@ -238,6 +278,34 @@ class TestSyncPlans:
         assert "already in sync" in out
         price.refresh_from_db()
         assert price.stripe_price_id == "price_already_synced"
+
+    def test_existing_unspecified_price_gets_tax_behavior_exclusive(self, paid_plan_with_price):
+        """A matching but ``unspecified`` price is migrated in place (no churn)."""
+        plan, _price = paid_plan_with_price
+        existing = _existing_price(
+            price_id="price_unspecified",
+            unit_amount=1900,
+            interval="month",
+            product_name=plan.name,
+            product_description="Basic monthly",
+            product_metadata={"local_plan_id": str(plan.id), "kind": "plan"},
+            lookup_key=_plan_lookup_key(plan, "usd"),
+            tax_behavior=None,  # pre-migration shape
+        )
+        list_resp = MagicMock(data=[existing])
+        with (
+            patch("stripe.Price.list", return_value=list_resp),
+            patch("stripe.Price.create") as mock_create,
+            patch("stripe.Price.modify") as mock_modify,
+            patch("stripe.Product.create") as mock_pcreate,
+            patch("stripe.Product.modify"),
+        ):
+            _run()
+
+        # Price re-used (not archived/recreated); only tax_behavior modified.
+        mock_create.assert_not_called()
+        mock_pcreate.assert_not_called()
+        mock_modify.assert_called_once_with("price_unspecified", tax_behavior="exclusive")
 
     def test_amount_drift_archives_old_price_and_creates_new(self, paid_plan_with_price):
         plan, price = paid_plan_with_price
@@ -279,6 +347,7 @@ class TestSyncPlans:
             interval="month",
             product_metadata={},  # missing local_plan_id, kind
             lookup_key=_plan_lookup_key(plan, "usd"),
+            tax_behavior="exclusive",  # isolate the product-metadata path
         )
         list_resp = MagicMock(data=[existing])
         with (

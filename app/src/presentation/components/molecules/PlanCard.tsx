@@ -4,6 +4,8 @@ export interface PlanCardProps {
   interval: string;
   /** Optional sub-label shown below the price (e.g. "$15.83/month billed yearly"). */
   priceSubLabel?: string;
+  /** Optional "incl. VAT" hint shown next to the interval for tax-inclusive prices. */
+  taxLabel?: string;
   description?: string;
   highlighted?: boolean;
   cta: React.ReactNode;
@@ -15,6 +17,7 @@ export function PlanCard({
   price,
   interval,
   priceSubLabel,
+  taxLabel,
   description,
   highlighted = false,
   cta,
@@ -30,8 +33,13 @@ export function PlanCard({
     >
       <h3 className="text-lg font-semibold text-gray-900">{name}</h3>
       <p className="mt-4">
-        <span className="text-4xl font-bold text-gray-900">{price}</span>
-        <span className="text-sm text-gray-500">/{interval}</span>
+        <span className="block text-4xl font-bold text-gray-900">{price}</span>
+        <span className="mt-1 block text-sm text-gray-500">
+          /{interval}
+          {taxLabel && (
+            <span className="ml-2 text-xs text-gray-400">{taxLabel}</span>
+          )}
+        </span>
       </p>
       {priceSubLabel && (
         <p className="mt-1 text-sm text-gray-500">{priceSubLabel}</p>

@@ -47,7 +47,7 @@
 
 - [ ] 7.1 Full local stack up via root compose (postgres, redis, django, celery, caddy) with no path errors
 - [ ] 7.2 `make lint`, `make typecheck`, `make test` (core) and `pnpm lint`, `pnpm typecheck`, `pnpm test` (app) all pass
-- [ ] 7.3 Deploy to staging from the new repo; confirm `.env.staging` is loaded and `api`/`app` come up healthy
+- [x] 7.3 Deploy to staging from the new repo; confirm `.env.staging` is loaded and `api`/`app` come up healthy (done via the v0.13.1 cutover — see 10.8; api 200, app 307, DB intact)
 
 ## 8. Cut over and finalize
 

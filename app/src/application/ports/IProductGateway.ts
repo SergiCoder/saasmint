@@ -15,6 +15,6 @@ export interface ProductCheckoutInput {
 }
 
 export interface IProductGateway {
-  listProducts(currency?: string): Promise<Product[]>;
+  listProducts(currency?: string, country?: string): Promise<Product[]>;
   createCheckoutSession(input: ProductCheckoutInput): Promise<{ url: string }>;
 }

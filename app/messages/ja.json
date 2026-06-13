@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount}（{monthly}/月、{currency}で年額請求）",
     "seat": "シート",
     "seats": "シート",
+    "month": "月",
+    "year": "年",
     "products": "クレジットパック",
     "credits": "クレジット",
     "creditBalanceLabel": "クレジット残高",
@@ -270,7 +272,9 @@
     "seatsOfMax": "{count} of {max} seats",
     "scheduledCancelHeadline": "Cancels on {date}",
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
-    "scheduledPlanLabel": "Scheduled — switching here on {date}"
+    "scheduledPlanLabel": "Scheduled — switching here on {date}",
+    "inclTax": "税込",
+    "currencyLabel": "通貨"
   },
   "profile": {
     "title": "設定",

@@ -25,6 +25,7 @@ const products: Product[] = [
       currency: "usd",
       localDisplayAmount: null,
       localCurrency: null,
+      taxInclusive: false,
     },
   },
 ];
@@ -62,6 +63,28 @@ describe("DjangoApiProductGateway", () => {
 
       expect(mockApiFetchOptional).toHaveBeenCalledWith(
         "/billing/products/?currency=eur",
+        { next: { revalidate: 3600 } },
+      );
+    });
+
+    it("appends ?country= query string when country is provided", async () => {
+      mockApiFetchOptional.mockResolvedValue({ results: [] });
+
+      await gateway.listProducts(undefined, "GB");
+
+      expect(mockApiFetchOptional).toHaveBeenCalledWith(
+        "/billing/products/?country=GB",
+        { next: { revalidate: 3600 } },
+      );
+    });
+
+    it("appends both ?country= and ?currency= when both are provided", async () => {
+      mockApiFetchOptional.mockResolvedValue({ results: [] });
+
+      await gateway.listProducts("gbp", "GB");
+
+      expect(mockApiFetchOptional).toHaveBeenCalledWith(
+        "/billing/products/?currency=gbp&country=GB",
         { next: { revalidate: 3600 } },
       );
     });

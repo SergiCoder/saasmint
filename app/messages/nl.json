@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/maand, jaarlijks gefactureerd in {currency}",
     "seat": "stoel",
     "seats": "stoelen",
+    "month": "maand",
+    "year": "jaar",
     "products": "Creditpakketten",
     "credits": "credits",
     "creditBalanceLabel": "Tegoedsaldo",
@@ -270,7 +272,9 @@
     "seatsOfMax": "{count} of {max} seats",
     "scheduledCancelHeadline": "Cancels on {date}",
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
-    "scheduledPlanLabel": "Scheduled — switching here on {date}"
+    "scheduledPlanLabel": "Scheduled — switching here on {date}",
+    "inclTax": "incl. btw",
+    "currencyLabel": "Valuta"
   },
   "profile": {
     "title": "Instellingen",

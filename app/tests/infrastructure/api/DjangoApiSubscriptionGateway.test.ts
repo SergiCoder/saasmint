@@ -83,6 +83,7 @@ const expectedPersonal = {
       currency: "usd",
       localDisplayAmount: null,
       localCurrency: null,
+      taxInclusive: false,
     },
   },
   seatLimit: 1,
@@ -432,6 +433,7 @@ describe("DjangoApiSubscriptionGateway", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       });
     });
@@ -553,6 +555,7 @@ describe("DjangoApiSubscriptionGateway", () => {
         currency: "usd",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       });
     });
 
@@ -584,6 +587,7 @@ describe("DjangoApiSubscriptionGateway", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       });
     });

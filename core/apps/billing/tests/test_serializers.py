@@ -43,6 +43,7 @@ class TestPlanPriceSerializer:
             "currency",
             "local_display_amount",
             "local_currency",
+            "tax_inclusive",
         }
 
 
@@ -492,6 +493,7 @@ class TestProductPriceSerializer:
             "currency",
             "local_display_amount",
             "local_currency",
+            "tax_inclusive",
         }
 
     def test_reads_localized_amount_for_currency(self):

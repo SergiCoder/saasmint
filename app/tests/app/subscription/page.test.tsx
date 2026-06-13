@@ -667,6 +667,7 @@ describe("BillingPage (subscription/page)", () => {
             currency: "usd",
             localDisplayAmount: null,
             localCurrency: null,
+            taxInclusive: false,
           },
         },
         seatLimit: 1,
@@ -701,6 +702,7 @@ describe("BillingPage (subscription/page)", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       };
     }
@@ -822,6 +824,7 @@ describe("BillingPage (subscription/page)", () => {
             // localCurrency differs from billed currency → sub-label emitted
             localDisplayAmount: 18.45,
             localCurrency: "chf",
+            taxInclusive: false,
           },
         },
       ]);
@@ -848,7 +851,8 @@ describe("BillingPage (subscription/page)", () => {
             displayAmount: 9.99,
             currency: "usd",
             localDisplayAmount: 9.99,
-            localCurrency: "usd", // same as billed → no sub-label
+            localCurrency: "usd", // same as billed → no sub-label,
+            taxInclusive: false,
           },
         },
       ]);

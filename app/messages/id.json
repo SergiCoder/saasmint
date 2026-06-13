@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/bulan, ditagih tahunan dalam {currency}",
     "seat": "kursi",
     "seats": "kursi",
+    "month": "bulan",
+    "year": "tahun",
     "products": "Paket kredit",
     "credits": "kredit",
     "creditBalanceLabel": "Saldo kredit",
@@ -270,7 +272,9 @@
     "seatsOfMax": "{count} of {max} seats",
     "scheduledCancelHeadline": "Cancels on {date}",
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
-    "scheduledPlanLabel": "Scheduled — switching here on {date}"
+    "scheduledPlanLabel": "Scheduled — switching here on {date}",
+    "inclTax": "termasuk PPN",
+    "currencyLabel": "Mata uang"
   },
   "profile": {
     "title": "Pengaturan",

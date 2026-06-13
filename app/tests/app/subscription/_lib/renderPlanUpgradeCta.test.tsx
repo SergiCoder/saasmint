@@ -35,6 +35,7 @@ function makePlan(
             currency: "usd",
             localDisplayAmount: null,
             localCurrency: null,
+            taxInclusive: false,
           },
   };
 }
@@ -147,6 +148,7 @@ describe("renderPlanUpgradeCta — personal change-plan via in-app confirm", () 
         currency: "usd",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       },
     });
     const personalSub = makeSubscription("personal");
@@ -266,6 +268,7 @@ describe("renderPlanUpgradeCta — team change-plan via in-app confirm", () => {
         currency: "usd",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       },
     });
     const teamSub = makeSubscription("team");

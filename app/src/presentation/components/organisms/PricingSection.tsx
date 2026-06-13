@@ -70,6 +70,7 @@ export function PricingSection({
             price={variant.price}
             interval={variant.intervalLabel}
             priceSubLabel={variant.priceSubLabel}
+            taxLabel={variant.taxLabel}
             description={group.description}
             highlighted={group.highlighted}
             cta={variant.cta ?? <span />}

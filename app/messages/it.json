@@ -232,6 +232,8 @@
     "billedInLocalYearly": "≈ {amount} — {monthly}/mese, fatturato annualmente in {currency}",
     "seat": "posto",
     "seats": "posti",
+    "month": "mese",
+    "year": "anno",
     "products": "Pacchetti crediti",
     "credits": "crediti",
     "creditBalanceLabel": "Saldo crediti",
@@ -270,7 +272,9 @@
     "seatsOfMax": "{count} of {max} seats",
     "scheduledCancelHeadline": "Cancels on {date}",
     "scheduledCancelBody": "You can resume any time before then to keep this plan.",
-    "scheduledPlanLabel": "Scheduled — switching here on {date}"
+    "scheduledPlanLabel": "Scheduled — switching here on {date}",
+    "inclTax": "IVA inclusa",
+    "currencyLabel": "Valuta"
   },
   "profile": {
     "title": "Impostazioni",

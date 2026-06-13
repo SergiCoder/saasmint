@@ -476,6 +476,13 @@ paths:
         response header — clients should redirect the user there to complete payment.
       parameters:
       - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO 3166-1 alpha-2 country code (e.g. 'ES'). Manual override
+          that wins over locale/IP resolution; selects the per-country tax-inclusive
+          price (falls back to the USD anchor when no per-country price exists).
+      - in: query
         name: currency
         schema:
           type: string
@@ -565,8 +572,17 @@ paths:
       operationId: billing_plans_retrieve
       description: List all active plans with prices. Emits the DRF paginated envelope
         (``count``/``next``/``previous``/``results``) — the catalog is bounded, so
-        ``next`` and ``previous`` are always ``null``.
+        ``next`` and ``previous`` are always ``null``. When a country resolves (``?country=``,
+        locale, or edge IP) each price's ``display_amount`` is that country's tax-inclusive
+        sticker (``tax_inclusive=true``); otherwise it falls back to the USD anchor.
       parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO 3166-1 alpha-2 country code (e.g. 'ES'). Manual override
+          that wins over locale/IP resolution; selects the per-country tax-inclusive
+          price (falls back to the USD anchor when no per-country price exists).
       - in: query
         name: currency
         schema:
@@ -656,6 +672,13 @@ paths:
           requires ``role=OWNER`` on the active org. Non-org-member callers cannot
           pick ``team``.'
       - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO 3166-1 alpha-2 country code (e.g. 'ES'). Manual override
+          that wins over locale/IP resolution; selects the per-country tax-inclusive
+          price (falls back to the USD anchor when no per-country price exists).
+      - in: query
         name: currency
         schema:
           type: string
@@ -697,8 +720,18 @@ paths:
       operationId: billing_products_retrieve
       description: List all active one-time products with prices. Emits the DRF paginated
         envelope (``count``/``next``/``previous``/``results``) — the catalog is bounded,
-        so ``next`` and ``previous`` are always ``null``.
+        so ``next`` and ``previous`` are always ``null``. When a country resolves
+        (``?country=``, locale, or edge IP) each price's ``display_amount`` is that
+        country's tax-inclusive sticker (``tax_inclusive=true``); otherwise it falls
+        back to the USD anchor.
       parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO 3166-1 alpha-2 country code (e.g. 'ES'). Manual override
+          that wins over locale/IP resolution; selects the per-country tax-inclusive
+          price (falls back to the USD anchor when no per-country price exists).
       - in: query
         name: currency
         schema:
@@ -2063,6 +2096,9 @@ components:
           type: string
           readOnly: true
           nullable: true
+        tax_inclusive:
+          type: boolean
+          readOnly: true
       required:
       - amount
       - currency
@@ -2070,6 +2106,7 @@ components:
       - id
       - local_currency
       - local_display_amount
+      - tax_inclusive
     PortalRequestRequest:
       type: object
       properties:
@@ -2208,6 +2245,9 @@ components:
           type: string
           readOnly: true
           nullable: true
+        tax_inclusive:
+          type: boolean
+          readOnly: true
       required:
       - amount
       - currency
@@ -2215,6 +2255,7 @@ components:
       - id
       - local_currency
       - local_display_amount
+      - tax_inclusive
     PublicInvitation:
       type: object
       description: |-

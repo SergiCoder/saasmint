@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PricingSection } from "@/presentation/components/organisms/PricingSection";
 import { GetStartedButton } from "./_components/GetStartedButton";
+import { CurrencySelector } from "./_components/CurrencySelector";
+import {
+  PRICING_CURRENCIES,
+  normalizePricingCurrency,
+  catalogParamsForCurrency,
+} from "@/domain/data/pricingCurrencies";
 import { ProductsCheckoutSection } from "@/app/[locale]/(app)/subscription/_components/ProductsCheckoutSection";
 import { renderPlanUpgradeCta } from "@/app/[locale]/(app)/subscription/_lib/renderPlanUpgradeCta";
 import { getOrgMembers } from "@/app/[locale]/_data/getOrgMembers";
@@ -49,7 +56,7 @@ const SYNTHETIC_FREE_PLANS: Plan[] = (["month", "year"] as const).map<Plan>(
 
 interface Props {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ interval?: string }>;
+  searchParams: Promise<{ interval?: string; currency?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -67,17 +74,38 @@ export default async function PricingPage({ params, searchParams }: Props) {
   // the translation loads on the same Promise.all. Anonymous visitors (the
   // majority on /pricing) skip the authenticated calls and fall back to
   // empty lists.
+  // Read the pricing-currency override up front so it can parameterise the
+  // catalog fetch. A launch-market currency resolves to a per-country (tax-
+  // inclusive) sticker via ?country=; a display-only currency to the FX price
+  // via ?currency=; an empty/unknown value to neither, so the backend
+  // auto-detects the market from locale/IP.
+  const query = await searchParams;
+  const selectedCurrency = normalizePricingCurrency(query.currency);
+  const { country: fetchCountry, currency: fetchCurrency } =
+    catalogParamsForCurrency(selectedCurrency);
+
   const userPromise = getOptionalUser();
-  const catalogPromise = userPromise.then(getPricingCatalog);
-  const [t, tPlans, tProducts, user, query, catalog] = await Promise.all([
+  const catalogPromise = userPromise.then((u) =>
+    getPricingCatalog(u, fetchCountry, fetchCurrency),
+  );
+  const [t, tPlans, tProducts, user, catalog] = await Promise.all([
     getTranslations("billing"),
     getTranslations("plans"),
     getTranslations("products"),
     userPromise,
-    searchParams,
     catalogPromise,
   ]);
   const { plans, subscriptions, products, userOrgs } = catalog;
+
+  // With no explicit ?currency=, the backend resolved the market from
+  // locale/IP — reflect that in the selector by reading the currency it
+  // returned, so visitors see their detected currency pre-selected (there is
+  // no explicit "auto-detect" row). Falls back to USD on an empty catalog.
+  const detectedCurrency =
+    plans.find((p) => p.price)?.price?.currency ??
+    products.find((p) => p.price)?.price?.currency;
+  const effectiveCurrency =
+    selectedCurrency || normalizePricingCurrency(detectedCurrency) || "usd";
 
   const selectedInterval = parseIntervalParam(query.interval);
 
@@ -138,7 +166,10 @@ export default async function PricingPage({ params, searchParams }: Props) {
     labels: {
       upgrade: t("upgrade"),
       seat: t("seat"),
+      month: t("month"),
+      year: t("year"),
       billedYearly: t("billedYearly"),
+      inclTax: t("inclTax"),
     },
     planNames,
     planDescriptions,
@@ -228,6 +259,15 @@ export default async function PricingPage({ params, searchParams }: Props) {
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           {t("pricingTitle")}
         </h1>
+        <div className="mt-4 flex justify-center">
+          <Suspense fallback={null}>
+            <CurrencySelector
+              label={t("currencyLabel")}
+              selected={effectiveCurrency}
+              currencies={PRICING_CURRENCIES}
+            />
+          </Suspense>
+        </div>
       </div>
 
       <div className="mt-12 space-y-16">
@@ -273,6 +313,7 @@ export default async function PricingPage({ params, searchParams }: Props) {
             locale,
             makeProductSubLabelFormatter(t),
           )}
+          taxLabel={t("inclTax")}
           creditsLabel={t("credits")}
           buyLabel={t("buy")}
           locale={locale}

@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   buildPlanCardGroups,
   buildProductPriceSubLabels,
+  makeLocalSubLabelFormatter,
+  makeProductSubLabelFormatter,
 } from "@/app/[locale]/_lib/buildPlanCards";
 import type { Plan } from "@/domain/models/Plan";
 import type { Product } from "@/domain/models/Product";
@@ -9,7 +11,10 @@ import type { Product } from "@/domain/models/Product";
 const labels = {
   upgrade: "Upgrade",
   seat: "seat",
+  month: "month",
+  year: "year",
   billedYearly: "billed yearly",
+  inclTax: "incl. VAT",
 };
 
 function makePlan(overrides: Partial<Plan> & { id: string }): Plan {
@@ -27,6 +32,7 @@ function makePlan(overrides: Partial<Plan> & { id: string }): Plan {
       currency: "usd",
       localDisplayAmount: null,
       localCurrency: null,
+      taxInclusive: false,
     },
   };
 }
@@ -45,6 +51,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -58,6 +65,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -99,6 +107,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -112,6 +121,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -151,6 +161,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -163,6 +174,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -365,6 +377,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -378,6 +391,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -442,6 +456,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -455,6 +470,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -506,6 +522,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -520,6 +537,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -570,6 +588,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -584,6 +603,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -631,6 +651,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makePlan({
@@ -645,6 +666,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
     ];
@@ -707,6 +729,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: 17.42,
           localCurrency: "chf",
+          taxInclusive: false,
         },
       });
       const calls: unknown[] = [];
@@ -739,6 +762,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: 176.16,
           localCurrency: "chf",
+          taxInclusive: false,
         },
       });
       const groups = buildPlanCardGroups({
@@ -771,6 +795,7 @@ describe("buildPlanCardGroups", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       });
       const groups = buildPlanCardGroups({
@@ -798,6 +823,7 @@ describe("buildPlanCardGroups", () => {
           currency: "USD",
           localDisplayAmount: 19,
           localCurrency: "usd",
+          taxInclusive: false,
         },
       });
       const groups = buildPlanCardGroups({
@@ -810,6 +836,136 @@ describe("buildPlanCardGroups", () => {
       });
       expect(groups[0]!.monthly?.priceSubLabel).toBeUndefined();
     });
+  });
+});
+
+describe("taxLabel on plan variants", () => {
+  const baseTranslations = {
+    planNames: { "personal.2": "Basic" },
+    planDescriptions: { "personal.2": "Basic desc" },
+  };
+
+  it("sets taxLabel when price.taxInclusive is true", () => {
+    const plan = makePlan({
+      id: "es-m",
+      tier: 2,
+      interval: "month",
+      price: {
+        id: "pm",
+        amount: 1999,
+        displayAmount: 19.99,
+        currency: "eur",
+        localDisplayAmount: null,
+        localCurrency: null,
+        taxInclusive: true,
+      },
+    });
+    const groups = buildPlanCardGroups({
+      plans: [plan],
+      locale: "en-US",
+      labels,
+      ...baseTranslations,
+      renderCta: () => null,
+    });
+    expect(groups[0]!.monthly?.taxLabel).toBe("incl. VAT");
+  });
+
+  it("leaves taxLabel undefined when price.taxInclusive is false", () => {
+    const plan = makePlan({
+      id: "usd-m",
+      tier: 2,
+      interval: "month",
+      price: {
+        id: "pm",
+        amount: 1900,
+        displayAmount: 19,
+        currency: "usd",
+        localDisplayAmount: null,
+        localCurrency: null,
+        taxInclusive: false,
+      },
+    });
+    const groups = buildPlanCardGroups({
+      plans: [plan],
+      locale: "en-US",
+      labels,
+      ...baseTranslations,
+      renderCta: () => null,
+    });
+    expect(groups[0]!.monthly?.taxLabel).toBeUndefined();
+  });
+
+  it("leaves taxLabel undefined when plan has no price (free tier)", () => {
+    const plan: Plan = {
+      id: "free",
+      name: "Free",
+      description: "",
+      context: "personal",
+      tier: 1,
+      interval: "month",
+      price: null,
+    };
+    const groups = buildPlanCardGroups({
+      plans: [plan],
+      locale: "en-US",
+      labels,
+      planNames: { "personal.1": "Free" },
+      planDescriptions: { "personal.1": "Free desc" },
+      renderCta: () => null,
+    });
+    expect(groups[0]!.monthly?.taxLabel).toBeUndefined();
+  });
+});
+
+describe("makeLocalSubLabelFormatter", () => {
+  function fakeT(
+    key: "billedInLocalMonthly" | "billedInLocalYearly",
+    values: Record<string, string>,
+  ): string {
+    if (key === "billedInLocalMonthly") {
+      return `monthly:${values.amount}:${values.currency}`;
+    }
+    return `yearly:${values.amount}:${values.monthly}:${values.currency}`;
+  }
+
+  it("calls billedInLocalMonthly template for month interval", () => {
+    const formatter = makeLocalSubLabelFormatter(fakeT);
+    const result = formatter({
+      interval: "month",
+      localAmount: "€17.42",
+      monthlyEquivalent: "$19.00",
+      billedCurrency: "USD",
+    });
+    expect(result).toBe("monthly:€17.42:USD");
+  });
+
+  it("calls billedInLocalYearly template for year interval", () => {
+    const formatter = makeLocalSubLabelFormatter(fakeT);
+    const result = formatter({
+      interval: "year",
+      localAmount: "€176.16",
+      monthlyEquivalent: "$16.00",
+      billedCurrency: "USD",
+    });
+    expect(result).toBe("yearly:€176.16:$16.00:USD");
+  });
+});
+
+describe("makeProductSubLabelFormatter", () => {
+  function fakeT(
+    _key: "billedInLocalMonthly",
+    values: Record<string, string>,
+  ): string {
+    return `billed:${values.amount}:${values.currency}`;
+  }
+
+  it("calls billedInLocalMonthly template and returns formatted string", () => {
+    const formatter = makeProductSubLabelFormatter(fakeT);
+    const result = formatter({
+      localAmount: "CHF 9.16",
+      billedCurrency: "USD",
+    });
+    expect(result).toBe("billed:CHF 9.16:USD");
   });
 });
 
@@ -835,6 +991,7 @@ describe("buildProductPriceSubLabels", () => {
           currency: "usd",
           localDisplayAmount: 9.16,
           localCurrency: "chf",
+          taxInclusive: false,
         },
       }),
       makeProduct({
@@ -846,6 +1003,7 @@ describe("buildProductPriceSubLabels", () => {
           currency: "usd",
           localDisplayAmount: 10,
           localCurrency: "USD",
+          taxInclusive: false,
         },
       }),
       makeProduct({
@@ -857,6 +1015,7 @@ describe("buildProductPriceSubLabels", () => {
           currency: "usd",
           localDisplayAmount: null,
           localCurrency: null,
+          taxInclusive: false,
         },
       }),
       makeProduct({ id: "p_priceless", price: null }),

@@ -78,6 +78,28 @@ describe("DjangoApiPlanGateway", () => {
       );
     });
 
+    it("appends ?country= query string when country is provided", async () => {
+      mockApiFetchOptional.mockResolvedValue({ results: [] });
+
+      await gateway.listPlans(undefined, "ES");
+
+      expect(mockApiFetchOptional).toHaveBeenCalledWith(
+        "/billing/plans/?country=ES",
+        { next: { revalidate: 3600 } },
+      );
+    });
+
+    it("appends both ?country= and ?currency= when both are provided", async () => {
+      mockApiFetchOptional.mockResolvedValue({ results: [] });
+
+      await gateway.listPlans("eur", "ES");
+
+      expect(mockApiFetchOptional).toHaveBeenCalledWith(
+        "/billing/plans/?currency=eur&country=ES",
+        { next: { revalidate: 3600 } },
+      );
+    });
+
     it("propagates errors from apiFetchOptional", async () => {
       mockApiFetchOptional.mockRejectedValue(
         new Error("API 500: Server Error"),
@@ -102,6 +124,7 @@ describe("DjangoApiPlanGateway", () => {
         currency: "usd",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       });
     });
 
@@ -128,6 +151,7 @@ describe("DjangoApiPlanGateway", () => {
         currency: "eur",
         localDisplayAmount: null,
         localCurrency: null,
+        taxInclusive: false,
       });
     });
 

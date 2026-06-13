@@ -62,6 +62,18 @@ describe("PlanCard", () => {
     expect(card.className).toContain("col-span-2");
   });
 
+  describe("taxLabel", () => {
+    it("renders the incl. VAT hint when provided", () => {
+      render(<PlanCard {...defaultProps} taxLabel="incl. VAT" />);
+      expect(screen.getByText("incl. VAT")).toBeInTheDocument();
+    });
+
+    it("omits the hint when not provided", () => {
+      render(<PlanCard {...defaultProps} />);
+      expect(screen.queryByText("incl. VAT")).not.toBeInTheDocument();
+    });
+  });
+
   describe("priceSubLabel", () => {
     it("renders the dual-currency disclosure when provided", () => {
       render(
