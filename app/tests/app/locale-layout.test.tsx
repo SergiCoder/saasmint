@@ -5,10 +5,12 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // assert on setRequestLocale per-test.
 const setRequestLocaleMock = vi.fn();
 const getMessagesMock = vi.fn(async () => ({ hello: "world" }));
+const getTranslationsMock = vi.fn(async () => (key: string) => key);
 
 vi.mock("next-intl/server", () => ({
   setRequestLocale: (locale: string) => setRequestLocaleMock(locale),
   getMessages: () => getMessagesMock(),
+  getTranslations: () => getTranslationsMock(),
 }));
 
 vi.mock("next-intl", async () => {
@@ -45,6 +47,7 @@ describe("LocaleLayout", () => {
   beforeEach(() => {
     setRequestLocaleMock.mockClear();
     getMessagesMock.mockClear();
+    getTranslationsMock.mockClear();
     notFoundMock.mockClear();
   });
 
